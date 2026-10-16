@@ -31,6 +31,8 @@ env:
   RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
   RCLONE_CONFIG_R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
   RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+  # rclone in Ubuntu (1.60) checks each upload by its version id, which R2 answers with 501
+  RCLONE_CONFIG_R2_NO_HEAD: "true"
 
 jobs:
   pipeline:
