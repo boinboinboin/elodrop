@@ -1,0 +1,1209 @@
+[
+    {
+        "title": "Ålesund",
+        "slug": "ålesund",
+        "fullName": "Ålesund Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 15,
+        "logo": "Ålesund.webp"
+    },
+    {
+        "title": "Alta",
+        "slug": "alta",
+        "fullName": "Alta Badmintonklubb",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1228,
+        "logo": null
+    },
+    {
+        "title": "Asker",
+        "slug": "asker",
+        "fullName": "Asker Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 12,
+        "logo": "Asker.jpg"
+    },
+    {
+        "title": "Askim",
+        "slug": "askim",
+        "fullName": "Askim Badminton Club",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 13,
+        "logo": null
+    },
+    {
+        "title": "Askøy",
+        "slug": "askøy",
+        "fullName": "Askøy Badmintonklubb",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 14,
+        "logo": "Askøy.png"
+    },
+    {
+        "title": "Austevoll",
+        "slug": "austevoll",
+        "fullName": "Austevoll IK Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 166,
+        "logo": null
+    },
+    {
+        "title": "Bærum",
+        "slug": "bærum",
+        "fullName": "Bærum Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 75,
+        "logo": "Bærum.png"
+    },
+    {
+        "title": "Båtsfjord",
+        "slug": "båtsfjord",
+        "fullName": "Båtsfjord Sportsklubb -Badminton",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 16,
+        "logo": null
+    },
+    {
+        "title": "Bergen",
+        "slug": "bergen",
+        "fullName": "Bergen Badmintonklubb",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 17,
+        "logo": "Bergen.png"
+    },
+    {
+        "title": "Berlevåg",
+        "slug": "berlevåg",
+        "fullName": "Berlevåg Turn&Idrettsforening  Badminton",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 18,
+        "logo": null
+    },
+    {
+        "title": "Billefjord",
+        "slug": "billefjord",
+        "fullName": "Billefjord IL Badmintongruppen",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 170,
+        "logo": null
+    },
+    {
+        "title": "Bodø",
+        "slug": "bodø",
+        "fullName": "Bodø Badmintonklubb",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 93,
+        "logo": null
+    },
+    {
+        "title": "Bøn",
+        "slug": "bøn",
+        "fullName": "Bøn Fotballklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1244,
+        "logo": null
+    },
+    {
+        "title": "Brønnøysund",
+        "slug": "brønnøysund",
+        "fullName": "Brønnøysund Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 1221,
+        "logo": null
+    },
+    {
+        "title": "Brumunddal",
+        "slug": "brumunddal",
+        "fullName": "Brumunddal Badmintonklubb",
+        "region": "Innlandet Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1196,
+        "logo": null
+    },
+    {
+        "title": "BSI",
+        "slug": "bsi",
+        "fullName": "BSI Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 20,
+        "logo": null
+    },
+    {
+        "title": "Bygdø",
+        "slug": "bygdø",
+        "fullName": "Bygdø Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 21,
+        "logo": null
+    },
+    {
+        "title": "Dale",
+        "slug": "dale",
+        "fullName": "Dale IL-Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1182,
+        "logo": null
+    },
+    {
+        "title": "Djerv",
+        "slug": "djerv",
+        "fullName": "Djerv Spkl. - Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 22,
+        "logo": "Djerv.webp"
+    },
+    {
+        "title": "Drammen",
+        "slug": "drammen",
+        "fullName": "Drammen Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 23,
+        "logo": null
+    },
+    {
+        "title": "Drøbak",
+        "slug": "drøbak",
+        "fullName": "Drøbak Frogn I.L. - Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 24,
+        "logo": null
+    },
+    {
+        "title": "Eidekameratene",
+        "slug": "eidekameratene",
+        "fullName": "Eidekameratene IL - Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 25,
+        "logo": null
+    },
+    {
+        "title": "Fedje",
+        "slug": "fedje",
+        "fullName": "Fedje IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1220,
+        "logo": null
+    },
+    {
+        "title": "Fitjar",
+        "slug": "fitjar",
+        "fullName": "Fitjar IL - Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 130,
+        "logo": null
+    },
+    {
+        "title": "Flatanger",
+        "slug": "flatanger",
+        "fullName": "Flatanger IL",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 1232,
+        "logo": null
+    },
+    {
+        "title": "Flatås",
+        "slug": "flatås",
+        "fullName": "Flatås IL - Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 1204,
+        "logo": null
+    },
+    {
+        "title": "Førde",
+        "slug": "førde",
+        "fullName": "Førde Badmintonklubb",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 28,
+        "logo": null
+    },
+    {
+        "title": "Fredrikstad BK",
+        "slug": "fredrikstad-bk",
+        "fullName": "Fredrikstad Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 139,
+        "logo": null
+    },
+    {
+        "title": "Frogner",
+        "slug": "frogner",
+        "fullName": "Frogner I.L. Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 29,
+        "logo": "Frogner.png"
+    },
+    {
+        "title": "Fron",
+        "slug": "fron",
+        "fullName": "Fron Badmintonklubb",
+        "region": "Innlandet Badmintonkrets",
+        "website": null,
+        "nbfClubId": 30,
+        "logo": null
+    },
+    {
+        "title": "Frøya",
+        "slug": "frøya",
+        "fullName": "Frøya IL",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 1205,
+        "logo": null
+    },
+    {
+        "title": "Grimstad",
+        "slug": "grimstad",
+        "fullName": "Grimstad Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 33,
+        "logo": "Grimstad.png"
+    },
+    {
+        "title": "Grong",
+        "slug": "grong",
+        "fullName": "Grong Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 34,
+        "logo": "Grong.png"
+    },
+    {
+        "title": "Gullvikmoen",
+        "slug": "gullvikmoen",
+        "fullName": "Gullvikmoen IL-Badminton",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 169,
+        "logo": "Gullvikmoen.png"
+    },
+    {
+        "title": "Hadsel",
+        "slug": "hadsel",
+        "fullName": "Hadsel badmintonklubb",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 35,
+        "logo": null
+    },
+    {
+        "title": "Hamar",
+        "slug": "hamar",
+        "fullName": "Hamar Badmintonklubb",
+        "region": "Innlandet Badmintonkrets",
+        "website": null,
+        "nbfClubId": 36,
+        "logo": "Hamar.png"
+    },
+    {
+        "title": "Hammerfest",
+        "slug": "hammerfest",
+        "fullName": "Hammerfest Badmintonklubb",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 112,
+        "logo": "Hammerfest.png"
+    },
+    {
+        "title": "Harstad",
+        "slug": "harstad",
+        "fullName": "Harstad Badmintonklubb",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 94,
+        "logo": null
+    },
+    {
+        "title": "Haugerud",
+        "slug": "haugerud",
+        "fullName": "Haugerud I.F. Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 38,
+        "logo": "Haugerud.png"
+    },
+    {
+        "title": "Haugesund",
+        "slug": "haugesund",
+        "fullName": "Haugesund Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 99,
+        "logo": "Haugesund.png"
+    },
+    {
+        "title": "Herøy",
+        "slug": "herøy",
+        "fullName": "Herøy Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 39,
+        "logo": "Herøy.png"
+    },
+    {
+        "title": "Hitra",
+        "slug": "hitra",
+        "fullName": "Hitra IL",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 1236,
+        "logo": null
+    },
+    {
+        "title": "Horten",
+        "slug": "horten",
+        "fullName": "Horten badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 42,
+        "logo": null
+    },
+    {
+        "title": "Hyllestad",
+        "slug": "hyllestad",
+        "fullName": "Hyllestad IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1224,
+        "logo": null
+    },
+    {
+        "title": "I.L Ros",
+        "slug": "i-l-ros",
+        "fullName": "I.L Ros",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 134,
+        "logo": null
+    },
+    {
+        "title": "IL Santor",
+        "slug": "il-santor",
+        "fullName": "IL Santor",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1209,
+        "logo": null
+    },
+    {
+        "title": "IL Skrim",
+        "slug": "il-skrim",
+        "fullName": "IL Skrim Badminton",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1179,
+        "logo": null
+    },
+    {
+        "title": "IL Strand-Ulv",
+        "slug": "il-strand-ulv",
+        "fullName": "IL Strand-Ulv Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1189,
+        "logo": null
+    },
+    {
+        "title": "Imås IL",
+        "slug": "imås-il",
+        "fullName": "Imås IL-Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 178,
+        "logo": null
+    },
+    {
+        "title": "Jarlsberg",
+        "slug": "jarlsberg",
+        "fullName": "Jarlsberg Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 44,
+        "logo": null
+    },
+    {
+        "title": "Karmøy",
+        "slug": "karmøy",
+        "fullName": "Karmøy Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 47,
+        "logo": "Karmøy.png"
+    },
+    {
+        "title": "Kirkenes",
+        "slug": "kirkenes",
+        "fullName": "Kirkenes Badmintonklubb",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 48,
+        "logo": null
+    },
+    {
+        "title": "Klæbu",
+        "slug": "klæbu",
+        "fullName": "Klæbu I.L. -Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 49,
+        "logo": null
+    },
+    {
+        "title": "Klemetsrud",
+        "slug": "klemetsrud",
+        "fullName": "Klemetsrud IL",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1212,
+        "logo": "Klemetsrud.png"
+    },
+    {
+        "title": "Kolvereid",
+        "slug": "kolvereid",
+        "fullName": "Kolvereid I.L. -Badminton",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 50,
+        "logo": "Kolvereid.png"
+    },
+    {
+        "title": "Kragerø",
+        "slug": "kragerø",
+        "fullName": "Kragerø Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 51,
+        "logo": null
+    },
+    {
+        "title": "Kristiansand",
+        "slug": "kristiansand",
+        "fullName": "Kristiansand Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 52,
+        "logo": "Kristiansand.png"
+    },
+    {
+        "title": "Kristiansund",
+        "slug": "kristiansund",
+        "fullName": "Kristiansund Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 53,
+        "logo": null
+    },
+    {
+        "title": "Kronstad",
+        "slug": "kronstad",
+        "fullName": "Kronstad IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1216,
+        "logo": null
+    },
+    {
+        "title": "Kvæfjord",
+        "slug": "kvæfjord",
+        "fullName": "Kvæfjord IL",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1210,
+        "logo": null
+    },
+    {
+        "title": "Lambertseter IF",
+        "slug": "lambertseter-if",
+        "fullName": "Lambertseter IF Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1193,
+        "logo": null
+    },
+    {
+        "title": "Landøya",
+        "slug": "landøya",
+        "fullName": "Landøya I.L. - Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 115,
+        "logo": null
+    },
+    {
+        "title": "Leksvik",
+        "slug": "leksvik",
+        "fullName": "Leksvik badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 54,
+        "logo": null
+    },
+    {
+        "title": "Levanger",
+        "slug": "levanger",
+        "fullName": "Levanger Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 1222,
+        "logo": null
+    },
+    {
+        "title": "Lillesand",
+        "slug": "lillesand",
+        "fullName": "Lillesand Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 117,
+        "logo": null
+    },
+    {
+        "title": "Linderud",
+        "slug": "linderud",
+        "fullName": "Linderud Il",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1215,
+        "logo": null
+    },
+    {
+        "title": "Lye",
+        "slug": "lye",
+        "fullName": "Lye Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 118,
+        "logo": null
+    },
+    {
+        "title": "Mandal",
+        "slug": "mandal",
+        "fullName": "Mandal Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 55,
+        "logo": null
+    },
+    {
+        "title": "Mehamn",
+        "slug": "mehamn",
+        "fullName": "Mehamn I.L. - Badminton",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 56,
+        "logo": null
+    },
+    {
+        "title": "Molde",
+        "slug": "molde",
+        "fullName": "Molde Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 119,
+        "logo": null
+    },
+    {
+        "title": "Mortensrud-Aker",
+        "slug": "mortensrud-aker",
+        "fullName": "Mortensrud-Aker Spkl",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1211,
+        "logo": null
+    },
+    {
+        "title": "Moss",
+        "slug": "moss",
+        "fullName": "Moss BK",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 57,
+        "logo": "Moss.png"
+    },
+    {
+        "title": "NBF",
+        "slug": "nbf",
+        "fullName": "Norges Badminton Forbund",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1,
+        "logo": null
+    },
+    {
+        "title": "Nesna",
+        "slug": "nesna",
+        "fullName": "Nesna IL Badminton",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 60,
+        "logo": "Nesna.png"
+    },
+    {
+        "title": "Nesodden",
+        "slug": "nesodden",
+        "fullName": "Nesodden Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 61,
+        "logo": null
+    },
+    {
+        "title": "NHHI",
+        "slug": "nhhi",
+        "fullName": "Norges Handelshøgskole Idrettslag",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1230,
+        "logo": null
+    },
+    {
+        "title": "NMBUI",
+        "slug": "nmbui",
+        "fullName": "NMBUI Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1234,
+        "logo": null
+    },
+    {
+        "title": "Norborg",
+        "slug": "norborg",
+        "fullName": "Norborg I.L. - Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 63,
+        "logo": "Norborg.png"
+    },
+    {
+        "title": "Nord og Rødtvedt SK",
+        "slug": "nord-og-rødtvedt-sk",
+        "fullName": "Nord og Rødtvedt SK - badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1194,
+        "logo": null
+    },
+    {
+        "title": "Nordre Fjell",
+        "slug": "nordre-fjell",
+        "fullName": "Nordre Fjell idrettslag",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1243,
+        "logo": null
+    },
+    {
+        "title": "Nøtterøy",
+        "slug": "nøtterøy",
+        "fullName": "Nøtterøy Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 64,
+        "logo": null
+    },
+    {
+        "title": "NTNUI",
+        "slug": "ntnui",
+        "fullName": "NTNUI Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 65,
+        "logo": "NTNUI.png"
+    },
+    {
+        "title": "Odda",
+        "slug": "odda",
+        "fullName": "Odda IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1231,
+        "logo": null
+    },
+    {
+        "title": "Oppegård IL",
+        "slug": "oppegård-il",
+        "fullName": "Oppegård IL",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 163,
+        "logo": null
+    },
+    {
+        "title": "Orkanger",
+        "slug": "orkanger",
+        "fullName": "Orkanger Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 66,
+        "logo": null
+    },
+    {
+        "title": "OSI",
+        "slug": "osi",
+        "fullName": "OSI",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 67,
+        "logo": "OSI.png"
+    },
+    {
+        "title": "Oslofjorden  Badmintonkrets",
+        "slug": "oslofjorden-badmintonkrets",
+        "fullName": "Oslofjorden Badmintonkrets",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 9,
+        "logo": null
+    },
+    {
+        "title": "Østre Tromøy",
+        "slug": "østre-tromøy",
+        "fullName": "Østre Tromøy Trim og Idrettsklubb Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 68,
+        "logo": null
+    },
+    {
+        "title": "Otra IL",
+        "slug": "otra-il",
+        "fullName": "Otra IL Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 177,
+        "logo": null
+    },
+    {
+        "title": "Pillarguri",
+        "slug": "pillarguri",
+        "fullName": "Pillarguri Badmintonklubb",
+        "region": "Innlandet Badmintonkrets",
+        "website": null,
+        "nbfClubId": 69,
+        "logo": null
+    },
+    {
+        "title": "Porsgrunn",
+        "slug": "porsgrunn",
+        "fullName": "Porsgrunn Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 70,
+        "logo": null
+    },
+    {
+        "title": "Rana",
+        "slug": "rana",
+        "fullName": "Rana Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 71,
+        "logo": null
+    },
+    {
+        "title": "Risør BK",
+        "slug": "risør-bk",
+        "fullName": "Risør Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1186,
+        "logo": null
+    },
+    {
+        "title": "Rissa",
+        "slug": "rissa",
+        "fullName": "Rissa Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 73,
+        "logo": null
+    },
+    {
+        "title": "Rjukan",
+        "slug": "rjukan",
+        "fullName": "Rjukan IL",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1240,
+        "logo": null
+    },
+    {
+        "title": "Rørvik",
+        "slug": "rørvik",
+        "fullName": "Rørvik IL - Badminton",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 74,
+        "logo": null
+    },
+    {
+        "title": "Rubbestadneset",
+        "slug": "rubbestadneset",
+        "fullName": "Rubbestadneset IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 136,
+        "logo": null
+    },
+    {
+        "title": "Sandefjord",
+        "slug": "sandefjord",
+        "fullName": "Sandefjord Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 76,
+        "logo": "Sandefjord.webp"
+    },
+    {
+        "title": "Sandnes",
+        "slug": "sandnes",
+        "fullName": "Sandnes Sportsklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1226,
+        "logo": null
+    },
+    {
+        "title": "Sangam",
+        "slug": "sangam",
+        "fullName": "Sangam IL - Badminton",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1180,
+        "logo": null
+    },
+    {
+        "title": "Sarpsborg",
+        "slug": "sarpsborg",
+        "fullName": "Sarpsborg Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 78,
+        "logo": null
+    },
+    {
+        "title": "Siddis BK",
+        "slug": "siddis-bk",
+        "fullName": "Siddis Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 132,
+        "logo": null
+    },
+    {
+        "title": "Skien BK",
+        "slug": "skien-bk",
+        "fullName": "Skien Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 144,
+        "logo": null
+    },
+    {
+        "title": "Skogsvåg",
+        "slug": "skogsvåg",
+        "fullName": "Skogsvåg IL",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1227,
+        "logo": null
+    },
+    {
+        "title": "Skudenes",
+        "slug": "skudenes",
+        "fullName": "Skudenes U.I.L. - Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 80,
+        "logo": null
+    },
+    {
+        "title": "Slagen",
+        "slug": "slagen",
+        "fullName": "Slagen Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 81,
+        "logo": null
+    },
+    {
+        "title": "Sogn RK",
+        "slug": "sogn-rk",
+        "fullName": "Sogn Racketklubb",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1235,
+        "logo": null
+    },
+    {
+        "title": "Søgne",
+        "slug": "søgne",
+        "fullName": "Søgne IL Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 83,
+        "logo": null
+    },
+    {
+        "title": "Sola",
+        "slug": "sola",
+        "fullName": "Sola Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 125,
+        "logo": null
+    },
+    {
+        "title": "Sørfjell",
+        "slug": "sørfjell",
+        "fullName": "Sørfjell IL",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1237,
+        "logo": null
+    },
+    {
+        "title": "Sortland",
+        "slug": "sortland",
+        "fullName": "Sortland BK",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1203,
+        "logo": null
+    },
+    {
+        "title": "Sotra",
+        "slug": "sotra",
+        "fullName": "Sotra Badminton Club",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 82,
+        "logo": "Sotra.png"
+    },
+    {
+        "title": "Stanghelle IL",
+        "slug": "stanghelle-il",
+        "fullName": "Stanghelle IL Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 175,
+        "logo": null
+    },
+    {
+        "title": "Stavanger",
+        "slug": "stavanger",
+        "fullName": "Stavanger Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 84,
+        "logo": "Stavanger.png"
+    },
+    {
+        "title": "Stovner",
+        "slug": "stovner",
+        "fullName": "Stovner Sportsklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1218,
+        "logo": null
+    },
+    {
+        "title": "Strømmen",
+        "slug": "strømmen",
+        "fullName": "Strømmen BK",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1183,
+        "logo": "Strømmen.png"
+    },
+    {
+        "title": "Svalbard",
+        "slug": "svalbard",
+        "fullName": "Svalbard Turn",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1219,
+        "logo": null
+    },
+    {
+        "title": "Sviland",
+        "slug": "sviland",
+        "fullName": "Sviland IL",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1233,
+        "logo": null
+    },
+    {
+        "title": "Sykkylven",
+        "slug": "sykkylven",
+        "fullName": "Sykkylven I.L. - Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 88,
+        "logo": null
+    },
+    {
+        "title": "Tana",
+        "slug": "tana",
+        "fullName": "Tana IF Badminton",
+        "region": "Finnmark Badmintonkrets",
+        "website": null,
+        "nbfClubId": 138,
+        "logo": null
+    },
+    {
+        "title": "Tranby",
+        "slug": "tranby",
+        "fullName": "Tranby Badmintonklubb",
+        "region": "VBT Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1246,
+        "logo": null
+    },
+    {
+        "title": "Tromsø",
+        "slug": "tromsø",
+        "fullName": "Tromsø Badmintonklubb",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 96,
+        "logo": "Tromsø.webp"
+    },
+    {
+        "title": "Tromsøstudentenes IL",
+        "slug": "tromsøstudentenes-il",
+        "fullName": "Tromsøstudentenes IL",
+        "region": "Hålogaland Badmintonkrets",
+        "website": null,
+        "nbfClubId": 97,
+        "logo": null
+    },
+    {
+        "title": "Trondheim",
+        "slug": "trondheim",
+        "fullName": "Trondheim Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 89,
+        "logo": "Trondheim.png"
+    },
+    {
+        "title": "Tynset",
+        "slug": "tynset",
+        "fullName": "Tynset Badmintonklubb",
+        "region": "Innlandet Badmintonkrets",
+        "website": null,
+        "nbfClubId": 90,
+        "logo": null
+    },
+    {
+        "title": "UISI",
+        "slug": "uisi",
+        "fullName": "Universitetet I Stavangers Idrettslag - Badminton",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1242,
+        "logo": null
+    },
+    {
+        "title": "Ullevål",
+        "slug": "ullevål",
+        "fullName": "Ullevål Badmintonklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 128,
+        "logo": null
+    },
+    {
+        "title": "Varegg Allianse-Idrettslag",
+        "slug": "varegg-allianse-idrettslag",
+        "fullName": "Varegg Allianse-Idrettslag - Badminton",
+        "region": "Badmintonkretsen Vest",
+        "website": null,
+        "nbfClubId": 1241,
+        "logo": null
+    },
+    {
+        "title": "Varhaug IL",
+        "slug": "varhaug-il",
+        "fullName": "Varhaug IL",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 1187,
+        "logo": null
+    },
+    {
+        "title": "Vennesla",
+        "slug": "vennesla",
+        "fullName": "Vennesla Badmintonklubb",
+        "region": "Badmintonkretsen Sør",
+        "website": null,
+        "nbfClubId": 126,
+        "logo": null
+    },
+    {
+        "title": "Verdal",
+        "slug": "verdal",
+        "fullName": "Verdal Badmintonklubb",
+        "region": "Midtnorsk Badmintonkrets Nord",
+        "website": null,
+        "nbfClubId": 91,
+        "logo": null
+    },
+    {
+        "title": "Vestre Aker",
+        "slug": "vestre-aker",
+        "fullName": "Vestre Aker",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 137,
+        "logo": "Vestre-Aker.png"
+    },
+    {
+        "title": "Vigra IL",
+        "slug": "vigra-il",
+        "fullName": "Vigra IL - Badminton",
+        "region": "Midtnorsk Badmintonkrets Sør",
+        "website": null,
+        "nbfClubId": 1192,
+        "logo": null
+    },
+    {
+        "title": "Vika og Flipstad",
+        "slug": "vika-og-flipstad",
+        "fullName": "Vika og Flipstad Sportsklubb",
+        "region": "Oslofjorden Badmintonkrets",
+        "website": null,
+        "nbfClubId": 1239,
+        "logo": null
+    }
+]
+

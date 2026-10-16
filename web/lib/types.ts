@@ -1,0 +1,300 @@
+// Shapes of the files written by pipeline/export.mjs (see its header for the layout).
+
+export type Pool = "men" | "women" | "mensDoubles" | "womensDoubles" | "mixedDoubles";
+export type Gender = "M" | "K";
+
+export interface PlayerRef {
+  id: number;
+  name: string;
+  rating: number;
+}
+
+/** A player's standing in one pool (ratings.json pools[pool][i]) */
+export interface RatingEntry {
+  rank: number | null;
+  id: number;
+  rating: number;
+  rd: number;
+  start: number;
+  peak: number;
+  matches: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  firstPlayed: string;
+  firstWeek: string;
+  name: string;
+  lastPlayed: string;
+  club: string | null;
+  gender: Gender | null;
+  genderInferred?: boolean;
+  active: boolean;
+  plusMinus: number;
+}
+
+export interface SeasonRow {
+  season: number;
+  rating: number;
+  club: string | null;
+  rank: number | null;
+  ranked: number | null;
+}
+
+/** Weekly history: values[i] is the value at the end of week i from `from` (a Monday) */
+export interface History {
+  from: string;
+  ratings: (number | null)[];
+  clubs: [number, string][];
+  ranks?: (number | null)[];
+  rankCounts?: number[];
+  seasons?: SeasonRow[];
+}
+
+export interface Match {
+  day: string;
+  event: string;
+  key?: string;
+  partner: PlayerRef | null;
+  opponents: PlayerRef[];
+  rating: number;
+  change: number;
+  result: number;
+  winChance: number;
+  score: string;
+  // Added for head to head
+  pool?: Pool;
+  poolLabel?: string;
+  setsFor?: number | null;
+  setsAgainst?: number | null;
+  pointsFor?: number | null;
+  pointsAgainst?: number | null;
+  margin?: number | null;
+}
+
+export interface Rival {
+  opponent: PlayerRef;
+  matches: number;
+  wins: number;
+  draws: number;
+  losses: number;
+  margin: number;
+  lastPlayed: string;
+}
+
+export interface MatchLog {
+  all: Match[];
+  biggestWins: Match[];
+  biggestLosses: Match[];
+  biggestGains: Match[];
+  biggestDrops: Match[];
+  rivals: Rival[];
+}
+
+export interface PlayerPool extends RatingEntry {
+  label: string;
+  history: History | null;
+  matchLog: MatchLog | null;
+}
+
+export interface Player {
+  id: number;
+  name: string;
+  club: string | null;
+  generatedAt: string;
+  /** In page order: the player's own gender's disciplines first */
+  pools: Partial<Record<Pool, PlayerPool>>;
+}
+
+export interface ClubTopPlayer {
+  id: number;
+  name: string;
+  rating: number;
+  gender: Gender | null;
+}
+
+export interface ClubStanding {
+  rank: number;
+  club: string;
+  strength: number;
+  players: number;
+  top: ClubTopPlayer[][];
+}
+
+export interface CombinedClubStanding {
+  rank: number;
+  club: string;
+  score: number;
+  players: number;
+  pools: Partial<Record<Pool, { rank: number; strength: number; players: number }>>;
+}
+
+export interface ClubStrengthRule {
+  slots: number;
+  pairs?: "doubles" | "mixed" | null;
+  weights: number[];
+}
+
+export interface ClubsFile {
+  generatedAt: string;
+  clubs: Record<Pool, ClubStanding[]> & { combined: CombinedClubStanding[] };
+  clubStrength: Record<Pool, ClubStrengthRule>;
+}
+
+export interface ClubHistoryPool {
+  from: string;
+  strength: (number | null)[];
+  rank: (number | null)[];
+  clubs: (number | null)[];
+  seasons?: { season: number; strength: number | null; rank: number | null; clubs: number | null }[];
+}
+
+export interface Meta {
+  generatedAt: string;
+  pools: Record<Pool, string>;
+  eliteserien: { current: string | null; seasons: string[] };
+  tournamentLinks: Record<string, number>;
+  players: number;
+}
+
+export interface UpsetPlayer extends PlayerRef {
+  change?: number;
+  club: string | null;
+}
+
+export interface Upset {
+  day: string;
+  pool: Pool;
+  poolLabel?: string;
+  event: string;
+  key?: string;
+  winChance: number;
+  winners: UpsetPlayer[];
+  losers: UpsetPlayer[];
+  score: string;
+}
+
+export interface UpsetWeek {
+  week: string;
+  matches: Upset[];
+}
+
+// ---- Tournament draws (pipeline/upcoming.mjs) ----
+
+export interface Chances {
+  wins: number;
+  groupWin: number;
+  knockout: number;
+  win: number;
+  groupRank: number | null;
+  progress: number;
+  place: number | null;
+}
+
+export interface Luck {
+  wins: number;
+  groupWin: number;
+  knockout: number;
+  win: number;
+  progress: number;
+  place?: number;
+  score: number;
+  draw?: number;
+  withdrawals?: number;
+}
+
+export interface EntryPlayer {
+  id: number | null;
+  name: string;
+  club: string | null;
+  matchedBy: string | null;
+  rating: number;
+  rank: number | null;
+  estimated: boolean;
+}
+
+export interface Entry {
+  players: EntryPlayer[];
+  rating: number;
+  group: number | null;
+  actual: Chances;
+  fair: Chances;
+  luck: Luck | null;
+  result: Chances | null;
+  after: Chances | null;
+  fairAfter: Chances | null;
+  withdrew: boolean;
+}
+
+export interface TournamentEvent {
+  className: string;
+  discipline: string;
+  pool: Pool;
+  poolLabel?: string;
+  title: string;
+  seeds: number[];
+  groups: { name: string; number: number; entries: number[]; rating: number }[];
+  knockout: boolean;
+  stages: { title: string; main: boolean; places: [number, number] | null }[];
+  maxRounds: number;
+  singleGroup: boolean;
+  noLuck?: boolean;
+  placement: boolean;
+  advance: { ranks: number[]; best: number[] };
+  played: boolean;
+  entries: Entry[];
+  unknownPlaceholders: string[];
+}
+
+export interface LuckSums {
+  n: number;
+  xx: number;
+  xy: number;
+  yy: number;
+}
+
+export interface Evaluation {
+  events: number;
+  winners: number;
+  favouritesWon: number;
+  favouritesExpected: number;
+  winnerChance: number;
+  logLoss: number;
+  luck: { rounds: LuckSums; places: LuckSums };
+}
+
+export interface Tournament {
+  cup2000Id: number;
+  portalenId: number | null;
+  name: string;
+  cancelled: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  fetchedAt: string;
+  runs: number;
+  events: TournamentEvent[];
+  evaluation: Evaluation;
+  unmatched: string[];
+}
+
+export interface TournamentSummary extends Omit<Tournament, "events" | "unmatched"> {
+  events: number;
+  entries: number;
+  played: number;
+}
+
+export interface TournamentsIndex {
+  generatedAt: string;
+  evaluation: Evaluation;
+  tournaments: TournamentSummary[];
+}
+
+/** A club's content (CMS): short name, full name, region, website, NBF id and logo */
+export interface ClubEntry {
+  title: string;
+  slug: string;
+  fullName: string | null;
+  region: string | null;
+  website: string | null;
+  nbfClubId: number | null;
+  logo: string | null;
+}

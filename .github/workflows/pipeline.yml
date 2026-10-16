@@ -1,0 +1,95 @@
+# Nightly: fetch new results, rate, work out Eliteserien strengths and tournament draw luck, export
+# the web data to the data bucket and tell the site to refresh. Sundays also rescan the whole
+# season's tournaments and refresh the current ranking.
+#
+# Secrets: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (an R2 API token with read and
+# write on both buckets), REVALIDATE_SECRET (as on the site). Variables: SITE_URL (e.g.
+# https://example.com), R2_RAW_BUCKET (default elo-raw), R2_DATA_BUCKET (default elo-data).
+name: Pipeline
+
+on:
+  schedule:
+    - cron: "15 3 * * 1-6" # nightly, 03:15 UTC
+    - cron: "15 3 * * 0" # Sunday: also the whole season and the ranking
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Also rescan the whole season's tournaments and refresh the ranking"
+        type: boolean
+        default: false
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+env:
+  RAW: r2:${{ vars.R2_RAW_BUCKET || 'elo-raw' }}
+  DATA: r2:${{ vars.R2_DATA_BUCKET || 'elo-data' }}
+  RCLONE_CONFIG_R2_TYPE: s3
+  RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+  RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  RCLONE_CONFIG_R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+  RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: pipeline
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install rclone
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq rclone
+
+      - name: Season and mode
+        id: mode
+        run: |
+          month=$(date -u +%-m); year=$(date -u +%Y)
+          echo "season=$(( month >= 7 ? year : year - 1 ))" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event.schedule }}" = "15 3 * * 0" ] || [ "${{ inputs.full }}" = "true" ]; then echo "full=true" >> "$GITHUB_OUTPUT"; fi
+
+      # The raw inputs (fetched results, rankings, draws, player and club lists, and the
+      # Eliteserien reviews, which are only recalculated by hand); everything else is rebuilt
+      - name: Download raw data
+        run: rclone copy "$RAW" data --filter-from ../.github/raw-data.filter --transfers 32 --checkers 32 --fast-list
+
+      - name: Fetch tournaments (badmintonportalen)
+        run: node fetch-portalen.mjs --season ${{ steps.mode.outputs.season }}
+
+      - name: Fetch league ties
+        run: node fetch-league.mjs --season ${{ steps.mode.outputs.season }}
+
+      - name: Fetch the current ranking
+        if: steps.mode.outputs.full == 'true'
+        run: node fetch-ranking.mjs 200${{ steps.mode.outputs.season }}
+
+      - name: Rate
+        run: node rate.mjs > /dev/null
+
+      - name: Eliteserien team strengths
+        run: node eliteserien.mjs > /dev/null
+
+      - name: Tournament draws
+        run: node upcoming.mjs ${{ steps.mode.outputs.full == 'true' && format('--season {0}', steps.mode.outputs.season) || '' }}
+
+      - name: Export the web data
+        run: node export.mjs
+
+      - name: Upload raw data
+        run: rclone copy data "$RAW" --filter-from ../.github/raw-data.filter --checksum --transfers 32 --checkers 32 --fast-list
+
+      # --checksum: only files whose content changed are uploaded (R2 counts every write)
+      - name: Upload the web data
+        run: rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list
+
+      - name: Refresh the site
+        if: vars.SITE_URL != ''
+        run: curl -fsS -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate"

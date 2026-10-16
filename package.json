@@ -1,0 +1,12 @@
+{
+  "name": "elodrop",
+  "private": true,
+  "description": "Elo ratings for Norwegian badminton: the rating pipeline and the website",
+  "packageManager": "pnpm@10.12.1",
+  "scripts": {
+    "pipeline:rate": "node pipeline/rate.mjs",
+    "pipeline:export": "node pipeline/export.mjs",
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build"
+  }
+}

@@ -1,0 +1,12 @@
+# rclone filter of pipeline/data: the raw inputs kept in the raw bucket (see workflows/pipeline.yml).
+# Everything else in data/ is rebuilt by rate.mjs, eliteserien.mjs, upcoming.mjs and export.mjs.
++ /portalen/**
++ /league/**
++ /ranking/**
++ /tournaments/**
++ /upcoming/raw/**
++ /tournaments.json
++ /players.json
++ /clubs.json
++ /eliteserien-*.json
+- *

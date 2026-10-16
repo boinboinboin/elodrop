@@ -1,0 +1,138 @@
+// Each week's biggest upsets (pipeline/rate.mjs): ?week=<Monday> shows that week's top 10 (default:
+// the newest week with matches), and the biggest upset of every week of ?year= (default: the shown
+// week's year).
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Suspense } from "react";
+import { ClubLogo } from "@/components/Team";
+import UpsetCard from "@/components/UpsetCard";
+import { getClubMap } from "@/lib/clubs";
+import { POOLS, getUpsetYear, getUpsetsIndex } from "@/lib/data";
+import { addDays, date, signed } from "@/lib/format";
+import type { ClubEntry, UpsetPlayer, UpsetWeek } from "@/lib/types";
+
+export const metadata: Metadata = { title: "Biggest upsets" };
+
+export default function UpsetsPage(props: PageProps<"/upsets">) {
+  return (
+    <>
+      <section className="base-section">
+        <div className="base-container px-4">
+          <Link href="/" className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <h1 className="h1 mt-4">Biggest upsets</h1>
+          <p className="text-2xl max-w-3xl mt-2">The matches won with the lowest chance of winning, week by week.</p>
+          <p className="max-w-3xl mt-4 text-gray-700">
+            The win chance is from the ratings right before the match. Only matches between settled players count: every player has played at least 10 matches and has a rating certain to within ±250 in
+            singles or ±180 in doubles, so a junior improving fast beating a favourite isn&apos;t counted as an upset. Walkovers and draws are left out.
+          </p>
+        </div>
+      </section>
+      <Suspense fallback={<div className="base-container px-4 text-gray-600">Loading upsets…</div>}>
+        <Content searchParams={props.searchParams} />
+      </Suspense>
+    </>
+  );
+}
+
+const withLabels = (w: UpsetWeek): UpsetWeek => ({ ...w, matches: w.matches.map((m) => ({ ...m, poolLabel: POOLS[m.pool] })) });
+
+async function Content({ searchParams }: Pick<PageProps<"/upsets">, "searchParams">) {
+  const params = await searchParams;
+  const [index, clubs] = await Promise.all([getUpsetsIndex(), getClubMap()]);
+  if (!index?.latest) return <p className="base-container px-4 text-gray-600">No upsets calculated yet: run the pipeline.</p>;
+  const years = index.years;
+  const requested = typeof params.week === "string" && /^\d{4}-\d{2}-\d{2}$/.test(params.week) ? params.week : null;
+  const weekYear = requested && years.includes(requested.slice(0, 4)) ? requested.slice(0, 4) : index.latest.week.slice(0, 4);
+  const weeks = await getUpsetYear(weekYear);
+  const current = withLabels(weeks.find((w) => w.week === requested) ?? (requested ? null : index.latest) ?? weeks[0] ?? index.latest);
+
+  // Newest first: the earlier week is the next item, crossing into the year before if needed
+  const at = weeks.findIndex((w) => w.week === current.week);
+  const yearAt = years.indexOf(weekYear);
+  const earlier = weeks[at + 1] ?? (years[yearAt + 1] ? (await getUpsetYear(years[yearAt + 1]))[0] : null) ?? null;
+  const later = at > 0 ? weeks[at - 1] : yearAt > 0 ? ((await getUpsetYear(years[yearAt - 1])).at(-1) ?? null) : null;
+
+  const year = typeof params.year === "string" && years.includes(params.year) ? params.year : weekYear;
+  const yearWeeks = year === weekYear ? weeks : await getUpsetYear(year);
+
+  return (
+    <>
+      <section className="base-section">
+        <div className="base-container px-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6">
+            <h2 className="text-3xl">Week of {date(current.week, "dayOnly")}–{date(addDays(current.week, 6), "long")}</h2>
+            <nav className="flex gap-2" aria-label="Weeks">
+              {earlier && <Link href={`/upsets?week=${earlier.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">&larr; Earlier</Link>}
+              {later && <Link href={`/upsets?week=${later.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">Later &rarr;</Link>}
+            </nav>
+          </div>
+          <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {current.matches.map((u, i) => (
+              <li key={i}><UpsetCard upset={u} rank={i + 1} clubs={clubs} /></li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <section className="base-section">
+        <div className="base-container px-4">
+          <h2 className="text-3xl mb-4">Biggest upset of each week</h2>
+          <nav className="flex flex-wrap gap-2 mb-6" aria-label="Year">
+            {years.map((y) => (
+              <Link
+                key={y}
+                href={`/upsets?week=${current.week}&year=${y}`}
+                className={`px-3 py-1 border border-black transition-colors duration-200 ${y === year ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
+                aria-current={y === year ? "page" : undefined}
+              >
+                {y}
+              </Link>
+            ))}
+          </nav>
+          <div className="bg-white overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="text-sm text-gray-600 border-b border-gray-200">
+                <tr>
+                  <th scope="col" className="py-2 px-4 font-normal">Week</th>
+                  <th scope="col" className="py-2 px-4 font-normal">Upset</th>
+                  <th scope="col" className="py-2 px-4 font-normal text-right" title="The winner's chance of winning before the match">Chance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {yearWeeks.map((w) => {
+                  const u = w.matches[0];
+                  const chance = Math.round(u.winChance * 100);
+                  return (
+                    <tr key={w.week} className={`border-b border-gray-100 last:border-0 align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
+                      <td className="py-2 px-4 whitespace-nowrap"><Link href={`/upsets?week=${w.week}`} className="hover:text-blue-600">{date(w.week, "dayMonth")}</Link></td>
+                      <td className="py-2 px-4">
+                        {u.winners.map((p, i) => <span key={p.id}>{i > 0 && " / "}<UpsetName p={p} clubs={clubs} bold /></span>)}
+                        <span className="text-gray-600"> beat </span>
+                        {u.losers.map((p, i) => <span key={p.id}>{i > 0 && " / "}<UpsetName p={p} clubs={clubs} /></span>)}
+                        <span className="block text-sm text-gray-600">{u.score} · {POOLS[u.pool]} · {u.event}</span>
+                      </td>
+                      <td className="py-2 px-4 text-right tabular-nums">{chance < 1 ? "<1" : chance}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+/** A player's name with their club's logo (if any) in front, and the rating gained or lost */
+function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
+  return (
+    <span className="inline-flex items-center gap-1 align-middle" title={p.club ?? undefined}>
+      <ClubLogo name={p.club} clubs={clubs} />
+      <Link href={`/players/${p.id}`} className={`${bold ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>
+      {p.change !== undefined && (
+        <span className={`text-sm tabular-nums ${p.change >= 0 ? "text-green-700" : "text-red-700"}`} title={`Rating ${p.change >= 0 ? "gained" : "lost"}`}>{signed(p.change, 1).replace("±", "+")}</span>
+      )}
+    </span>
+  );
+}

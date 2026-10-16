@@ -1,0 +1,16 @@
+# Generated and fetched data (kept in Cloudflare R2, see README)
+/pipeline/data
+/pipeline/export
+
+# Dependencies and builds
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# Local env
+.env*
+!.env.example
+.DS_Store
