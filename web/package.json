@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import-clubs": "tsx scripts/import-clubs.ts"
+    "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts"
   },
   "dependencies": {
     "next": "16.4.2",

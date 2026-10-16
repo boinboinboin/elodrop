@@ -1,6 +1,6 @@
 // Club content: short name, full name, region, website, NBF id and logo. From Sanity once it is set
 // up (NEXT_PUBLIC_SANITY_PROJECT_ID), else from content/clubs.json (exported from the old Craft
-// site, also the source for importing into Sanity: scripts/import-clubs.ts).
+// site, also the source for importing into Sanity: scripts/import-clubs.mts).
 import { cacheLife, cacheTag } from "next/cache";
 import clubsJson from "@/content/clubs.json";
 import type { ClubEntry } from "./types";
