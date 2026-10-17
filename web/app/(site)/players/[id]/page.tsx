@@ -61,6 +61,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
         <div className="base-container px-4">
           <Tabs
             label="Disciplines"
+            param="discipline"
             tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
           />
         </div>
@@ -274,11 +275,12 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
               <h3 className="text-xl mb-3">Highlights</h3>
               <Tabs
                 label="Highlights"
-                hash={false}
+                param="highlight"
+                id={pool}
                 small
                 className="mb-4"
                 tabs={highlights.map((h) => ({
-                  id: `${pool}-${h.key}`,
+                  id: h.key,
                   label: h.label,
                   content: <MatchTable title={h.label} subtitle={h.subtitle} matches={log[h.key]} embedded pool={pool} tournamentLinks={links} />,
                 }))}

@@ -6,7 +6,7 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import PredictionStats, { luckFit } from "@/components/PredictionStats";
 import { getTournamentsIndex } from "@/lib/data";
-import { date, dateRange } from "@/lib/format";
+import { date, dateRange, today } from "@/lib/format";
 import type { TournamentSummary } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Tournament draws" };
@@ -56,13 +56,13 @@ async function Content() {
   await connection();
   const index = await getTournamentsIndex();
   const tournaments = index?.tournaments ?? [];
-  const today = new Date().toISOString().slice(0, 10);
-  const upcoming = tournaments.filter((t) => (t.endDate ?? today) >= today).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
-  const past = tournaments.filter((t) => (t.endDate ?? today) < today);
+  const now = today();
+  const upcoming = tournaments.filter((t) => (t.endDate ?? now) >= now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
+  const past = tournaments.filter((t) => (t.endDate ?? now) < now);
   // Played tournaments by month of the first day, newest first
   const months = new Map<string, TournamentSummary[]>();
   for (const t of past) {
-    const month = (t.startDate ?? today).slice(0, 7);
+    const month = (t.startDate ?? now).slice(0, 7);
     months.set(month, [...(months.get(month) ?? []), t]);
   }
   const season = index?.evaluation;

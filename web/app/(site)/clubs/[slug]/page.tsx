@@ -65,11 +65,12 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
 
       <OverTime history={history} />
 
-      {/* One tab per discipline, as on the player page; the selected tab is kept in the URL hash (#men, #mixedDoubles, ...) */}
+      {/* One tab per discipline, as on the player page; the selected tab is kept in the URL (?discipline=mixedDoubles) */}
       <section className="base-section">
         <div className="base-container px-4">
           <Tabs
             label="Disciplines"
+            param="discipline"
             tabs={POOL_KEYS.map((pool, i) => ({
               id: pool,
               label: POOLS[pool],

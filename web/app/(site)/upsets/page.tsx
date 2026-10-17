@@ -8,7 +8,7 @@ import { ClubLogo } from "@/components/Team";
 import UpsetCard from "@/components/UpsetCard";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, getUpsetYear, getUpsetsIndex } from "@/lib/data";
-import { addDays, date, signed } from "@/lib/format";
+import { addDays, date, dateRange, signed } from "@/lib/format";
 import type { ClubEntry, UpsetPlayer, UpsetWeek } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Biggest upsets" };
@@ -60,7 +60,7 @@ async function Content({ searchParams }: Pick<PageProps<"/upsets">, "searchParam
       <section className="base-section">
         <div className="base-container px-4">
           <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6">
-            <h2 className="text-3xl">Week of {date(current.week, "dayOnly")}–{date(addDays(current.week, 6), "long")}</h2>
+            <h2 className="text-3xl">Week of {dateRange(current.week, addDays(current.week, 6), true)}</h2>
             <nav className="flex gap-2" aria-label="Weeks">
               {earlier && <Link href={`/upsets?week=${earlier.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">&larr; Earlier</Link>}
               {later && <Link href={`/upsets?week=${later.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">Later &rarr;</Link>}
