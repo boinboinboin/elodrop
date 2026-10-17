@@ -158,7 +158,10 @@ export interface ClubHistoryPool {
 }
 
 export interface Meta {
+  /** When the ratings were calculated */
   generatedAt: string;
+  /** When the pipeline finished building the site's data (missing in exports from before it was added) */
+  updatedAt?: string;
   pools: Record<Pool, string>;
   eliteserien: { current: string | null; seasons: string[] };
   tournamentLinks: Record<string, number>;
