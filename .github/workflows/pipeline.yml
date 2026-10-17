@@ -76,6 +76,9 @@ jobs:
       - name: Rate
         run: node rate.mjs > /dev/null
 
+      - name: Gender gap
+        run: node gender-gap.mjs
+
       - name: Eliteserien team strengths
         run: node eliteserien.mjs > /dev/null
 

@@ -1,19 +1,25 @@
 // Two players head to head (?a=<id>&b=<id>): their record against each other and together,
 // winning margins, and per discipline both play their ratings, A's chance of beating B now and
-// both rating histories; then the matches.
+// both rating histories; then the matches. A man and a woman also get a comparison just for fun in
+// singles and doubles, with her rating moved onto the men's scale by the gender gap
+// (pipeline/gender-gap.mjs).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
+import GenderGapNote from "@/components/GenderGapNote";
+import HeadToHeadSwitch from "@/components/HeadToHeadSwitch";
+import MarginsTable from "@/components/MarginsTable";
 import MatchTable from "@/components/MatchTable";
 import PlayerPicker from "@/components/PlayerPicker";
+import SideRating from "@/components/SideRating";
 import Tabs from "@/components/Tabs";
 import Team from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
-import { type HeadToHeadPool, type Margins, getHeadToHead, getMeta, getPlayer } from "@/lib/data";
-import { date, num, pct } from "@/lib/format";
+import { type GenderGap, type HeadToHead, type HeadToHeadCrossover, type HeadToHeadPool, getGenderGap, getHeadToHead, getMeta, getPlayer } from "@/lib/data";
+import { pct } from "@/lib/format";
 import { PALETTE } from "@/lib/chart";
-import type { ClubEntry, Match, Player, Pool } from "@/lib/types";
+import type { ClubEntry, Player, Pool } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Head to head" };
 
@@ -36,11 +42,12 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searc
   const idB = playerId(params.b);
   const h2h = idA && idB ? await getHeadToHead(idA, idB) : null;
   // Names for the pickers, also when only one player is chosen
-  const [playerA, playerB, clubs, meta] = await Promise.all([
+  const [playerA, playerB, clubs, meta, gap] = await Promise.all([
     h2h ? h2h.a : idA ? getPlayer(idA) : null,
     h2h ? h2h.b : idB ? getPlayer(idB) : null,
     getClubMap(),
     getMeta(),
+    getGenderGap(),
   ]);
 
   return (
@@ -50,6 +57,7 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searc
           <Link href="/" className="text-gray-600 hover:text-black">&larr; Rankings</Link>
           <h1 className="h1 mt-4">Head to head</h1>
           <p className="text-2xl max-w-3xl mt-2">Two players&apos; matches against each other and together, and their chances if they met now.</p>
+          <HeadToHeadSwitch current="players" />
           <form action="/head-to-head" method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end max-w-4xl">
             <PlayerPicker key={`a-${idA}`} name="a" label="Player" initial={playerA ? { id: playerA.id, name: playerA.name } : null} />
             <PlayerPicker key={`b-${idB}`} name="b" label="Against" initial={playerB ? { id: playerB.id, name: playerB.name } : null} />
@@ -63,12 +71,12 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searc
           {idA && idB && !h2h && <p className="mt-4 text-red-700">{idA === idB ? "Choose two different players." : "One of the players was not found."}</p>}
         </div>
       </section>
-      {h2h && <Comparison h2h={h2h} clubs={clubs} links={meta?.tournamentLinks ?? {}} />}
+      {h2h && <Comparison h2h={h2h} clubs={clubs} links={meta?.tournamentLinks ?? {}} gap={gap} />}
     </>
   );
 }
 
-function Comparison({ h2h, clubs, links }: { h2h: NonNullable<Awaited<ReturnType<typeof getHeadToHead>>>; clubs: Record<string, ClubEntry>; links: Record<string, number> }) {
+function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
   const { a, b, record } = h2h;
   const pools = Object.entries(h2h.pools) as [Pool, HeadToHeadPool][];
   return (
@@ -106,7 +114,7 @@ function Comparison({ h2h, clubs, links }: { h2h: NonNullable<Awaited<ReturnType
               <p className="text-sm text-gray-600 mb-4">
                 Over their {h2h.margins.matches} {h2h.margins.matches === 1 ? "match" : "matches"} against each other with a score (not walkovers), all disciplines.
               </p>
-              <MarginsTable mg={h2h.margins} a={a} b={b} showPool={pools.length > 1} />
+              <MarginsTable mg={h2h.margins} names={[a.name, b.name]} showPool={pools.length > 1} />
             </div>
           )}
         </div>
@@ -117,10 +125,37 @@ function Comparison({ h2h, clubs, links }: { h2h: NonNullable<Awaited<ReturnType
           <div className="base-container px-4">
             <h2 className="text-3xl mb-2">If they met now</h2>
             <p className="text-gray-700 mb-6 max-w-3xl">
-              Current ratings in each discipline both play, and {a.name}&apos;s chance of winning against {b.name}. In doubles, the chance is with equally rated partners: a pair&apos;s rating is the sum of
+              Current ratings in each discipline both play, and {a.name}&apos;s chance of winning against {b.name}. Singles and men&apos;s or women&apos;s doubles are only compared between players of the same gender. In doubles, the chance is with equally rated partners: a pair&apos;s rating is the sum of
               its players&apos;.
             </p>
             <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <PoolComparison pool={pool} p={p} a={a} b={b} showMargins={pools.length > 1} /> }))} />
+          </div>
+        </section>
+      )}
+
+      {h2h.crossovers.length > 0 && (
+        <section className="base-section">
+          <div className="base-container px-4">
+            <h2 className="text-3xl mb-2">Just for fun</h2>
+            <p className="text-gray-700 mb-6 max-w-3xl">
+              Men and women are rated in separate disciplines, so their ratings can&apos;t be compared as they are. Here are {a.name}&apos;s and {b.name}&apos;s
+              chances if they did, with the woman&apos;s rating moved onto the men&apos;s scale. In doubles, the chance is with equally rated partners.
+            </p>
+            <Tabs
+              label="Just for fun"
+              param="fun"
+              className="mb-6"
+              tabs={h2h.crossovers.map((c) => ({
+                id: c.format,
+                label: c.label,
+                content: (
+                  <>
+                    <CrossoverComparison c={c} a={a} b={b} />
+                    {gap && <GenderGapNote gap={gap} format={c.format} extrapolated={!!(c.a.extrapolated || c.b.extrapolated)} />}
+                  </>
+                ),
+              }))}
+            />
           </div>
         </section>
       )}
@@ -177,7 +212,7 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
       {showMargins && p.margins.matches > 0 && (
         <>
           <h4 className="text-lg mt-8 mb-2">Winning margins in {p.label.toLowerCase()}</h4>
-          <MarginsTable mg={p.margins} a={a} b={b} showPool={false} />
+          <MarginsTable mg={p.margins} names={[a.name, b.name]} showPool={false} />
         </>
       )}
       {series.length === 2 && (
@@ -191,85 +226,47 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
   );
 }
 
-/** A score from the winner's side: "18-21, 15-21" → "21-18, 21-15" */
-const winnerScore = (m: Match, flip: boolean) => (flip ? m.score.split(", ").map((set) => set.split("-").reverse().join("-")).join(", ") : m.score);
-
-/** Winning margins: per player the matches, sets and points won, the average margin of their wins and their biggest win; then deciding sets and the closest match */
-function MarginsTable({ mg, a, b, showPool }: { mg: Margins; a: Player; b: Player; showPool: boolean }) {
-  const sides = [
-    { player: a, s: mg.a, i: 0 },
-    { player: b, s: mg.b, i: 1 },
-  ];
-  const total = mg.points[0] + mg.points[1];
-  const closest = mg.closest;
-  const winnerIsB = closest?.result === 0;
+/** A man against a woman, just for fun: both on the men's scale, the chance and both histories */
+function CrossoverComparison({ c, a, b }: { c: HeadToHeadCrossover; a: Player; b: Player }) {
+  const series: ChartSeries[] = [];
+  c.history.forEach((history, i) => {
+    if (history) series.push({ label: [a, b][i].name, from: history.from, values: history.ratings, slot: i });
+  });
   return (
-    <>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="text-sm text-gray-600 border-b border-gray-200">
-            <tr>
-              <th scope="col" className="py-2 pr-4 font-normal"><span className="sr-only">Measure</span></th>
-              {sides.map((side) => (
-                <th key={side.i} scope="col" className="py-2 pr-4 font-normal text-right whitespace-nowrap">
-                  <span className="inline-block w-3 h-1 rounded-full align-middle mr-1.5" style={{ background: COLORS[side.i] }} />
-                  {side.player.name}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="tabular-nums">
-            <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Matches won</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{side.s.wins}</td>)}
-            </tr>
-            <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Sets won</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{mg.sets[side.i]}</td>)}
-            </tr>
-            <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Points won</th>
-              {sides.map((side) => (
-                <td key={side.i} className="py-2 pr-4 text-right">
-                  {num(mg.points[side.i])}
-                  {total > 0 && <span className="block text-sm text-gray-500">{((mg.points[side.i] / total) * 100).toFixed(1)}%</span>}
-                </td>
-              ))}
-            </tr>
-            <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Average winning margin</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{side.s.average !== null ? `${side.s.average.toFixed(1)} points` : "–"}</td>)}
-            </tr>
-            <tr>
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Biggest win</th>
-              {sides.map((side) => {
-                const big = side.s.biggest;
-                return (
-                  <td key={side.i} className="py-2 pr-4 text-right">
-                    {big ? (
-                      <>
-                        {winnerScore(big, side.i === 1)}
-                        <span className="block text-sm text-gray-500">
-                          +{Math.abs(big.margin!)} points · {date(big.day)}{showPool && big.poolLabel ? ` · ${big.poolLabel.toLowerCase()}` : ""}
-                        </span>
-                      </>
-                    ) : "–"}
-                  </td>
-                );
-              })}
-            </tr>
-          </tbody>
-        </table>
+    <div className="bg-white p-4 md:p-6">
+      <h3 className="text-xl mb-4">{c.label}, on the men&apos;s scale</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {[c.a, c.b].map((side, i) => (
+          <dl key={i} className={i === 1 ? "text-right" : ""}>
+            <dt className="text-sm text-gray-600">{[a, b][i].name}</dt>
+            <dd className="text-3xl font-semibold tabular-nums">{Math.round(side.rating)}{side.extrapolated ? "*" : ""}</dd>
+            <dd className="text-sm text-gray-600"><SideRating side={side} /></dd>
+          </dl>
+        ))}
       </div>
-      <p className="text-sm text-gray-600 mt-3">
-        {mg.deciding} of {mg.matches} {mg.matches === 1 ? "match" : "matches"} went to a deciding set.
-        {closest && (
-          <>
-            {" "}Closest: {(winnerIsB ? b : a).name} won {winnerScore(closest, winnerIsB)} (
-            {closest.margin === 0 ? "level on points" : `by ${Math.abs(closest.margin!)} ${Math.abs(closest.margin!) === 1 ? "point" : "points"}`}) on {date(closest.day)}.
-          </>
+      <div className="mt-6">
+        <div className="flex justify-between text-sm mb-1 tabular-nums">
+          <span><strong className="text-base">{pct(c.chance)}</strong> {a.name}</span>
+          <span>{b.name} <strong className="text-base">{pct(1 - c.chance)}</strong></span>
+        </div>
+        <div className="flex h-3 gap-0.5" role="img" aria-label={`${a.name} ${pct(c.chance)}, ${b.name} ${pct(1 - c.chance)}`}>
+          <div className="rounded-l" style={{ width: `${(c.chance * 100).toFixed(1)}%`, background: COLORS[0] }} />
+          <div className="rounded-r flex-1" style={{ background: COLORS[1] }} />
+        </div>
+        {c.record.matches > 0 && (
+          <p className="text-sm text-gray-600 mt-2">
+            They have met {c.record.matches} {c.record.matches === 1 ? "time" : "times"} in men&apos;s {c.format}: {a.name} won {c.record.wins}, lost {c.record.losses}
+            {c.record.draws ? `, drew ${c.record.draws}` : ""}.
+          </p>
         )}
-      </p>
-    </>
+      </div>
+      {series.length === 2 && (
+        <>
+          <h4 className="text-lg mt-8 mb-1">Rating history</h4>
+          <p className="text-sm text-gray-600 mb-4">Rating at the end of each week, on the men&apos;s scale</p>
+          <LineChart series={series} label="Rating" className="relative h-72" />
+        </>
+      )}
+    </div>
   );
 }
