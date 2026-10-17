@@ -5,7 +5,8 @@
 // show all; `sortable` adds sorting by date or rating change; `embedded` leaves out the box and
 // title; `showMargin` shows each match's point margin (head to head). A match whose tournament has
 // a draw-luck page (`tournamentLinks`: badmintonportalen id → Cup2000 id, from the match key
-// "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`).
+// "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`). With `more`,
+// `matches` are only the newest and "show all" loads the rest from `more.url` (the player page).
 import Link from "next/link";
 import { useState } from "react";
 import { date, signed } from "@/lib/format";
@@ -22,6 +23,8 @@ interface Props {
   showMargin?: boolean;
   pool?: Pool;
   tournamentLinks?: Record<string, number>;
+  /** Where to load every match from, and how many there are, when `matches` are only the newest */
+  more?: { url: string; count: number };
 }
 
 const SORTS = { date: "Newest", gain: "Biggest gain", loss: "Biggest loss" } as const;
@@ -36,9 +39,26 @@ function tournamentHref(m: Match, links: Record<string, number> | undefined, poo
   return className && eventPool ? eventHref(cupId, { className, pool: eventPool }) : `/tournaments/${cupId}`;
 }
 
-export default function MatchTable({ matches, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks }: Props) {
+export default function MatchTable({ matches: newest, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks, more }: Props) {
   const [sort, setSort] = useState<keyof typeof SORTS>("date");
   const [expanded, setExpanded] = useState(false);
+  const [loaded, setLoaded] = useState<Match[] | null>(null);
+  const [loading, setLoading] = useState<"no" | "yes" | "failed">("no");
+  const matches = loaded ?? newest;
+  const total = more?.count ?? matches.length;
+  const expand = async () => {
+    if (expanded || !more || loaded || newest.length >= more.count) return setExpanded(!expanded);
+    setLoading("yes");
+    try {
+      const res = await fetch(more.url);
+      if (!res.ok) throw new Error(String(res.status));
+      setLoaded(await res.json());
+      setExpanded(true);
+      setLoading("no");
+    } catch {
+      setLoading("failed");
+    }
+  };
   const rows = matches.map((m, index) => ({ m, index }));
   if (sort === "gain") rows.sort((a, b) => b.m.change - a.m.change || a.index - b.index);
   if (sort === "loss") rows.sort((a, b) => a.m.change - b.m.change || a.index - b.index);
@@ -139,9 +159,14 @@ export default function MatchTable({ matches, title, subtitle, limit, sortable =
           </tbody>
         </table>
       </div>
-      {limit && matches.length > limit && (
-        <button type="button" onClick={() => setExpanded(!expanded)} className="mt-4 px-4 py-2 border border-black transition-colors duration-200 hover:bg-black hover:text-white cursor-pointer">
-          {expanded ? "Show fewer" : `Show all ${matches.length.toLocaleString("en-GB")} matches`}
+      {limit && total > limit && (
+        <button
+          type="button"
+          onClick={expand}
+          disabled={loading === "yes"}
+          className="mt-4 px-4 py-2 border border-black transition-colors duration-200 hover:bg-black hover:text-white cursor-pointer disabled:cursor-wait disabled:opacity-60"
+        >
+          {loading === "yes" ? "Loading matches…" : loading === "failed" ? "Couldn't load the matches: try again" : expanded ? "Show fewer" : `Show all ${total.toLocaleString("en-GB")} matches`}
         </button>
       )}
     </div>

@@ -279,7 +279,15 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
               )}
             </div>
           )}
-          <MatchTable title="Matches" matches={log.all} limit={20} pool={pool} tournamentLinks={links} />
+          <MatchTable
+            title="Matches"
+            // Only the newest are sent with the page; "show all" loads the rest
+            matches={log.all.slice(0, 20)}
+            limit={20}
+            more={{ url: `/api/players/${player.id}/matches?pool=${pool}`, count: log.count ?? log.all.length }}
+            pool={pool}
+            tournamentLinks={links}
+          />
           {/* Biggest wins and losses (by win chance) and biggest rating gains and losses, as tabs in one box */}
           {highlights.length > 0 && (
             <div className="bg-white p-4 md:p-6">

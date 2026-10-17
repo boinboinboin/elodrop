@@ -82,7 +82,10 @@ export interface Rival {
 }
 
 export interface MatchLog {
+  /** The newest matches (all of them in exports before the split; see getPlayerMatches) */
   all: Match[];
+  /** How many matches there are in all */
+  count?: number;
   biggestWins: Match[];
   biggestLosses: Match[];
   biggestGains: Match[];
