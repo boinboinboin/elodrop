@@ -9,6 +9,12 @@ import { getClubMap } from "@/lib/clubs";
 import { getEliteserienReview, getMeta, type Loose } from "@/lib/data";
 import { dateRange } from "@/lib/format";
 
+// Every season in review is prerendered (and refreshed with the data)
+export async function generateStaticParams() {
+  const seasons = (await getMeta())?.eliteserien.seasons ?? [];
+  return seasons.length ? seasons.map((season) => ({ season })) : [{ season: "0" }];
+}
+
 export async function generateMetadata({ params }: PageProps<"/eliteserien/[season]">): Promise<Metadata> {
   const data = await getEliteserienReview((await params).season);
   return { title: data ? `Eliteserien ${data.season} in review` : "Eliteserien" };

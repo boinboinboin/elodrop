@@ -2,11 +2,10 @@
 // ones by month, and how the predictions turned out over the season.
 import type { Metadata } from "next";
 import Link from "next/link";
-import { connection } from "next/server";
 import { Suspense } from "react";
 import PredictionStats, { luckFit } from "@/components/PredictionStats";
 import { getTournamentsIndex } from "@/lib/data";
-import { date, dateRange, today } from "@/lib/format";
+import { date, dateRange } from "@/lib/format";
 import type { TournamentSummary } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Tournament draws" };
@@ -53,10 +52,10 @@ function Row({ t }: { t: TournamentSummary }) {
 }
 
 async function Content() {
-  await connection();
   const index = await getTournamentsIndex();
   const tournaments = index?.tournaments ?? [];
-  const now = today();
+  // "Today" is the day of the data update, which the page is rendered with
+  const now = index?.generatedAt.slice(0, 10) ?? "";
   const upcoming = tournaments.filter((t) => (t.endDate ?? now) >= now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
   const past = tournaments.filter((t) => (t.endDate ?? now) < now);
   // Played tournaments by month of the first day, newest first
