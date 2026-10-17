@@ -5,9 +5,11 @@
 //   1: leagues for season + age group + region -> groups
 //   4: all ties (team matches) in a group
 //   5: one tie, with its individual games (1. HS, 2. HS, 1. DS, 1. HD, 1. MD, ...)
-// Writes data/league/<season>-<groupId>.json per group. Groups are skipped once saved; groups
-// with unplayed ties in the current season aren't saved, so a later run picks them up.
-import { readdir, writeFile, mkdir, appendFile } from "node:fs/promises";
+// Writes data/league/<season>-<groupId>.json per group. A group still being played (the current
+// season, with unplayed ties) is saved with the ties played so far and `complete: false`, and is
+// fetched again on every run: ties already saved with the same score keep their games, so only new
+// ties are fetched. Complete groups are skipped once saved.
+import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
 import { call, text } from "./portalen.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -156,13 +158,25 @@ async function fetchGames(g, tie) {
   return games;
 }
 
-async function fetchGroup(g) {
+/** A group's played ties with their games; `previous` is the saved file of a group still being played */
+async function fetchGroup(g, previous) {
   const ties = await listTies(g);
   // Unplayed ties show "-" as their score.
   const played = ties.filter((t) => /\d+\s*-\s*\d+/.test(t.score));
-  if (g.season >= currentSeason() && played.length < ties.length) return { unfinished: true };
-  for (const tie of played) tie.games = await fetchGames(g, tie);
-  return { ...g, fetchedAt: new Date().toISOString(), ties: played };
+  const saved = new Map((previous?.ties ?? []).map((t) => [t.matchId, t]));
+  let fetched = 0;
+  for (const tie of played) {
+    const before = saved.get(tie.matchId);
+    if (before && before.score === tie.score && before.games?.length) {
+      tie.games = before.games;
+      if (before.goldenSet) tie.goldenSet = before.goldenSet;
+    } else {
+      tie.games = await fetchGames(g, tie);
+      fetched++;
+    }
+  }
+  const complete = g.season < currentSeason() || played.length === ties.length;
+  return { group: { ...g, fetchedAt: new Date().toISOString(), complete, ties: played }, fetched, unplayed: ties.length - played.length };
 }
 
 const arg = (name) => process.argv[process.argv.indexOf(name) + 1];
@@ -172,7 +186,14 @@ const seasons = process.argv.includes("--season")
   : Array.from({ length: currentSeason() - FIRST_SEASON + 1 }, (_, i) => FIRST_SEASON + i);
 
 await mkdir(OUT, { recursive: true });
-const done = new Set(refetch ? [] : (await readdir(OUT)).map((f) => f.replace(".json", "")));
+// Saved groups: complete ones are skipped, ones still being played are fetched again
+const saved = new Map();
+for (const f of refetch ? [] : await readdir(OUT)) {
+  if (!f.endsWith(".json")) continue;
+  const group = JSON.parse(await readFile(`${OUT}/${f}`, "utf8"));
+  saved.set(f.replace(".json", ""), group);
+}
+const done = new Set([...saved].filter(([, group]) => group.complete !== false).map(([key]) => key));
 const fileKey = (g) => `${g.season}-${g.groupId}`;
 
 const groups = new Map();
@@ -194,7 +215,7 @@ console.error(`${groups.size} groups, ${groups.size - pending.length} already fe
 if (process.argv.includes("--dry-run")) process.exit(0);
 
 let failed = 0;
-let unfinished = 0;
+let inProgress = 0;
 let next = 0;
 async function worker() {
   while (next < todo.length) {
@@ -202,15 +223,11 @@ async function worker() {
     const g = todo[i];
     const label = `[${i + 1}/${todo.length}] ${g.season} ${g.region} ${g.ageGroup} ${g.division} ${g.group}`;
     try {
-      const result = await fetchGroup(g);
-      if (result.unfinished) {
-        unfinished++;
-        console.error(`${label}: not finished, skipped`);
-        continue;
-      }
-      await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(result));
-      const games = result.ties.reduce((n, t) => n + t.games.length, 0);
-      console.error(`${label}: ${result.ties.length} ties, ${games} games`);
+      const { group, fetched, unplayed } = await fetchGroup(g, saved.get(fileKey(g)));
+      await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(group));
+      const games = group.ties.reduce((n, t) => n + t.games.length, 0);
+      if (!group.complete) inProgress++;
+      console.error(`${label}: ${group.ties.length} ties played (${fetched} new), ${games} games${group.complete ? "" : `; ${unplayed} still to play`}`);
     } catch (err) {
       failed++;
       console.error(`${label}: FAILED ${err.message}`);
@@ -220,4 +237,4 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));
 if (unknownCodes.size) console.error(`Skipped unknown game codes: ${[...unknownCodes].join(", ")}`);
-console.error(`Done. ${todo.length - failed - unfinished} saved, ${unfinished} not finished, ${failed} failed`);
+console.error(`Done. ${todo.length - failed} saved (${inProgress} still being played), ${failed} failed`);
