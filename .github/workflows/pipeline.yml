@@ -100,8 +100,11 @@ jobs:
       - name: Upload the web data
         run: rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list
 
+      # Fails unless the site answers that it revalidated: a redirect (elodrop.no -> www.elodrop.no)
+      # is followed, keeping the POST and the header (same site), instead of passing silently.
       - name: Refresh the site
         if: vars.SITE_URL != ''
-        # A block scalar: in a plain one, the ": " in the header would be read as YAML
         run: |
-          curl -fsS -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate"
+          answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate")
+          echo "$answer"
+          echo "$answer" | grep -q '"revalidated":true'
