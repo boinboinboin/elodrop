@@ -11,7 +11,8 @@
 //   club-history/<NBF id>.json    a club's strength and rank per week
 //   players/<id>.json             one player: per pool their rating, weekly history (with the
 //                                 number of ranked players each week) and match log, with only the
-//                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`)
+//                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`),
+//                                 and their rivals over all disciplines
 //   matches/<id>.json             one player's every match per pool, newest first (for "show all"
 //                                 and head to head)
 //   search-index.json             [id, name, club, ranked, matches] for the name search
@@ -105,7 +106,7 @@ for (const [id, entries] of byPlayer) {
   }
   const first = Object.values(pools)[0];
   // No generatedAt here: a file whose content hasn't changed isn't uploaded again (R2 counts writes)
-  write(`players/${id}.json`, { id, name: first.name, club: first.club, pools });
+  write(`players/${id}.json`, { id, name: first.name, club: first.club, rivals: matches.rivals ?? [], pools });
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 

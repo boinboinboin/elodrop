@@ -7,6 +7,8 @@ export interface PlayerRef {
   id: number;
   name: string;
   rating: number;
+  /** In a match: the club they played for at the time (missing in exports from before it was added) */
+  club?: string | null;
 }
 
 /** A player's standing in one pool (ratings.json pools[pool][i]) */
@@ -71,14 +73,18 @@ export interface Match {
   margin?: number | null;
 }
 
+/** A rival over all disciplines (pipeline/rate.mjs): the opponent with the closest matches */
 export interface Rival {
-  opponent: PlayerRef;
+  /** With their club now */
+  opponent: Pick<PlayerRef, "id" | "name" | "club">;
   matches: number;
   wins: number;
   draws: number;
   losses: number;
   margin: number;
   lastPlayed: string;
+  /** The meetings per discipline */
+  pools: Partial<Record<Pool, number>>;
 }
 
 export interface MatchLog {
@@ -90,7 +96,6 @@ export interface MatchLog {
   biggestLosses: Match[];
   biggestGains: Match[];
   biggestDrops: Match[];
-  rivals: Rival[];
 }
 
 export interface PlayerPool extends RatingEntry {
@@ -103,6 +108,8 @@ export interface Player {
   id: number;
   name: string;
   club: string | null;
+  /** The closest rivals over all disciplines (missing in exports from before they were) */
+  rivals?: Rival[];
   /** In page order: the player's own gender's disciplines first */
   pools: Partial<Record<Pool, PlayerPool>>;
 }
