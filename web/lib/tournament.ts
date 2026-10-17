@@ -1,4 +1,4 @@
-// The logic of the tournament page (app/tournaments/[id]): how events are ordered and described,
+// The logic of the tournament page (app/(site)/tournaments/[id]/[[...path]]): how events are ordered and described,
 // their rounds, the orders of the event table and the numbering of final standings.
 import type { Entry, Pool, Tournament, TournamentEvent } from "./types";
 
@@ -29,16 +29,25 @@ export function eventsByClass(t: Tournament): { className: string; events: { i: 
 }
 
 /** The event to show: ?event=<index>, or by class and pool (?class=SEN X&pool=men, from match lists), or the first */
-export function pickEvent(t: Tournament, params: Record<string, string | string[] | undefined>): number {
-  const index = typeof params.event === "string" && /^\d+$/.test(params.event) ? Number(params.event) : null;
-  if (index !== null && t.events[index]) return index;
-  const cls = typeof params.class === "string" ? params.class : null;
-  const pool = typeof params.pool === "string" ? params.pool : null;
-  if (cls) {
-    const found = t.events.findIndex((e) => e.className === cls && (!pool || e.pool === pool));
-    if (found >= 0) return found;
-  }
-  return 0;
+/** A class name in a URL: "SEN A" → "sen-a", "U13 A" → "u13-a" */
+export const classSlug = (className: string) => className.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+/** An event's page: /tournaments/<id>/<class>/<pool>, with the table order last unless it's the default */
+export const eventHref = (cup2000Id: number, e: Pick<TournamentEvent, "className" | "pool">, order?: string) =>
+  `/tournaments/${cup2000Id}/${classSlug(e.className)}/${e.pool}${order && order !== "default" ? `/${order}` : ""}`;
+
+/**
+ * What a tournament page shows, from its path after the id: [] the first event, ["summary"] the
+ * summary, [class, pool] or [class, pool, order] an event. Null for a path that doesn't exist.
+ */
+export function pickView(t: Tournament, path: string[]): { view: "summary" } | { view: "events"; event: number; order: string | null } | null {
+  if (!path.length) return { view: "events", event: 0, order: null };
+  if (path.length === 1 && path[0] === "summary") return { view: "summary" };
+  const [cls, pool, order = null, ...rest] = path;
+  if (!pool || rest.length) return null;
+  const event = t.events.findIndex((e) => classSlug(e.className) === cls && e.pool === pool);
+  if (event < 0 || (order && !(order in orders(t.events[event])))) return null;
+  return { view: "events", event, order };
 }
 
 /** No draw luck: a single group (everyone plays everyone) or just two entries (one match) */

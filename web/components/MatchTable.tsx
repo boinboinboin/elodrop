@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { date, signed } from "@/lib/format";
+import { eventHref } from "@/lib/tournament";
 import type { Match, Pool } from "@/lib/types";
 
 interface Props {
@@ -29,11 +30,10 @@ function tournamentHref(m: Match, links: Record<string, number> | undefined, poo
   const id = m.key?.match(/^T(\d+)/)?.[1];
   const cupId = id ? links?.[id] : undefined;
   if (!cupId) return null;
+  // The match's event: its class from the event name ("... (SEN A)") and the pool
   const className = m.event.match(/\(([^()]+)\)\s*$/)?.[1];
-  const params = new URLSearchParams();
-  if (className) params.set("class", className);
-  if (m.pool ?? pool) params.set("pool", (m.pool ?? pool)!);
-  return `/tournaments/${cupId}${params.size ? `?${params}` : ""}`;
+  const eventPool = m.pool ?? pool;
+  return className && eventPool ? eventHref(cupId, { className, pool: eventPool }) : `/tournaments/${cupId}`;
 }
 
 export default function MatchTable({ matches, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks }: Props) {

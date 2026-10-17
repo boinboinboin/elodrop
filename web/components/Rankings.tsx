@@ -1,5 +1,7 @@
 // A ranking list: the discipline tabs, the "show inactive players" switch, in mixed doubles men or
-// women, and the table. Each list is its own static page (lib/rankings.ts).
+// women, and the table. Each list is its own static page (lib/rankings.ts). With inactive players,
+// only the best INACTIVE_SHOWN of them are listed (the full lists run to over 10,000 players), with a
+// link to the page with all of them.
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RankingTable, { type RankingRow } from "@/components/RankingTable";
@@ -10,10 +12,16 @@ import { RANKING_LISTS, type RankingList, rankingHref } from "@/lib/rankings";
 import type { Gender } from "@/lib/types";
 
 const GENDERS: Record<Gender, string> = { M: "Men", K: "Women" };
+const INACTIVE_SHOWN = 500;
 
-export default async function Rankings({ list, showInactive }: { list: RankingList; showInactive: boolean }) {
+export default async function Rankings({ list, showInactive, allInactive = false }: { list: RankingList; showInactive: boolean; allInactive?: boolean }) {
   const { pool, gender } = list;
-  const [players, clubs] = await Promise.all([getRankings(pool, showInactive, gender), getClubMap()]);
+  const [everyone, clubs] = await Promise.all([getRankings(pool, showInactive, gender), getClubMap()]);
+  // In rating order: every ranked player, and the best inactive ones unless all are asked for
+  const inactive = everyone.filter((p) => p.rank === null).length;
+  let shownInactive = 0;
+  const players = allInactive ? everyone : everyone.filter((p) => p.rank !== null || shownInactive++ < INACTIVE_SHOWN);
+  const hiddenInactive = inactive - Math.min(inactive, allInactive ? inactive : INACTIVE_SHOWN);
 
   return (
     <section className="base-section">
@@ -71,11 +79,21 @@ export default async function Rankings({ list, showInactive }: { list: RankingLi
             rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.plusMinus, p.matches, p.lastPlayed])}
             clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
             summary={
-              showInactive
-                ? `${num(players.length)} players, including those who haven't played in the last 12 months (no rank).`
-                : `${num(players.length)} ranked players: everyone who has played in the last 12 months.`
+              !showInactive
+                ? `${num(players.length)} ranked players: everyone who has played in the last 12 months.`
+                : hiddenInactive
+                  ? `${num(players.length)} players: the ranked ones and the ${num(INACTIVE_SHOWN)} best of the ${num(inactive)} who haven't played in the last 12 months (no rank).`
+                  : `${num(players.length)} players, including those who haven't played in the last 12 months (no rank).`
             }
           />
+        )}
+        {hiddenInactive > 0 && (
+          <p className="mt-4">
+            <Link href={`${rankingHref(pool, gender, true)}/all`} prefetch={false} className="underline hover:text-blue-600">
+              Show all {num(everyone.length)} players &rarr;
+            </Link>{" "}
+            <span className="text-gray-600">(a long page)</span>
+          </p>
         )}
       </div>
     </section>
@@ -83,8 +101,8 @@ export default async function Rankings({ list, showInactive }: { list: RankingLi
 }
 
 /** The list a /rankings/<list> page shows, from its params (404 for an unknown list) */
-export async function RankingsFor({ params, showInactive }: { params: Promise<{ list: string }>; showInactive: boolean }) {
+export async function RankingsFor({ params, showInactive, allInactive }: { params: Promise<{ list: string }>; showInactive: boolean; allInactive?: boolean }) {
   const list = RANKING_LISTS[(await params).list];
   if (!list) notFound();
-  return <Rankings list={list} showInactive={showInactive} />;
+  return <Rankings list={list} showInactive={showInactive} allInactive={allInactive} />;
 }
