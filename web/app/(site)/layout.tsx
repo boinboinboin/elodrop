@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { Suspense } from "react";
 import SearchBar from "@/components/SearchBar";
@@ -40,6 +41,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           </Suspense>
         </div>
       </footer>
+      {/* Vercel Web Analytics: page views, on the site's pages only (not the Studio) */}
+      <Analytics />
     </>
   );
 }
