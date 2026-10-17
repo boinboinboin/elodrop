@@ -4,8 +4,13 @@
 // the URL query (?discipline=mixedDoubles, via nuqs), so a link can open a given tab; the first
 // tab leaves the URL clean. Without it, the choice is just local state. Changing tabs neither
 // scrolls, reloads the page nor adds to the history. Arrow keys, Home and End move between tabs.
+//
+// Reading the URL (useSearchParams, under nuqs) can't happen when a page is prerendered, and would
+// make the whole page around it render in the browser only. So the URL-reading part has its own
+// Suspense boundary: the prerendered HTML shows the first tab, and the browser then switches to the
+// one in the URL.
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { useRef, useState, type ReactNode } from "react";
+import { Suspense, useRef, useState, type ReactNode } from "react";
 
 export interface Tab {
   /** The tab's value in the URL (and, with the Tabs' `id`, its element ids) */
@@ -29,21 +34,37 @@ interface Props {
   small?: boolean;
 }
 
-export default function Tabs({ tabs, label, param, id: prefix, className = "mb-8", small = false }: Props) {
-  const ids = tabs.map((t) => t.id);
-  const [fromUrl, setUrl] = useQueryState(
-    param ?? "",
+export default function Tabs(props: Props) {
+  const { tabs, param } = props;
+  if (tabs.length === 1) return <>{tabs[0].content}</>;
+  if (!param) return <LocalTabs {...props} />;
+  return (
+    <Suspense fallback={<TabsView {...props} index={0} onSelect={() => {}} />}>
+      <UrlTabs {...props} param={param} />
+    </Suspense>
+  );
+}
+
+function LocalTabs(props: Props) {
+  const [index, setIndex] = useState(0);
+  return <TabsView {...props} index={index} onSelect={setIndex} />;
+}
+
+function UrlTabs(props: Props & { param: string }) {
+  const ids = props.tabs.map((t) => t.id);
+  const [selected, setSelected] = useQueryState(
+    props.param,
     parseAsStringLiteral(ids).withDefault(ids[0]).withOptions({ history: "replace", scroll: false, clearOnDefault: true }),
   );
-  const [local, setLocal] = useState(ids[0]);
-  const selected = param ? fromUrl : local;
-  const index = Math.max(0, ids.indexOf(selected));
+  return <TabsView {...props} index={Math.max(0, ids.indexOf(selected))} onSelect={(i) => setSelected(ids[i])} />;
+}
+
+/** The tab list and panels, with tab `index` selected */
+function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, index, onSelect }: Props & { index: number; onSelect: (i: number) => void }) {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const elementId = (tab: string) => (prefix ? `${prefix}-${tab}` : tab);
-
   const select = (i: number, focus = false) => {
-    if (param) setUrl(ids[i]);
-    else setLocal(ids[i]);
+    onSelect(i);
     if (focus) buttons.current[i]?.focus();
   };
   const onKey = (event: React.KeyboardEvent, current: number) => {
@@ -54,7 +75,6 @@ export default function Tabs({ tabs, label, param, id: prefix, className = "mb-8
     select((next + last + 1) % (last + 1), true);
   };
 
-  if (tabs.length === 1) return <>{tabs[0].content}</>;
   return (
     <div>
       <div role="tablist" aria-label={label} className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${className}`}>

@@ -92,6 +92,16 @@ export async function getPlayer(id: number): Promise<Player | null> {
   return load<Player>(`players/${id}.json`);
 }
 
+/**
+ * A player's every match per pool, newest first (matches/<id>.json). A player file has only the
+ * newest few; exports from before the split have them all there, so they're the fallback.
+ */
+export async function getPlayerMatches(player: Player): Promise<Partial<Record<Pool, Match[]>>> {
+  const file = await load<{ pools: Partial<Record<Pool, Match[]>> }>(`matches/${player.id}.json`);
+  if (file) return file.pools;
+  return Object.fromEntries(Object.entries(player.pools).map(([pool, p]) => [pool, p?.matchLog?.all ?? []]));
+}
+
 type SearchRow = [number, string, string | null, 0 | 1, number];
 const searchIndex = async () => (await load<{ players: SearchRow[] }>("search-index.json"))?.players ?? [];
 
@@ -232,10 +242,11 @@ export interface HeadToHead {
 export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | null> {
   const [playerA, playerB] = await Promise.all([getPlayer(a), getPlayer(b)]);
   if (!playerA || !playerB || a === b) return null;
+  const allMatches = await getPlayerMatches(playerA);
   const meetings: Match[] = [];
   const together: Match[] = [];
   for (const [pool, p] of Object.entries(playerA.pools) as [Pool, PlayerPool][]) {
-    for (const match of p.matchLog?.all ?? []) {
+    for (const match of allMatches[pool] ?? []) {
       const m = { ...match, pool, poolLabel: p.label, ...points(match.score ?? "") };
       if (m.opponents.some((o) => o.id === b)) meetings.push(m);
       else if (m.partner?.id === b) together.push(m);
@@ -431,18 +442,19 @@ export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b
   const players = await Promise.all([a1, a2, b1, b2].map(getPlayer));
   if (players.some((p) => !p)) return null;
   const [pa1, pa2, pb1, pb2] = players as Player[];
+  const [matchesA, matchesB] = await Promise.all([getPlayerMatches(pa1), getPlayerMatches(pb1)]);
   const meetings: Match[] = [];
   const togetherA: Match[] = [];
   const togetherB: Match[] = [];
   for (const pool of DOUBLES) {
     const p = pa1.pools[pool];
-    for (const match of p?.matchLog?.all ?? []) {
+    for (const match of matchesA[pool] ?? []) {
       if (match.partner?.id !== a2) continue;
       togetherA.push(match);
       const opponents = match.opponents.map((o) => o.id);
       if (opponents.includes(b1) && opponents.includes(b2)) meetings.push({ ...match, pool, poolLabel: p!.label, ...points(match.score ?? "") });
     }
-    for (const match of pb1.pools[pool]?.matchLog?.all ?? []) if (match.partner?.id === b2) togetherB.push(match);
+    for (const match of matchesB[pool] ?? []) if (match.partner?.id === b2) togetherB.push(match);
   }
   meetings.sort((x, y) => y.day.localeCompare(x.day));
   const genders = [pa1, pa2, pb1, pb2].map(playerGender);

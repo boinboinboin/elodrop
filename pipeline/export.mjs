@@ -10,7 +10,10 @@
 //   clubs.json                    strongest clubs per pool and how club strength is calculated
 //   club-history/<NBF id>.json    a club's strength and rank per week
 //   players/<id>.json             one player: per pool their rating, weekly history (with the
-//                                 number of ranked players each week) and match log
+//                                 number of ranked players each week) and match log, with only the
+//                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`)
+//   matches/<id>.json             one player's every match per pool, newest first (for "show all"
+//                                 and head to head)
 //   search-index.json             [id, name, club, ranked, matches] for the name search
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
@@ -86,6 +89,8 @@ for (const [pool, players] of Object.entries(ratings.pools)) {
   }
 }
 const optional = (file) => (existsSync(`${DATA}/${file}`) ? read(file) : {});
+// A player page shows this many matches per pool; the rest are loaded when asked for
+const RECENT_MATCHES = 20;
 for (const [id, entries] of byPlayer) {
   const history = optional(`history/${id}.json`);
   const matches = optional(`matches/${id}.json`);
@@ -94,10 +99,13 @@ for (const [id, entries] of byPlayer) {
   for (const pool of POOL_ORDER[gender] ?? POOL_ORDER.M) {
     const p = entries[pool];
     if (!p) continue;
-    pools[pool] = { ...p, label: POOLS[pool], history: withRankCounts(history[pool], pool, p.gender), matchLog: matches[pool] ?? null };
+    const log = matches[pool];
+    const matchLog = log ? { ...log, all: log.all.slice(0, RECENT_MATCHES), count: log.all.length } : null;
+    pools[pool] = { ...p, label: POOLS[pool], history: withRankCounts(history[pool], pool, p.gender), matchLog };
   }
   const first = Object.values(pools)[0];
   write(`players/${id}.json`, { id, name: first.name, club: first.club, generatedAt, pools });
+  write(`matches/${id}.json`, { id, generatedAt, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 
 // Name search: every player once, with whether they are ranked anywhere and their matches
