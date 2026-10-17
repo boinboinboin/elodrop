@@ -103,7 +103,6 @@ export interface Player {
   id: number;
   name: string;
   club: string | null;
-  generatedAt: string;
   /** In page order: the player's own gender's disciplines first */
   pools: Partial<Record<Pool, PlayerPool>>;
 }

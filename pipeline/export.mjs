@@ -104,8 +104,9 @@ for (const [id, entries] of byPlayer) {
     pools[pool] = { ...p, label: POOLS[pool], history: withRankCounts(history[pool], pool, p.gender), matchLog };
   }
   const first = Object.values(pools)[0];
-  write(`players/${id}.json`, { id, name: first.name, club: first.club, generatedAt, pools });
-  write(`matches/${id}.json`, { id, generatedAt, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
+  // No generatedAt here: a file whose content hasn't changed isn't uploaded again (R2 counts writes)
+  write(`players/${id}.json`, { id, name: first.name, club: first.club, pools });
+  write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 
 // Name search: every player once, with whether they are ranked anywhere and their matches
