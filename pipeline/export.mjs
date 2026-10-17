@@ -3,7 +3,8 @@
 // Usage: node export.mjs   (after rate.mjs, gender-gap.mjs, eliteserien*.mjs and upcoming.mjs)
 //
 // export/
-//   meta.json                     generatedAt, pool labels, Eliteserien seasons, tournament links
+//   meta.json                     generatedAt (ratings), updatedAt (this export), pool labels,
+//                                 Eliteserien seasons, tournament links
 //   rankings/<pool>.json          ranked (active) players, best first
 //   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months; not players of
 //                                 the other gender, see rules.mjs rankedIn)
@@ -148,6 +149,9 @@ if (existsSync(`${DATA}/gender-gap.json`)) write("gender-gap.json", read("gender
 
 write("meta.json", {
   generatedAt,
+  // When this export was made: the end of the run's fetching, rating and building (the footer's
+  // "updated"); only the upload to the data bucket comes after it
+  updatedAt: new Date().toISOString(),
   pools: POOLS,
   eliteserien: { current: optional("eliteserien.json").season ?? null, seasons: eliteserienSeasons },
   // badmintonportalen tournament id -> Cup2000 id, for linking matches to tournament pages
