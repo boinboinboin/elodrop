@@ -10,6 +10,7 @@
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
     "motion": "^14.3.0",
