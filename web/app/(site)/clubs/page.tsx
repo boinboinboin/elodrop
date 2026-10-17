@@ -7,7 +7,8 @@ import { clubRule } from "@/components/ClubRule";
 import { ClubLogo } from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubsFile, isPool } from "@/lib/data";
-import type { CombinedClubStanding, ClubStanding, Pool } from "@/lib/types";
+import type { CombinedClubStanding, ClubStanding, Pool } from "@/lib/types";import { rankingHref } from "@/lib/rankings";
+
 
 export const metadata: Metadata = { title: "Strongest clubs" };
 
@@ -33,7 +34,7 @@ async function Content({ searchParams }: Pick<PageProps<"/clubs">, "searchParams
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href={combined ? "/" : `/?pool=${pool}`} className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <Link href={combined ? "/" : rankingHref(pool)} className="text-gray-600 hover:text-black">&larr; Rankings</Link>
           <h1 className="h1 mt-4">Strongest clubs</h1>
           <p className="text-2xl max-w-3xl mt-2">
             {combined

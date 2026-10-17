@@ -9,9 +9,17 @@ import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
-import { POOL_KEYS, getMeta, getPlayer } from "@/lib/data";
+import { POOL_KEYS, getMeta, getPlayer, getRankings } from "@/lib/data";
 import { date, num } from "@/lib/format";
+import { rankingHref } from "@/lib/rankings";
 import type { Player, PlayerPool, Pool, SeasonRow } from "@/lib/types";
+
+// The best ten men are prerendered at build; every other player page is rendered on its first visit
+// and then served from the cache until the next data update (ISR), instead of on every request.
+export async function generateStaticParams() {
+  const top = (await getRankings("men")).slice(0, 10);
+  return top.length ? top.map((p) => ({ id: String(p.id) })) : [{ id: "0" }];
+}
 
 export async function generateMetadata({ params }: PageProps<"/players/[id]">): Promise<Metadata> {
   const player = await getPlayer(Number((await params).id));
@@ -136,7 +144,7 @@ function AllDisciplines({ player }: { player: Player }) {
           <div className="bg-white p-4 md:p-6">
             <h2 className="text-xl mb-1">Ranking history</h2>
             <p className="text-sm text-gray-600 mb-4">
-              National rank at the end of each week, among players who had played in the last 12 months; men's disciplines rank only men and women's only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
+              National rank at the end of each week, among players who had played in the last 12 months; men&apos;s disciplines rank only men and women&apos;s only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
               logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.
             </p>
             <LineChart series={rankSeries} label="Rank" rank />
@@ -180,7 +188,7 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
           {p.rank ? (
             <>
               <dd className="text-3xl font-semibold">
-                <Link href={`/?pool=${pool}${mixed ? `&gender=${p.gender}` : ""}`} className="hover:text-blue-600">#{p.rank}</Link>
+                <Link href={rankingHref(pool, mixed ? p.gender : null)} className="hover:text-blue-600">#{p.rank}</Link>
               </dd>
               {mixed && <dd className="text-sm text-gray-600">among {p.gender === "K" ? "women" : "men"}</dd>}
             </>

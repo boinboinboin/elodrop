@@ -7,10 +7,17 @@ import { Suspense } from "react";
 import { clubRule } from "@/components/ClubRule";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import Tabs from "@/components/Tabs";
-import { getClubBySlug } from "@/lib/clubs";
+import { getClubBySlug, getClubEntries } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubHistory, getClubPlayers, getClubsFile } from "@/lib/data";
 import { num } from "@/lib/format";
 import type { ClubEntry, ClubHistoryPool, ClubsFile, Pool } from "@/lib/types";
+
+// A few clubs are prerendered at build; the rest are rendered on their first visit and then served
+// from the cache until the data or the club content changes (ISR).
+export async function generateStaticParams() {
+  const clubs = (await getClubEntries()).slice(0, 5);
+  return clubs.length ? clubs.map((c) => ({ slug: c.slug })) : [{ slug: "_" }];
+}
 
 export async function generateMetadata({ params }: PageProps<"/clubs/[slug]">): Promise<Metadata> {
   const club = await getClubBySlug(decodeURIComponent((await params).slug));
