@@ -599,7 +599,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Fields only used while rating
   const INTERNAL = new Set(["weekly", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks"]);
 
-  // Rankings only include active players (R.isActive); others get rank null.
+  // Rankings only include active players (R.isActive) of the pool's gender (R.rankedIn); others get rank null.
   for (const [pool, map] of Object.entries(players)) {
     const list = [...map.values()].sort((a, b) => b.rating - a.rating);
     // Mixed doubles ranks men and women separately: every side has one of each, so results
@@ -611,7 +611,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       const active = R.isActive(p.lastPlayed, today);
       const gender = genderOf(p.id);
       const rankGroup = separate ? gender : "all";
-      const rank = active && rankGroup ? (ranks[rankGroup] = (ranks[rankGroup] ?? 0) + 1) : null;
+      const rank = active && R.rankedIn(pool, gender) ? (ranks[rankGroup] = (ranks[rankGroup] ?? 0) + 1) : null;
       // gender: "M" or "K" (kvinne) from badmintonportalen's player register, or inferred
       // (genderInferred) for players not in it; null if unknown.
       // plusMinus: 95% range, rating ± 2·RD
@@ -713,6 +713,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const p of map.values()) {
       const offset = weekIndex(p.firstWeek);
       const playedWeeks = [...new Set(p.log.map((m) => weekIndex(m.day)))].sort((a, b) => a - b);
+      // Only players ranked in the pool by gender count for the weekly ranks and club strengths
+      if (!R.rankedIn(pool, genderOf(p.id))) continue;
       const gender = pool === "mixedDoubles" ? genderOf(p.id) : null;
       let played = 0; // index into playedWeeks of the last week played up to w
       let club = 0; // index into p.clubs

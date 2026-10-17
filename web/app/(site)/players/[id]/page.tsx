@@ -136,7 +136,7 @@ function AllDisciplines({ player }: { player: Player }) {
           <div className="bg-white p-4 md:p-6">
             <h2 className="text-xl mb-1">Ranking history</h2>
             <p className="text-sm text-gray-600 mb-4">
-              National rank at the end of each week, among players who had played in the last 12 months; mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
+              National rank at the end of each week, among players who had played in the last 12 months; men's disciplines rank only men and women's only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
               logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.
             </p>
             <LineChart series={rankSeries} label="Rank" rank />
@@ -186,7 +186,10 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
             </>
           ) : (
             <dd className="text-xl pt-2">
-              Not ranked <span className="block text-sm text-gray-600">No matches in the last 12 months</span>
+              Not ranked
+              <span className="block text-sm text-gray-600">
+                {p.active ? `${pool === "men" || pool === "mensDoubles" ? "Men's disciplines rank only men" : pool === "mixedDoubles" ? "Gender unknown" : "Women's disciplines rank only women"}` : "No matches in the last 12 months"}
+              </span>
             </dd>
           )}
         </div>
