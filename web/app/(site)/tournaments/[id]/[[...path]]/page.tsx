@@ -1,6 +1,7 @@
 // One tournament's draws, draw luck and, once played, how the predictions turned out
-// (pipeline/upcoming.mjs). Two views: the events (default; ?event=<index> or ?class=&pool= picks
-// the event, ?order= the table order) and the summary (?view=summary).
+// (pipeline/upcoming.mjs). Two views: the events (/tournaments/<id> the first, /<class>/<pool> another,
+// /<class>/<pool>/<order> in another table order) and the summary (/tournaments/<id>/summary). Each
+// is a static page, rendered on its first visit and cached until the next data update.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,31 +9,39 @@ import { Suspense, type ReactNode } from "react";
 import PredictionStats from "@/components/PredictionStats";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
-import { getTournament } from "@/lib/data";
+import { getTournament, getTournamentsIndex } from "@/lib/data";
 import { dateRange, num, pct, place, signed } from "@/lib/format";
-import { type Order, allEntries, eventsByClass, formatDescription, noLuck, onlyWinners, orders, pickEvent, rounds, tableRows } from "@/lib/tournament";
+import { type Order, allEntries, eventHref, eventsByClass, formatDescription, noLuck, onlyWinners, orders, pickView, rounds, tableRows } from "@/lib/tournament";
 import type { ClubEntry, Entry, Tournament, TournamentEvent } from "@/lib/types";
 
-export async function generateMetadata({ params }: PageProps<"/tournaments/[id]">): Promise<Metadata> {
+// Every tournament's first event is prerendered; the other events and the summaries on their first visit
+export async function generateStaticParams() {
+  const tournaments = (await getTournamentsIndex())?.tournaments ?? [];
+  return tournaments.length ? tournaments.map((t) => ({ id: String(t.cup2000Id), path: [] })) : [{ id: "0", path: [] }];
+}
+
+export async function generateMetadata({ params }: PageProps<"/tournaments/[id]/[[...path]]">): Promise<Metadata> {
   const { id } = await params;
   const t = /^\d+$/.test(id) ? await getTournament(Number(id)) : null;
   return { title: t?.name ?? "Tournament" };
 }
 
-export default function TournamentPage(props: PageProps<"/tournaments/[id]">) {
+export default function TournamentPage(props: PageProps<"/tournaments/[id]/[[...path]]">) {
   return (
     <Suspense fallback={<div className="base-container px-4 base-section text-gray-600">Loading tournament…</div>}>
-      <Content params={props.params} searchParams={props.searchParams} />
+      <Content params={props.params} />
     </Suspense>
   );
 }
 
-async function Content({ params, searchParams }: Pick<PageProps<"/tournaments/[id]">, "params" | "searchParams">) {
-  const [{ id }, query] = await Promise.all([params, searchParams]);
+async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]">, "params">) {
+  const { id, path = [] } = await params;
   if (!/^\d+$/.test(id)) notFound();
   const [t, clubs] = await Promise.all([getTournament(Number(id)), getClubMap()]);
   if (!t) notFound();
-  const view = query.view === "summary" ? "summary" : "events";
+  const shown = pickView(t, path);
+  if (!shown) notFound();
+  const { view } = shown;
 
   return (
     <>
@@ -55,7 +64,7 @@ async function Content({ params, searchParams }: Pick<PageProps<"/tournaments/[i
             {(["events", "summary"] as const).map((key) => (
               <Link
                 key={key}
-                href={`/tournaments/${t.cup2000Id}${key === "summary" ? "?view=summary" : ""}`}
+                href={`/tournaments/${t.cup2000Id}${key === "summary" ? "/summary" : ""}`}
                 className={`px-4 py-2 border border-black transition-colors duration-200 ${view === key ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                 aria-current={view === key ? "page" : undefined}
               >
@@ -65,7 +74,7 @@ async function Content({ params, searchParams }: Pick<PageProps<"/tournaments/[i
           </nav>
         </div>
       </section>
-      {view === "summary" ? <Summary t={t} clubs={clubs} /> : <Events t={t} clubs={clubs} query={query} />}
+      {shown.view === "summary" ? <Summary t={t} clubs={clubs} /> : <Events t={t} clubs={clubs} eventIndex={shown.event} requestedOrder={shown.order} />}
     </>
   );
 }
@@ -146,7 +155,7 @@ function Summary({ t, clubs }: { t: Tournament; clubs: Record<string, ClubEntry>
                         <li key={i} className="flex justify-between gap-4">
                           <div>
                             <EntryNames e={e} clubs={clubs} />
-                            <Link href={`/tournaments/${t.cup2000Id}?event=${e.eventIndex}`} className="block text-sm text-gray-600 hover:text-blue-600">
+                            <Link href={eventHref(t.cup2000Id, t.events[e.eventIndex])} className="block text-sm text-gray-600 hover:text-blue-600">
                               {e.eventLabel}{list.kind === "luck" && e.group ? ` · group ${e.group}` : ""}
                             </Link>
                           </div>
@@ -202,8 +211,7 @@ function Summary({ t, clubs }: { t: Tournament; clubs: Record<string, ClubEntry>
 
 // ---- Events ----
 
-function Events({ t, clubs, query }: { t: Tournament; clubs: Record<string, ClubEntry>; query: Record<string, string | string[] | undefined> }) {
-  const eventIndex = pickEvent(t, query);
+function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs: Record<string, ClubEntry>; eventIndex: number; requestedOrder: string | null }) {
   const event = t.events[eventIndex];
   const single = noLuck(event);
   const { placement, played } = event;
@@ -212,7 +220,7 @@ function Events({ t, clubs, query }: { t: Tournament; clubs: Record<string, Club
   const max = event.maxRounds;
   const available = orders(event);
   const keys = Object.keys(available) as Order[];
-  const order: Order = typeof query.order === "string" && query.order !== "default" && query.order in available ? (query.order as Order) : keys[0];
+  const order: Order = requestedOrder && requestedOrder in available ? (requestedOrder as Order) : keys[0];
   const grouped = event.groups.length > 1;
   const groupColumn = grouped && order !== "group";
   const numbered = order === "standings";
@@ -232,7 +240,7 @@ function Events({ t, clubs, query }: { t: Tournament; clubs: Record<string, Club
               {events.map(({ i, e }) => (
                 <Link
                   key={i}
-                  href={`/tournaments/${t.cup2000Id}?event=${i}`}
+                  href={eventHref(t.cup2000Id, e)}
                   className={`px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                   aria-current={i === eventIndex ? "page" : undefined}
                 >
@@ -318,7 +326,7 @@ function Events({ t, clubs, query }: { t: Tournament; clubs: Record<string, Club
             {keys.map((key) => (
               <Link
                 key={key}
-                href={`/tournaments/${t.cup2000Id}?event=${eventIndex}${key !== "default" ? `&order=${key}` : ""}`}
+                href={eventHref(t.cup2000Id, event, key)}
                 className={`px-3 py-1 text-sm border border-black transition-colors duration-200 ${order === key ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                 aria-current={order === key ? "true" : undefined}
               >

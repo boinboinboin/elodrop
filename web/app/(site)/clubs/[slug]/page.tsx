@@ -10,6 +10,7 @@ import Tabs from "@/components/Tabs";
 import { getClubBySlug, getClubEntries } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubHistory, getClubPlayers, getClubsFile } from "@/lib/data";
 import { num } from "@/lib/format";
+import { strongestClubsHref } from "@/lib/rankings";
 import type { ClubEntry, ClubHistoryPool, ClubsFile, Pool } from "@/lib/types";
 
 // A few clubs are prerendered at build; the rest are rendered on their first visit and then served
@@ -57,7 +58,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
             {combinedStanding && (
               <>
                 {" · "}
-                <Link href="/clubs?pool=combined" className="underline hover:text-blue-600">#{combinedStanding.rank} of the strongest clubs combined</Link>
+                <Link href="/clubs" className="underline hover:text-blue-600">#{combinedStanding.rank} of the strongest clubs combined</Link>
               </>
             )}
             {entry.website && (
@@ -209,7 +210,7 @@ function Discipline({ pool, entry, history, file, players }: { pool: Pool; entry
             {standing && (
               <>
                 {" · "}
-                <Link href={`/clubs?pool=${pool}`} className="underline hover:text-blue-600">#{standing.rank} of the strongest clubs</Link> (strength {Math.round(standing.strength)})
+                <Link href={strongestClubsHref(pool)} className="underline hover:text-blue-600">#{standing.rank} of the strongest clubs</Link> (strength {Math.round(standing.strength)})
               </>
             )}
           </p>
