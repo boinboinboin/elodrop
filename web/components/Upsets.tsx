@@ -125,12 +125,13 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
   );
 }
 
-/** A player's name with their club's logo (if any) in front, and the rating gained or lost */
+/** A player's name with their club's logo (if any) in front and its name after, and the rating gained or lost */
 function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
   return (
     <span className="inline-flex items-center gap-1 align-middle" title={p.club ?? undefined}>
       <ClubLogo name={p.club} clubs={clubs} />
       <Link href={`/players/${p.id}`} className={`${bold ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>
+      {p.club && <span className="text-sm text-gray-500">{p.club}</span>}
       {p.change !== undefined && (
         <span className={`text-sm tabular-nums ${p.change >= 0 ? "text-green-700" : "text-red-700"}`} title={`Rating ${p.change >= 0 ? "gained" : "lost"}`}>{signed(p.change, 1).replace("±", "+")}</span>
       )}

@@ -315,7 +315,7 @@ The club page also shows all five disciplines on one graph, and the combined sco
 
 ### Matches
 
-A player's page has one tab per discipline they have played, with a graph of all their disciplines together above the tabs. Each tab lists all their matches, showing the last 20 with a button to show all (`data/matches/<id>.json` holds every match, newest first). A Highlights box, with a tab for each, lists their 5 biggest wins and losses and the 5 matches that raised and lowered their rating most (largest rating change, in any match). Biggest wins are the wins with the lowest win chance before the match ($E_A$); biggest losses are the losses with the highest. Only matches where both players already had 10 rated matches count, since start ratings are too uncertain to make an upset meaningful.
+A player's page has one tab per discipline they have played, with a graph of all their disciplines together above the tabs. Each tab lists all their matches, showing the last 20 with a button to show all (`data/matches/<id>.json` holds every match, newest first). Every opponent and partner is shown with their rating before the match and the club they played for at the time (their club history, as on the rating graph); rivals with the club they play for now. A Highlights box, with a tab for each, lists their 5 biggest wins and losses and the 5 matches that raised and lowered their rating most (largest rating change, in any match). Biggest wins are the wins with the lowest win chance before the match ($E_A$); biggest losses are the losses with the highest. Only matches where both players already had 10 rated matches count, since start ratings are too uncertain to make an upset meaningful.
 
 ### Rivals
 

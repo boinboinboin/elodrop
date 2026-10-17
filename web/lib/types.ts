@@ -7,6 +7,8 @@ export interface PlayerRef {
   id: number;
   name: string;
   rating: number;
+  /** In a match: the club they played for at the time (missing in exports from before it was added) */
+  club?: string | null;
 }
 
 /** A player's standing in one pool (ratings.json pools[pool][i]) */
@@ -73,7 +75,8 @@ export interface Match {
 
 /** A rival over all disciplines (pipeline/rate.mjs): the opponent with the closest matches */
 export interface Rival {
-  opponent: Pick<PlayerRef, "id" | "name">;
+  /** With their club now */
+  opponent: Pick<PlayerRef, "id" | "name" | "club">;
   matches: number;
   wins: number;
   draws: number;

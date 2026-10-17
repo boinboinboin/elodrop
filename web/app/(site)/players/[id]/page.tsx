@@ -96,6 +96,7 @@ function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
           <p className="text-sm text-gray-600 mb-4">The opponent with the closest matches, in all disciplines together, from at least 3 meetings</p>
           <p className="text-2xl">
             <Link href={`/players/${rival.opponent.id}`} className="hover:text-blue-600">{rival.opponent.name}</Link>
+            {rival.opponent.club && <span className="text-base text-gray-600"> · {rival.opponent.club}</span>}
           </p>
           <p className="text-gray-700 mt-1">
             {rival.matches} matches{where(rival)} · {rival.wins} won{rival.draws ? `, ${rival.draws} drawn` : ""}, {rival.losses} lost · average margin {(rival.margin * 100).toFixed(1)}% of points · last met{" "}
@@ -110,6 +111,7 @@ function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
                   <li key={r.opponent.id}>
                     <Link href={`/players/${r.opponent.id}`} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
                     <span className="text-sm text-gray-600">
+                      {r.opponent.club && `${r.opponent.club} · `}
                       {r.matches} matches{where(r)}, {r.wins}–{r.losses}{r.draws ? `–${r.draws}` : ""}, margin {(r.margin * 100).toFixed(1)}% ·{" "}
                       <Link href={`/head-to-head?a=${player.id}&b=${r.opponent.id}`} className="underline hover:text-blue-600">head to head</Link>
                     </span>

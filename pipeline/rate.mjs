@@ -517,7 +517,8 @@ export function computeRatings(
     }
 
     if (keepWeekly) {
-      const ref = (p) => ({ id: p.id, name: p.name, rating: Math.round(p.rating) });
+      // club: the club the player played for at the time (their club history, as for the upsets)
+      const ref = (p) => ({ id: p.id, name: p.name, rating: Math.round(p.rating), club: p.clubs.at(-1)?.[1] ?? null });
       for (const side of perSide) {
         side.players.forEach((p, j) => {
           p.log.push({
@@ -910,6 +911,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // A player's rivals over all their disciplines: every match with a point margin, against each
   // opposing player (in doubles both count), with how many were in each discipline.
+  // A player's club now, as in the rankings: from any pool they've played in
+  const currentClub = (id) => {
+    for (const map of Object.values(players)) {
+      const p = map.get(id);
+      if (p) return clubOf(p);
+    }
+    return null;
+  };
   function rivals(id) {
     const meetings = Object.entries(players).flatMap(([pool, map]) =>
       (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, pool, opponent: o }))),
@@ -919,15 +928,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       .filter((list) => list.length >= RIVAL_MIN_MATCHES)
       .map((list) => {
         const sum = list.reduce((total, m) => total + m.margin, 0);
+        const last = list.reduce((latest, m) => (m.day > latest.day ? m : latest));
         const pools = Object.fromEntries(Object.keys(players).map((pool) => [pool, list.filter((m) => m.pool === pool).length]).filter(([, n]) => n));
         return {
-          opponent: { id: list[0].opponent.id, name: list[0].opponent.name },
+          // Their club now (as in the rankings)
+          opponent: { id: last.opponent.id, name: last.opponent.name, club: currentClub(last.opponent.id) },
           matches: list.length,
           wins: list.filter((m) => m.result === 1).length,
           draws: list.filter((m) => m.result === 0.5).length,
           losses: list.filter((m) => m.result === 0).length,
           margin: Math.round((1000 * sum) / list.length) / 1000,
-          lastPlayed: list.reduce((last, m) => (m.day > last ? m.day : last), ""),
+          lastPlayed: last.day,
           pools,
           score: (sum + TYPICAL_MARGIN * RIVAL_PRIOR_MATCHES) / (list.length + RIVAL_PRIOR_MATCHES),
         };
