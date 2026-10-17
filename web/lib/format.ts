@@ -46,6 +46,15 @@ export function date(value: string | Date, format: DateFormat = "day"): string {
   return formatDate(typeof value === "string" ? parseISO(value) : value, DATE_FORMATS[format]);
 }
 
+/** A time (ISO) in Norwegian time, whatever time zone the page is rendered in: "17 October 2026, 05:24" */
+// The one formatter not on date-fns: its time zone support (@date-fns/tz) reads the current time
+// when it builds a date, which Next.js doesn't allow while prerendering. Intl only needs the time.
+const osloTime = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Oslo", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+export function dateTime(value: string): string {
+  const parts = Object.fromEntries(osloTime.formatToParts(parseISO(value)).map((p) => [p.type, p.value]));
+  return `${parts.day} ${parts.month} ${parts.year}, ${parts.hour}:${parts.minute}`;
+}
+
 /** A date range: "23–25 Oct 2026", "30 Sep – 2 Oct 2026", "29 Dec 2026 – 3 Jan 2027", or one day */
 export function dateRange(from: string | null, to: string | null, long = false): string {
   if (!from) return "";
