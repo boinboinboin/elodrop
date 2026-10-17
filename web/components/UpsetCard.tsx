@@ -48,6 +48,17 @@ export default function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?:
             <Link href={`/head-to-head?a=${upset.winners[0].id}&b=${upset.losers[0].id}`} className="underline hover:text-blue-600">head to head</Link>
           </>
         )}
+        {upset.winners.length === 2 && upset.losers.length === 2 && (
+          <>
+            {" · "}
+            <Link
+              href={`/head-to-head/doubles?a1=${upset.winners[0].id}&a2=${upset.winners[1].id}&b1=${upset.losers[0].id}&b2=${upset.losers[1].id}`}
+              className="underline hover:text-blue-600"
+            >
+              head to head
+            </Link>
+          </>
+        )}
       </p>
     </article>
   );

@@ -325,6 +325,27 @@ A player's biggest rival is the opponent they have had the closest matches again
 
 `/elo/head-to-head?a=<player id>&b=<player id>` compares two players, chosen with name search (`/elo/players/search?q=<name>`; every word must be in the name, accents ignored and æ/ø/å read as ae/o/a; ranked players first). It shows their record against each other (all disciplines, from player A's side) and together as partners, both from the complete match logs. For each discipline both are rated in, it shows the current ratings and A's chance of beating B now from the expected score; in doubles the chance is with equally rated partners, since a pair's rating is the sum of its players' and equal partners cancel out. Both players' rating histories in that discipline are drawn on one chart. Winning margins, overall and per discipline, come from the scores of their meetings (walkovers left out): matches, sets and points won by each, each player's average point margin in the matches they won and their biggest win, how many went to a deciding set, and the closest match (smallest point difference). Each meeting in the list shows its point margin. Player pages link to it, also from each rival.
 
+### Doubles head to head
+
+`/head-to-head/doubles?a1=&a2=&b1=&b2=` compares two pairs the same way: their record against each other (the same four players, from pair A's side), each pair's record together, winning margins, and pair A's chance of beating pair B now, from the sums of the partners' ratings. Pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two women's pairs in women's doubles, two mixed pairs in mixed doubles. The players' head to head likewise compares singles and men's or women's doubles only between players of the same gender, since women mostly play men's singles when there are too few for women's singles; mixed doubles is compared between anyone. An unknown gender rules nothing out.
+
+### Men against women: the gender gap
+
+The disciplines are rated separately, so a woman's rating in women's singles says nothing by itself about how she would do against men, and mixed doubles can't tell either (see [mixed doubles](#mixed-doubles-men-and-women-ranked-separately)). The link is the women who play men's singles and doubles: their results against men can be set against their rating in their own discipline at the time (`gender-gap.mjs` → `data/gender-gap.json`). A woman rated $w$ in women's singles plays like a man rated
+
+$$w + a + b\,(w - p_0)$$
+
+in men's singles, with $a$ and $b$ fitted by maximum likelihood over those matches (the expected score as above; her rating from the end of the week before the match). In doubles, only matches with a male partner count, and her side plays at her mapped women's doubles rating plus his men's doubles rating. With the data up to October 2026:
+
+| Format  | Matches |  $a$ (at 1500) |           $b$ | Gap at 1200 | 1800 | 2100 | Log loss (no gap) |
+|---------|--------:|---------------:|--------------:|------------:|-----:|-----:|------------------:|
+| Singles |   4,080 |       −201 ± 5 | −0.45 ± 0.01  |         −67 | −335 | −469 |   0.582 (0.757)   |
+| Doubles |   2,155 |       −111 ± 8 | −0.46 ± 0.04  |         +26 | −249 | −386 |   0.555 (0.611)   |
+
+The gap grows with the level: girls in the lowest junior classes play about level with boys, and the best women play like men rated several hundred points lower. Fitted separately on bands of women's ratings, the gap follows the line (singles: +18 below 1100, −180 at 1300–1500, −254 at 1500–1700, −304 at 1700–1900, −472 above 1900), and fitted on settled players only (50+ matches, 2018 on) it is about the same. The fit covers women rated about 930–1990 in singles and 1140–1720 in doubles (5th to 95th percentile); beyond that the line is extrapolated.
+
+The head-to-head pages use it "just for fun", where the players or pairs don't meet in a shared discipline: a man and a woman in singles and in doubles (with equally rated partners), and pairs of different kinds (a men's pair against a women's or mixed pair). Everyone is then put on the men's scale: men at their men's singles or doubles rating, women at their mapped women's rating, a pair at the sum.
+
 ### Search
 
 Every Elo page (templates/_elo/_layout.twig) has a search bar for players, clubs and the Eliteserien pages (`/elo/search?q=<text>`): players as in the head-to-head search, clubs by short or full name, and Eliteserien's team strengths and each season in review (e.g. "elite 2024"). Every word of the search must match; choosing a result opens its page.

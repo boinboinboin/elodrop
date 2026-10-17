@@ -1,6 +1,6 @@
 // Export the generated data for the website: web-ready JSON files in export/, each small enough
 // for the site's data cache (at most 2 MB), uploaded to the data bucket by the pipeline workflow.
-// Usage: node export.mjs   (after rate.mjs, eliteserien*.mjs and upcoming.mjs)
+// Usage: node export.mjs   (after rate.mjs, gender-gap.mjs, eliteserien*.mjs and upcoming.mjs)
 //
 // export/
 //   meta.json                     generatedAt, pool labels, Eliteserien seasons, tournament links
@@ -16,6 +16,7 @@
 //   eliteserien.json, eliteserien-<season>.json
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
+//   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)
 //   manifest.json                 every file with its size and hash (written last)
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
@@ -129,6 +130,8 @@ write("tournaments/index.json", tournaments);
 if (existsSync(`${DATA}/upcoming`)) {
   for (const f of readdirSync(`${DATA}/upcoming`).filter((f) => f.endsWith(".json"))) write(`tournaments/${f}`, read(`upcoming/${f}`));
 }
+
+if (existsSync(`${DATA}/gender-gap.json`)) write("gender-gap.json", read("gender-gap.json"));
 
 write("meta.json", {
   generatedAt,
