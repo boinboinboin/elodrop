@@ -5,7 +5,8 @@
 // export/
 //   meta.json                     generatedAt, pool labels, Eliteserien seasons, tournament links
 //   rankings/<pool>.json          ranked (active) players, best first
-//   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months)
+//   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months; not players of
+//                                 the other gender, see rules.mjs rankedIn)
 //   clubs.json                    strongest clubs per pool and how club strength is calculated
 //   club-history/<NBF id>.json    a club's strength and rank per week
 //   players/<id>.json             one player: per pool their rating, weekly history (with the
@@ -19,6 +20,7 @@
 //   manifest.json                 every file with its size and hash (written last)
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { rankedIn } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const DATA = `${DIR}data`;
@@ -59,7 +61,8 @@ const generatedAt = ratings.generatedAt;
 // Rankings and clubs
 for (const [pool, players] of Object.entries(ratings.pools)) {
   write(`rankings/${pool}.json`, { generatedAt, pool, players: players.filter((p) => p.rank !== null) });
-  write(`rankings/${pool}-inactive.json`, { generatedAt, pool, players: players.filter((p) => p.rank === null) });
+  // Inactive: not ranked though of the pool's gender (women in men's singles are in neither list)
+  write(`rankings/${pool}-inactive.json`, { generatedAt, pool, players: players.filter((p) => p.rank === null && rankedIn(pool, p.gender)) });
 }
 write("clubs.json", { generatedAt, clubs: ratings.clubs, clubStrength: ratings.clubStrength });
 for (const f of readdirSync(`${DATA}/club-history`)) write(`club-history/${f}`, read(`club-history/${f}`));

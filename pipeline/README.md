@@ -273,6 +273,10 @@ Ranking lists only include players who have played in the last 12 months, with t
 
 The club shown for a player is their club registered on badmintonportalen. Players no longer in the register show the club of their last tournament, or otherwise the club of their last league team. League team names such as "Kristiansand 2" are team numbers, not clubs.
 
+### Men's and women's disciplines rank their own gender
+
+Men's singles and doubles rank only men, and women's singles and doubles only women. Women mostly play men's singles when there are too few entries for women's singles, so a rank among men says little about them, and before this 202 women held men's singles ranks (the best at #114) and 274 held men's doubles ranks, pushing men down. They keep their rating and history there, which predict their matches against men as before, and these matches are what the [gender gap](#men-against-women-the-gender-gap) is fitted on; they just aren't ranked, aren't in the inactive list either, and don't count for club strength. Players of unknown gender are ranked in men's and women's disciplines (in mixed doubles they get no rank, see below). The weekly ranking history follows the same rule.
+
 ### Ranking history
 
 At the top of a player's page, one chart shows their national rank at the end of every week since they started, with a line per discipline, and a table of their rank at the end of each season. The weekly rank uses the same rules as the ranking lists: players are ranked by their rating at the end of the week, among players active then (Covid-adjusted), and in mixed doubles among men or among women. The current week is the ranking itself. The chart has a logarithmic scale with #1 at the top, so a climb from #100 to #50 looks as big as one from #20 to #10.

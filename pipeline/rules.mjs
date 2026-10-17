@@ -250,6 +250,13 @@ export const INACTIVITY = { graceDays: 365, halfLifeDays: 1095, floor: P0 };
 // to 2020-10-10, when hardly anything was played, and at half speed until 2021-07-24. Without this,
 // most players went inactive at once and club strengths dropped through 2020 and 2021.
 export const RANKING_ACTIVE_DAYS = 365;
+
+// Who is ranked in a pool, by gender: men's singles and doubles rank men, women's rank women
+// (women mostly play men's singles when there are too few entries for women's singles, so their
+// ranks there say little; they keep their rating). Mixed doubles ranks men and women separately,
+// and players of unknown gender only where their gender doesn't matter.
+export const rankedIn = (pool, gender) =>
+  pool === "men" || pool === "mensDoubles" ? gender !== "K" : pool === "women" || pool === "womensDoubles" ? gender !== "M" : gender != null;
 const COVID_ACTIVITY = [
   { from: "2020-03-18", to: "2020-10-10", rate: 0 },
   { from: "2020-10-11", to: "2021-07-24", rate: 0.5 },
