@@ -6,6 +6,8 @@
   "scripts": {
     "pipeline:rate": "node pipeline/rate.mjs",
     "pipeline:export": "node pipeline/export.mjs",
+    "data:pull": "rclone sync r2:elo-data pipeline/export --checksum --fast-list --transfers 32 --s3-no-head",
+    "data:pull-raw": "rclone copy r2:elo-raw pipeline/data --filter-from .github/raw-data.filter --checksum --fast-list --transfers 32 --s3-no-head",
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build"
   }
