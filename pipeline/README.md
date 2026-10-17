@@ -319,7 +319,7 @@ A player's page has one tab per discipline they have played, with a graph of all
 
 ### Rivals
 
-A player's biggest rival is the opponent they have had the closest matches against, measured by the average point margin $d$ (as in the [margin of victory weight](#margin-of-victory-weight)) over at least 3 matches. To favour many close matches over a few, the average is pulled towards a typical margin of 0.2 as if there were 2 more matches: $(\sum d + 2 \cdot 0.2) / (n + 2)$. The player page shows the closest 3.
+A player's biggest rival is the opponent they have had the closest matches against, in all disciplines together (in doubles both opposing players count as opponents), measured by the average point margin $d$ (as in the [margin of victory weight](#margin-of-victory-weight)) over at least 3 matches. To favour many close matches over a few, the average is pulled towards a typical margin of 0.2 as if there were 10 more matches: $(\sum d + 10 \cdot 0.2) / (n + 10)$. With fewer (2), the biggest rival was usually someone met 3 or 4 times who happened to play very close; with 10, it's a long rivalry, such as Aleksander Jakovlevs and Filip Bøhn (31 matches, 10.7% average margin). The player page shows the closest 3, once for the player rather than per discipline, each with how many of the meetings were in which discipline.
 
 ### Biggest upsets
 

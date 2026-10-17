@@ -1,6 +1,6 @@
-// One player: club, rating and ranking history in every discipline (with tables by season), and per
-// discipline their rating, rank, peak, matches, rating history, biggest rival, match list and
-// highlights (biggest wins and losses, rating gains and drops).
+// One player: club, rating and ranking history in every discipline (with tables by season), their
+// biggest rivals over all disciplines, and per discipline their rating, rank, peak, matches, rating
+// history, match list and highlights (biggest wins and losses, rating gains and drops).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,10 +9,10 @@ import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
-import { POOL_KEYS, getMeta, getPlayer, getRankings } from "@/lib/data";
+import { POOLS, POOL_KEYS, getMeta, getPlayer, getRankings } from "@/lib/data";
 import { date, num } from "@/lib/format";
 import { rankingHref } from "@/lib/rankings";
-import type { Player, PlayerPool, Pool, SeasonRow } from "@/lib/types";
+import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/lib/types";
 
 // The best ten men are prerendered at build; every other player page is rendered on its first visit
 // and then served from the cache until the next data update (ISR), instead of on every request.
@@ -64,6 +64,8 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
 
       <AllDisciplines player={player} />
 
+      {player.rivals && player.rivals.length > 0 && <Rivals player={player} rivals={player.rivals} />}
+
       {/* One tab per discipline (no tabs for players with a single discipline) */}
       <section className="base-section">
         <div className="base-container px-4">
@@ -75,6 +77,50 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
         </div>
       </section>
     </>
+  );
+}
+
+/** The closest rivals over all disciplines: the biggest in full, then the others */
+function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
+  const [rival, ...others] = rivals;
+  // "4 matches: 1 in men's singles, 1 in men's doubles, 2 in mixed doubles"
+  const where = (r: Rival) => {
+    const pools = Object.entries(r.pools) as [Pool, number][];
+    return pools.length > 1 ? `: ${pools.map(([pool, n]) => `${n} in ${POOLS[pool].toLowerCase()}`).join(", ")}` : ` in ${POOLS[pools[0][0]].toLowerCase()}`;
+  };
+  return (
+    <section className="base-section">
+      <div className="base-container px-4">
+        <div className="bg-white p-4 md:p-6">
+          <h2 className="text-xl mb-1">Biggest rival</h2>
+          <p className="text-sm text-gray-600 mb-4">The opponent with the closest matches, in all disciplines together, from at least 3 meetings</p>
+          <p className="text-2xl">
+            <Link href={`/players/${rival.opponent.id}`} className="hover:text-blue-600">{rival.opponent.name}</Link>
+          </p>
+          <p className="text-gray-700 mt-1">
+            {rival.matches} matches{where(rival)} · {rival.wins} won{rival.draws ? `, ${rival.draws} drawn` : ""}, {rival.losses} lost · average margin {(rival.margin * 100).toFixed(1)}% of points · last met{" "}
+            {date(rival.lastPlayed)} ·{" "}
+            <Link href={`/head-to-head?a=${player.id}&b=${rival.opponent.id}`} className="underline hover:text-blue-600">head to head</Link>
+          </p>
+          {others.length > 0 && (
+            <>
+              <p className="text-sm text-gray-600 mt-4">Also close:</p>
+              <ul className="mt-1">
+                {others.map((r) => (
+                  <li key={r.opponent.id}>
+                    <Link href={`/players/${r.opponent.id}`} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
+                    <span className="text-sm text-gray-600">
+                      {r.matches} matches{where(r)}, {r.wins}–{r.losses}{r.draws ? `–${r.draws}` : ""}, margin {(r.margin * 100).toFixed(1)}% ·{" "}
+                      <Link href={`/head-to-head?a=${player.id}&b=${r.opponent.id}`} className="underline hover:text-blue-600">head to head</Link>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -171,7 +217,6 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
   const mixed = pool === "mixedDoubles";
   const history = p.history;
   const log = p.matchLog;
-  const rival = log?.rivals[0];
   const highlights = HIGHLIGHTS.filter((h) => (log?.[h.key] ?? []).length > 0);
   return (
     <div>
@@ -248,37 +293,6 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
 
       {log && log.all.length > 0 && (
         <div className="grid gap-6 mt-6">
-          {rival && (
-            <div className="bg-white p-4 md:p-6">
-              <h3 className="text-xl mb-1">Biggest rival</h3>
-              <p className="text-sm text-gray-600 mb-4">The opponent with the closest matches, from at least 3 meetings</p>
-              <p className="text-2xl">
-                <Link href={`/players/${rival.opponent.id}`} className="hover:text-blue-600">{rival.opponent.name}</Link>{" "}
-                <span className="text-base text-gray-500 tabular-nums">{rival.opponent.rating}</span>
-              </p>
-              <p className="text-gray-700 mt-1">
-                {rival.matches} matches: {rival.wins} won{rival.draws ? `, ${rival.draws} drawn` : ""}, {rival.losses} lost · average margin {(rival.margin * 100).toFixed(1)}% of points · last met{" "}
-                {date(rival.lastPlayed)} ·{" "}
-                <Link href={`/head-to-head?a=${player.id}&b=${rival.opponent.id}`} className="underline hover:text-blue-600">head to head</Link>
-              </p>
-              {log.rivals.length > 1 && (
-                <>
-                  <p className="text-sm text-gray-600 mt-4">Also close:</p>
-                  <ul className="mt-1">
-                    {log.rivals.slice(1).map((r) => (
-                      <li key={r.opponent.id}>
-                        <Link href={`/players/${r.opponent.id}`} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
-                        <span className="text-sm text-gray-600">
-                          {r.matches} matches, {r.wins}–{r.losses}{r.draws ? `–${r.draws}` : ""}, margin {(r.margin * 100).toFixed(1)}% ·{" "}
-                          <Link href={`/head-to-head?a=${player.id}&b=${r.opponent.id}`} className="underline hover:text-blue-600">head to head</Link>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-          )}
           <MatchTable
             title="Matches"
             // Only the newest are sent with the page; "show all" loads the rest

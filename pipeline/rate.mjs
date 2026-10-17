@@ -5,7 +5,8 @@
 // Reads data/portalen/*.json and data/league/*.json.
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
-// data/matches/<id>.json (each player's last matches and biggest wins and losses).
+// data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
+// over all pools).
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
 
@@ -24,11 +25,12 @@ const BIGGEST_MATCHES = 5;
 // certain half of ranked players), so a fast-improving junior beating a favourite isn't an upset.
 const WEEKLY_UPSETS = 10;
 const UPSET_MAX_RD = { singles: 125, doubles: 90 };
-// Rivals: opponents met at least RIVAL_MIN_MATCHES times, closest first by the average point
+// Rivals: opponents met at least RIVAL_MIN_MATCHES times in all disciplines together, closest first by the average point
 // margin d (as in the margin of victory weight). The average is pulled towards a typical margin
-// as if there were RIVAL_PRIOR_MATCHES more matches, so many close matches beat a few.
+// as if there were RIVAL_PRIOR_MATCHES more matches, so many close matches beat a few: with 10, a
+// long rivalry (20-30 meetings at a 10-13% margin) beats three very close matches.
 const RIVAL_MIN_MATCHES = 3;
-const RIVAL_PRIOR_MATCHES = 2;
+const RIVAL_PRIOR_MATCHES = 10;
 const TYPICAL_MARGIN = 0.2;
 const RIVALS = 3;
 // Club history: a tournament club counts for this long; otherwise the league team's club is used.
@@ -906,23 +908,27 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Number of ranked players per week (mixed doubles: { M, K }), from the Monday `from`
   writeFileSync(`${DIR}data/rank-counts.json`, JSON.stringify({ from: firstWeek, pools: rankCounts }));
 
-  function rivals(p, pool) {
-    // In doubles every opposing player counts as an opponent.
-    const meetings = p.log.filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, opponent: o })));
+  // A player's rivals over all their disciplines: every match with a point margin, against each
+  // opposing player (in doubles both count), with how many were in each discipline.
+  function rivals(id) {
+    const meetings = Object.entries(players).flatMap(([pool, map]) =>
+      (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, pool, opponent: o }))),
+    );
     const byOpponent = Map.groupBy(meetings, (m) => m.opponent.id);
     return [...byOpponent.values()]
       .filter((list) => list.length >= RIVAL_MIN_MATCHES)
       .map((list) => {
         const sum = list.reduce((total, m) => total + m.margin, 0);
-        const opponent = pool.get(list[0].opponent.id);
+        const pools = Object.fromEntries(Object.keys(players).map((pool) => [pool, list.filter((m) => m.pool === pool).length]).filter(([, n]) => n));
         return {
-          opponent: { id: opponent.id, name: opponent.name, rating: Math.round(opponent.rating) },
+          opponent: { id: list[0].opponent.id, name: list[0].opponent.name },
           matches: list.length,
           wins: list.filter((m) => m.result === 1).length,
           draws: list.filter((m) => m.result === 0.5).length,
           losses: list.filter((m) => m.result === 0).length,
           margin: Math.round((1000 * sum) / list.length) / 1000,
-          lastPlayed: list.at(-1).day,
+          lastPlayed: list.reduce((last, m) => (m.day > last ? m.day : last), ""),
+          pools,
           score: (sum + TYPICAL_MARGIN * RIVAL_PRIOR_MATCHES) / (list.length + RIVAL_PRIOR_MATCHES),
         };
       })
@@ -948,11 +954,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
           biggestLosses: biggest(0, -1),
           biggestGains: strip([...p.log].sort((x, y) => y.change - x.change || y.day.localeCompare(x.day)).filter((m) => m.change > 0).slice(0, BIGGEST_MATCHES)),
           biggestDrops: strip([...p.log].sort((x, y) => x.change - y.change || y.day.localeCompare(x.day)).filter((m) => m.change < 0).slice(0, BIGGEST_MATCHES)),
-          rivals: rivals(p, map),
         },
       });
     }
   }
+  // Rivals over all disciplines, beside the pools (every reader of these files looks pools up by name)
+  for (const [id, m] of matches) m.rivals = rivals(id);
   mkdirSync(`${DIR}data/matches`, { recursive: true });
   for (const [id, m] of matches) writeFileSync(`${DIR}data/matches/${id}.json`, JSON.stringify(m));
 
