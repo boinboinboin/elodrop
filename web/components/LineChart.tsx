@@ -11,7 +11,8 @@
 // ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values.
 // Hover or focus and use the arrow keys (PageUp/PageDown a year, Home/End) to read values.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { COLORS, MARGIN, OTHER_COLOR, PALETTE, WEEK, DAY, dateFormat, formatNumber, logDomain, yDomain, yearTicks } from "@/lib/chart";
+import { dayAt } from "@/lib/format";
+import { COLORS, MARGIN, OTHER_COLOR, PALETTE, WEEK, DAY, formatNumber, logDomain, yDomain, yearTicks } from "@/lib/chart";
 
 export interface ChartSeries {
   label: string;
@@ -175,7 +176,7 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
 
   const lastWeek = ends.filter(Boolean).at(-1);
   const ariaLabel = ready
-    ? `${label} history${series.length > 1 ? ` in ${series.map((s) => s.label).join(", ")}` : ""}, from ${dateFormat.format(t0)} to ${dateFormat.format(t1)}${lastWeek && series.length === 1 ? `, ending at ${fmt(lastWeek.v)}` : ""}. Use the arrow keys to read values.`
+    ? `${label} history${series.length > 1 ? ` in ${series.map((s) => s.label).join(", ")}` : ""}, from ${dayAt(t0)} to ${dayAt(t1)}${lastWeek && series.length === 1 ? `, ending at ${fmt(lastWeek.v)}` : ""}. Use the arrow keys to read values.`
     : label;
 
   return (
@@ -266,7 +267,7 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
               top: Math.max(0, Math.min(tooltip.top - 24, height - 80)),
             }}
           >
-            <span className="block text-gray-600 mb-1">Week ending {dateFormat.format(time(active!))}</span>
+            <span className="block text-gray-600 mb-1">Week ending {dayAt(time(active!))}</span>
             {tooltip.rows.map((r) => (
               <span key={r.key} className="flex items-center gap-1.5">
                 <Swatch color={r.color} />

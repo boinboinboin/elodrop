@@ -10,7 +10,11 @@
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts"
   },
   "dependencies": {
+    "date-fns": "^4.4.0",
+    "embla-carousel-react": "^8.6.0",
+    "motion": "^14.3.0",
     "next": "16.4.2",
+    "nuqs": "^2.10.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sanity": "^6.19.0",

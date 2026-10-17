@@ -7,7 +7,7 @@ import RankingTable, { type RankingRow } from "@/components/RankingTable";
 import UpsetCard from "@/components/UpsetCard";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getRankings, getUpsetsIndex, isPool } from "@/lib/data";
-import { addDays, date, num } from "@/lib/format";
+import { addDays, dateRange, mondayOf, num, today } from "@/lib/format";
 import type { Gender, Pool } from "@/lib/types";
 
 const GENDERS: Record<Gender, string> = { M: "Men", K: "Women" };
@@ -46,14 +46,12 @@ async function LatestUpsets() {
   const [index, clubs] = await Promise.all([getUpsetsIndex(), getClubMap()]);
   const week = index?.latest;
   if (!week) return null;
-  const today = new Date().toISOString().slice(0, 10);
-  const thisMonday = addDays(today, -((new Date(`${today}T00:00:00Z`).getUTCDay() + 6) % 7));
   return (
     <section className="base-section">
       <div className="base-container px-4">
         <div className="flex flex-wrap items-baseline justify-between gap-4 mb-4">
           <h2 className="text-3xl">
-            {week.week === thisMonday ? "This week's biggest upsets" : `Biggest upsets, week of ${date(week.week, "dayOnly")}–${date(addDays(week.week, 6), "long").replace(/ \d{4}$/, "")}`}
+            {week.week === mondayOf(today()) ? "This week's biggest upsets" : `Biggest upsets, week of ${dateRange(week.week, addDays(week.week, 6), true)}`}
           </h2>
           <Link href="/upsets" className="underline hover:text-blue-600">All weeks &rarr;</Link>
         </div>

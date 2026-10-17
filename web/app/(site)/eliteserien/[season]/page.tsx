@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import Team from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { getEliteserienReview, getMeta, type Loose } from "@/lib/data";
-import { date } from "@/lib/format";
+import { dateRange } from "@/lib/format";
 
 export async function generateMetadata({ params }: PageProps<"/eliteserien/[season]">): Promise<Metadata> {
   const data = await getEliteserienReview((await params).season);
@@ -171,7 +171,7 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
           {data.rounds.map((round: Loose) => (
             <div key={round.name}>
               <h3 className="text-xl mt-6 mb-2">
-                {round.name} <span className="text-base text-gray-600">{date(round.from, "dayOnly")}–{date(round.to, "long")}</span>
+                {round.name} <span className="text-base text-gray-600">{dateRange(round.from, round.to, true)}</span>
               </h3>
               <div className="bg-white overflow-x-auto">
                 <table className="w-full text-left">

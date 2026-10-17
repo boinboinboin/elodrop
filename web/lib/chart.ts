@@ -11,8 +11,6 @@ export const COLORS = { series: PALETTE[0], grid: "#e7e5e4", axis: "#6b7280", te
 export const OTHER_COLOR = "#8a8984";
 export const MARGIN = { top: 12, right: 52, bottom: 28, left: 48 };
 
-export const dateFormat = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-
 /** "2,569", "1.23", or with `signed` "+1.23" / "−0.40" */
 export function formatNumber(value: number, decimals = 0, signed = false): string {
   const text = Math.abs(value).toLocaleString("en-GB", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });

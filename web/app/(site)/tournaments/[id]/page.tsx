@@ -135,7 +135,7 @@ function Summary({ t, clubs }: { t: Tournament; clubs: Record<string, ClubEntry>
             <div className="bg-white p-4 md:p-6">
               <Tabs
                 label="Lists"
-                hash={false}
+                param="list"
                 className="mb-6"
                 tabs={lists.map((list) => ({
                   id: list.id,

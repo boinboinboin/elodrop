@@ -5,11 +5,11 @@
 // rating, ± range, matches, last played]. `clubs`: the clubs in the table with a page, short name →
 // [slug, logo].
 import Link from "next/link";
+import { date } from "@/lib/format";
 import { useMemo, useState } from "react";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, number, string];
 
-const monthYear = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
 
 export default function RankingTable({ rows, clubs, summary }: { rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
   const [query, setQuery] = useState("");
@@ -53,7 +53,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
                   <td className="py-3 px-4">
                     <Link href={`/players/${id}`} prefetch={false} className="hover:text-blue-600">{name}</Link>
                     <span className="block text-sm text-gray-600 sm:hidden">{club}</span>
-                    {!rank && <span className="block text-sm text-gray-500">Last played {monthYear.format(new Date(`${lastPlayed}T00:00:00Z`))}</span>}
+                    {!rank && <span className="block text-sm text-gray-500">Last played {date(lastPlayed, "monthYear")}</span>}
                   </td>
                   <td className="py-3 px-4 text-gray-700 hidden sm:table-cell">
                     {club &&

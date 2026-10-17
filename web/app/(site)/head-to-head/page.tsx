@@ -120,7 +120,7 @@ function Comparison({ h2h, clubs, links }: { h2h: NonNullable<Awaited<ReturnType
               Current ratings in each discipline both play, and {a.name}&apos;s chance of winning against {b.name}. In doubles, the chance is with equally rated partners: a pair&apos;s rating is the sum of
               its players&apos;.
             </p>
-            <Tabs label="Disciplines" hash={false} className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <PoolComparison pool={pool} p={p} a={a} b={b} showMargins={pools.length > 1} /> }))} />
+            <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <PoolComparison pool={pool} p={p} a={a} b={b} showMargins={pools.length > 1} /> }))} />
           </div>
         </section>
       )}

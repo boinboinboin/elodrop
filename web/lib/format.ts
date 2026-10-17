@@ -1,4 +1,5 @@
 // Number and date formatting shared by the pages.
+import { addDays as addDaysTo, format as formatDate, isSameMonth, isSameYear, parseISO, startOfISOWeek } from "date-fns";
 
 const numberFormat = (decimals: number) =>
   new Intl.NumberFormat("en-GB", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -27,34 +28,46 @@ export function place(p: number): string {
   return p === Math.round(p) ? String(p) : `${Math.round(p - 0.5)}–${Math.round(p + 0.5)}`;
 }
 
-const dateFormats = {
-  day: { day: "numeric", month: "short", year: "numeric" },
-  long: { day: "numeric", month: "long", year: "numeric" },
-  dayMonth: { day: "numeric", month: "short" },
-  monthYear: { month: "long", year: "numeric" },
-  month: { month: "long" },
-  dayOnly: { day: "numeric" },
-} satisfies Record<string, Intl.DateTimeFormatOptions>;
+// Dates (date-fns). The data's days are calendar dates ("2026-10-15"): parsed as that day at local
+// midnight and formatted back the same, so no time zone shifts them. Times (ISO with a time) are
+// shown in the time zone they're rendered in.
+const DATE_FORMATS = {
+  day: "d MMM yyyy", // 15 Oct 2026
+  long: "d MMMM yyyy", // 15 October 2026
+  dayMonth: "d MMM", // 15 Oct
+  monthYear: "MMMM yyyy", // October 2026
+  month: "MMMM", // October
+  dayOnly: "d", // 15
+} as const;
+export type DateFormat = keyof typeof DATE_FORMATS;
 
-// Three-letter months ("Sep", not en-GB's "Sept")
-const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-/** A date ("2026-10-15" or ISO time) as "15 Oct 2026" (or another format), in UTC */
-export function date(value: string, format: keyof typeof dateFormats = "day"): string {
-  const d = new Date(value.length === 10 ? `${value}T00:00:00Z` : value);
-  if (format === "day") return `${d.getUTCDate()} ${SHORT_MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
-  if (format === "dayMonth") return `${d.getUTCDate()} ${SHORT_MONTHS[d.getUTCMonth()]}`;
-  return new Intl.DateTimeFormat("en-GB", { ...dateFormats[format], timeZone: "UTC" }).format(d);
+/** A day ("2026-10-15") or time (ISO) as "15 Oct 2026", or another format */
+export function date(value: string | Date, format: DateFormat = "day"): string {
+  return formatDate(typeof value === "string" ? parseISO(value) : value, DATE_FORMATS[format]);
 }
 
-/** A date range: "23–25 Oct 2026", or "29 Aug 2026" for one day */
+/** A date range: "23–25 Oct 2026", "30 Sep – 2 Oct 2026", "29 Dec 2026 – 3 Jan 2027", or one day */
 export function dateRange(from: string | null, to: string | null, long = false): string {
   if (!from) return "";
-  if (!to || to === from) return date(from, long ? "long" : "day");
-  return `${date(from, "dayOnly")}–${date(to, long ? "long" : "day")}`;
+  const full = long ? "long" : "day";
+  if (!to || to === from) return date(from, full);
+  const [a, b] = [parseISO(from), parseISO(to)];
+  if (isSameMonth(a, b)) return `${date(a, "dayOnly")}–${date(b, full)}`;
+  if (isSameYear(a, b)) return `${formatDate(a, long ? "d MMMM" : "d MMM")} – ${date(b, full)}`;
+  return `${date(a, full)} – ${date(b, full)}`;
 }
 
-export const addDays = (day: string, n: number) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+/** The day `n` days after `day` (both "yyyy-MM-dd") */
+export const addDays = (day: string, n: number) => formatDate(addDaysTo(parseISO(day), n), "yyyy-MM-dd");
+
+/** Today ("yyyy-MM-dd"), in the time zone it's rendered in */
+export const today = () => formatDate(new Date(), "yyyy-MM-dd");
+
+/** The Monday of the week of `day` ("yyyy-MM-dd") */
+export const mondayOf = (day: string) => formatDate(startOfISOWeek(parseISO(day)), "yyyy-MM-dd");
+
+/** A chart's time (milliseconds, a day at UTC midnight or later that day) as that day: "15 Oct 2026" */
+export const dayAt = (time: number, format: DateFormat = "day") => date(new Date(time).toISOString().slice(0, 10), format);
 
 /** Accents and case ignored, æ/ø/å as ae/o/a: for the name searches */
 export function normalize(text: string): string {
