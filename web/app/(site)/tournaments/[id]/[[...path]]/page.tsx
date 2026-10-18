@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import PoolName from "@/components/PoolName";
 import PredictionStats from "@/components/PredictionStats";
+import ScrollRow from "@/components/ScrollRow";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
 import { getTournament, getTournamentsIndex } from "@/lib/data";
@@ -234,23 +235,23 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
   return (
     <section className="base-section">
       <div className="base-container px-4">
-        <nav className="grid gap-3 mb-8" aria-label="Events">
+        <nav className="grid grid-cols-1 gap-3 mb-8" aria-label="Events">
           {eventsByClass(t).map(({ className, events }) => (
-            // The disciplines as one group: on the class name's line if they all fit, else together on their own
-            <div key={className} className="flex flex-wrap items-center gap-2">
-              <span className="w-20 shrink-0 font-semibold">{className}</span>
-              <div className="flex flex-wrap gap-2">
+            // One line per class: the disciplines scroll sideways when they don't fit beside the class name
+            <div key={className} className="flex items-center gap-2">
+              <span className="w-16 sm:w-20 shrink-0 font-semibold">{className}</span>
+              <ScrollRow className="min-w-0 flex-1">
                 {events.map(({ i, e }) => (
                   <Link
                     key={i}
                     href={eventHref(t.cup2000Id, e)}
-                    className={`px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
+                    className={`shrink-0 px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                     aria-current={i === eventIndex ? "page" : undefined}
                   >
                     <PoolName pool={e.pool} />
                   </Link>
                 ))}
-              </div>
+              </ScrollRow>
             </div>
           ))}
         </nav>
