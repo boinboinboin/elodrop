@@ -161,7 +161,7 @@ async function Content() {
                   <p className="text-gray-700 mb-6">
                     {t.strength.tablePoints.toFixed(1)} expected table points · {t.strength.expected.toFixed(2)} matches won per tie · wins {percent(t.strength.win)} of ties
                   </p>
-                  <div className="grid gap-6 lg:grid-cols-2">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="bg-white p-4 md:p-6">
                       <h3 className="text-xl mb-1">Strongest lineup</h3>
                       <p className="text-sm text-gray-600 mb-4">With the chance of winning each match against an average Eliteserien opponent</p>

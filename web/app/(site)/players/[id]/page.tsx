@@ -4,11 +4,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
 import PoolName from "@/components/PoolName";
 import { WeekChange } from "@/components/RankMovement";
+import SeasonLabel from "@/components/SeasonLabel";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getMeta, getPlayer, getRankings } from "@/lib/data";
@@ -149,7 +150,7 @@ function AllDisciplines({ player }: { player: Player }) {
   if (ratingSeries.length < 2 && !rankSeries.length) return null;
 
   // One column per discipline (MS, WS, ... on phones); if still too wide, it scrolls inside the box
-  const seasonTable = (series: typeof ratingSeries, cell: (row: SeasonRow | undefined) => string) => (
+  const seasonTable = (series: typeof ratingSeries, cell: (row: SeasonRow | undefined) => ReactNode) => (
     <div className="overflow-x-auto">
       <table className="mt-2 text-left">
         <thead className="text-sm text-gray-600">
@@ -165,7 +166,7 @@ function AllDisciplines({ player }: { player: Player }) {
         <tbody className="text-sm sm:text-base">
           {rows.map(([season, byPool]) => (
             <tr key={season}>
-              <td className="py-1 pr-3 sm:pr-6 whitespace-nowrap">{season}/{season + 1}</td>
+              <td className="py-1 pr-3 sm:pr-6 whitespace-nowrap"><SeasonLabel season={season} /></td>
               {series.map((s) => (
                 <td key={s.pool} className="py-1 pr-3 sm:pr-6 text-right tabular-nums whitespace-nowrap">{cell(byPool[s.pool])}</td>
               ))}
@@ -204,7 +205,17 @@ function AllDisciplines({ player }: { player: Player }) {
             <LineChart series={rankSeries} label="Rank" rank className="relative h-72" />
             <details className="mt-4">
               <summary className="cursor-pointer text-gray-700 hover:text-black">Rank by season</summary>
-              {seasonTable(rankSeries, (row) => (row?.rank ? `#${row.rank}${row.ranked ? ` of ${num(row.ranked)}` : ""}` : "–"))}
+              {seasonTable(rankSeries, (row) =>
+                row?.rank ? (
+                  <>
+                    #{row.rank}
+                    {/* "of 1,754" on its own line on phones */}
+                    {row.ranked ? <span className="block sm:inline text-xs sm:text-sm text-gray-500"> of {num(row.ranked)}</span> : null}
+                  </>
+                ) : (
+                  "–"
+                ),
+              )}
               <p className="text-sm text-gray-600 mt-2">Rank at the end of each season (or the latest week for the current one).</p>
             </details>
           </div>

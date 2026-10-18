@@ -22,12 +22,12 @@ export default function MarginsTable({ mg, names, showPool }: { mg: Margins; nam
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full text-left text-sm sm:text-base">
           <thead className="text-sm text-gray-600 border-b border-gray-200">
             <tr>
               <th scope="col" className="py-2 pr-4 font-normal"><span className="sr-only">Measure</span></th>
               {sides.map((side) => (
-                <th key={side.i} scope="col" className="py-2 pr-4 font-normal text-right whitespace-nowrap">
+                <th key={side.i} scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right align-bottom [overflow-wrap:anywhere]">
                   <span className="inline-block w-3 h-1 rounded-full align-middle mr-1.5" style={{ background: COLORS[side.i] }} />
                   {side.name}
                 </th>
@@ -36,32 +36,32 @@ export default function MarginsTable({ mg, names, showPool }: { mg: Margins; nam
           </thead>
           <tbody className="tabular-nums">
             <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Matches won</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{side.s.wins}</td>)}
+              <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">Matches won</th>
+              {sides.map((side) => <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">{side.s.wins}</td>)}
             </tr>
             <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Sets won</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{mg.sets[side.i]}</td>)}
+              <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">Sets won</th>
+              {sides.map((side) => <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">{mg.sets[side.i]}</td>)}
             </tr>
             <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Points won</th>
+              <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">Points won</th>
               {sides.map((side) => (
-                <td key={side.i} className="py-2 pr-4 text-right">
+                <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">
                   {num(mg.points[side.i])}
                   {total > 0 && <span className="block text-sm text-gray-500">{((mg.points[side.i] / total) * 100).toFixed(1)}%</span>}
                 </td>
               ))}
             </tr>
             <tr className="border-b border-gray-100">
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Average winning margin</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-4 text-right">{side.s.average !== null ? `${side.s.average.toFixed(1)} points` : "–"}</td>)}
+              <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">Average winning margin</th>
+              {sides.map((side) => <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">{side.s.average !== null ? `${side.s.average.toFixed(1)} points` : "–"}</td>)}
             </tr>
             <tr>
-              <th scope="row" className="py-2 pr-4 font-normal text-gray-700">Biggest win</th>
+              <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">Biggest win</th>
               {sides.map((side) => {
                 const big = side.s.biggest;
                 return (
-                  <td key={side.i} className="py-2 pr-4 text-right">
+                  <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">
                     {big ? (
                       <>
                         {winnerScore(big, side.i === 1)}

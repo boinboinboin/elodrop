@@ -236,18 +236,21 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
       <div className="base-container px-4">
         <nav className="grid gap-3 mb-8" aria-label="Events">
           {eventsByClass(t).map(({ className, events }) => (
+            // The disciplines as one group: on the class name's line if they all fit, else together on their own
             <div key={className} className="flex flex-wrap items-center gap-2">
               <span className="w-20 shrink-0 font-semibold">{className}</span>
-              {events.map(({ i, e }) => (
-                <Link
-                  key={i}
-                  href={eventHref(t.cup2000Id, e)}
-                  className={`px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
-                  aria-current={i === eventIndex ? "page" : undefined}
-                >
-                  <PoolName pool={e.pool} />
-                </Link>
-              ))}
+              <div className="flex flex-wrap gap-2">
+                {events.map(({ i, e }) => (
+                  <Link
+                    key={i}
+                    href={eventHref(t.cup2000Id, e)}
+                    className={`px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
+                    aria-current={i === eventIndex ? "page" : undefined}
+                  >
+                    <PoolName pool={e.pool} />
+                  </Link>
+                ))}
+              </div>
             </div>
           ))}
         </nav>
@@ -337,32 +340,33 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
           </nav>
         )}
 
+        {/* On phones the numbers go under each entry's names (EntryRow); from tablet width up, the table */}
         <div className="bg-white overflow-x-auto">
           <table className="w-full text-left">
             <thead className="text-sm text-gray-600 border-b border-gray-200">
               <tr>
-                {numbered && <th scope="col" className="py-2 pl-4 pr-0 font-normal text-right">#</th>}
-                <th scope="col" className="py-2 px-4 font-normal">{event.pool === "men" || event.pool === "women" ? "Player" : "Pair"}</th>
-                {groupColumn && <th scope="col" className="py-2 px-4 font-normal text-right">Group</th>}
-                <th scope="col" className="py-2 px-4 font-normal text-right" title="Sum of the players' ratings in doubles">Rating</th>
-                {knockoutColumn && <th scope="col" className="py-2 px-4 font-normal text-right" title="Chance of reaching the knockout from the group: actual draw (fair draw)">Out of group</th>}
-                <th scope="col" className="py-2 px-4 font-normal text-right" title={`Chance of winning the event${single ? "" : ": actual draw (fair draw)"}`}>Wins event</th>
+                {numbered && <th scope="col" className="py-2 pl-2 sm:pl-4 pr-0 font-normal text-right">#</th>}
+                <th scope="col" className="py-2 px-2 sm:px-4 font-normal">{event.pool === "men" || event.pool === "women" ? "Player" : "Pair"}</th>
+                {groupColumn && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right">Group</th>}
+                <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="Sum of the players' ratings in doubles">Rating</th>
+                {knockoutColumn && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="Chance of reaching the knockout from the group: actual draw (fair draw)">Out of group</th>}
+                <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title={`Chance of winning the event${single ? "" : ": actual draw (fair draw)"}`}>Wins event</th>
                 {single ? (
-                  <th scope="col" className="py-2 px-4 font-normal text-right" title="Expected match wins">Wins <span className="whitespace-nowrap">of {max}</span></th>
+                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="Expected match wins">Wins <span className="whitespace-nowrap">of {max}</span></th>
                 ) : placement ? (
-                  <th scope="col" className="py-2 px-4 font-normal text-right" title="Expected final place: actual draw (fair draw)">Placement <span className="whitespace-nowrap">of {event.entries.length}</span></th>
+                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="Expected final place: actual draw (fair draw)">Placement <span className="whitespace-nowrap">of {event.entries.length}</span></th>
                 ) : (
-                  <th scope="col" className="py-2 px-4 font-normal text-right" title="Rounds expected: actual draw (fair draw)">Rounds {max ? <span className="whitespace-nowrap">of {max}</span> : null}</th>
+                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="Rounds expected: actual draw (fair draw)">Rounds {max ? <span className="whitespace-nowrap">of {max}</span> : null}</th>
                 )}
-                {!single && <th scope="col" className="py-2 px-4 font-normal">Luck</th>}
-                {played && <th scope="col" className="py-2 px-4 font-normal text-right">Result</th>}
+                {!single && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal">Luck</th>}
+                {played && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right">Result</th>}
               </tr>
             </thead>
             <tbody>
               {tableRows(event, order).map((row, i) =>
                 "header" in row ? (
                   <tr key={`h${i}`} className="bg-gray-50 border-b border-gray-200">
-                    <th scope="colgroup" colSpan={columns} className="py-2 px-4 text-left font-semibold">
+                    <th scope="colgroup" colSpan={columns} className="py-2 px-2 sm:px-4 text-left font-semibold">
                       {row.header} {row.detail && <span className="font-normal text-sm text-gray-600">· {row.detail}</span>}
                     </th>
                   </tr>
@@ -377,6 +381,14 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
     </section>
   );
 }
+
+/** A labelled value in an entry's numbers on phones */
+const Stat = ({ label, children }: { label: string; children: ReactNode }) => (
+  <div className="min-w-0">
+    <dt className="text-xs text-gray-500">{label}</dt>
+    <dd className="tabular-nums">{children}</dd>
+  </div>
+);
 
 const RANK_LABELS: Record<number, string> = { 1: "Won the group", 2: "2nd in the group", 3: "3rd in the group", 4: "4th in the group" };
 const Badge = ({ children, tone }: { children: ReactNode; tone: "green" | "red" | "gray" }) => (
@@ -416,70 +428,74 @@ function EntryRow({
   const marked = placement ? [1, 2, 3, 4] : (event.advance?.ranks ?? [1]);
   const r = e.result;
 
+  const expected = single ? { label: "Wins", ex: ex.wins.toFixed(2), fair: null } : placement ? { label: "Placement", ex: ex.place!.toFixed(2), fair: fx.place!.toFixed(2) } : { label: "Rounds", ex: ex.progress.toFixed(2), fair: fx.progress.toFixed(2) };
+  const luckValue = (
+    <>
+      <span className={`tabular-nums font-semibold ${luck >= 0 ? "text-green-700" : "text-red-700"}`} title={withdrawalLuck ? `Draw ${signed(e.luck!.draw!)}, withdrawals ${signed(e.luck!.withdrawals!)}` : undefined}>
+        {signed(luck)}
+        {withdrawalLuck && <span className="text-gray-500">*</span>}
+      </span>
+      {/* Diverging bar from the middle: right for a lucky draw, left for an unlucky one */}
+      <span className="mt-1 flex h-2" aria-hidden="true">
+        <span className="w-1/2 flex justify-end">{luck < 0 && <span className="h-2 rounded-l bg-red-600" style={{ width: `${((Math.abs(luck) / maxLuck) * 100).toFixed(1)}%` }} />}</span>
+        <span className="w-px bg-gray-400" />
+        <span className="w-1/2">{luck > 0 && <span className="block h-2 rounded-r bg-green-600" style={{ width: `${((luck / maxLuck) * 100).toFixed(1)}%` }} />}</span>
+      </span>
+    </>
+  );
+  // The result and how it compares with the expectation (two lines)
+  const result = r ? (
+    single ? (
+      <>
+        <span className={r.win ? "font-semibold" : ""}>{r.win ? "Won" : `${Math.round(r.wins)} ${Math.round(r.wins) === 1 ? "win" : "wins"}`}</span>
+        <span className={`block text-sm ${r.wins >= ex.wins ? "text-green-700" : "text-red-700"}`}>{signed(r.wins - ex.wins, 1)} wins</span>
+      </>
+    ) : placement ? (
+      <>
+        <span className={r.place === 1 ? "font-semibold" : ""}>{place(r.place!)}</span>
+        <span className={`block text-sm ${ex.place! - r.place! >= 0 ? "text-green-700" : "text-red-700"}`}>{signed(ex.place! - r.place!, 1)} places</span>
+      </>
+    ) : (
+      <>
+        <span className={r.win ? "font-semibold" : ""}>{Math.round(r.progress) === 0 ? (event.groups.length ? "group" : "first match") : (short[Math.round(r.progress) - 1] ?? Math.round(r.progress))}</span>
+        <span className={`block text-sm ${r.progress >= ex.progress ? "text-green-700" : "text-red-700"}`}>{signed(r.progress - ex.progress, 1)} rounds</span>
+      </>
+    )
+  ) : null;
+  // A value with the fair-draw one after it in brackets (on its own line in the table)
+  const withFair = (value: string, fair: string | null, inline: boolean) => (
+    <>
+      {value}
+      {fair !== null && <span className={`${inline ? "" : "block "}text-sm text-gray-500`}>{inline ? " " : ""}({fair})</span>}
+    </>
+  );
+  const cell = "hidden sm:table-cell py-2 px-4 text-right tabular-nums";
+
   return (
     <tr className="border-b border-gray-100 last:border-0 align-top">
-      {columns.numbered && <td className="py-2 pl-4 pr-0 text-right tabular-nums font-semibold">{standing}</td>}
-      <td className="py-2 px-4">
+      {columns.numbered && <td className="py-2 pl-2 sm:pl-4 pr-0 text-right tabular-nums font-semibold">{standing}</td>}
+      <td className="py-2 px-2 sm:px-4">
         <EntryNames e={e} clubs={clubs} />
         {e.withdrew && <Badge tone="red">Withdrew</Badge>}
         {order === "group" && played && rank && marked.includes(rank) && <Badge tone={rank === 1 ? "green" : "gray"}>{RANK_LABELS[rank] ?? `${rank}. in the group`}</Badge>}
+        {/* Phones: the numbers under the names, labelled */}
+        <dl className="sm:hidden mt-2 grid grid-cols-3 gap-x-3 gap-y-2 text-sm">
+          {columns.groupColumn && <Stat label="Group">{e.group ?? "–"}</Stat>}
+          <Stat label="Rating">{e.rating}</Stat>
+          {columns.knockoutColumn && <Stat label="Out of group">{withFair(pct(ex.knockout), pct(fx.knockout), true)}</Stat>}
+          <Stat label="Wins event">{withFair(pct(ex.win), single ? null : pct(fx.win), true)}</Stat>
+          <Stat label={expected.label}>{withFair(expected.ex, expected.fair, true)}</Stat>
+          {!single && <Stat label="Luck">{luckValue}</Stat>}
+          {played && result && <Stat label="Result">{result}</Stat>}
+        </dl>
       </td>
-      {columns.groupColumn && <td className="py-2 px-4 text-right tabular-nums">{e.group ?? "–"}</td>}
-      <td className="py-2 px-4 text-right tabular-nums">{e.rating}</td>
-      {columns.knockoutColumn && (
-        <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-          {pct(ex.knockout)} <span className="block text-sm text-gray-500">({pct(fx.knockout)})</span>
-        </td>
-      )}
-      <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-        {pct(ex.win)}
-        {!single && <span className="block text-sm text-gray-500">({pct(fx.win)})</span>}
-      </td>
-      {single ? (
-        <td className="py-2 px-4 text-right tabular-nums">{ex.wins.toFixed(2)}</td>
-      ) : placement ? (
-        <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-          {ex.place!.toFixed(2)} <span className="block text-sm text-gray-500">({fx.place!.toFixed(2)})</span>
-        </td>
-      ) : (
-        <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-          {ex.progress.toFixed(2)} <span className="block text-sm text-gray-500">({fx.progress.toFixed(2)})</span>
-        </td>
-      )}
-      {!single && (
-        <td className="py-2 px-4 min-w-40">
-          <span className={`tabular-nums font-semibold ${luck >= 0 ? "text-green-700" : "text-red-700"}`} title={withdrawalLuck ? `Draw ${signed(e.luck!.draw!)}, withdrawals ${signed(e.luck!.withdrawals!)}` : undefined}>
-            {signed(luck)}
-            {withdrawalLuck && <span className="text-gray-500">*</span>}
-          </span>
-          {/* Diverging bar from the middle: right for a lucky draw, left for an unlucky one */}
-          <span className="mt-1 flex h-2" aria-hidden="true">
-            <span className="w-1/2 flex justify-end">{luck < 0 && <span className="h-2 rounded-l bg-red-600" style={{ width: `${((Math.abs(luck) / maxLuck) * 100).toFixed(1)}%` }} />}</span>
-            <span className="w-px bg-gray-400" />
-            <span className="w-1/2">{luck > 0 && <span className="block h-2 rounded-r bg-green-600" style={{ width: `${((luck / maxLuck) * 100).toFixed(1)}%` }} />}</span>
-          </span>
-        </td>
-      )}
-      {played && r && (
-        <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-          {single ? (
-            <>
-              <span className={r.win ? "font-semibold" : ""}>{r.win ? "Won" : `${Math.round(r.wins)} ${Math.round(r.wins) === 1 ? "win" : "wins"}`}</span>
-              <span className={`block text-sm ${r.wins >= ex.wins ? "text-green-700" : "text-red-700"}`}>{signed(r.wins - ex.wins, 1)} wins</span>
-            </>
-          ) : placement ? (
-            <>
-              <span className={r.place === 1 ? "font-semibold" : ""}>{place(r.place!)}</span>
-              <span className={`block text-sm ${ex.place! - r.place! >= 0 ? "text-green-700" : "text-red-700"}`}>{signed(ex.place! - r.place!, 1)} places</span>
-            </>
-          ) : (
-            <>
-              <span className={r.win ? "font-semibold" : ""}>{Math.round(r.progress) === 0 ? (event.groups.length ? "group" : "first match") : (short[Math.round(r.progress) - 1] ?? Math.round(r.progress))}</span>
-              <span className={`block text-sm ${r.progress >= ex.progress ? "text-green-700" : "text-red-700"}`}>{signed(r.progress - ex.progress, 1)} rounds</span>
-            </>
-          )}
-        </td>
-      )}
+      {columns.groupColumn && <td className={cell}>{e.group ?? "–"}</td>}
+      <td className={cell}>{e.rating}</td>
+      {columns.knockoutColumn && <td className={`${cell} whitespace-nowrap`}>{withFair(pct(ex.knockout), pct(fx.knockout), false)}</td>}
+      <td className={`${cell} whitespace-nowrap`}>{withFair(pct(ex.win), single ? null : pct(fx.win), false)}</td>
+      <td className={`${cell} whitespace-nowrap`}>{withFair(expected.ex, expected.fair, false)}</td>
+      {!single && <td className="hidden sm:table-cell py-2 px-4 min-w-40">{luckValue}</td>}
+      {played && result && <td className={`${cell} whitespace-nowrap`}>{result}</td>}
     </tr>
   );
 }

@@ -8,6 +8,7 @@ import { clubRule } from "@/components/ClubRule";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import PoolName from "@/components/PoolName";
 import { WeekChange } from "@/components/RankMovement";
+import SeasonLabel from "@/components/SeasonLabel";
 import Tabs from "@/components/Tabs";
 import { getClubBySlug, getClubEntries } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubHistory, getClubPlayers, getClubsFile } from "@/lib/data";
@@ -136,18 +137,18 @@ function OverTime({ history }: { history: Partial<Record<Pool | "combined", Club
             <table className="mt-2 text-left">
               <thead className="text-sm text-gray-600">
                 <tr>
-                  <th scope="col" className="py-1 pr-6 font-normal">Season</th>
-                  {columns.map((c) => <th key={c.key} scope="col" className="py-1 pr-6 font-normal text-right">{c.label}</th>)}
+                  <th scope="col" className="py-1 pr-3 sm:pr-6 font-normal">Season</th>
+                  {columns.map((c) => <th key={c.key} scope="col" className="py-1 pr-3 sm:pr-6 font-normal text-right whitespace-nowrap">{c.key === "combined" ? c.label : <PoolName pool={c.key} />}</th>)}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-sm sm:text-base">
                 {[...seasons].sort(([a], [b]) => a - b).map(([season, row]) => (
                   <tr key={season}>
-                    <td className="py-1 pr-6">{season}/{season + 1}</td>
+                    <td className="py-1 pr-3 sm:pr-6 whitespace-nowrap"><SeasonLabel season={season} /></td>
                     {columns.map((c) => {
                       const v = row[c.key];
                       return (
-                        <td key={c.key} className="py-1 pr-6 text-right tabular-nums">
+                        <td key={c.key} className="py-1 pr-3 sm:pr-6 text-right tabular-nums">
                           {v == null ? <span className="text-gray-400">–</span> : c.key === "combined" ? `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(2)}` : v}
                         </td>
                       );
