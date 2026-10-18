@@ -628,54 +628,60 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   // Strongest clubs: weighted average of each club's best ranked players or pairs (CLUB_STRENGTH).
-  const clubs = {};
-  for (const [pool, list] of Object.entries(ratings)) {
-    const ranked = list.filter((p) => p.rank !== null);
-    const byClub = Map.groupBy(ranked.filter((p) => p.club), (p) => p.club); // list is best first
-    const replacement = replacementRating(pool, ranked);
-    clubs[pool] = [...byClub]
-      .map(([club, members]) => {
-        const { strength, filled } = clubStrength(pool, members, replacement);
+  // From the ranked players per pool, best first, each with their club. Also run on last week's
+  // players for the movement in the club rankings, so both weeks are ranked the same way.
+  function rankClubs(rankedByPool) {
+    const clubs = {};
+    for (const [pool, ranked] of Object.entries(rankedByPool)) {
+      const byClub = Map.groupBy(ranked.filter((p) => p.club), (p) => p.club); // best first
+      const replacement = replacementRating(pool, ranked);
+      clubs[pool] = [...byClub]
+        .map(([club, members]) => {
+          const { strength, filled } = clubStrength(pool, members, replacement);
+          return {
+            club,
+            strength: round(strength),
+            players: members.length,
+            // The players or pairs counted, best first
+            top: filled.map((slot) => slot.map(({ id, name, rating, gender }) => ({ id, name, rating, gender }))),
+          };
+        })
+        .sort((a, b) => b.strength - a.strength)
+        .map((c, i) => ({ rank: i + 1, ...c }));
+    }
+    // Combined, for clubs listed in all five pools: the average of a club's standard score in each pool
+    // (its strength minus the mean of those clubs, divided by their standard deviation). Ratings in
+    // different pools are separate scales with different spreads, so each pool counts equally this way.
+    const poolNames = Object.keys(clubs);
+    const byPool = Object.fromEntries(poolNames.map((pool) => [pool, new Map(clubs[pool].map((c) => [c.club, c]))]));
+    const listed = clubs.men.filter((m) => poolNames.every((pool) => byPool[pool].has(m.club))).map((m) => m.club);
+    const zScore = Object.fromEntries(
+      poolNames.map((pool) => {
+        const values = listed.map((club) => byPool[pool].get(club).strength);
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
+        return [pool, (strength) => (strength - mean) / sd];
+      })
+    );
+    clubs.combined = clubs.men
+      .filter((m) => listed.includes(m.club))
+      .map((m) => {
+        const entries = poolNames.map((pool) => [pool, byPool[pool].get(m.club)]);
+        // Ranked players across the pools, each counted once
+        const ids = new Set(poolNames.flatMap((pool) => rankedByPool[pool].filter((p) => p.club === m.club).map((p) => p.id)));
         return {
-          club,
-          strength: round(strength),
-          players: members.length,
-          // The players or pairs counted, best first
-          top: filled.map((slot) => slot.map(({ id, name, rating, gender }) => ({ id, name, rating, gender }))),
+          club: m.club,
+          score: Math.round((100 * entries.reduce((sum, [pool, c]) => sum + zScore[pool](c.strength), 0)) / entries.length) / 100,
+          players: ids.size,
+          pools: Object.fromEntries(entries.map(([pool, c]) => [pool, { rank: c.rank, strength: c.strength, players: c.players }])),
         };
       })
-      .sort((a, b) => b.strength - a.strength)
+      .sort((a, b) => b.score - a.score)
       .map((c, i) => ({ rank: i + 1, ...c }));
+    return clubs;
   }
-  // Combined, for clubs listed in all five pools: the average of a club's standard score in each pool
-  // (its strength minus the mean of those clubs, divided by their standard deviation). Ratings in
-  // different pools are separate scales with different spreads, so each pool counts equally this way.
-  const poolNames = Object.keys(clubs);
-  const byPool = Object.fromEntries(poolNames.map((pool) => [pool, new Map(clubs[pool].map((c) => [c.club, c]))]));
-  const listed = clubs.men.filter((m) => poolNames.every((pool) => byPool[pool].has(m.club))).map((m) => m.club);
-  const zScore = Object.fromEntries(
-    poolNames.map((pool) => {
-      const values = listed.map((club) => byPool[pool].get(club).strength);
-      const mean = values.reduce((a, b) => a + b, 0) / values.length;
-      const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
-      return [pool, (strength) => (strength - mean) / sd];
-    })
-  );
-  clubs.combined = clubs.men
-    .filter((m) => listed.includes(m.club))
-    .map((m) => {
-      const entries = poolNames.map((pool) => [pool, byPool[pool].get(m.club)]);
-      // Ranked players across the pools, each counted once
-      const ids = new Set(poolNames.flatMap((pool) => ratings[pool].filter((p) => p.rank !== null && p.club === m.club).map((p) => p.id)));
-      return {
-        club: m.club,
-        score: Math.round((100 * entries.reduce((sum, [pool, c]) => sum + zScore[pool](c.strength), 0)) / entries.length) / 100,
-        players: ids.size,
-        pools: Object.fromEntries(entries.map(([pool, c]) => [pool, { rank: c.rank, strength: c.strength, players: c.players }])),
-      };
-    })
-    .sort((a, b) => b.score - a.score)
-    .map((c, i) => ({ rank: i + 1, ...c }));
+  const clubs = rankClubs(Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, list.filter((p) => p.rank !== null)])));
+  const poolNames = Object.keys(clubs).filter((pool) => pool !== "combined");
 
   // Scores to review, newest first, as lines ready to copy into corrections.txt. A tournament where
   // more than a fifth of the scores break the set formats played its own format (e.g. Sandefjord SaBK
@@ -685,7 +691,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const ownFormat = new Set([...impossible].filter(([source, list]) => list.length > 0.2 * checked.get(source)).map(([source]) => source));
   const review = suspicious.filter((r) => !(r.reason.startsWith("impossible") && ownFormat.has(sourceOf(r)))).sort((a, b) => b.day.localeCompare(a.day));
   writeFileSync(`${DIR}data/suspicious-scores.txt`, suspiciousReport(review));
-  writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
 
   // Club history: each club's strength (the same CLUB_STRENGTH as the club ranking) at the end
   // of every week, from the ranked players who played for it at the time. A player counts for a
@@ -708,11 +713,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const clubHistory = new Map(); // club -> { pool: { strength: [], rank: [] } }
   const clubCounts = {}; // pool -> clubs with a strength per week
   const rankCounts = {}; // pool -> ranked players per week (mixed doubles: per gender)
+  const lastWeekActive = {}; // pool -> the active players at the end of last week, with their rating then
   for (const [pool, map] of Object.entries(players)) {
     // week -> club -> [{ rating, gender }]
     const byWeek = Array.from({ length: weekCount }, () => new Map());
     // week -> every active player, for the weekly national ranks
     const activeByWeek = Array.from({ length: weekCount }, () => []);
+    lastWeekActive[pool] = activeByWeek[weekCount - 2] ?? [];
     for (const p of map.values()) {
       const offset = weekIndex(p.firstWeek);
       const playedWeeks = [...new Set(p.log.map((m) => weekIndex(m.day)))].sort((a, b) => a - b);
@@ -837,6 +844,42 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     history.combined.strength[now] = c.score;
     history.combined.rank[now] = c.rank;
   }
+
+  // Since last week, for the rankings: each ranked player's and club's rank at the end of the week
+  // before the current one (null if they weren't ranked then), and the rating (club: strength)
+  // gained or lost since then (null for players who started this week)
+  for (const [pool, map] of Object.entries(players)) {
+    for (const entry of ratings[pool]) {
+      if (entry.rank === null) continue;
+      const p = map.get(entry.id);
+      const week = now - 1 - weekIndex(p.firstWeek);
+      entry.previousRank = p.ranks?.[week] ?? null;
+      // A week without matches keeps the last recorded rating (as for the weekly ranks)
+      const before = week < 0 ? null : (p.weekly[week] ?? p.weekly.at(-1) ?? null);
+      // Weekly ratings are the exact rating rounded, so compare with it the same way (not the
+      // entry's rating, already rounded to a decimal)
+      entry.ratingChange = before === null ? null : Math.round(p.rating) - before;
+    }
+  }
+  // Clubs: last week's club ranking made the same way as this week's (each player's registered club,
+  // the ranked players then with their rating then), not from the club history, which follows the
+  // club played for
+  const lastWeek = rankClubs(
+    Object.fromEntries(
+      Object.entries(lastWeekActive).map(([pool, list]) => [
+        pool,
+        list.map(({ p, rating }) => ({ id: p.id, name: p.name, rating, gender: genderOf(p.id), club: clubOf(p) })).sort((a, b) => b.rating - a.rating),
+      ]),
+    ),
+  );
+  for (const [pool, ranked] of Object.entries(clubs)) {
+    const before = new Map(lastWeek[pool].map((c) => [c.club, c]));
+    for (const c of ranked) {
+      c.previousRank = before.get(c.club)?.rank ?? null;
+      if (pool !== "combined") c.strengthChange = before.has(c.club) ? Math.round(c.strength - before.get(c.club).strength) : null;
+    }
+  }
+  writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
 
   // Per club file, keyed by NBF club id (clubs no longer in the club list have no club page).
   // Each pool keeps only the weeks from its first to its last value: `from` is that first week's

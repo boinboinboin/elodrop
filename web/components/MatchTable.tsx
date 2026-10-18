@@ -89,28 +89,35 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
           </div>
         )}
       </div>
-      <div className="overflow-x-auto">
+      {/* Fits a phone: there the win chance goes under the score and the match key is left out. Clip,
+          not scroll, so the header can stick to the top of the page while scrolling through matches. */}
+      <div className="overflow-x-clip">
         <table className="w-full text-left">
-          <thead className="text-sm text-gray-600 border-b border-gray-200">
+          <thead className="sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
             <tr>
-              <th scope="col" className="py-2 pr-4 font-normal">Date</th>
-              <th scope="col" className="py-2 pr-4 font-normal">{doubles ? "Opponents" : "Opponent"}</th>
-              <th scope="col" className="py-2 pr-4 font-normal">Result</th>
-              <th scope="col" className="py-2 pr-4 font-normal text-right" title="Chance of winning before the match">Win chance</th>
+              <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">Date</th>
+              <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">{doubles ? "Opponents" : "Opponent"}</th>
+              <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">
+                Result<span className="sm:hidden" title="Chance of winning before the match">, %</span>
+              </th>
+              <th scope="col" className="py-2 pr-4 font-normal text-right hidden sm:table-cell" title="Chance of winning before the match">Win chance</th>
               <th scope="col" className="py-2 font-normal text-right" title="Rating after the match">Rating</th>
             </tr>
           </thead>
           <tbody>
             {shown.map(({ m, index }) => {
               const chance = Math.round(m.winChance * 100);
+              const chanceText = `${chance > 99 ? ">99" : chance < 1 ? "<1" : chance}%`;
               const href = tournamentHref(m, tournamentLinks, pool);
               return (
                 <tr key={`${m.key ?? m.day}-${index}`} className="border-b border-gray-100 last:border-0 align-top">
-                  {/* On small screens the year goes on its own line */}
-                  <td className="py-2 pr-4 tabular-nums">
-                    <span className="whitespace-nowrap">{date(m.day, "dayMonth")}</span> <span className="block sm:inline">{m.day.slice(0, 4)}</span>
+                  {/* Keeping the column narrow: on phones day, month and year each get a line, up to large
+                      screens the year gets its own line ("18 Sep" / "2026"), and from there it's one line */}
+                  <td className="py-2 pr-2 sm:pr-4 tabular-nums sm:whitespace-nowrap">
+                    <span className="block sm:inline">{date(m.day, "dayOnly")}</span> <span className="block sm:inline">{date(m.day, "monthShort")}</span>{" "}
+                    <span className="block lg:inline">{m.day.slice(0, 4)}</span>
                   </td>
-                  <td className="py-2 pr-4">
+                  <td className="py-2 pr-2 sm:pr-4 break-words">
                     {m.opponents.map((o, i) => (
                       <span key={o.id}>
                         <Link href={`/players/${o.id}`} className="hover:text-blue-600">{o.name}</Link>{" "}
@@ -133,10 +140,10 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                     )}
                     {m.key && (
                       // Match key for pipeline/corrections.txt; one click selects all of it for copying
-                      <code className="block text-xs text-gray-400 select-all" title="Match key, for corrections">{m.key}</code>
+                      <code className="hidden sm:block text-xs text-gray-400 select-all" title="Match key, for corrections">{m.key}</code>
                     )}
                   </td>
-                  <td className="py-2 pr-4 whitespace-nowrap">
+                  <td className="py-2 pr-2 sm:pr-4 whitespace-nowrap">
                     {m.result === 1 ? <span className="font-semibold text-green-700">Won</span> : m.result === 0 ? <span className="font-semibold text-red-700">Lost</span> : <span className="font-semibold">Draw</span>}
                     {showMargin && m.margin != null && (
                       <span className="text-sm text-gray-600 tabular-nums" title="Point margin"> {m.margin > 0 ? "+" : m.margin < 0 ? "−" : "±"}{Math.abs(m.margin)}</span>
@@ -150,8 +157,13 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                         </span>
                       ))}
                     </span>
+                    {/* Just the number on phones, so it's no wider than a set score */}
+                    <span className="block text-sm text-gray-500 tabular-nums sm:hidden" title="Chance of winning before the match">
+                      {chanceText}
+                      <span className="sr-only"> chance of winning</span>
+                    </span>
                   </td>
-                  <td className="py-2 pr-4 text-right tabular-nums">{chance > 99 ? ">99" : chance < 1 ? "<1" : chance}%</td>
+                  <td className="py-2 pr-4 text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
                   <td className="py-2 text-right tabular-nums whitespace-nowrap">
                     {Math.round(m.rating + m.change)}
                     <span className={`block text-sm ${m.change >= 0 ? "text-green-700" : "text-red-700"}`}>{signed(m.change, 1).replace("±", "+")}</span>

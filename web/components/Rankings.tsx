@@ -4,9 +4,10 @@
 // link to the page with all of them.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PoolName from "@/components/PoolName";
 import RankingTable, { type RankingRow } from "@/components/RankingTable";
 import { getClubMap } from "@/lib/clubs";
-import { POOLS, POOL_KEYS, getRankings } from "@/lib/data";
+import { POOL_KEYS, getRankings } from "@/lib/data";
 import { num } from "@/lib/format";
 import { RANKING_LISTS, type RankingList, rankingHref } from "@/lib/rankings";
 import type { Gender } from "@/lib/types";
@@ -35,7 +36,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
                 className={`px-4 py-2 border border-black transition-colors duration-200 ${key === pool ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                 aria-current={key === pool ? "page" : undefined}
               >
-                {POOLS[key]}
+                <PoolName pool={key} />
               </Link>
             ))}
           </nav>
@@ -76,7 +77,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
           <p>No ratings yet: run the pipeline (pipeline/rate.mjs and pipeline/export.mjs).</p>
         ) : (
           <RankingTable
-            rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.plusMinus, p.matches, p.lastPlayed])}
+            rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
             clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
             summary={
               !showInactive

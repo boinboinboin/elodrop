@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { clubRule } from "@/components/ClubRule";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
+import PoolName from "@/components/PoolName";
+import { WeekChange } from "@/components/RankMovement";
 import Tabs from "@/components/Tabs";
 import { getClubBySlug, getClubEntries } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubHistory, getClubPlayers, getClubsFile } from "@/lib/data";
@@ -81,7 +83,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
             param="discipline"
             tabs={POOL_KEYS.map((pool, i) => ({
               id: pool,
-              label: POOLS[pool],
+              label: <PoolName pool={pool} />,
               content: <Discipline pool={pool} entry={entry} history={history[pool] ?? null} file={file} players={players[i]} />,
             }))}
           />
@@ -220,7 +222,8 @@ function Discipline({ pool, entry, history, file, players }: { pool: Pool; entry
                 <tr>
                   <th scope="col" className="py-3 px-4 font-normal text-right w-16">#</th>
                   <th scope="col" className="py-3 px-4 font-normal">Player</th>
-                  <th scope="col" className="py-3 px-4 font-normal text-right">Rating</th>
+                  <th scope="col" className="py-3 pl-4 pr-1.5 font-normal text-right">Rating</th>
+                  <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Change since last week</span></th>
                   <th scope="col" className="py-3 px-4 font-normal text-right hidden sm:table-cell">Matches</th>
                 </tr>
               </thead>
@@ -232,9 +235,8 @@ function Discipline({ pool, entry, history, file, players }: { pool: Pool; entry
                       <Link href={`/players/${p.id}`} className="hover:text-blue-600">{p.name}</Link>
                       {pool === "mixedDoubles" && <span className="text-sm text-gray-600"> {p.gender === "K" ? "woman" : "man"}</span>}
                     </td>
-                    <td className="py-3 px-4 text-right tabular-nums whitespace-nowrap">
-                      {Math.round(p.rating)} <span className="text-sm text-gray-500" title="95% range">±{p.plusMinus}</span>
-                    </td>
+                    <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(p.rating)}</td>
+                    <td className="py-3 pr-4 whitespace-nowrap"><WeekChange change={p.ratingChange} /></td>
                     <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{num(p.matches)}</td>
                   </tr>
                 ))}

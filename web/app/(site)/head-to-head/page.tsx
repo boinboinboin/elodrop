@@ -12,6 +12,7 @@ import HeadToHeadSwitch from "@/components/HeadToHeadSwitch";
 import MarginsTable from "@/components/MarginsTable";
 import MatchTable from "@/components/MatchTable";
 import PlayerPicker from "@/components/PlayerPicker";
+import PoolName from "@/components/PoolName";
 import SideRating from "@/components/SideRating";
 import Tabs from "@/components/Tabs";
 import Team from "@/components/Team";
@@ -128,7 +129,7 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record
               Current ratings in each discipline both play, and {a.name}&apos;s chance of winning against {b.name}. Singles and men&apos;s or women&apos;s doubles are only compared between players of the same gender. In doubles, the chance is with equally rated partners: a pair&apos;s rating is the sum of
               its players&apos;.
             </p>
-            <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <PoolComparison pool={pool} p={p} a={a} b={b} showMargins={pools.length > 1} /> }))} />
+            <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison pool={pool} p={p} a={a} b={b} showMargins={pools.length > 1} /> }))} />
           </div>
         </section>
       )}
@@ -162,7 +163,7 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record
 
       {(h2h.meetings.length > 0 || h2h.together.length > 0) && (
         <section className="base-section">
-          <div className="base-container px-4 grid gap-6">
+          <div className="base-container px-4 grid grid-cols-1 gap-6">
             {h2h.meetings.length > 0 && <MatchTable title="Matches against each other" subtitle={`From ${a.name}'s side, newest first`} matches={h2h.meetings} limit={20} showMargin tournamentLinks={links} />}
             {h2h.together.length > 0 && <MatchTable title="Together as partners" subtitle={`From ${a.name}'s side, newest first`} matches={h2h.together} limit={20} tournamentLinks={links} />}
           </div>
@@ -185,7 +186,7 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
           <dl key={i} className={i === 1 ? "text-right" : ""}>
             <dt className="text-sm text-gray-600">{[a, b][i].name}</dt>
             <dd className="text-3xl font-semibold tabular-nums">
-              {Math.round(side.rating)} <span className="text-base font-normal text-gray-500" title="95% range">±{side.plusMinus}</span>
+              {Math.round(side.rating)}
             </dd>
             <dd className="text-sm text-gray-600">
               {side.rank ? `#${side.rank}${pool === "mixedDoubles" ? ` among ${side.gender === "K" ? "women" : "men"}` : ""}` : "Not ranked"} · peak {Math.round(side.peak)}

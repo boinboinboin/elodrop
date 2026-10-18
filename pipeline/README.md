@@ -239,7 +239,7 @@ The grace period covers the summer break: the season runs from about September t
 
 ## Rating uncertainty
 
-Every rating comes with a $\pm$ range showing how reliable it is, based on the [Glicko](https://en.wikipedia.org/wiki/Glicko_rating_system) rating deviation $RD$. The range is $\pm 2 \cdot RD$, so the player's true level is within it with about 95% probability. The $RD$ is shown alongside the rating. In singles it does not change how ratings move; in doubles it decides how a side's rating change is shared between the partners.
+Every rating comes with a $\pm$ range showing how reliable it is, based on the [Glicko](https://en.wikipedia.org/wiki/Glicko_rating_system) rating deviation $RD$. The range is $\pm 2 \cdot RD$, so the player's true level is within it with about 95% probability. It is in the data (`plusMinus`) but no longer shown on the site, where the rating gained or lost since last week took its place. In singles it does not change how ratings move; in doubles it decides how a side's rating change is shared between the partners.
 
 New players start at $RD = 260$ ($\pm 520$), or $130$ in doubles (see below). Time without playing increases it:
 
@@ -272,6 +272,10 @@ With the singles maximum, doubles ranges were about 30% too wide.
 Ranking lists only include players who have played in the last 12 months, with time during Covid-19 counting slower (see [Covid-19 period adjustment](#covid-19-period-adjustment)). Inactive players keep their rating and history, and reappear in the rankings as soon as they play again. The rankings page can show them too (without a rank) with "Show inactive players": the 500 best of them, with a link to a page with everyone. Each list is its own page (`/` for men's singles, `/rankings/<pool>`, `/rankings/<pool>/inactive` and `/rankings/<pool>/inactive/all`; mixed doubles women at `mixedDoubles-women`), as are the strongest clubs (`/clubs` combined, `/clubs/strongest/<pool>`), so every page can be cached until the next data update.
 
 The club shown for a player is their club registered on badmintonportalen. Players no longer in the register show the club of their last tournament, or otherwise the club of their last league team. League team names such as "Kristiansand 2" are team numbers, not clubs.
+
+### Since last week
+
+The rankings show how each ranked player and club has moved since the end of last week (the week before the current one, Monday to Sunday): a green ▲ with the places gained, a red ▼ with the places lost, – for no change, and a blue dot with "new" for one who wasn't ranked then. Beside each rating is the rating gained or lost since then (from the weekly rating history; a week without matches keeps the rating it ended on), and beside each club's strength the strength gained or lost. Last week's club ranking is made the same way as the current one, from each player's registered club and the ranked players' ratings at the end of last week, so a club only moves through results and players becoming active or inactive, not through the club history (which follows the club played for). In `data/ratings.json`: `previousRank` and `ratingChange` on the ranked players, `previousRank` and `strengthChange` on the clubs.
 
 ### Men's and women's disciplines rank their own gender
 

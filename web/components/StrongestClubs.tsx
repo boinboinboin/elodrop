@@ -1,8 +1,11 @@
 // Strongest clubs in one pool, or combined over all five: the average rating of each club's best
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
-// /clubs/strongest/<pool>.
+// /clubs/strongest/<pool>. The table can be sorted by ranked players (components/SortableTable).
 import Link from "next/link";
 import { clubRule } from "@/components/ClubRule";
+import PoolName from "@/components/PoolName";
+import RankMovement, { WeekChange } from "@/components/RankMovement";
+import SortableTable from "@/components/SortableTable";
 import { ClubLogo } from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubsFile } from "@/lib/data";
@@ -41,20 +44,23 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                 className={`px-4 py-2 border border-black transition-colors duration-200 ${key === pool ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                 aria-current={key === pool ? "page" : undefined}
               >
-                {TABS[key]}
+                {key === "combined" ? TABS.combined : <PoolName pool={key} />}
               </Link>
             ))}
           </nav>
           {clubs.length === 0 ? (
             <p>No clubs yet: run the pipeline.</p>
           ) : (
-            <div className="bg-white overflow-x-auto">
-              <table className="w-full text-left">
-                <thead className="text-sm text-gray-600 border-b border-gray-200">
-                  <tr>
-                    <th scope="col" className="py-3 px-4 font-normal text-right w-16">#</th>
+            <div className="bg-white overflow-x-clip">
+              {/* clip, not auto: a scrolling box would keep the sticky header from sticking to the page (narrow screens hide the wide columns) */}
+              <SortableTable
+                head={
+                  <>
+                    <th scope="col" className="py-3 pl-4 pr-2 font-normal text-right w-16">#</th>
+                    <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Since last week</span></th>
                     <th scope="col" className="py-3 px-4 font-normal">Club</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right">{combined ? "Score" : "Strength"}</th>
+                    <th scope="col" className="py-3 pl-4 pr-1.5 font-normal text-right">{combined ? "Score" : "Strength"}</th>
+                    <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Change since last week</span></th>
                     {combined ? (
                       POOL_KEYS.map((key) => (
                         <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{POOLS[key]}</th>
@@ -62,24 +68,29 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                     ) : (
                       <th scope="col" className="py-3 px-4 font-normal hidden md:table-cell">{rule?.pairs ? "Best pairs" : "Best players"}</th>
                     )}
-                    <th scope="col" className="py-3 px-4 font-normal text-right hidden sm:table-cell">Ranked players</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clubs.map((club) => {
+                  </>
+                }
+                sortLabel="Ranked players"
+                sortClassName="py-3 px-4 font-normal text-right hidden sm:table-cell"
+                rows={clubs.map((club) => {
                     const entry = entries[club.club];
-                    return (
-                      <tr key={club.club} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 align-top">
-                        <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{club.rank}</td>
+                    return {
+                      key: club.club,
+                      value: club.players,
+                      row: (
+                        <tr key={club.club} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 align-top">
+                        <td className="py-3 pl-4 pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>
+                        <td className="py-3 pr-4 text-sm"><RankMovement rank={club.rank} previous={club.previousRank} /></td>
                         <td className="py-3 px-4">
                           <span className="flex items-center gap-3">
                             <ClubLogo name={club.club} clubs={entries} size={8} />
                             {entry ? <Link href={`/clubs/${entry.slug}`} className="hover:text-blue-600">{club.club}</Link> : club.club}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-right tabular-nums">
+                        <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">
                           {"score" in club ? `${club.score > 0 ? "+" : ""}${club.score.toFixed(2)}` : Math.round(club.strength)}
                         </td>
+                        <td className="py-3 pr-4 whitespace-nowrap">{"strengthChange" in club && <WeekChange change={club.strengthChange} what="strength" />}</td>
                         {"pools" in club ? (
                           POOL_KEYS.map((key) => {
                             const c = club.pools[key];
@@ -108,10 +119,10 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                         )}
                         <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{club.players}</td>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                    ),
+                    };
+                })}
+              />
             </div>
           )}
         </div>
