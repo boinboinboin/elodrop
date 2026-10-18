@@ -40,7 +40,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
 
       <div className="bg-white overflow-x-clip">
         {/* clip, not auto: a scrolling box would keep the sticky header from sticking to the page (narrow screens hide the wide columns) */}
-        <table className="w-full text-left">
+        <table className="w-full text-left" data-sorted={byMatches || undefined}>
           <thead className="sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
             <tr>
               <th scope="col" className="py-3 pl-4 pr-2 font-normal text-right w-16" aria-sort={byMatches ? "none" : "ascending"}>#</th>

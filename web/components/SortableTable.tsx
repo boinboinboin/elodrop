@@ -19,7 +19,8 @@ export default function SortableTable({ head, sortLabel, sortClassName, rows }: 
   // Most first; equal ones keep their order
   const shown = sorted ? rows.map((r, i) => ({ r, i })).sort((a, b) => b.r.value - a.r.value || a.i - b.i).map(({ r }) => r) : rows;
   return (
-    <table className="w-full text-left">
+    // data-sorted hides the change since last week (components/RankMovement), which is about the ranking order
+    <table className="w-full text-left" data-sorted={sorted || undefined}>
       <thead className="sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
         <tr>
           {head}
