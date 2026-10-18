@@ -5,6 +5,9 @@
 + /ranking/**
 + /tournaments/**
 + /upcoming/raw/**
+# The tournaments' draw analyses: a nightly run only redoes the upcoming ones (upcoming.mjs), so
+# the played ones must be kept from earlier runs to stay in the list
++ /upcoming/*.json
 + /tournaments.json
 + /players.json
 + /clubs.json
