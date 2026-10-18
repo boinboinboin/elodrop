@@ -10,8 +10,8 @@ name: Pipeline
 
 on:
   schedule:
-    - cron: "15 3 * * 1-6" # nightly, 03:15 UTC
-    - cron: "15 3 * * 0" # Sunday: also the whole season's tournament draws
+    - cron: "15 1 * * 1-6" # nightly, 01:15 UTC (03:15 Norwegian summer time, 02:15 winter time)
+    - cron: "15 1 * * 0" # Sunday: also the whole season's tournament draws
   workflow_dispatch:
     inputs:
       full:
@@ -57,7 +57,7 @@ jobs:
         run: |
           month=$(date -u +%-m); year=$(date -u +%Y)
           echo "season=$(( month >= 7 ? year : year - 1 ))" >> "$GITHUB_OUTPUT"
-          if [ "${{ github.event.schedule }}" = "15 3 * * 0" ] || [ "${{ inputs.full }}" = "true" ]; then echo "full=true" >> "$GITHUB_OUTPUT"; fi
+          if [ "${{ github.event.schedule }}" = "15 1 * * 0" ] || [ "${{ inputs.full }}" = "true" ]; then echo "full=true" >> "$GITHUB_OUTPUT"; fi
 
       # The raw inputs (fetched results, rankings, draws, player and club lists, and the
       # Eliteserien reviews, which are only recalculated by hand); everything else is rebuilt
