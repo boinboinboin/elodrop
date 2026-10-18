@@ -43,12 +43,12 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
         <table className="w-full text-left" data-sorted={byMatches || undefined}>
           <thead className="sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
             <tr>
-              <th scope="col" className="py-3 pl-4 pr-2 font-normal text-right w-16" aria-sort={byMatches ? "none" : "ascending"}>#</th>
-              <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Since last week</span></th>
-              <th scope="col" className="py-3 px-4 font-normal">Player</th>
+              <th scope="col" className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 font-normal text-right w-10 sm:w-16" aria-sort={byMatches ? "none" : "ascending"}>#</th>
+              <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">Since last week</span></th>
+              <th scope="col" className="py-3 px-1.5 sm:px-4 font-normal">Player</th>
               <th scope="col" className="py-3 px-4 font-normal hidden sm:table-cell">Club</th>
-              <th scope="col" className="py-3 pl-4 pr-1.5 font-normal text-right">Rating</th>
-              <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Change since last week</span></th>
+              <th scope="col" className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 font-normal text-right">Rating</th>
+              <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">Change since last week</span></th>
               <th scope="col" className="py-3 px-4 font-normal text-right hidden md:table-cell" aria-sort={byMatches ? "descending" : "none"}>
                 <SortButton active={byMatches} onClick={() => setByMatches(!byMatches)} label="Matches" />
               </th>
@@ -59,9 +59,9 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
               const entry = club ? clubs[club] : undefined;
               return (
                 <tr key={id} className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 ${rank ? "" : "text-gray-500"}`}>
-                  <td className="py-3 pl-4 pr-2 text-right text-gray-600 tabular-nums">{rank ?? "–"}</td>
-                  <td className="py-3 pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{rank ?? "–"}</td>
+                  <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
+                  <td className="py-3 px-1.5 sm:px-4">
                     <Link href={`/players/${id}`} prefetch={false} className="hover:text-blue-600">{name}</Link>
                     <span className="block text-sm text-gray-600 sm:hidden">{club}</span>
                     {!rank && <span className="block text-sm text-gray-500">Last played {date(lastPlayed, "monthYear")}</span>}
@@ -79,8 +79,8 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
                       ))}
                   </td>
                   {/* The rating right-aligned, the change since last week in its own column after it, so ratings line up */}
-                  <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
-                  <td className="py-3 pr-4 whitespace-nowrap">{rank !== null && <WeekChange change={change} />}</td>
+                  <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
+                  <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap">{rank !== null && <WeekChange change={change} />}</td>
                   <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden md:table-cell">{matches.toLocaleString("en-GB")}</td>
                 </tr>
               );
