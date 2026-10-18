@@ -185,7 +185,7 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
           <dl key={i} className={i === 1 ? "text-right" : ""}>
             <dt className="text-sm text-gray-600">{[a, b][i].name}</dt>
             <dd className="text-3xl font-semibold tabular-nums">
-              {Math.round(side.rating)} <span className="text-base font-normal text-gray-500" title="95% range">±{side.plusMinus}</span>
+              {Math.round(side.rating)}
             </dd>
             <dd className="text-sm text-gray-600">
               {side.rank ? `#${side.rank}${pool === "mixedDoubles" ? ` among ${side.gender === "K" ? "women" : "men"}` : ""}` : "Not ranked"} · peak {Math.round(side.peak)}

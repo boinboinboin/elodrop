@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
+import { WeekChange } from "@/components/RankMovement";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getMeta, getPlayer, getRankings } from "@/lib/data";
@@ -227,7 +228,7 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
         <div className="bg-white p-4">
           <dt className="text-sm text-gray-600">Rating</dt>
           <dd className="text-3xl font-semibold">
-            {Math.round(p.rating)} <span className="text-base font-normal text-gray-500" title="95% range">±{p.plusMinus}</span>
+            {Math.round(p.rating)} {p.rank !== null && <span className="text-base font-normal"><WeekChange change={p.ratingChange} /></span>}
           </dd>
         </div>
         <div className="bg-white p-4">

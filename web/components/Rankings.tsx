@@ -76,7 +76,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
           <p>No ratings yet: run the pipeline (pipeline/rate.mjs and pipeline/export.mjs).</p>
         ) : (
           <RankingTable
-            rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.plusMinus, p.matches, p.lastPlayed])}
+            rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
             clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
             summary={
               !showInactive

@@ -14,6 +14,10 @@ export interface PlayerRef {
 /** A player's standing in one pool (ratings.json pools[pool][i]) */
 export interface RatingEntry {
   rank: number | null;
+  /** The rank at the end of last week (null: not ranked then; missing in older exports) */
+  previousRank?: number | null;
+  /** The rating gained or lost since the end of last week (null: started this week) */
+  ratingChange?: number | null;
   id: number;
   rating: number;
   rd: number;
@@ -123,6 +127,10 @@ export interface ClubTopPlayer {
 
 export interface ClubStanding {
   rank: number;
+  /** The rank at the end of last week (null: not ranked then; missing in older exports) */
+  previousRank?: number | null;
+  /** The strength gained or lost since the end of last week */
+  strengthChange?: number | null;
   club: string;
   strength: number;
   players: number;
@@ -131,6 +139,7 @@ export interface ClubStanding {
 
 export interface CombinedClubStanding {
   rank: number;
+  previousRank?: number | null;
   club: string;
   score: number;
   players: number;
