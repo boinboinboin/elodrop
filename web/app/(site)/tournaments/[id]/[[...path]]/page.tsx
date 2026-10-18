@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
+import PoolName from "@/components/PoolName";
 import PredictionStats from "@/components/PredictionStats";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
@@ -244,7 +245,7 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
                   className={`px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                   aria-current={i === eventIndex ? "page" : undefined}
                 >
-                  {e.poolLabel}
+                  <PoolName pool={e.pool} />
                 </Link>
               ))}
             </div>

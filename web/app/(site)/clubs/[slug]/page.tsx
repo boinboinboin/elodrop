@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { clubRule } from "@/components/ClubRule";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
+import PoolName from "@/components/PoolName";
 import { WeekChange } from "@/components/RankMovement";
 import Tabs from "@/components/Tabs";
 import { getClubBySlug, getClubEntries } from "@/lib/clubs";
@@ -82,7 +83,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
             param="discipline"
             tabs={POOL_KEYS.map((pool, i) => ({
               id: pool,
-              label: POOLS[pool],
+              label: <PoolName pool={pool} />,
               content: <Discipline pool={pool} entry={entry} history={history[pool] ?? null} file={file} players={players[i]} />,
             }))}
           />

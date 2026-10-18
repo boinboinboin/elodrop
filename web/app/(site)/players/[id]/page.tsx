@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
+import PoolName from "@/components/PoolName";
 import { WeekChange } from "@/components/RankMovement";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
@@ -73,7 +74,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
           <Tabs
             label="Disciplines"
             param="discipline"
-            tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
+            tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
           />
         </div>
       </section>
@@ -147,23 +148,26 @@ function AllDisciplines({ player }: { player: Player }) {
   const rows = [...seasons].sort(([a], [b]) => a - b);
   if (ratingSeries.length < 2 && !rankSeries.length) return null;
 
+  // One column per discipline (MS, WS, ... on phones); if still too wide, it scrolls inside the box
   const seasonTable = (series: typeof ratingSeries, cell: (row: SeasonRow | undefined) => string) => (
     <div className="overflow-x-auto">
       <table className="mt-2 text-left">
         <thead className="text-sm text-gray-600">
           <tr>
-            <th scope="col" className="py-1 pr-6 font-normal">Season</th>
+            <th scope="col" className="py-1 pr-3 sm:pr-6 font-normal">Season</th>
             {series.map((s) => (
-              <th key={s.pool} scope="col" className="py-1 pr-6 font-normal text-right">{s.label}</th>
+              <th key={s.pool} scope="col" className="py-1 pr-3 sm:pr-6 font-normal text-right whitespace-nowrap">
+                <PoolName pool={s.pool} />
+              </th>
             ))}
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-sm sm:text-base">
           {rows.map(([season, byPool]) => (
             <tr key={season}>
-              <td className="py-1 pr-6">{season}/{season + 1}</td>
+              <td className="py-1 pr-3 sm:pr-6 whitespace-nowrap">{season}/{season + 1}</td>
               {series.map((s) => (
-                <td key={s.pool} className="py-1 pr-6 text-right tabular-nums whitespace-nowrap">{cell(byPool[s.pool])}</td>
+                <td key={s.pool} className="py-1 pr-3 sm:pr-6 text-right tabular-nums whitespace-nowrap">{cell(byPool[s.pool])}</td>
               ))}
             </tr>
           ))}
@@ -174,14 +178,15 @@ function AllDisciplines({ player }: { player: Player }) {
 
   return (
     <section className="base-section">
-      <div className="base-container px-4 grid gap-6">
+      {/* grid-cols-1: the column may shrink below the charts' measured width, so they fit a phone */}
+      <div className="base-container px-4 grid grid-cols-1 gap-6">
         {ratingSeries.length > 1 && (
           <div className="bg-white p-4 md:p-6">
             <h2 className="text-xl mb-1">Rating history</h2>
             <p className="text-sm text-gray-600 mb-4">
               Rating in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.
             </p>
-            <LineChart series={ratingSeries} label="Rating" />
+            <LineChart series={ratingSeries} label="Rating" className="relative h-72" />
             <details className="mt-4">
               <summary className="cursor-pointer text-gray-700 hover:text-black">Rating by season</summary>
               {seasonTable(ratingSeries, (row) => (row?.rating != null ? String(row.rating) : "–"))}
@@ -196,7 +201,7 @@ function AllDisciplines({ player }: { player: Player }) {
               National rank at the end of each week, among players who had played in the last 12 months; men&apos;s disciplines rank only men and women&apos;s only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
               logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.
             </p>
-            <LineChart series={rankSeries} label="Rank" rank />
+            <LineChart series={rankSeries} label="Rank" rank className="relative h-72" />
             <details className="mt-4">
               <summary className="cursor-pointer text-gray-700 hover:text-black">Rank by season</summary>
               {seasonTable(rankSeries, (row) => (row?.rank ? `#${row.rank}${row.ranked ? ` of ${num(row.ranked)}` : ""}` : "–"))}
@@ -295,7 +300,7 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
       )}
 
       {log && log.all.length > 0 && (
-        <div className="grid gap-6 mt-6">
+        <div className="grid grid-cols-1 gap-6 mt-6">
           <MatchTable
             title="Matches"
             // Only the newest are sent with the page; "show all" loads the rest

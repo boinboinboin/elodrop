@@ -88,7 +88,7 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
   const { width, height } = size;
   const ready = width > 0 && height > 0 && all.length > 0;
   const domain = rank ? logDomain(Math.min(...all), Math.max(...all)) : yDomain(Math.min(...all), Math.max(...all));
-  const plot = { left: MARGIN.left, right: width - MARGIN.right, top: MARGIN.top, bottom: height - MARGIN.bottom };
+  const plot = { left: MARGIN.left, right: width - (series.length === 1 ? MARGIN.right : MARGIN.rightWithoutLabel), top: MARGIN.top, bottom: height - MARGIN.bottom };
   const t0 = time(0);
   const t1 = time(weeks - 1);
   const x = (t: number) => plot.left + ((t - t0) / (t1 - t0 || 1)) * (plot.right - plot.left);

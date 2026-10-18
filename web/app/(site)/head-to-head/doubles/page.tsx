@@ -15,6 +15,7 @@ import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MarginsTable from "@/components/MarginsTable";
 import MatchTable from "@/components/MatchTable";
 import PlayerPicker from "@/components/PlayerPicker";
+import PoolName from "@/components/PoolName";
 import SideRating from "@/components/SideRating";
 import Tabs from "@/components/Tabs";
 import Team from "@/components/Team";
@@ -171,7 +172,7 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs:
               Current ratings and pair A&apos;s chance of winning against pair B. A pair plays at the sum of its players&apos; ratings, and pairs are compared in the discipline their genders put them
               in: two men&apos;s pairs in men&apos;s doubles, two mixed pairs in mixed doubles.
             </p>
-            <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: p.label, content: <PoolComparison p={p} h2h={h2h} names={names} showMargins={pools.length > 1} /> }))} />
+            <Tabs label="Disciplines" param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison p={p} h2h={h2h} names={names} showMargins={pools.length > 1} /> }))} />
           </div>
         </section>
       ) : h2h.crossover ? (

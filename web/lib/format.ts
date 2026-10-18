@@ -37,6 +37,7 @@ const DATE_FORMATS = {
   dayMonth: "d MMM", // 15 Oct
   monthYear: "MMMM yyyy", // October 2026
   month: "MMMM", // October
+  monthShort: "MMM", // Oct
   dayOnly: "d", // 15
 } as const;
 export type DateFormat = keyof typeof DATE_FORMATS;

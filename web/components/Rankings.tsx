@@ -4,9 +4,10 @@
 // link to the page with all of them.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PoolName from "@/components/PoolName";
 import RankingTable, { type RankingRow } from "@/components/RankingTable";
 import { getClubMap } from "@/lib/clubs";
-import { POOLS, POOL_KEYS, getRankings } from "@/lib/data";
+import { POOL_KEYS, getRankings } from "@/lib/data";
 import { num } from "@/lib/format";
 import { RANKING_LISTS, type RankingList, rankingHref } from "@/lib/rankings";
 import type { Gender } from "@/lib/types";
@@ -35,7 +36,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
                 className={`px-4 py-2 border border-black transition-colors duration-200 ${key === pool ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                 aria-current={key === pool ? "page" : undefined}
               >
-                {POOLS[key]}
+                <PoolName pool={key} />
               </Link>
             ))}
           </nav>

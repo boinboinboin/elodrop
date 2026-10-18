@@ -9,7 +9,9 @@ export const PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "
 export const COLORS = { series: PALETTE[0], grid: "#e7e5e4", axis: "#6b7280", text: "#111827", crosshair: "#9ca3af", surface: "#ffffff" };
 // Clubs past the eighth share a neutral "other" colour
 export const OTHER_COLOR = "#8a8984";
-export const MARGIN = { top: 12, right: 52, bottom: 28, left: 48 };
+// right: room for the value label at the end of a single line; with several lines (no end label)
+// only for the end dots and the last year label
+export const MARGIN = { top: 12, right: 52, rightWithoutLabel: 16, bottom: 28, left: 48 };
 
 /** "2,569", "1.23", or with `signed` "+1.23" / "−0.40" */
 export function formatNumber(value: number, decimals = 0, signed = false): string {
