@@ -85,18 +85,18 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record
       <section className="base-section">
         <div className="base-container px-4">
           {/* The two players and their record against each other */}
-          <div className="bg-white p-4 md:p-6 grid grid-cols-[1fr_auto_1fr] gap-4 items-center text-center">
+          <div className="bg-white p-4 md:p-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4 items-center text-center [overflow-wrap:anywhere]">
             {[a, b].map((player, i) => (
               <div key={player.id} className={i === 0 ? "order-1" : "order-3"}>
                 <span className="inline-block w-8 h-1 rounded-full mb-2" style={{ background: COLORS[i] }} />
-                <p className="text-2xl"><Link href={`/players/${player.id}`} className="hover:text-blue-600">{player.name}</Link></p>
+                <p className="text-lg sm:text-2xl"><Link href={`/players/${player.id}`} className="hover:text-blue-600">{player.name}</Link></p>
                 {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
               </div>
             ))}
-            <div className="order-2 px-2">
+            <div className="order-2 px-1 sm:px-2 max-w-28 sm:max-w-none">
               {record.matches ? (
                 <>
-                  <p className="text-5xl font-semibold tabular-nums">
+                  <p className="text-4xl sm:text-5xl font-semibold tabular-nums">
                     {record.wins}<span className="text-gray-400 mx-2">–</span>{record.losses}
                   </p>
                   <p className="text-sm text-gray-600">

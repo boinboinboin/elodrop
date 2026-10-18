@@ -56,11 +56,11 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
               <SortableTable
                 head={
                   <>
-                    <th scope="col" className="py-3 pl-4 pr-2 font-normal text-right w-16">#</th>
-                    <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Since last week</span></th>
-                    <th scope="col" className="py-3 px-4 font-normal">Club</th>
-                    <th scope="col" className="py-3 pl-4 pr-1.5 font-normal text-right">{combined ? "Score" : "Strength"}</th>
-                    <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">Change since last week</span></th>
+                    <th scope="col" className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 font-normal text-right w-10 sm:w-16">#</th>
+                    <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">Since last week</span></th>
+                    <th scope="col" className="py-3 px-1.5 sm:px-4 font-normal">Club</th>
+                    <th scope="col" className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 font-normal text-right">{combined ? "Score" : "Strength"}</th>
+                    <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">Change since last week</span></th>
                     {combined ? (
                       POOL_KEYS.map((key) => (
                         <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{POOLS[key]}</th>
@@ -79,18 +79,18 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                       value: club.players,
                       row: (
                         <tr key={club.club} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 align-top">
-                        <td className="py-3 pl-4 pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>
-                        <td className="py-3 pr-4 text-sm"><RankMovement rank={club.rank} previous={club.previousRank} /></td>
-                        <td className="py-3 px-4">
+                        <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>
+                        <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={club.rank} previous={club.previousRank} /></td>
+                        <td className="py-3 px-1.5 sm:px-4 [overflow-wrap:anywhere]">
                           <span className="flex items-center gap-3">
                             <ClubLogo name={club.club} clubs={entries} size={8} />
                             {entry ? <Link href={`/clubs/${entry.slug}`} className="hover:text-blue-600">{club.club}</Link> : club.club}
                           </span>
                         </td>
-                        <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">
+                        <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">
                           {"score" in club ? `${club.score > 0 ? "+" : ""}${club.score.toFixed(2)}` : Math.round(club.strength)}
                         </td>
-                        <td className="py-3 pr-4 whitespace-nowrap">{"strengthChange" in club && <WeekChange change={club.strengthChange} what="strength" />}</td>
+                        <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap">{"strengthChange" in club && <WeekChange change={club.strengthChange} what="strength" />}</td>
                         {"pools" in club ? (
                           POOL_KEYS.map((key) => {
                             const c = club.pools[key];

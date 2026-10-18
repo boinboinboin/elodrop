@@ -119,16 +119,16 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs:
       <section className="base-section">
         <div className="base-container px-4">
           {/* The two pairs, their record against each other and each pair's record together */}
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-2 md:gap-4 items-stretch text-center">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 md:gap-4 items-stretch text-center [overflow-wrap:anywhere]">
             {[h2h.a, h2h.b].map((pair, i) => (
-              <div key={i} className={`bg-white p-4 md:p-6 border-t-4 ${i === 0 ? "order-1" : "order-3"}`} style={{ borderTopColor: COLORS[i] }}>
+              <div key={i} className={`bg-white p-3 sm:p-4 md:p-6 border-t-4 ${i === 0 ? "order-1" : "order-3"}`} style={{ borderTopColor: COLORS[i] }}>
                 <p className="text-lg mb-3">
                   <PairLabel i={i} />
                   {h2h.kinds[i] && <span className="block text-sm text-gray-600">{capitalize(KINDS[h2h.kinds[i]!])}</span>}
                 </p>
                 {pair.map((player) => (
                   <div key={player.id} className="mb-2">
-                    <p className="text-2xl"><Link href={`/players/${player.id}`} className="hover:text-blue-600">{player.name}</Link></p>
+                    <p className="text-lg sm:text-2xl"><Link href={`/players/${player.id}`} className="hover:text-blue-600">{player.name}</Link></p>
                     {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
                   </div>
                 ))}
@@ -137,10 +137,10 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs:
                 </p>
               </div>
             ))}
-            <div className="order-2 bg-white px-2 md:px-6 py-4 flex flex-col justify-center">
+            <div className="order-2 bg-white px-2 md:px-6 py-4 flex flex-col justify-center max-w-28 sm:max-w-none">
               {record.matches ? (
                 <>
-                  <p className="text-5xl font-semibold tabular-nums">
+                  <p className="text-4xl sm:text-5xl font-semibold tabular-nums">
                     {record.wins}<span className="text-gray-400 mx-2">–</span>{record.losses}
                   </p>
                   <p className="text-sm text-gray-600">
