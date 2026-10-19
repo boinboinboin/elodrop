@@ -37,7 +37,9 @@ export const expectedScore = (ra: number, rb: number) => 1 / (1 + 10 ** ((rb - r
 
 async function load<T>(path: string): Promise<T | null> {
   "use cache";
-  cacheTag("elo-data");
+  // elo-data for everything, and one tag per area ("elo-data:tournaments" for tournaments/...), so a
+  // night that only brings new tournament draws refreshes just the pages that use them
+  cacheTag("elo-data", `elo-data:${path.split("/")[0].replace(/\.json$/, "")}`);
   cacheLife("days");
   const dir = process.env.DATA_DIR;
   if (dir) {

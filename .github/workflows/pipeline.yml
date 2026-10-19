@@ -1,7 +1,13 @@
-# Nightly: fetch new results (tournaments and team matches), the player register, the clubs and the
-# official ranking, rate, work out Eliteserien strengths and tournament draw luck, export the web
-# data to the data bucket and tell the site to refresh. Sundays also rescan the whole season's
-# tournament draws.
+# Nightly: fetch new results (tournaments and team matches), tournament draws, the player register,
+# the clubs and the official ranking; then rebuild only what's needed (fingerprint.mjs):
+#   - full: rate, Eliteserien strengths, draw luck, export everything, refresh the whole site. On
+#     Saturday, Sunday and Monday nights (the weekend's matches, and "since last week" in the
+#     rankings), on manual runs, and whenever results, the ranking, the register or the pipeline
+#     itself changed (results registered late, on any day, are picked up the next night).
+#   - draws: only new or changed tournament draws: rate (for the ratings before each tournament),
+#     analyse the draws, upload and refresh only the tournament pages.
+#   - none: nothing new: no uploads, and the site keeps its cached pages.
+# Sundays also rescan the whole season's tournament draws.
 #
 # Secrets: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (an R2 API token with read and
 # write on both buckets), REVALIDATE_SECRET (as on the site). Variables: SITE_URL (e.g.
@@ -14,7 +20,7 @@ on:
     - cron: "15 1 * * 0" # Sunday: also the whole season's tournament draws
   workflow_dispatch:
     inputs:
-      full:
+      rescan:
         description: "Also rescan the whole season's tournament draws"
         type: boolean
         default: false
@@ -52,21 +58,22 @@ jobs:
       - name: Install rclone
         run: sudo apt-get update -qq && sudo apt-get install -y -qq rclone
 
-      - name: Season and mode
+      - name: Season
         id: mode
         run: |
           month=$(date -u +%-m); year=$(date -u +%Y)
           echo "season=$(( month >= 7 ? year : year - 1 ))" >> "$GITHUB_OUTPUT"
-          if [ "${{ github.event.schedule }}" = "15 1 * * 0" ] || [ "${{ inputs.full }}" = "true" ]; then echo "full=true" >> "$GITHUB_OUTPUT"; fi
+          if [ "${{ github.event.schedule }}" = "15 1 * * 0" ] || [ "${{ inputs.rescan }}" = "true" ]; then echo "rescan=true" >> "$GITHUB_OUTPUT"; fi
 
-      # The raw inputs (fetched results, rankings, draws, player and club lists, and the
-      # Eliteserien reviews, which are only recalculated by hand); everything else is rebuilt
+      # The raw inputs (fetched results, rankings, draws, player and club lists, the Eliteserien
+      # reviews, which are only recalculated by hand, and the last build's fingerprint)
       - name: Download raw data
         run: rclone copy "$RAW" data --filter-from ../.github/raw-data.filter --transfers 32 --checkers 32 --fast-list
 
       - name: Fetch tournaments (badmintonportalen)
         run: node fetch-portalen.mjs --season ${{ steps.mode.outputs.season }}
 
+      # Groups still being played are fetched again every night, so late results come in
       - name: Fetch league ties
         run: node fetch-league.mjs --season ${{ steps.mode.outputs.season }}
 
@@ -78,33 +85,69 @@ jobs:
       - name: Fetch the current ranking
         run: node fetch-ranking.mjs 200${{ steps.mode.outputs.season }}
 
+      # Only downloaded here; analysed below if anything is rebuilt
+      - name: Fetch tournament draws (Cup2000)
+        run: node upcoming.mjs --fetch-only ${{ steps.mode.outputs.rescan == 'true' && format('--season {0}', steps.mode.outputs.season) || '' }}
+
+      # full, draws or none (see the top); the fingerprints are saved at the end, after a rebuild
+      - name: What to rebuild
+        id: build
+        run: |
+          node fingerprint.mjs > fingerprint.txt
+          now() { grep "^$1=" fingerprint.txt | cut -d= -f2; }
+          before() { grep "^$1=" data/build-fingerprint.txt 2>/dev/null | cut -d= -f2; }
+          weekday=$(date -u +%u) # 1 Monday … 7 Sunday
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$weekday" -ge 6 ] || [ "$weekday" -eq 1 ] || [ "$(now results)" != "$(before results)" ]; then mode=full
+          elif [ "$(now draws)" != "$(before draws)" ]; then mode=draws
+          else mode=none; fi
+          echo "Rebuild: $mode (results $(before results) -> $(now results), draws $(before draws) -> $(now draws))"
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+
       - name: Rate
+        if: steps.build.outputs.mode != 'none'
         run: node rate.mjs > /dev/null
 
       - name: Gender gap
+        if: steps.build.outputs.mode == 'full'
         run: node gender-gap.mjs
 
       - name: Eliteserien team strengths
+        if: steps.build.outputs.mode == 'full'
         run: node eliteserien.mjs > /dev/null
 
       - name: Tournament draws
-        run: node upcoming.mjs ${{ steps.mode.outputs.full == 'true' && format('--season {0}', steps.mode.outputs.season) || '' }}
+        if: steps.build.outputs.mode != 'none'
+        run: node upcoming.mjs --offline
 
       - name: Export the web data
+        if: steps.build.outputs.mode != 'none'
         run: node export.mjs
 
       - name: Upload raw data
+        if: steps.build.outputs.mode != 'none'
         run: rclone copy data "$RAW" --filter-from ../.github/raw-data.filter --checksum --transfers 32 --checkers 32 --fast-list
 
-      # --checksum: only files whose content changed are uploaded (R2 counts every write)
+      # --checksum: only files whose content changed are uploaded (R2 counts every write). A draws
+      # rebuild uploads only the tournaments, so the day's small changes in every player's rating
+      # history (decay, players dropping out of the ranking) wait for the next full rebuild.
       - name: Upload the web data
-        run: rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list
+        if: steps.build.outputs.mode != 'none'
+        run: |
+          if [ "${{ steps.build.outputs.mode }}" = "full" ]; then rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list
+          else rclone sync export/tournaments "$DATA/tournaments" --checksum --transfers 32 --checkers 32 --fast-list; fi
 
       # Fails unless the site answers that it revalidated: a redirect (elodrop.no -> www.elodrop.no)
-      # is followed, keeping the POST and the header (same site), instead of passing silently.
+      # is followed, keeping the POST and the header (same site), instead of passing silently. A
+      # draws rebuild refreshes only the pages using the tournaments' data.
       - name: Refresh the site
-        if: vars.SITE_URL != ''
+        if: steps.build.outputs.mode != 'none' && vars.SITE_URL != ''
         run: |
-          answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate")
+          tag=${{ steps.build.outputs.mode == 'full' && 'elo-data' || 'elo-data:tournaments' }}
+          answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate?tag=$tag")
           echo "$answer"
           echo "$answer" | grep -q '"revalidated":true'
+
+      # Last, so a failed rebuild is tried again the next night
+      - name: Save the fingerprint
+        if: steps.build.outputs.mode != 'none'
+        run: cp fingerprint.txt data/build-fingerprint.txt && rclone copyto data/build-fingerprint.txt "$RAW/build-fingerprint.txt"
