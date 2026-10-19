@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.5 (2026-10-19)
+
+- The upsets table fits phones: one player per line (club and rating change after the name, wrapping together), "beat" between the sides, and on phones the chance under the event instead of in a column of its own.
+
 ## v1.4.4 (2026-10-19)
 
 - The nightly pipeline only rebuilds what's needed: on nights with nothing new it stops after fetching (no uploads, the site keeps its cache), and a new tournament draw on a weekday updates just the tournament pages. Full rebuilds on Saturday, Sunday and Monday nights, and whenever results arrive, including team results registered late.

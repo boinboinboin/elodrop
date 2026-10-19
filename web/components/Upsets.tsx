@@ -95,25 +95,28 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
             <table className="w-full text-left">
               <thead className="text-sm text-gray-600 border-b border-gray-200">
                 <tr>
-                  <th scope="col" className="py-2 px-4 font-normal">Week</th>
-                  <th scope="col" className="py-2 px-4 font-normal">Upset</th>
-                  <th scope="col" className="py-2 px-4 font-normal text-right" title="The winner's chance of winning before the match">Chance</th>
+                  <th scope="col" className="py-2 pl-2 pr-1 sm:px-4 font-normal">Week</th>
+                  <th scope="col" className="py-2 px-2 sm:px-4 font-normal">Upset</th>
+                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title="The winner's chance of winning before the match">Chance</th>
                 </tr>
               </thead>
               <tbody>
                 {yearWeeks.map((w) => {
                   const u = w.matches[0];
                   const chance = Math.round(u.winChance * 100);
+                  const chanceText = `${chance < 1 ? "<1" : chance}%`;
                   return (
                     <tr key={w.week} className={`border-b border-gray-100 last:border-0 align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
-                      <td className="py-2 px-4 whitespace-nowrap"><Link href={`/upsets/${w.week}`} className="hover:text-blue-600">{date(w.week, "dayMonth")}</Link></td>
-                      <td className="py-2 px-4">
-                        {u.winners.map((p, i) => <span key={p.id}>{i > 0 && " / "}<UpsetName p={p} clubs={clubs} bold /></span>)}
-                        <span className="text-gray-600"> beat </span>
-                        {u.losers.map((p, i) => <span key={p.id}>{i > 0 && " / "}<UpsetName p={p} clubs={clubs} /></span>)}
-                        <span className="block text-sm text-gray-600">{u.score} · {POOLS[u.pool]} · {u.event}</span>
+                      <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap"><Link href={`/upsets/${w.week}`} className="hover:text-blue-600">{date(w.week, "dayMonth")}</Link></td>
+                      {/* One player per line, "beat" between the sides; on phones the chance under the event */}
+                      <td className="py-2 px-2 sm:px-4 [overflow-wrap:anywhere]">
+                        {u.winners.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} bold />)}
+                        <span className="block text-sm text-gray-600">beat</span>
+                        {u.losers.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} />)}
+                        <span className="block mt-1 text-sm text-gray-600">{u.score} · {POOLS[u.pool]} · {u.event}</span>
+                        <span className="sm:hidden block text-sm text-gray-600 tabular-nums"><strong className="text-gray-900">{chanceText}</strong> chance</span>
                       </td>
-                      <td className="py-2 px-4 text-right tabular-nums">{chance < 1 ? "<1" : chance}%</td>
+                      <td className="hidden sm:table-cell py-2 px-4 text-right tabular-nums">{chanceText}</td>
                     </tr>
                   );
                 })}
@@ -126,16 +129,25 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
   );
 }
 
-/** A player's name with their club's logo (if any) in front and its name after, and the rating gained or lost */
+/**
+ * A player on a line of their own: their club's logo (if any) and name, then the club and the
+ * rating gained or lost, which wrap together onto the next line when they don't fit
+ */
 function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-1 align-middle" title={p.club ?? undefined}>
-      <ClubLogo name={p.club} clubs={clubs} />
-      <Link href={`/players/${p.id}`} className={`${bold ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>
-      {p.club && <span className="text-sm text-gray-500">{p.club}</span>}
-      {p.change !== undefined && (
-        <span className={`text-sm tabular-nums ${p.change >= 0 ? "text-green-700" : "text-red-700"}`} title={`Rating ${p.change >= 0 ? "gained" : "lost"}`}>{signed(p.change, 1).replace("±", "+")}</span>
-      )}
+    <span className="flex flex-wrap items-baseline gap-x-1.5" title={p.club ?? undefined}>
+      <span className="inline-flex items-center gap-1 self-center">
+        <ClubLogo name={p.club} clubs={clubs} />
+        <Link href={`/players/${p.id}`} className={`${bold ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>
+      </span>
+      <span className="text-sm whitespace-nowrap">
+        {p.club && <span className="text-gray-500">{p.club}</span>}
+        {p.change !== undefined && (
+          <span className={`tabular-nums ${p.club ? "ml-1.5 " : ""}${p.change >= 0 ? "text-green-700" : "text-red-700"}`} title={`Rating ${p.change >= 0 ? "gained" : "lost"}`}>
+            {signed(p.change, 1).replace("±", "+")}
+          </span>
+        )}
+      </span>
     </span>
   );
 }
