@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.2 (2026-10-19)
+
+- Club pages: the discipline tabs stick to the top while scrolling, as on player pages.
+- A thin line under the sticky discipline tabs while they're stuck, separating them from the content scrolling underneath.
+
 ## v1.4.1 (2026-10-19)
 
 - Fixed: sliding along a chart while holding stopped after a few weeks on Android (the page took over and scrolled); the page no longer scrolls while holding.
