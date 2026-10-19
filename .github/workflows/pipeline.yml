@@ -52,9 +52,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # No package cache: v5 sets one up for the packageManager in package.json (pnpm), which the
+      # pipeline doesn't install, as it needs no packages
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          package-manager-cache: false
 
       - name: Install rclone
         run: sudo apt-get update -qq && sudo apt-get install -y -qq rclone
