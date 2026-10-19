@@ -278,7 +278,9 @@ async function fetchDraws(id) {
 
 // ---- Players and ratings ----
 
-const { pools } = JSON.parse(readFileSync(`${DIR}data/ratings.json`, "utf8"));
+// Only for analysing the draws: not read (nor there yet, in the nightly workflow, which fetches
+// before it rates) when only downloading them (--fetch-only)
+const { pools } = process.argv.includes("--fetch-only") ? { pools: {} } : JSON.parse(readFileSync(`${DIR}data/ratings.json`, "utf8"));
 const rated = Object.fromEntries(Object.entries(pools).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
 const byName = new Map(); // normalized name -> [player]
 for (const list of Object.values(pools)) for (const p of list) {
