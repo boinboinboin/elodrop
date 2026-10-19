@@ -1,5 +1,5 @@
 // Number and date formatting shared by the pages.
-import { addDays as addDaysTo, format as formatDate, isSameMonth, isSameYear, parseISO, startOfISOWeek } from "date-fns";
+import { addDays as addDaysTo, format as formatDate, getISOWeek, getISOWeekYear, isSameMonth, isSameYear, parseISO, startOfISOWeek } from "date-fns";
 
 const numberFormat = (decimals: number) =>
   new Intl.NumberFormat("en-GB", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -78,6 +78,12 @@ export const mondayOf = (day: string) => formatDate(startOfISOWeek(parseISO(day)
 
 /** A chart's time (milliseconds, a day at UTC midnight or later that day) as that day: "15 Oct 2026" */
 export const dayAt = (time: number, format: DateFormat = "day") => date(new Date(time).toISOString().slice(0, 10), format);
+
+/** A chart's week (its time, as for dayAt) as its ISO week number: "Week 41, 2026" */
+export function weekAt(time: number): string {
+  const day = parseISO(new Date(time).toISOString().slice(0, 10));
+  return `Week ${getISOWeek(day)}, ${getISOWeekYear(day)}`;
+}
 
 /** Accents and case ignored, æ/ø/å as ae/o/a: for the name searches */
 export function normalize(text: string): string {

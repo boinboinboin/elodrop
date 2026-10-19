@@ -10,8 +10,8 @@
 // `ranks` and `counts` show in the tooltip as "#3 of 89 <rankOf>". With `rank`, the values are
 // ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values.
 // Hover or focus and use the arrow keys (PageUp/PageDown a year, Home/End) to read values.
-import { useEffect, useMemo, useRef, useState } from "react";
-import { dayAt } from "@/lib/format";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { dayAt, weekAt } from "@/lib/format";
 import { COLORS, MARGIN, OTHER_COLOR, PALETTE, WEEK, DAY, formatNumber, logDomain, yDomain, yearTicks } from "@/lib/chart";
 
 export interface ChartSeries {
@@ -143,6 +143,18 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
     press.current = null;
   };
   useEffect(() => () => clearTimeout(press.current?.timer), []);
+  // While holding, the page mustn't scroll: a slight vertical drift while sliding would otherwise
+  // start a scroll, and the browser would cancel the touch (sliding stops until the next hold).
+  // A non-passive listener, as React's touch listeners are passive and can't prevent scrolling.
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const onTouchMove = (e: TouchEvent) => {
+      if (press.current?.holding) e.preventDefault();
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
+  }, []);
 
   const onKey = (event: React.KeyboardEvent) => {
     const moves: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, PageDown: -52, PageUp: 52, Home: -Infinity, End: Infinity };
@@ -194,6 +206,14 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
         ? [...clubColors].map(([club, color]) => ({ label: club, color }))
         : [];
 
+  // The detail box's size, measured once shown, to keep it inside the chart
+  const tip = useRef<HTMLDivElement>(null);
+  const [tipSize, setTipSize] = useState({ width: 0, height: 0 });
+  useLayoutEffect(() => {
+    if (active === null || !tip.current) return;
+    const { offsetWidth, offsetHeight } = tip.current;
+    if (offsetWidth !== tipSize.width || offsetHeight !== tipSize.height) setTipSize({ width: offsetWidth, height: offsetHeight });
+  }, [active, tipSize.width, tipSize.height]);
   const tooltip = (() => {
     if (active === null || !ready) return null;
     const px = x(time(active));
@@ -305,14 +325,16 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
         )}
         {tooltip && (
           <div
-            className="absolute z-10 pointer-events-none bg-white border border-gray-200 shadow-sm px-3 py-2 text-sm whitespace-nowrap"
+            ref={tip}
+            // To the right of the crosshair, or to its left when it doesn't fit, and always inside the
+            // chart (as wide as the chart at most, the lines wrapping)
+            className="absolute z-10 pointer-events-none bg-white border border-gray-200 shadow-sm px-3 py-2 text-sm max-w-full"
             style={{
-              left: tooltip.px + 12 + 220 > width ? undefined : tooltip.px + 12,
-              right: tooltip.px + 12 + 220 > width ? width - tooltip.px + 12 : undefined,
-              top: Math.max(0, Math.min(tooltip.top - 24, height - 80)),
+              left: Math.max(0, Math.min(tooltip.px + 12 + tipSize.width <= width ? tooltip.px + 12 : tooltip.px - 12 - tipSize.width, width - tipSize.width)),
+              top: Math.max(0, Math.min(tooltip.top - 24, height - tipSize.height)),
             }}
           >
-            <span className="block text-gray-600 mb-1">Week ending {dayAt(time(active!))}</span>
+            <span className="block text-gray-600 mb-1" title={`Week ending ${dayAt(time(active!))}`}>{weekAt(time(active!))}</span>
             {tooltip.rows.map((r) => (
               <span key={r.key} className="flex items-center gap-1.5">
                 <Swatch color={r.color} />
