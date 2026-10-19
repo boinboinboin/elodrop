@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.8 (2026-10-19)
+
+- Fixed: the pipeline stopped at its Node.js setup after the update to setup-node v5, which looked for pnpm to cache packages the pipeline doesn't use.
+
 ## v1.4.7 (2026-10-19)
 
 - Fixed: a tournament's final results (and how the predictions turned out) reached its draw page only with the next Sunday's rescan, a week later. Nightly runs now also fetch tournaments that ended in the last week, once more after they ended, so a Sunday tournament is complete after Monday's run.
