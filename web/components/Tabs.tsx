@@ -33,8 +33,9 @@ interface Props {
   /** Smaller buttons, for tabs inside a box */
   small?: boolean;
   /**
-   * The tab list sticks to the top of the page while scrolling through the panels; sticky table
-   * headers inside them stick below it (--sticky-offset, the list's height)
+   * The tab list sticks to the top of the page while scrolling through the panels, with a line
+   * under it while it's stuck; sticky table headers inside them stick below it (--sticky-offset,
+   * the list's height)
    */
   sticky?: boolean;
 }
@@ -77,6 +78,16 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
     observer.observe(el);
     return () => observer.disconnect();
   }, [sticky]);
+  // Stuck: the marker just above the list has scrolled out of view at the top
+  const marker = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const el = marker.current;
+    if (!sticky || !el) return;
+    const observer = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting && entry.boundingClientRect.top < 0));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sticky]);
   const elementId = (tab: string) => (prefix ? `${prefix}-${tab}` : tab);
   const select = (i: number, focus = false) => {
     onSelect(i);
@@ -92,12 +103,14 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
 
   return (
     <div style={sticky ? ({ "--sticky-offset": `${listHeight}px` } as CSSProperties) : undefined}>
+      {sticky && <div ref={marker} aria-hidden="true" />}
       <div
         ref={list}
         role="tablist"
         aria-label={label}
-        // Sticky: on the page's background, reaching to the container's edges
-        className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${sticky ? "sticky top-0 z-20 bg-stone-100 -mx-4 px-4 py-2" : ""} ${className}`}
+        // Sticky: on the page's background, reaching to the container's edges, the line under it
+        // shown only while stuck (always there, transparent otherwise, so nothing shifts)
+        className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${sticky ? `sticky top-0 z-20 bg-stone-100 -mx-4 px-4 py-2 border-b transition-colors duration-200 ${stuck ? "border-gray-300" : "border-transparent"}` : ""} ${className}`}
       >
         {tabs.map((t, i) => (
           <button

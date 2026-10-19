@@ -83,6 +83,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
           <Tabs
             label="Disciplines"
             param="discipline"
+            sticky
             tabs={POOL_KEYS.map((pool, i) => ({
               id: pool,
               label: <PoolName pool={pool} />,
