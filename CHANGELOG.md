@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.9 (2026-10-19)
+
+- Fixed: the nightly pipeline stopped when downloading tournament draws, which needed the ratings before they were calculated (since v1.4.4).
+
 ## v1.4.8 (2026-10-19)
 
 - Fixed: the pipeline stopped at its Node.js setup after the update to setup-node v5, which looked for pnpm to cache packages the pipeline doesn't use.
