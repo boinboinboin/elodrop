@@ -5,6 +5,7 @@ Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from eve
 - `pipeline/`: the rating pipeline (Node scripts): fetches the results, rates them and exports the data the site reads. [`pipeline/README.md`](pipeline/README.md) is the full specification of the ratings and every feature.
 - `web/`: the site (Next.js 16, React 19, TypeScript, Tailwind CSS v4), with the club content in Sanity.
 - `.github/workflows/pipeline.yml`: runs the pipeline every night.
+- [`CHANGELOG.md`](CHANGELOG.md): every version, with what was added or fixed.
 
 ## How it fits together
 
