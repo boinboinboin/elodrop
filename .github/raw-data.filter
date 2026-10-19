@@ -10,6 +10,8 @@
 + /upcoming/*.json
 # The fingerprints of the last rebuild (pipeline/fingerprint.mjs), to see what's new
 + /build-fingerprint.txt
+# What the fetch scripts remember to avoid needless requests (league groups, tournament end dates)
++ /cache/**
 + /tournaments.json
 + /players.json
 + /clubs.json

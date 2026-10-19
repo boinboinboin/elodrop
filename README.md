@@ -19,7 +19,16 @@ Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from eve
 
 The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each). The site reads them on the server, caches them (`'use cache'`, tag `elo-data`, plus `elo-data:<area>` per area such as `elo-data:tournaments`), and refreshes when the nightly run calls `/api/revalidate`.
 
-The nightly run always fetches, then rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inputs with the last rebuild's):
+The nightly run fetches only what can have changed:
+
+- **Tournament results**: a tournament once its end date has passed (end dates are remembered; rechecked on Mondays).
+- **Team matches**: a league group when one of its ties, by date, was played in the last 14 days and isn't in yet (results registered late). Mondays also list the groups again and sweep every ongoing group (postponed ties).
+- **Tournament draws**: after the registration deadline, until the tournament has ended and been fetched once more for its final results. Sundays rescan the whole season.
+- **Official ranking**: Wednesday to Friday, when it's published; the lists only when a new version is out.
+- **Player register and clubs**: Mondays.
+- Raw files are kept between runs in GitHub's cache, so finished history isn't downloaded again.
+
+Then it rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inputs with the last rebuild's):
 
 - **full**: everything, and the whole site refreshed. The runs on Saturday, Sunday and Monday (01:15 UTC, after Friday's, Saturday's and Sunday's matches), manual runs, and any night when results (also ones registered late), the official ranking, the player register or the pipeline itself changed.
 - **draws**: only new or changed tournament draws: just the tournament pages are uploaded and refreshed.

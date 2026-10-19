@@ -1,17 +1,21 @@
 // Fetch all tournament results from badmintonportalen.no (NBF), with player ids: singles and doubles
 // (MensSingles, WomensSingles, MensDoubles, WomensDoubles, MixedDoubles).
-// Usage: node fetch-portalen.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5]
+// Usage: node fetch-portalen.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--check-dates]
 //
 // Seasons -> tournaments (GetSeasonPlan) -> classes and events (GetTournamentEvents)
 // -> matches of each event (SearchTournamentMatches). Doubles sides have two players.
 // Writes data/portalen/<tournamentId>.json per tournament. Already-fetched and unfinished
 // tournaments are skipped, so it can be stopped and re-run. Failures go to data/portalen-errors.log.
-import { readdir, writeFile, mkdir, appendFile } from "node:fs/promises";
+// The end dates of unfinished tournaments are kept in data/cache/tournament-ends.json, so a
+// tournament isn't asked about again until its end date has passed (or with --check-dates, weekly,
+// in case dates move).
+import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
 import { call, unescape, text } from "./portalen.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/portalen`;
 const ERRORS = `${DIR}data/portalen-errors.log`;
+const ENDS = `${DIR}data/cache/tournament-ends.json`;
 const FIRST_SEASON = 2013; // earliest season on badmintonportalen (2013/2014)
 const CONCURRENCY = 2;
 const today = new Date().toISOString().slice(0, 10);
@@ -167,9 +171,15 @@ for (const year of seasons) {
   console.error(`${year}/${year + 1}: ${found.length} tournaments`);
   tournaments.push(...found);
 }
-const pending = tournaments.filter((t) => !done.has(t.tournamentId));
+// Unfinished tournaments' end dates (tournament id -> yyyy-mm-dd): no need to ask before then
+await mkdir(`${DIR}data/cache`, { recursive: true });
+const ends = JSON.parse(await readFile(ENDS, "utf8").catch(() => "{}"));
+const notOver = (t) => !process.argv.includes("--check-dates") && ends[t.tournamentId] >= today;
+const unsaved = tournaments.filter((t) => !done.has(t.tournamentId));
+const waiting = unsaved.filter(notOver);
+const pending = unsaved.filter((t) => !notOver(t));
 const todo = pending.slice(0, process.argv.includes("--limit") ? +arg("--limit") : undefined);
-console.error(`${tournaments.length} tournaments, ${tournaments.length - pending.length} already fetched, ${todo.length} to fetch`);
+console.error(`${tournaments.length} tournaments: ${tournaments.length - unsaved.length} already fetched, ${waiting.length} not over yet, ${todo.length} to fetch`);
 if (process.argv.includes("--dry-run")) process.exit(0);
 
 let failed = 0;
@@ -184,10 +194,12 @@ async function worker() {
       const result = await fetchTournament(t);
       if (result.unfinished) {
         unfinished++;
+        if (result.endDate) ends[t.tournamentId] = result.endDate;
         console.error(`${label}: not finished (${result.endDate ?? "no date"}), skipped`);
         continue;
       }
       await writeFile(`${OUT}/${t.tournamentId}.json`, JSON.stringify(result));
+      delete ends[t.tournamentId];
       console.error(`${label}: ${result.startDate}, ${result.matches.length} matches`);
     } catch (err) {
       failed++;
@@ -197,4 +209,5 @@ async function worker() {
   }
 }
 await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+await writeFile(ENDS, JSON.stringify(ends, null, 1));
 console.error(`Done. ${todo.length - failed - unfinished} saved, ${unfinished} not finished, ${failed} failed`);
