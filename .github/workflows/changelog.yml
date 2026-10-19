@@ -9,13 +9,20 @@ jobs:
   changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
+      # The PR's own changes: from where it branched off main to its newest commit (the SHAs from the
+      # event, not GitHub's merge commit for the PR, which can be missing or out of date)
       - name: CHANGELOG.md has a new entry
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
-          if git diff --name-only "origin/${{ github.base_ref }}...HEAD" | grep -qx "CHANGELOG.md"; then
+          changed=$(git diff --name-only "$BASE...$HEAD")
+          echo "Changed in this pull request:"; echo "$changed" | sed 's/^/  /'
+          if echo "$changed" | grep -qx "CHANGELOG.md"; then
             echo "CHANGELOG.md updated."
           else
             echo "::error file=CHANGELOG.md::Add this change's version and bullets to CHANGELOG.md (see CLAUDE.md)."

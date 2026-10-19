@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.6 (2026-10-19)
+
+- Fixed: the changelog check on pull requests could fail although the PR added its entry; it now compares the PR's own commits and lists the files it saw.
+- GitHub Actions updated (checkout and setup-node v5), ahead of Node.js 20 being retired on GitHub's runners.
+
 ## v1.4.5 (2026-10-19)
 
 - The upsets table fits phones: one player per line (club and rating change after the name, wrapping together), "beat" between the sides, and on phones the chance under the event instead of in a column of its own.
