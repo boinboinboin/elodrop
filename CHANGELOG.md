@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.1 (2026-10-19)
+
+- Fixed: sliding along a chart while holding stopped after a few weeks on Android (the page took over and scrolled); the page no longer scrolls while holding.
+- Fixed: the chart's detail box could end up partly outside the screen; it now always stays inside the chart.
+- The detail box shows the week number ("Week 41, 2026") instead of "Week ending 11 Oct 2026" (the date is in its hover text).
+
 ## v1.4.0 (2026-10-19)
 
 - Charts work on touch screens: holding a chart shows the values (as hovering does), sliding moves through the weeks, and a tap hides them.
