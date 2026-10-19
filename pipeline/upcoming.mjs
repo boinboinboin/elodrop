@@ -14,6 +14,8 @@
 //                                             badmintonportalen doesn't link to its draw
 //        node upcoming.mjs --offline          recalculate every saved tournament from its saved draw
 //                                             and entry list (after rate.mjs), without fetching
+//        node upcoming.mjs --fetch-only       only download the draws (with --season too), without
+//                                             analysing them (then --offline does that)
 //        --refetch                            fetch finished tournaments again
 // Run after rate.mjs. Writes data/upcoming/<cup2000 id>.json and the list data/upcoming.json; the
 // fetched Cup2000 pages and entry list are kept in data/upcoming/raw/<cup2000 id>.json.
@@ -572,6 +574,9 @@ function findCup2000(info, title) {
 const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : null);
 mkdirSync(`${OUT}/raw`, { recursive: true });
 const offline = process.argv.includes("--offline");
+// Only download the draws (into data/upcoming/raw), without analysing them: the nightly workflow
+// fetches everything first, to see whether anything is new, and analyses later (--offline) if so
+const fetchOnly = process.argv.includes("--fetch-only");
 const refetch = process.argv.includes("--refetch");
 const savedRaw = (cupId) => (existsSync(`${OUT}/raw/${cupId}.json`) ? JSON.parse(readFileSync(`${OUT}/raw/${cupId}.json`, "utf8")) : null);
 
@@ -614,6 +619,10 @@ for (const target of targets) {
   const label = target.raw?.info.name ?? target.portalen?.title ?? `Cup2000 ${target.cup2000}`;
   try {
     const raw = target.raw ?? (await fetchRaw(target));
+    if (fetchOnly) {
+      if (!target.raw) console.error(`${label}: fetched`);
+      continue;
+    }
     if (!raw.draws?.[0]?.pages) {
       console.error(`${label}: saved in an older format, run again without --offline`);
       continue;
@@ -637,6 +646,8 @@ for (const target of targets) {
     console.error(`${label}: FAILED ${err.stack}`);
   }
 }
+
+if (fetchOnly) process.exit(0);
 
 // The list of tournaments, newest first, and the season's evaluation summed over them
 const tournaments = readdirSync(OUT)

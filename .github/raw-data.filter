@@ -8,6 +8,8 @@
 # The tournaments' draw analyses: a nightly run only redoes the upcoming ones (upcoming.mjs), so
 # the played ones must be kept from earlier runs to stay in the list
 + /upcoming/*.json
+# The fingerprints of the last rebuild (pipeline/fingerprint.mjs), to see what's new
++ /build-fingerprint.txt
 + /tournaments.json
 + /players.json
 + /clubs.json

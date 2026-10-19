@@ -17,7 +17,13 @@ Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from eve
 | Club content (names, regions, logos) | Sanity (Studio at `/studio`); `web/content/clubs.json` until Sanity is set up |
 | The site | Vercel |
 
-The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each). The site reads them on the server, caches them (`'use cache'`, tag `elo-data`), and refreshes when the nightly run calls `/api/revalidate`.
+The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each). The site reads them on the server, caches them (`'use cache'`, tag `elo-data`, plus `elo-data:<area>` per area such as `elo-data:tournaments`), and refreshes when the nightly run calls `/api/revalidate`.
+
+The nightly run always fetches, then rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inputs with the last rebuild's):
+
+- **full**: everything, and the whole site refreshed. Saturday, Sunday and Monday nights (matches are played Friday to Sunday), manual runs, and any night when results (also ones registered late), the official ranking, the player register or the pipeline itself changed.
+- **draws**: only new or changed tournament draws: just the tournament pages are uploaded and refreshed.
+- **none**: nothing new: no uploads, and the site keeps its cached pages.
 
 ## Local development
 

@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.4 (2026-10-19)
+
+- The nightly pipeline only rebuilds what's needed: on nights with nothing new it stops after fetching (no uploads, the site keeps its cache), and a new tournament draw on a weekday updates just the tournament pages. Full rebuilds on Saturday, Sunday and Monday nights, and whenever results arrive, including team results registered late.
+- The site can refresh one area of its data (such as the tournaments) without the rest.
+
 ## v1.4.3 (2026-10-19)
 
 - Fixed: the change since last week (rating, strength and rank arrows) was empty every Monday until new matches. It now shows the newest weekend's results against the week before: building up over Saturday and Sunday, and staying until the next weekend starts.
