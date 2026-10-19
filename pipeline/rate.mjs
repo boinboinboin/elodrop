@@ -698,6 +698,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // their club history for that week. Written per club (NBF club id) to data/club-history/<id>.json.
   const firstWeek = Object.values(players).flatMap((map) => [...map.values()].map((p) => p.firstWeek)).sort()[0];
   const weekCount = Math.round((toTime(weekStart(today)) - toTime(firstWeek)) / (7 * DAY_MS)) + 1;
+  // "Since last week" in the rankings: the newest week's results against the end of the week before
+  // it. Matches are played Friday to Sunday, so the newest week is the current one from Saturday (that
+  // night's run has Friday's matches) and the one that just ended from Monday to Friday, so the
+  // weekend's changes build up over the weekend and stay until the next one starts.
+  const weekday = new Date(`${today}T00:00:00Z`).getUTCDay(); // 0 Sunday … 6 Saturday
+  const baseWeek = weekCount - (weekday === 6 || weekday === 0 ? 2 : 3);
   const weekIndexCache = new Map();
   const weekIndex = (day) => {
     let index = weekIndexCache.get(day);
@@ -713,13 +719,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const clubHistory = new Map(); // club -> { pool: { strength: [], rank: [] } }
   const clubCounts = {}; // pool -> clubs with a strength per week
   const rankCounts = {}; // pool -> ranked players per week (mixed doubles: per gender)
-  const lastWeekActive = {}; // pool -> the active players at the end of last week, with their rating then
+  const lastWeekActive = {}; // pool -> the active players at the end of baseWeek, with their rating then
   for (const [pool, map] of Object.entries(players)) {
     // week -> club -> [{ rating, gender }]
     const byWeek = Array.from({ length: weekCount }, () => new Map());
     // week -> every active player, for the weekly national ranks
     const activeByWeek = Array.from({ length: weekCount }, () => []);
-    lastWeekActive[pool] = activeByWeek[weekCount - 2] ?? [];
+    lastWeekActive[pool] = activeByWeek[baseWeek] ?? [];
     for (const p of map.values()) {
       const offset = weekIndex(p.firstWeek);
       const playedWeeks = [...new Set(p.log.map((m) => weekIndex(m.day)))].sort((a, b) => a - b);
@@ -845,14 +851,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     history.combined.rank[now] = c.rank;
   }
 
-  // Since last week, for the rankings: each ranked player's and club's rank at the end of the week
-  // before the current one (null if they weren't ranked then), and the rating (club: strength)
-  // gained or lost since then (null for players who started this week)
+  // Since last week, for the rankings: each ranked player's and club's rank at the end of baseWeek
+  // (the week before the newest one; null if they weren't ranked then), and the rating (club:
+  // strength) gained or lost since then (null for players who started after it)
   for (const [pool, map] of Object.entries(players)) {
     for (const entry of ratings[pool]) {
       if (entry.rank === null) continue;
       const p = map.get(entry.id);
-      const week = now - 1 - weekIndex(p.firstWeek);
+      const week = baseWeek - weekIndex(p.firstWeek);
       entry.previousRank = p.ranks?.[week] ?? null;
       // A week without matches keeps the last recorded rating (as for the weekly ranks)
       const before = week < 0 ? null : (p.weekly[week] ?? p.weekly.at(-1) ?? null);
@@ -861,9 +867,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       entry.ratingChange = before === null ? null : Math.round(p.rating) - before;
     }
   }
-  // Clubs: last week's club ranking made the same way as this week's (each player's registered club,
-  // the ranked players then with their rating then), not from the club history, which follows the
-  // club played for
+  // Clubs: the club ranking at the end of baseWeek made the same way as the current one (each player's
+  // registered club, the ranked players then with their rating then), not from the club history,
+  // which follows the club played for
   const lastWeek = rankClubs(
     Object.fromEntries(
       Object.entries(lastWeekActive).map(([pool, list]) => [

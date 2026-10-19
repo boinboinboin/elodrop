@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.3 (2026-10-19)
+
+- Fixed: the change since last week (rating, strength and rank arrows) was empty every Monday until new matches. It now shows the newest weekend's results against the week before: building up over Saturday and Sunday, and staying until the next weekend starts.
+
 ## v1.4.2 (2026-10-19)
 
 - Club pages: the discipline tabs stick to the top while scrolling, as on player pages.
