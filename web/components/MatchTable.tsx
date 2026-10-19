@@ -93,7 +93,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
           not scroll, so the header can stick to the top of the page while scrolling through matches. */}
       <div className="overflow-x-clip">
         <table className="w-full text-left">
-          <thead className="sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
+          <thead className="sticky top-[var(--sticky-offset,0px)] z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
             <tr>
               <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">Date</th>
               <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">{doubles ? "Opponents" : "Opponent"}</th>

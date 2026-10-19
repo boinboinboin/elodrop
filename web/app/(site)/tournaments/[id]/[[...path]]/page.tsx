@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
+import { ArrowLeft } from "@/components/Icons";
 import PoolName from "@/components/PoolName";
 import PredictionStats from "@/components/PredictionStats";
 import ScrollRow from "@/components/ScrollRow";
@@ -49,7 +50,7 @@ async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/tournaments" className="text-gray-600 hover:text-black">&larr; Tournaments</Link>
+          <Link href="/tournaments" className="text-gray-600 hover:text-black"><ArrowLeft /> Tournaments</Link>
           <h1 className="h1 mt-4">{t.name}</h1>
           {t.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(t.startDate, t.endDate, true)}</p>}
           <p className="mt-2 flex flex-wrap gap-x-6 gap-y-1">

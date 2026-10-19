@@ -4,6 +4,7 @@
 // link to the page with all of them.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowRight } from "@/components/Icons";
 import PoolName from "@/components/PoolName";
 import RankingTable, { type RankingRow } from "@/components/RankingTable";
 import { getClubMap } from "@/lib/clubs";
@@ -91,7 +92,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
         {hiddenInactive > 0 && (
           <p className="mt-4">
             <Link href={`${rankingHref(pool, gender, true)}/all`} prefetch={false} className="underline hover:text-blue-600">
-              Show all {num(everyone.length)} players &rarr;
+              Show all {num(everyone.length)} players <ArrowRight />
             </Link>{" "}
             <span className="text-gray-600">(a long page)</span>
           </p>

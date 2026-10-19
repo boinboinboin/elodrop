@@ -106,6 +106,44 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
     }
     return w;
   };
+  // Touch: holding still on the chart shows the values (as hovering does), and sliding sideways while
+  // holding moves through the weeks. A quick swipe still scrolls the page; the values stay after
+  // lifting the finger, and a quick tap hides them.
+  const press = useRef<{ timer: ReturnType<typeof setTimeout>; x: number; y: number; holding: boolean } | null>(null);
+  const HOLD_MS = 300;
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse") return;
+    const x = e.nativeEvent.offsetX;
+    const timer = setTimeout(() => {
+      if (!press.current) return;
+      press.current.holding = true;
+      setActive(nearest(press.current.x));
+    }, HOLD_MS);
+    press.current = { timer, x, y: e.clientY, holding: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const x = e.nativeEvent.offsetX;
+    if (e.pointerType === "mouse") return setActive(nearest(x));
+    const p = press.current;
+    if (!p) return;
+    if (p.holding) return setActive(nearest(x));
+    // Moved before the hold: a swipe, not a hold
+    if (Math.abs(x - p.x) > 8 || Math.abs(e.clientY - p.y) > 8) {
+      clearTimeout(p.timer);
+      press.current = null;
+    } else p.x = x;
+  };
+  const onPointerEnd = (e: React.PointerEvent) => {
+    if (e.pointerType === "mouse") return;
+    const p = press.current;
+    if (p && !p.holding) {
+      clearTimeout(p.timer);
+      setActive(null); // a quick tap hides the values
+    }
+    press.current = null;
+  };
+  useEffect(() => () => clearTimeout(press.current?.timer), []);
+
   const onKey = (event: React.KeyboardEvent) => {
     const moves: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, PageDown: -52, PageUp: 52, Home: -Infinity, End: Infinity };
     if (!(event.key in moves)) return;
@@ -191,7 +229,8 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
           ))}
         </ul>
       )}
-      <div ref={box} className={className}>
+      {/* No text selection or iOS long-press menu on the chart, where holding shows the values */}
+      <div ref={box} className={`${className} select-none [-webkit-touch-callout:none]`}>
         {ready && (
           <svg
             width={width}
@@ -253,8 +292,14 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
               width={Math.max(0, plot.right - plot.left)}
               height={Math.max(0, plot.bottom - plot.top)}
               fill="transparent"
-              onPointerMove={(e) => setActive(nearest(e.nativeEvent.offsetX))}
-              onPointerLeave={() => setActive(null)}
+              // pan-y: vertical swipes scroll the page, sideways moves come here (for sliding while holding)
+              style={{ touchAction: "pan-y" }}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerEnd}
+              onPointerCancel={onPointerEnd}
+              onPointerLeave={(e) => e.pointerType === "mouse" && setActive(null)}
+              onContextMenu={(e) => e.preventDefault()}
             />
           </svg>
         )}
@@ -278,6 +323,8 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
           </div>
         )}
       </div>
+      {/* Touch screens only: there is no hovering there */}
+      <p className="hidden pointer-coarse:block mt-1 text-xs text-gray-500">Hold the chart to see the values; slide to move through the weeks</p>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import GenderGapNote from "@/components/GenderGapNote";
 import HeadToHeadSwitch from "@/components/HeadToHeadSwitch";
+import { ArrowLeft } from "@/components/Icons";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MarginsTable from "@/components/MarginsTable";
 import MatchTable from "@/components/MatchTable";
@@ -76,7 +77,7 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head/doubles">
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
           <h1 className="h1 mt-4">Head to head</h1>
           <p className="text-2xl max-w-3xl mt-2">Two doubles pairs&apos; matches against each other, and their chances if they met now.</p>
           <HeadToHeadSwitch current="pairs" />
