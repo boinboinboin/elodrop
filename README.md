@@ -21,7 +21,7 @@ The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each).
 
 The nightly run always fetches, then rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inputs with the last rebuild's):
 
-- **full**: everything, and the whole site refreshed. Saturday, Sunday and Monday nights (matches are played Friday to Sunday), manual runs, and any night when results (also ones registered late), the official ranking, the player register or the pipeline itself changed.
+- **full**: everything, and the whole site refreshed. The runs on Saturday, Sunday and Monday (01:15 UTC, after Friday's, Saturday's and Sunday's matches), manual runs, and any night when results (also ones registered late), the official ranking, the player register or the pipeline itself changed.
 - **draws**: only new or changed tournament draws: just the tournament pages are uploaded and refreshed.
 - **none**: nothing new: no uploads, and the site keeps its cached pages.
 

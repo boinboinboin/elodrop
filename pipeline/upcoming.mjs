@@ -3,7 +3,9 @@
 // the tournament is played, how the predictions turned out.
 // Usage: node upcoming.mjs                    upcoming tournaments with a published draw (found
 //                                             from the season plan: registration closed in the
-//                                             last 30 days, not over yet)
+//                                             last 45 days, not over yet), and the ones that ended
+//                                             in the last week, once more after they ended, for
+//                                             their final results
 //        node upcoming.mjs --season 2026      every tournament of the 2026/27 season whose
 //                                             registration has closed, played ones too (finished
 //                                             ones already fetched after they ended are kept)
@@ -590,11 +592,13 @@ if (!offline) {
     targets = [{ portalen: t, cup2000: arg("--cup2000") ? +arg("--cup2000") : null }];
   } else {
     // A season: every tournament whose registration has closed; else those that closed in the last
-    // 30 days and aren't over yet
-    const candidates = plan.filter((t) => t.deadline <= today && (arg("--season") || t.deadline >= addDays(today, -30)));
+    // 45 days and aren't over yet or ended in the last week
+    const candidates = plan.filter((t) => t.deadline <= today && (arg("--season") || t.deadline >= addDays(today, -45)));
     for (const t of candidates) {
       const info = await entryList(t.classId);
-      if (!info.endDate || (!arg("--season") && info.endDate < today)) continue;
+      // Not a season: the ones not over yet, and the ones that ended in the last week (fetched once
+      // more after they ended, for the final results; after that the saved draw is used, below)
+      if (!info.endDate || (!arg("--season") && info.endDate < addDays(today, -7))) continue;
       if (arg("--cup2000") && info.cup2000Id !== +arg("--cup2000")) continue;
       if (!info.cup2000Id) info.cup2000Id = findCup2000(info, t.title);
       if (!info.cup2000Id) {

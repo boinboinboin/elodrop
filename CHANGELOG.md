@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.7 (2026-10-19)
+
+- Fixed: a tournament's final results (and how the predictions turned out) reached its draw page only with the next Sunday's rescan, a week later. Nightly runs now also fetch tournaments that ended in the last week, once more after they ended, so a Sunday tournament is complete after Monday's run.
+
 ## v1.4.6 (2026-10-19)
 
 - Fixed: the changelog check on pull requests could fail although the PR added its entry; it now compares the PR's own commits and lists the files it saw.

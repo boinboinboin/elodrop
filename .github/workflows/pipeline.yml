@@ -1,9 +1,10 @@
 # Nightly: fetch new results (tournaments and team matches), tournament draws, the player register,
 # the clubs and the official ranking; then rebuild only what's needed (fingerprint.mjs):
 #   - full: rate, Eliteserien strengths, draw luck, export everything, refresh the whole site. On
-#     Saturday, Sunday and Monday nights (the weekend's matches, and "since last week" in the
-#     rankings), on manual runs, and whenever results, the ranking, the register or the pipeline
-#     itself changed (results registered late, on any day, are picked up the next night).
+#     the Saturday, Sunday and Monday runs (01:15 UTC, after Friday's, Saturday's and Sunday's
+#     matches; also "since last week" in the rankings), on manual runs, and whenever results, the
+#     ranking, the register or the pipeline itself changed (results registered late, on any day,
+#     are picked up the next night).
 #   - draws: only new or changed tournament draws: rate (for the ratings before each tournament),
 #     analyse the draws, upload and refresh only the tournament pages.
 #   - none: nothing new: no uploads, and the site keeps its cached pages.
