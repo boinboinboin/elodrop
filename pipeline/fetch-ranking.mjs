@@ -7,18 +7,21 @@
 // mixedWomen } (lists of rank, player number, internal id (the same id as in our match data), name,
 // club, class and points; mixed doubles has one list for men and one for women).
 // Finished seasons only keep their final list (a rolling 12 months up to about July 1).
+// The current list is saved with its publication date (`published`); with --if-new, the lists are
+// only fetched when a newer version has been published (one request to check, for the nightly runs).
 //
 // Usage: node fetch-ranking.mjs <seasonId> --before <yyyy-mm-dd>
 // fetches the latest version of the lists published before that date (they are updated about twice
 // a week) into data/ranking/<seasonId>-<version date>.json, e.g. for the ranking at a past match.
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { call, text } from "./portalen.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const ALL = Array.from({ length: 13 }, (_, i) => String(2002014 + i));
 const beforeIndex = process.argv.indexOf("--before");
 const before = beforeIndex > 0 ? process.argv[beforeIndex + 1] : null;
-const plain = process.argv.slice(2).filter((a, i, all) => a !== "--before" && all[i - 1] !== "--before");
+const ifNew = process.argv.includes("--if-new");
+const plain = process.argv.slice(2).filter((a, i, all) => a !== "--before" && a !== "--if-new" && all[i - 1] !== "--before");
 const seasons = plain[0] === "all" ? ALL : plain.length ? plain : ["2002026"];
 // HS, DS, HD, DD, MD for women, MD for men
 const LISTS = { men: "1", women: "3", mensDoubles: "2", womensDoubles: "4", mixedWomen: "5", mixedMen: "6" };
@@ -36,17 +39,31 @@ const ROW =
   /<td class='rank'>(\d+)<\/td><td class='playerid'>(\d+)<\/td><td class='name'><a href='[^']*#(\d+),[^']*'[^>]*>(.*?)<\/a>,?(.*?)<\/td><td class='clas'>(.*?)<\/td><td class='points[^']*'>(\d+)/g;
 
 mkdirSync(`${DIR}data/ranking`, { recursive: true });
-// The latest list version (MM/DD/YYYY, as the service takes it) published before a date (yyyy-mm-dd)
-async function versionBefore(season, date) {
-  const { Versions: versions } = await call("GetRankingListPlayers", { ...args(season, "1", 0), getversions: true });
-  const iso = (v) => v.replace(/^(\d\d)\/(\d\d)\/(\d{4})$/, "$3-$1-$2");
-  return versions.map((v) => v.Value).filter((v) => v && iso(v) < date).sort((a, b) => iso(b).localeCompare(iso(a)))[0];
+// The list versions (MM/DD/YYYY, as the service takes them), newest first
+const iso = (v) => v.replace(/^(\d\d)\/(\d\d)\/(\d{4})$/, "$3-$1-$2");
+async function versions(season) {
+  const { Versions: list } = await call("GetRankingListPlayers", { ...args(season, "1", 0), getversions: true });
+  return list.map((v) => v.Value).filter(Boolean).sort((a, b) => iso(b).localeCompare(iso(a)));
 }
+// The latest list version published before a date (yyyy-mm-dd)
+const versionBefore = async (season, date) => (await versions(season)).find((v) => iso(v) < date);
 
 for (const season of seasons) {
   const version = before ? await versionBefore(season, before) : "";
   if (before && !version) throw new Error(`No ${season} ranking version before ${before}`);
-  const result = { season, version: version ? version.replace(/^(\d\d)\/(\d\d)\/(\d{4})$/, "$3-$1-$2") : null, fetchedAt: new Date().toISOString() };
+  // The current list: when it was published, and with --if-new nothing to do if we have it already
+  let published = null;
+  if (!before) {
+    const newest = (await versions(season))[0];
+    published = newest ? iso(newest) : null;
+    const file = `${DIR}data/ranking/${season}.json`;
+    const saved = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null;
+    if (ifNew && published && saved?.published === published) {
+      console.log(`${season}: no new list (the one published ${published} is saved)`);
+      continue;
+    }
+  }
+  const result = { season, version: version ? iso(version) : null, published, fetchedAt: new Date().toISOString() };
   for (const [pool, list] of Object.entries(LISTS)) {
     const rows = [];
     for (let page = 0; ; page++) {

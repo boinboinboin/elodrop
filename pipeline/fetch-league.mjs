@@ -1,19 +1,26 @@
 // Fetch singles and doubles games from team matches (league play) on badmintonportalen.no.
-// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5]
+// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--list-groups] [--all]
 //
 // GetLeagueStanding is one method with "subpages":
 //   1: leagues for season + age group + region -> groups
 //   4: all ties (team matches) in a group
 //   5: one tie, with its individual games (1. HS, 2. HS, 1. DS, 1. HD, 1. MD, ...)
 // Writes data/league/<season>-<groupId>.json per group. A group still being played (the current
-// season, with unplayed ties) is saved with the ties played so far and `complete: false`, and is
-// fetched again on every run: ties already saved with the same score keep their games, so only new
-// ties are fetched. Complete groups are skipped once saved.
+// season, with unplayed ties) is saved with the ties played so far, `complete: false` and the
+// schedule of the rest (`schedule`, with dates). It's fetched again only when due: a tie dated today
+// or in the last LATE_DAYS days isn't in yet (results are sometimes registered late), or with --all
+// (the weekly sweep, which also catches postponed ties). Ties already saved with the same score keep
+// their games, so only new ties are fetched. Complete groups are skipped once saved.
+// The season's list of groups (180 requests: every region and age group) is kept in
+// data/cache/league-groups-<season>.json and listed again with --list-groups (weekly) or if missing.
 import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
 import { call, text } from "./portalen.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/league`;
+const CACHE = `${DIR}data/cache`;
+// How long after a tie's date to keep looking for its result
+const LATE_DAYS = 14;
 const ERRORS = `${DIR}data/league-errors.log`;
 const FIRST_SEASON = 2013;
 const CONCURRENCY = 2;
@@ -176,7 +183,9 @@ async function fetchGroup(g, previous) {
     }
   }
   const complete = g.season < currentSeason() || played.length === ties.length;
-  return { group: { ...g, fetchedAt: new Date().toISOString(), complete, ties: played }, fetched, unplayed: ties.length - played.length };
+  // The ties still to play, with their dates, to know when to fetch the group again
+  const schedule = complete ? undefined : ties.filter((t) => !played.includes(t)).map(({ matchId, time, home, away }) => ({ matchId, time, home, away }));
+  return { group: { ...g, fetchedAt: new Date().toISOString(), complete, ties: played, schedule }, fetched, unplayed: ties.length - played.length };
 }
 
 const arg = (name) => process.argv[process.argv.indexOf(name) + 1];
@@ -196,22 +205,37 @@ for (const f of refetch ? [] : await readdir(OUT)) {
 const done = new Set([...saved].filter(([, group]) => group.complete !== false).map(([key]) => key));
 const fileKey = (g) => `${g.season}-${g.groupId}`;
 
+// A group still being played is due when a tie dated today or in the last LATE_DAYS days isn't in
+// yet (or it was saved before schedules were, or a tie has no date)
+const today = new Date().toISOString().slice(0, 10);
+const since = new Date(Date.parse(today) - LATE_DAYS * 86_400_000).toISOString().slice(0, 10);
+const due = (group) => !group.schedule || group.schedule.some((t) => !t.time || (t.time.slice(0, 10) <= today && t.time.slice(0, 10) >= since));
+
+// The seasons' groups, from the cache unless asked to list them again (or not cached yet)
+await mkdir(CACHE, { recursive: true });
 const groups = new Map();
 for (const season of seasons) {
-  let found = 0;
-  for (const regionId of Object.keys(REGIONS)) {
-    for (const ageGroupId of Object.keys(AGE_GROUPS)) {
-      for (const g of await listGroups(season, ageGroupId, regionId)) {
-        if (!groups.has(fileKey(g))) found++;
-        groups.set(fileKey(g), g);
-      }
+  const cacheFile = `${CACHE}/league-groups-${season}.json`;
+  let list = null;
+  if (!process.argv.includes("--list-groups")) list = JSON.parse(await readFile(cacheFile, "utf8").catch(() => "null"))?.groups ?? null;
+  const listed = !list;
+  if (listed) {
+    list = [];
+    for (const regionId of Object.keys(REGIONS)) {
+      for (const ageGroupId of Object.keys(AGE_GROUPS)) list.push(...(await listGroups(season, ageGroupId, regionId)));
     }
+    await writeFile(cacheFile, JSON.stringify({ listedAt: new Date().toISOString(), groups: list }));
   }
-  console.error(`${season}/${season + 1}: ${found} league groups`);
+  // Some groups are listed under more than one region: each counts once
+  const distinct = new Set(list.map(fileKey));
+  for (const g of list) groups.set(fileKey(g), g);
+  console.error(`${season}/${season + 1}: ${distinct.size} league groups${listed ? " (listed)" : " (from the cache)"}`);
 }
-const pending = [...groups.values()].filter((g) => !done.has(fileKey(g)));
+const all = process.argv.includes("--all");
+const open = [...groups.values()].filter((g) => !done.has(fileKey(g)));
+const pending = open.filter((g) => all || !saved.has(fileKey(g)) || due(saved.get(fileKey(g))));
 const todo = pending.slice(0, process.argv.includes("--limit") ? +arg("--limit") : undefined);
-console.error(`${groups.size} groups, ${groups.size - pending.length} already fetched, ${todo.length} to fetch`);
+console.error(`${groups.size} groups: ${groups.size - open.length} complete, ${open.length - pending.length} with no ties due, ${todo.length} to fetch`);
 if (process.argv.includes("--dry-run")) process.exit(0);
 
 let failed = 0;

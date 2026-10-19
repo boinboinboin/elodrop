@@ -62,32 +62,65 @@ jobs:
       - name: Install rclone
         run: sudo apt-get update -qq && sudo apt-get install -y -qq rclone
 
-      - name: Season
+      # The season, and what to fetch tonight. Monday (after the weekend's matches) and manual runs
+      # also list the league groups again, sweep every ongoing group, recheck tournament dates and
+      # fetch the player register; Wednesday to Friday (and manual runs) check for a new official
+      # ranking, which is published once a week then
+      - name: Season and schedule
         id: mode
         run: |
-          month=$(date -u +%-m); year=$(date -u +%Y)
+          month=$(date -u +%-m); year=$(date -u +%Y); weekday=$(date -u +%u) # 1 Monday … 7 Sunday
+          manual=${{ github.event_name == 'workflow_dispatch' }}
           echo "season=$(( month >= 7 ? year : year - 1 ))" >> "$GITHUB_OUTPUT"
           if [ "${{ github.event.schedule }}" = "15 1 * * 0" ] || [ "${{ inputs.rescan }}" = "true" ]; then echo "rescan=true" >> "$GITHUB_OUTPUT"; fi
+          if [ "$manual" = "true" ] || [ "$weekday" -eq 1 ]; then echo "weekly=true" >> "$GITHUB_OUTPUT"; fi
+          if [ "$manual" = "true" ] || { [ "$weekday" -ge 3 ] && [ "$weekday" -le 5 ]; }; then echo "ranking=true" >> "$GITHUB_OUTPUT"; fi
+
+      # The raw inputs kept from the last run (GitHub's cache; saved again at the end of a run that
+      # succeeds), so finished history isn't downloaded again
+      - name: Restore raw data
+        uses: actions/cache@v4
+        with:
+          path: |
+            pipeline/data/portalen
+            pipeline/data/league
+            pipeline/data/ranking
+            pipeline/data/tournaments
+            pipeline/data/upcoming
+            pipeline/data/cache
+            pipeline/data/players.json
+            pipeline/data/clubs.json
+            pipeline/data/tournaments.json
+            pipeline/data/eliteserien-*.json
+            pipeline/data/build-fingerprint.txt
+          key: pipeline-raw-${{ github.run_id }}
+          restore-keys: pipeline-raw-
 
       # The raw inputs (fetched results, rankings, draws, player and club lists, the Eliteserien
-      # reviews, which are only recalculated by hand, and the last build's fingerprint)
+      # reviews, which are only recalculated by hand, the fetch caches and the last build's
+      # fingerprint): only what's new or changed since the cached copy
       - name: Download raw data
-        run: rclone copy "$RAW" data --filter-from ../.github/raw-data.filter --transfers 32 --checkers 32 --fast-list
+        run: rclone copy "$RAW" data --filter-from ../.github/raw-data.filter --checksum --transfers 32 --checkers 32 --fast-list
 
+      # Only tournaments whose (saved) end date has passed; the weekly run rechecks the dates
       - name: Fetch tournaments (badmintonportalen)
-        run: node fetch-portalen.mjs --season ${{ steps.mode.outputs.season }}
+        run: node fetch-portalen.mjs --season ${{ steps.mode.outputs.season }} ${{ steps.mode.outputs.weekly == 'true' && '--check-dates' || '' }}
 
-      # Groups still being played are fetched again every night, so late results come in
+      # Only groups with a tie dated in the last 14 days that isn't in yet (late results come in);
+      # the weekly run lists the groups again and sweeps every ongoing group (postponed ties)
       - name: Fetch league ties
-        run: node fetch-league.mjs --season ${{ steps.mode.outputs.season }}
+        run: node fetch-league.mjs --season ${{ steps.mode.outputs.season }} ${{ steps.mode.outputs.weekly == 'true' && '--list-groups --all' || '' }}
 
-      # New players and club changes (about a minute), and the clubs and their regions
+      # New players and club changes, and the clubs and their regions (about a minute): weekly
       - name: Fetch the player register and clubs
+        if: steps.mode.outputs.weekly == 'true'
         run: node fetch-players.mjs && node fetch-clubs.mjs
 
-      # The official ranking (about 20 seconds; updated about twice a month)
+      # The official ranking, published once a week, Wednesday to Friday: one request to check,
+      # and the lists (about 20 seconds) only when a new one is out
       - name: Fetch the current ranking
-        run: node fetch-ranking.mjs 200${{ steps.mode.outputs.season }}
+        if: steps.mode.outputs.ranking == 'true'
+        run: node fetch-ranking.mjs 200${{ steps.mode.outputs.season }} --if-new
 
       # Only downloaded here; analysed below if anything is rebuilt
       - name: Fetch tournament draws (Cup2000)
