@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ArrowLeft, ArrowRight } from "@/components/Icons";
 import { ClubLogo } from "@/components/Team";
 import UpsetCard from "@/components/UpsetCard";
 import { getClubMap } from "@/lib/clubs";
@@ -17,7 +18,7 @@ export default function Upsets({ period }: { period: Promise<string | null> }) {
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
           <h1 className="h1 mt-4">Biggest upsets</h1>
           <p className="text-2xl max-w-3xl mt-2">The matches won with the lowest chance of winning, week by week.</p>
           <p className="max-w-3xl mt-4 text-gray-700">
@@ -63,8 +64,8 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
           <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6">
             <h2 className="text-3xl">Week of {dateRange(current.week, addDays(current.week, 6), true)}</h2>
             <nav className="flex gap-2" aria-label="Weeks">
-              {earlier && <Link href={`/upsets/${earlier.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">&larr; Earlier</Link>}
-              {later && <Link href={`/upsets/${later.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">Later &rarr;</Link>}
+              {earlier && <Link href={`/upsets/${earlier.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200"><ArrowLeft /> Earlier</Link>}
+              {later && <Link href={`/upsets/${later.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">Later <ArrowRight /></Link>}
             </nav>
           </div>
           <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -10,7 +10,7 @@
 // Suspense boundary: the prerendered HTML shows the first tab, and the browser then switches to the
 // one in the URL.
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { Suspense, useRef, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 export interface Tab {
   /** The tab's value in the URL (and, with the Tabs' `id`, its element ids) */
@@ -32,6 +32,11 @@ interface Props {
   className?: string;
   /** Smaller buttons, for tabs inside a box */
   small?: boolean;
+  /**
+   * The tab list sticks to the top of the page while scrolling through the panels; sticky table
+   * headers inside them stick below it (--sticky-offset, the list's height)
+   */
+  sticky?: boolean;
 }
 
 export default function Tabs(props: Props) {
@@ -60,8 +65,18 @@ function UrlTabs(props: Props & { param: string }) {
 }
 
 /** The tab list and panels, with tab `index` selected */
-function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, index, onSelect }: Props & { index: number; onSelect: (i: number) => void }) {
+function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, sticky = false, index, onSelect }: Props & { index: number; onSelect: (i: number) => void }) {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  // A sticky list's height, for the sticky table headers below it
+  const list = useRef<HTMLDivElement>(null);
+  const [listHeight, setListHeight] = useState(0);
+  useEffect(() => {
+    const el = list.current;
+    if (!sticky || !el) return;
+    const observer = new ResizeObserver(() => setListHeight(el.offsetHeight));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sticky]);
   const elementId = (tab: string) => (prefix ? `${prefix}-${tab}` : tab);
   const select = (i: number, focus = false) => {
     onSelect(i);
@@ -76,8 +91,14 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
   };
 
   return (
-    <div>
-      <div role="tablist" aria-label={label} className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${className}`}>
+    <div style={sticky ? ({ "--sticky-offset": `${listHeight}px` } as CSSProperties) : undefined}>
+      <div
+        ref={list}
+        role="tablist"
+        aria-label={label}
+        // Sticky: on the page's background, reaching to the container's edges
+        className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${sticky ? "sticky top-0 z-20 bg-stone-100 -mx-4 px-4 py-2" : ""} ${className}`}
+      >
         {tabs.map((t, i) => (
           <button
             key={t.id}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { clubRule } from "@/components/ClubRule";
+import { ArrowLeft } from "@/components/Icons";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import PoolName from "@/components/PoolName";
 import { WeekChange } from "@/components/RankMovement";
@@ -47,7 +48,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/clubs" className="text-gray-600 hover:text-black">&larr; Strongest clubs</Link>
+          <Link href="/clubs" className="text-gray-600 hover:text-black"><ArrowLeft /> Strongest clubs</Link>
           <div className="flex items-center gap-6 mt-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {entry.logo && <img src={entry.logo} alt="" className="w-20 h-20 object-contain shrink-0" />}

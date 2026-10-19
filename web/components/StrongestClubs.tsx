@@ -3,6 +3,7 @@
 // /clubs/strongest/<pool>. The table can be sorted by ranked players (components/SortableTable).
 import Link from "next/link";
 import { clubRule } from "@/components/ClubRule";
+import { ArrowLeft } from "@/components/Icons";
 import PoolName from "@/components/PoolName";
 import RankMovement, { WeekChange } from "@/components/RankMovement";
 import SortableTable from "@/components/SortableTable";
@@ -24,7 +25,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href={combined ? "/" : rankingHref(pool)} className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <Link href={combined ? "/" : rankingHref(pool)} className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
           <h1 className="h1 mt-4">Strongest clubs</h1>
           <p className="text-2xl max-w-3xl mt-2">
             {combined

@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
+import { ArrowLeft, ArrowRight } from "@/components/Icons";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
 import PoolName from "@/components/PoolName";
@@ -50,7 +51,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black">&larr; Rankings</Link>
+          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
           <h1 className="h1 mt-4">{player.name}</h1>
           {player.club && (
             <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">
@@ -60,7 +61,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
             </p>
           )}
           <p className="mt-4">
-            <Link href={`/head-to-head?a=${player.id}`} className="underline hover:text-blue-600">Compare head to head with another player &rarr;</Link>
+            <Link href={`/head-to-head?a=${player.id}`} className="underline hover:text-blue-600">Compare head to head with another player <ArrowRight /></Link>
           </p>
         </div>
       </section>
@@ -75,6 +76,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
           <Tabs
             label="Disciplines"
             param="discipline"
+            sticky
             tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
           />
         </div>
@@ -181,45 +183,70 @@ function AllDisciplines({ player }: { player: Player }) {
     <section className="base-section">
       {/* grid-cols-1: the column may shrink below the charts' measured width, so they fit a phone */}
       <div className="base-container px-4 grid grid-cols-1 gap-6">
-        {ratingSeries.length > 1 && (
-          <div className="bg-white p-4 md:p-6">
-            <h2 className="text-xl mb-1">Rating history</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              Rating in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.
-            </p>
-            <LineChart series={ratingSeries} label="Rating" className="relative h-72" />
-            <details className="mt-4">
-              <summary className="cursor-pointer text-gray-700 hover:text-black">Rating by season</summary>
-              {seasonTable(ratingSeries, (row) => (row?.rating != null ? String(row.rating) : "–"))}
-              <p className="text-sm text-gray-600 mt-2">Rating at the end of each season (or the latest week for the current one).</p>
-            </details>
-          </div>
-        )}
-        {rankSeries.length > 0 && (
-          <div className="bg-white p-4 md:p-6">
-            <h2 className="text-xl mb-1">Ranking history</h2>
-            <p className="text-sm text-gray-600 mb-4">
-              National rank at the end of each week, among players who had played in the last 12 months; men&apos;s disciplines rank only men and women&apos;s only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
-              logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.
-            </p>
-            <LineChart series={rankSeries} label="Rank" rank className="relative h-72" />
-            <details className="mt-4">
-              <summary className="cursor-pointer text-gray-700 hover:text-black">Rank by season</summary>
-              {seasonTable(rankSeries, (row) =>
-                row?.rank ? (
-                  <>
-                    #{row.rank}
-                    {/* "of 1,754" on its own line on phones */}
-                    {row.ranked ? <span className="block sm:inline text-xs sm:text-sm text-gray-500"> of {num(row.ranked)}</span> : null}
-                  </>
-                ) : (
-                  "–"
-                ),
-              )}
-              <p className="text-sm text-gray-600 mt-2">Rank at the end of each season (or the latest week for the current one).</p>
-            </details>
-          </div>
-        )}
+        {/* Rating and ranking history in one box, a tab each (one without the other: just that one) */}
+        <div className="bg-white p-4 md:p-6">
+          <h2 className="text-xl mb-3">History</h2>
+          <Tabs
+            label="History"
+            small
+            className="mb-4"
+            tabs={[
+              ...(ratingSeries.length > 1
+                ? [
+                    {
+                      id: "rating",
+                      label: "Rating",
+                      content: (
+                        <>
+                          <p className="text-sm text-gray-600 mb-4">
+                            Rating in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.
+                          </p>
+                          <LineChart series={ratingSeries} label="Rating" className="relative h-72" />
+                          <details className="mt-4">
+                            <summary className="cursor-pointer text-gray-700 hover:text-black">Rating by season</summary>
+                            {seasonTable(ratingSeries, (row) => (row?.rating != null ? String(row.rating) : "–"))}
+                            <p className="text-sm text-gray-600 mt-2">Rating at the end of each season (or the latest week for the current one).</p>
+                          </details>
+                        </>
+                      ),
+                    },
+                  ]
+                : []),
+              ...(rankSeries.length > 0
+                ? [
+                    {
+                      id: "ranking",
+                      label: "Ranking",
+                      content: (
+                        <>
+                          <p className="text-sm text-gray-600 mb-4">
+                            National rank at the end of each week, among players who had played in the last 12 months; men&apos;s disciplines rank only men and women&apos;s only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is
+                            logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.
+                          </p>
+                          <LineChart series={rankSeries} label="Rank" rank className="relative h-72" />
+                          <details className="mt-4">
+                            <summary className="cursor-pointer text-gray-700 hover:text-black">Rank by season</summary>
+                            {seasonTable(rankSeries, (row) =>
+                              row?.rank ? (
+                                <>
+                                  #{row.rank}
+                                  {/* "of 1,754" on its own line on phones */}
+                                  {row.ranked ? <span className="block sm:inline text-xs sm:text-sm text-gray-500"> of {num(row.ranked)}</span> : null}
+                                </>
+                              ) : (
+                                "–"
+                              ),
+                            )}
+                            <p className="text-sm text-gray-600 mt-2">Rank at the end of each season (or the latest week for the current one).</p>
+                          </details>
+                        </>
+                      ),
+                    },
+                  ]
+                : []),
+            ]}
+          />
+        </div>
       </div>
     </section>
   );
