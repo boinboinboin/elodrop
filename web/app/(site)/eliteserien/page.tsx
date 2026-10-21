@@ -115,7 +115,7 @@ async function Content() {
               <h2 className="text-3xl mb-2">Head to head</h2>
               <p className="text-gray-700 mb-4">Chance that the team on the left wins a tie against the team at the top. Hover for the expected score.</p>
               <div className="bg-white overflow-x-auto p-2">
-                <table className="text-sm">
+                <table className="w-full text-sm">
                   <thead>
                     <tr>
                       <th scope="col" className="p-2" />
@@ -131,12 +131,13 @@ async function Content() {
                         {teams.map((b) => {
                           if (a.team === b.team) return <td key={b.team} className="p-2 text-center text-gray-300">–</td>;
                           const h = data.headToHead[a.team][b.team];
-                          // One blue, deeper with the chance; white text on the deep cells
+                          // The theme's first chart colour, deeper with the chance; light enough at its deepest (62%)
+                          // for dark text on every cell, in every theme
                           return (
                             <td
                               key={b.team}
-                              className={`p-2 text-center tabular-nums border-2 border-white ${h.win > 0.55 ? "text-white" : "text-gray-900"}`}
-                              style={{ background: `rgba(42, 120, 214, ${(0.08 + h.win * 0.82).toFixed(2)})` }}
+                              className="p-2 text-center tabular-nums border-2 border-white text-gray-900"
+                              style={{ background: `color-mix(in srgb, var(--color-chart-1) ${Math.round(6 + h.win * 56)}%, var(--color-white))` }}
                               title={`${a.team} against ${b.team}: expected ${h.expected.toFixed(1)}–${(8 - h.expected).toFixed(1)} in matches, ${h.points.toFixed(1)}–${(4 - h.points).toFixed(1)} in table points; wins ${percent(h.win)}, draws ${percent(h.draw)}, loses ${percent(h.loss)}`}
                             >
                               {h.win >= 0.995 ? ">99%" : h.win < 0.005 ? "<1%" : percent(h.win)}

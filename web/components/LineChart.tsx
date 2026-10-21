@@ -270,8 +270,8 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
           >
             {domain.ticks.map((v) => (
               <g key={v}>
-                <line x1={plot.left} x2={plot.right} y1={y(v)} y2={y(v)} stroke={COLORS.grid} />
-                <text x={plot.left - 8} y={y(v)} textAnchor="end" dominantBaseline="middle" fill={COLORS.axis} fontSize={12} style={{ fontVariantNumeric: "tabular-nums" }}>
+                <line x1={plot.left} x2={plot.right} y1={y(v)} y2={y(v)} style={{ stroke: COLORS.grid }} />
+                <text x={plot.left - 8} y={y(v)} textAnchor="end" dominantBaseline="middle" fontSize={12} style={{ fill: COLORS.axis, fontVariantNumeric: "tabular-nums" }}>
                   {rank ? `#${formatNumber(v)}` : formatNumber(v, domain.decimals, signed)}
                 </text>
               </g>
@@ -280,23 +280,23 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
               const px = x(Date.UTC(year, 0, 1));
               return (
                 <g key={year}>
-                  <line x1={px} x2={px} y1={plot.bottom} y2={plot.bottom + 4} stroke={COLORS.axis} />
-                  <text x={px} y={plot.bottom + 18} textAnchor="middle" fill={COLORS.axis} fontSize={12}>
+                  <line x1={px} x2={px} y1={plot.bottom} y2={plot.bottom + 4} style={{ stroke: COLORS.axis }} />
+                  <text x={px} y={plot.bottom + 18} textAnchor="middle" fontSize={12} style={{ fill: COLORS.axis }}>
                     {year}
                   </text>
                 </g>
               );
             })}
             {paths.map((p) => (
-              <path key={p.key} d={p.d} fill="none" stroke={p.color} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+              <path key={p.key} d={p.d} fill="none" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" style={{ stroke: p.color }} />
             ))}
             {ends.map(
               (e, i) =>
                 e && (
                   <g key={i}>
-                    <circle cx={x(time(e.week))} cy={y(e.v)} r={4} fill={e.color} stroke={COLORS.surface} strokeWidth={2} />
+                    <circle cx={x(time(e.week))} cy={y(e.v)} r={4} strokeWidth={2} style={{ fill: e.color, stroke: COLORS.surface }} />
                     {series.length === 1 && (
-                      <text x={x(time(e.week)) + 8} y={y(e.v)} dominantBaseline="middle" fill={COLORS.text} fontSize={12} fontWeight={600} style={{ fontVariantNumeric: "tabular-nums" }}>
+                      <text x={x(time(e.week)) + 8} y={y(e.v)} dominantBaseline="middle" fontSize={12} fontWeight={600} style={{ fill: COLORS.text, fontVariantNumeric: "tabular-nums" }}>
                         {fmt(e.v)}
                       </text>
                     )}
@@ -305,10 +305,10 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
             )}
             {tooltip && (
               <>
-                <line x1={tooltip.px} x2={tooltip.px} y1={plot.top} y2={plot.bottom} stroke={COLORS.crosshair} />
+                <line x1={tooltip.px} x2={tooltip.px} y1={plot.top} y2={plot.bottom} style={{ stroke: COLORS.crosshair }} />
                 {series.map((s, i) => {
                   const v = value(s, active!);
-                  return v === null ? null : <circle key={i} cx={tooltip.px} cy={y(v)} r={4} fill={s.colors?.[active! - s.offset] ?? s.color} stroke={COLORS.surface} strokeWidth={2} />;
+                  return v === null ? null : <circle key={i} cx={tooltip.px} cy={y(v)} r={4} strokeWidth={2} style={{ fill: s.colors?.[active! - s.offset] ?? s.color, stroke: COLORS.surface }} />;
                 })}
               </>
             )}

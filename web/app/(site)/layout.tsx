@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { Suspense } from "react";
 import Logo from "@/components/Logo";
+import MenuButton from "@/components/MenuButton";
 import NavigationProgress from "@/components/NavigationProgress";
 import SearchBar from "@/components/SearchBar";
 import UpdatedAt from "@/components/UpdatedAt";
@@ -22,16 +23,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
-      <header className="bg-white border-b border-gray-200">
-        <div className="base-container px-4 py-4 flex flex-wrap items-center gap-x-8 gap-y-3">
+      {/* Phones: the logo and the menu button, the search on its own line; tablets and small laptops:
+          the search between; from xl the links too (the menu then holds just the colour theme). */}
+      <header className="relative bg-white border-b border-gray-200">
+        <div className="base-container px-4 py-3 md:py-4 flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-3">
           <Logo />
-          <nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 text-gray-700">
+          <nav aria-label="Main" className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="hover:text-black">{n.label}</Link>
             ))}
           </nav>
-          <div className="flex-1 min-w-64">
+          <div className="order-last w-full md:order-none md:w-auto md:flex-1 md:min-w-0">
             <SearchBar />
+          </div>
+          <div className="ml-auto md:ml-0 flex">
+            <MenuButton links={NAV} />
           </div>
         </div>
       </header>

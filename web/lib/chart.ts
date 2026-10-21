@@ -3,12 +3,20 @@
 export const DAY = 86_400_000;
 export const WEEK = 7 * DAY;
 
-// Categorical palette in fixed order (validated: CVD and normal-vision separation pass on white;
-// slots 3-5 are below 3:1 contrast, so charts using them carry a legend, tooltip and table).
-export const PALETTE = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"];
-export const COLORS = { series: PALETTE[0], grid: "#e7e5e4", axis: "#6b7280", text: "#111827", crosshair: "#9ca3af", surface: "#ffffff" };
-// Clubs past the eighth share a neutral "other" colour
-export const OTHER_COLOR = "#8a8984";
+// Categorical palette in fixed order, and the chart's other colours: CSS variables, so they follow
+// the theme (values per theme in app/globals.css; each theme's palette is validated for CVD and
+// normal-vision separation against its chart surface). Set as styles, not SVG attributes.
+export const PALETTE = Array.from({ length: 8 }, (_, i) => `var(--color-chart-${i + 1})`);
+export const COLORS = {
+  series: PALETTE[0],
+  grid: "var(--color-chart-grid)",
+  axis: "var(--color-chart-axis)",
+  text: "var(--color-chart-text)",
+  crosshair: "var(--color-chart-crosshair)",
+  surface: "var(--color-chart-surface)",
+};
+// Clubs past the palette share a neutral "other" colour
+export const OTHER_COLOR = "var(--color-chart-other)";
 // right: room for the value label at the end of a single line; with several lines (no end label)
 // only for the end dots and the last year label
 export const MARGIN = { top: 12, right: 52, rightWithoutLabel: 16, bottom: 28, left: 48 };

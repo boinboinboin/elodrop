@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -14,7 +15,12 @@ export const metadata: Metadata = {
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) is full-screen
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    // The theme attribute is set by THEME_SCRIPT before React hydrates, so it may differ from the server's
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* The saved colour theme, before the page paints (lib/theme.ts) */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-screen flex flex-col">
         {/* Type-safe URL query state (nuqs) for client components */}
         <NuqsAdapter>{children}</NuqsAdapter>

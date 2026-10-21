@@ -9,6 +9,131 @@
   --text-heading-1-mobile--line-height: 110%;
 }
 
+/* Themes: the site's colours are Tailwind's palette classes (text-gray-600, bg-white, border-black,
+   text-blue-600 for links, green-700 and red-700 for good and bad, ...). "yinyang" (the default) is
+   Tailwind's own values; another theme re-points the palette variables those classes read, under
+   html[data-theme]. The choice is made in the header's menu (components/ThemePicker.tsx), saved in the browser and set before
+   the page paints (app/layout.tsx). Charts, the logo's cork and other non-class colours use the
+   tokens below. */
+
+/* Always emitted (static): they're read from code (lib/chart.ts, lib/logo.ts), not by a class */
+@theme static {
+  /* The logo's cork */
+  --color-accent: #f97316;
+  /* Charts: the series in fixed order (validated: CVD and normal-vision separation of adjacent
+     slots on white), then the chart's own colours */
+  --color-chart-1: #2a78d6;
+  --color-chart-2: #eb6834;
+  --color-chart-3: #1baf7a;
+  --color-chart-4: #eda100;
+  --color-chart-5: #e87ba4;
+  --color-chart-6: #008300;
+  --color-chart-7: #6250d6;
+  --color-chart-8: #e34948;
+  --color-chart-other: #8a8984;
+  --color-chart-grid: #e7e5e4;
+  --color-chart-axis: #6b7280;
+  --color-chart-text: #111827;
+  --color-chart-crosshair: #9ca3af;
+  --color-chart-surface: #ffffff;
+}
+
+/* totebag: light cream with dark olive text (a totebag), court-green links (a badminton court).
+   "black" (selected tabs, buttons, borders) is the dark olive. Every text colour passes WCAG AA
+   (4.5:1) on the page, cards and table rows: the faintest (gray-500) 4.6:1, body text 9.7:1. */
+@layer theme {
+  html[data-theme="totebag"] {
+    /* Surfaces: a light cream page, lighter cream cards (and the text on dark olive) */
+    --color-stone-100: #f3efdf;
+    --color-white: #fbf9f1;
+    --color-black: #2c3a1d;
+    /* The grays, cream to dark olive: rows and lines (50–300), decorative text (400), text from
+       faint to body (500–900) */
+    --color-gray-50: #efeadb;
+    --color-gray-100: #ebe6d5;
+    --color-gray-200: #e0dac6;
+    --color-gray-300: #cbc5ae;
+    --color-gray-400: #9c9d84;
+    --color-gray-500: #64694e;
+    --color-gray-600: #525a3d;
+    --color-gray-700: #3c462b;
+    --color-gray-800: #2c3a1d;
+    --color-gray-900: #2c3a1d;
+    /* Links: court green (5.1:1); good: olive green (5.1:1); bad: a brick red (5.4:1) */
+    --color-blue-500: #2f6b45;
+    --color-blue-600: #2f6b45;
+    --color-blue-700: #22513a;
+    --color-green-600: #4f7a23;
+    --color-green-700: #44691e;
+    --color-red-600: #a2462c;
+    --color-red-700: #9a3f27;
+    /* The logo's cork: terracotta */
+    --color-accent: #b5643a;
+    /* Five series (validated on the card colour: worst adjacent CVD ΔE 18.5, normal 20.1, all
+       ≥ 3:1): court green, blue, terracotta, plum, ochre; a sixth and on share "other" */
+    --color-chart-1: #1e7a4c;
+    --color-chart-2: #3a6fc2;
+    --color-chart-3: #d0603a;
+    --color-chart-4: #8e5bb0;
+    --color-chart-5: #b58a12;
+    --color-chart-6: #9c9d84;
+    --color-chart-7: #9c9d84;
+    --color-chart-8: #9c9d84;
+    --color-chart-other: #9c9d84;
+    --color-chart-grid: #ebe6d5;
+    --color-chart-axis: #64694e;
+    --color-chart-text: #2c3a1d;
+    --color-chart-crosshair: #cbc5ae;
+    --color-chart-surface: #fbf9f1;
+  }
+}
+
+/* allengland: the All England Open's grey courts (Yonex, from 2024): the page is the court's grey,
+   sampled from Yonex's photo of the arena (#c0c6d0), the cards a light grey (the white lines),
+   "black" the near-black floor around the courts (#1f2228). Links and good in a dark Yonex green (the court mat's #00834d, darkened),
+   darkened to pass on the grey (4.9:1 and 5.2:1); every text colour passes WCAG AA (the faintest,
+   gray-500, 4.7:1). Charts as in totebag; on the grey cards the fifth, ochre, is 2.8:1, which
+   the charts' legend, tooltip and table make up for (as for three of yinyang's). */
+@layer theme {
+  html[data-theme="allengland"] {
+    --color-stone-100: #c0c6d0;
+    --color-white: #eef1f5;
+    --color-black: #1f2228;
+    --color-gray-50: #e3e7ed;
+    --color-gray-100: #dde1e8;
+    --color-gray-200: #cdd2db;
+    --color-gray-300: #aeb4bf;
+    --color-gray-400: #7b828e;
+    --color-gray-500: #4a505b;
+    --color-gray-600: #3d434d;
+    --color-gray-700: #2d323a;
+    --color-gray-800: #1f2228;
+    --color-gray-900: #1f2228;
+    --color-blue-500: #005a35;
+    --color-blue-600: #005a35;
+    --color-blue-700: #00452a;
+    --color-green-600: #285d17;
+    --color-green-700: #245415;
+    --color-red-600: #a2301f;
+    --color-red-700: #962c1c;
+    --color-accent: #00834d;
+    --color-chart-1: #1e7a4c;
+    --color-chart-2: #3a6fc2;
+    --color-chart-3: #d0603a;
+    --color-chart-4: #8e5bb0;
+    --color-chart-5: #b58a12;
+    --color-chart-6: #7b828e;
+    --color-chart-7: #7b828e;
+    --color-chart-8: #7b828e;
+    --color-chart-other: #7b828e;
+    --color-chart-grid: #cdd2db;
+    --color-chart-axis: #4a505b;
+    --color-chart-text: #1f2228;
+    --color-chart-crosshair: #aeb4bf;
+    --color-chart-surface: #eef1f5;
+  }
+}
+
 /* Page building blocks, as on the old site */
 @utility base-section {
   @apply my-12 md:my-16;

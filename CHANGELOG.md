@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.10.0 (2026-10-21)
+
+- Colour themes, chosen in the header's menu and remembered in the browser: "Yinyang", today's black and white (the default); "Totebag", light cream with dark olive text and court-green links; and "All England", the All England Open's grey courts. Every text colour passes WCAG AA contrast in each theme, and the chart lines are checked to stay apart for colour-blind readers.
+- A menu button in the header: the site's links on phones, tablets and small laptops (below 1280 px), and the colour theme everywhere. On phones it opens as a panel under the header, from tablets as a dropdown; it closes on a link, Escape or a tap outside. On phones the header keeps to one line with the search below it, and tablets give the search more room.
+- Eliteserien's head-to-head table spans the full width, and its colours follow the theme; the cells are now light enough for dark text to read on every one (the deepest used white text at about 2:1).
+
 ## v1.9.0 (2026-10-21)
 
 - A logo: a drop shot. One line runs across like a rating graph that drops and recovers, its dip the feathers of a shuttlecock falling cork first, with the cork in orange, the one accent colour.
