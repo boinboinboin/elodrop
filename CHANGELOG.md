@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.5.0 (2026-10-21)
+
+- The week's 10 biggest upsets on the upsets page are a carousel: one card at a time on phones, two on tablets and three on desktop. Swipe or drag it, or use the arrows, which move one card at a time; the dots show and jump to each position.
+- A reusable carousel component (Embla).
+
 ## v1.4.12 (2026-10-21)
 
 - Fixed: club and player names were broken in the middle of a word in tables on tablets and smaller laptops (such as the combined club ranking at 1024 px). Names now only break inside a word on phones, where there's no other way to fit.
