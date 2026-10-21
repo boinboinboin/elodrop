@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts"
+    "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts",
+    "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -29,6 +30,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
