@@ -109,7 +109,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                     <tr key={w.week} className={`border-b border-gray-100 last:border-0 align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
                       <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap"><Link href={`/upsets/${w.week}`} className="hover:text-blue-600">{date(w.week, "dayMonth")}</Link></td>
                       {/* One player per line, "beat" between the sides; on phones the chance under the event */}
-                      <td className="py-2 px-2 sm:px-4 [overflow-wrap:anywhere]">
+                      <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                         {u.winners.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} bold />)}
                         <span className="block text-sm text-gray-600">beat</span>
                         {u.losers.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} />)}
