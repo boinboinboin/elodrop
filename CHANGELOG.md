@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.9.0 (2026-10-21)
+
+- A logo: a drop shot. One line runs across like a rating graph that drops and recovers, its dip the feathers of a shuttlecock falling cork first, with the cork in orange, the one accent colour.
+- The header shows the logo leading into the name; on a page load the line draws itself and the cork drops in (not with reduced motion).
+- The site's own icon in browser tabs, bookmarks and on phone home screens, replacing the default Next.js icon. The 16 px tab icon is drawn on the pixel grid, so it stays sharp.
+- `pnpm --filter web make-icons` renders every icon from the logo (`web/lib/logo.ts`).
+
 ## v1.8.0 (2026-10-21)
 
 - Breadcrumbs above the title on every page below the front page (such as Home / Clubs / Kristiansand, or Home / Tournaments / Mossetreffen), instead of a single "← Rankings" or "← Clubs" link: each step links back, and the trail wraps on phones.

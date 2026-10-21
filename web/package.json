@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts",
-    "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts"
+    "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts",
+    "make-icons": "tsx scripts/make-icons.mts"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

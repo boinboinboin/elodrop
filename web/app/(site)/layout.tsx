@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { Suspense } from "react";
+import Logo from "@/components/Logo";
 import NavigationProgress from "@/components/NavigationProgress";
 import SearchBar from "@/components/SearchBar";
 import UpdatedAt from "@/components/UpdatedAt";
@@ -23,7 +24,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       </Suspense>
       <header className="bg-white border-b border-gray-200">
         <div className="base-container px-4 py-4 flex flex-wrap items-center gap-x-8 gap-y-3">
-          <Link href="/" className="text-xl font-semibold tracking-tight">elodrop</Link>
+          <Logo />
           <nav aria-label="Main" className="flex flex-wrap gap-x-5 gap-y-1 text-gray-700">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="hover:text-black">{n.label}</Link>

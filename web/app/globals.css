@@ -23,3 +23,21 @@
 body {
   @apply bg-stone-100 text-gray-900 antialiased;
 }
+
+/* The header logo (components/Logo.tsx), on a page load: the line draws itself (its path has
+   pathLength 1 and stroke-dasharray 1), then the cork drops in at the dip */
+@theme {
+  --animate-logo-line: logo-line 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
+  --animate-logo-cork: logo-cork 0.35s 0.5s cubic-bezier(0.5, 0, 0.75, 0) both;
+  @keyframes logo-line {
+    from {
+      stroke-dashoffset: 1;
+    }
+  }
+  @keyframes logo-cork {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+  }
+}
