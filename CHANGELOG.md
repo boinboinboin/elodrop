@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.7.0 (2026-10-21)
+
+- A thin bar along the top of the page while the next page loads, so a tap or click visibly did something (especially on phones). It only appears when loading takes more than a moment, and fills and fades once the page is there; searches show it too.
+
 ## v1.6.0 (2026-10-21)
 
 - Draw luck follows NBF's seeding rules: the fair draw seeds by the official ranking list valid the Wednesday after registration closed (a pair has the sum of its players' points; no points, no seed), with 2, 4, 8, 16 or 32 seeds by the number of entries, also in group events (at most one per group, as the organisers' draws show). Seed 1 goes to the top, seed 2 to the bottom, seeds 3–4 to the second and third quarters and 5–8 into the eighths, as the rules say. A seed the organiser placed elsewhere, or left out, now counts as luck. Before, the seeds were the strongest by our ratings, kept where the organiser put them. The ranking list is settled when a tournament's draw is first published, so later lists don't change its seeds.

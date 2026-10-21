@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { Suspense } from "react";
+import NavigationProgress from "@/components/NavigationProgress";
 import SearchBar from "@/components/SearchBar";
 import UpdatedAt from "@/components/UpdatedAt";
 
@@ -16,6 +17,10 @@ const NAV = [
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* A bar along the top while a page loads (it reads the URL, so it waits for the client) */}
+      <Suspense fallback={null}>
+        <NavigationProgress />
+      </Suspense>
       <header className="bg-white border-b border-gray-200">
         <div className="base-container px-4 py-4 flex flex-wrap items-center gap-x-8 gap-y-3">
           <Link href="/" className="text-xl font-semibold tracking-tight">elodrop</Link>

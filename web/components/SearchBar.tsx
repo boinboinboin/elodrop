@@ -6,6 +6,7 @@
 // Enter without moving opens the first result. Escape closes the list.
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { startNavigationProgress } from "@/components/NavigationProgress";
 
 interface Result {
   name: string;
@@ -46,6 +47,7 @@ export default function SearchBar() {
     if (!r) return;
     setFound(null);
     setQuery("");
+    startNavigationProgress();
     router.push(r.url);
   };
   const onKey = (event: React.KeyboardEvent) => {
