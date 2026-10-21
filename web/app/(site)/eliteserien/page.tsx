@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeft } from "@/components/Icons";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Team from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { expectedScore, getEliteserien, getMeta, type Loose } from "@/lib/data";
@@ -33,7 +33,7 @@ async function Content() {
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
+          <Breadcrumbs trail={[{ label: "Eliteserien" }]} />
           <h1 className="h1 mt-4">Eliteserien {data?.season ?? ""}</h1>
           <p className="text-2xl max-w-3xl mt-2">How strong the eight teams are, from their players&apos; ratings.</p>
           {seasons.length > 0 && (

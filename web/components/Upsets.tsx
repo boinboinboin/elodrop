@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Carousel from "@/components/Carousel";
 import { ArrowLeft, ArrowRight } from "@/components/Icons";
 import { ClubLogo } from "@/components/Team";
@@ -19,7 +20,7 @@ export default function Upsets({ period }: { period: Promise<string | null> }) {
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
+          <Breadcrumbs trail={[{ label: "Upsets" }]} />
           <h1 className="h1 mt-4">Biggest upsets</h1>
           <p className="text-2xl max-w-3xl mt-2">The matches won with the lowest chance of winning, week by week.</p>
           <p className="max-w-3xl mt-4 text-gray-700">

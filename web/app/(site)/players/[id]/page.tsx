@@ -5,7 +5,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
-import { ArrowLeft, ArrowRight } from "@/components/Icons";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { ArrowRight } from "@/components/Icons";
 import LineChart, { type ChartSeries } from "@/components/LineChart";
 import MatchTable from "@/components/MatchTable";
 import PoolName from "@/components/PoolName";
@@ -51,7 +52,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
+          <Breadcrumbs trail={[{ label: player.name }]} />
           <h1 className="h1 mt-4">{player.name}</h1>
           {player.club && (
             <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">

@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.8.0 (2026-10-21)
+
+- Breadcrumbs above the title on every page below the front page (such as Home / Clubs / Kristiansand, or Home / Tournaments / Mossetreffen), instead of a single "← Rankings" or "← Clubs" link: each step links back, and the trail wraps on phones.
+- The strongest clubs in one discipline (such as /clubs/strongest/mixedDoubles) lead back to all clubs, where they used to link to that discipline's player ranking.
+
 ## v1.7.0 (2026-10-21)
 
 - A thin bar along the top of the page while the next page loads, so a tap or click visibly did something (especially on phones). It only appears when loading takes more than a moment, and fills and fades once the page is there; searches show it too.

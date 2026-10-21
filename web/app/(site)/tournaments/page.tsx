@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArrowLeft } from "@/components/Icons";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import PredictionStats, { luckFit } from "@/components/PredictionStats";
 import { getTournamentsIndex } from "@/lib/data";
 import { date, dateRange } from "@/lib/format";
@@ -16,7 +16,7 @@ export default function TournamentsPage() {
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/" className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
+          <Breadcrumbs trail={[{ label: "Tournaments" }]} />
           <h1 className="h1 mt-4">Tournament draws</h1>
           <p className="text-2xl max-w-3xl mt-2">Who got a lucky or unlucky draw in upcoming tournaments, from the players&apos; ratings.</p>
           <p className="max-w-3xl mt-4 text-gray-700">

@@ -2,15 +2,15 @@
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
 // /clubs/strongest/<pool>. The table can be sorted by ranked players (components/SortableTable).
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { clubRule } from "@/components/ClubRule";
-import { ArrowLeft } from "@/components/Icons";
 import PoolName from "@/components/PoolName";
 import RankMovement, { WeekChange } from "@/components/RankMovement";
 import SortableTable from "@/components/SortableTable";
 import { ClubLogo } from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { POOLS, POOL_KEYS, getClubsFile } from "@/lib/data";
-import { rankingHref, strongestClubsHref } from "@/lib/rankings";
+import { strongestClubsHref } from "@/lib/rankings";
 import type { CombinedClubStanding, ClubStanding, Pool } from "@/lib/types";
 
 const TABS = { combined: "Combined", ...POOLS };
@@ -25,7 +25,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href={combined ? "/" : rankingHref(pool)} className="text-gray-600 hover:text-black"><ArrowLeft /> Rankings</Link>
+          <Breadcrumbs trail={combined ? [{ label: "Clubs" }] : [{ label: "Clubs", href: "/clubs" }, { label: POOLS[pool] }]} />
           <h1 className="h1 mt-4">Strongest clubs</h1>
           <p className="text-2xl max-w-3xl mt-2">
             {combined

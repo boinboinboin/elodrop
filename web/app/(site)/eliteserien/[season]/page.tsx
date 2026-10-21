@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft } from "@/components/Icons";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Team from "@/components/Team";
 import { getClubMap } from "@/lib/clubs";
 import { getEliteserienReview, getMeta, type Loose } from "@/lib/data";
@@ -45,7 +45,7 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
     <>
       <section className="base-section">
         <div className="base-container px-4">
-          <Link href="/eliteserien" className="text-gray-600 hover:text-black"><ArrowLeft /> Eliteserien</Link>
+          <Breadcrumbs trail={[{ label: "Eliteserien", href: "/eliteserien" }, { label: data.season }]} />
           <h1 className="h1 mt-4">Eliteserien {data.season} in review</h1>
           {seasons.length > 1 && (
             <nav className="mt-3 flex flex-wrap gap-2" aria-label="Seasons">
