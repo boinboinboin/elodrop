@@ -13,7 +13,7 @@ import ScrollRow from "@/components/ScrollRow";
 import Tabs from "@/components/Tabs";
 import { getClubMap } from "@/lib/clubs";
 import { getTournament, getTournamentsIndex } from "@/lib/data";
-import { dateRange, num, pct, place, signed } from "@/lib/format";
+import { date, dateRange, num, pct, place, signed } from "@/lib/format";
 import { type Order, allEntries, eventHref, eventsByClass, formatDescription, noLuck, onlyWinners, orders, pickView, rounds, tableRows } from "@/lib/tournament";
 import type { ClubEntry, Entry, Tournament, TournamentEvent } from "@/lib/types";
 
@@ -191,8 +191,13 @@ function Summary({ t, clubs }: { t: Tournament; clubs: Record<string, ClubEntry>
           <div className="max-w-3xl text-gray-700 space-y-2">
             <p>
               How lucky each player&apos;s draw is, from their ratings at the end of the week before the tournament. Every event is played out {num(t.runs)} times with each match decided by the players&apos;
-              win chances, once with the actual draw and once with a fair draw: the same players drawn again at random, with the seeds (the strongest by rating: one per group, or 2–8 in a knockout) kept
-              where they are.
+              win chances, once with the actual draw and once with a fair draw: the same players drawn again by the rules, the seeds placed where the rules put them and everyone else at random.
+            </p>
+            <p>
+              <strong className="font-semibold">Seeds</strong> are by the official ranking
+              {t.rankingVersion ? ` of ${date(t.rankingVersion)}` : ""}, the list valid the Wednesday after registration closed (a pair has the sum of its players&apos; points; without points,
+              no seed): 2, 4 from 16 entries, 8 from 32 and 16 from 64, and in groups at most one per group. Seed 1 goes to the top of the draw, seed 2 to the bottom, seeds 3–4 are drawn into the second and
+              third quarters, 5–8 into the eighths without a seed. A seed the organiser placed differently, or left out, counts as luck. Classes without a ranking (such as U11) are seeded by rating.
             </p>
             <p>
               {hasRounds && (
@@ -307,6 +312,19 @@ function Events({ t, clubs, eventIndex, requestedOrder }: { t: Tournament; clubs
                 below, it hurts.
                 {withdrawals &&
                   " Players who withdrew (lost by walkover) count too: the numbers are with them out from then on, against a fair draw with the same withdrawals. A * marks luck that withdrawals changed (hover for the split)."}
+              </dd>
+            </>
+          )}
+          {!single && (
+            <>
+              <dt className="font-semibold">Seeds</dt>
+              <dd>
+                {event.seededBy !== "ranking"
+                  ? `No ranking list for the seeding here, so the fair draw seeds the ${event.seeds.length} strongest by rating`
+                  : event.seeds.length
+                    ? `${event.seeds.length} by the official ranking${t.rankingVersion ? ` of ${date(t.rankingVersion)}` : ""}, placed by the rules in the fair draw`
+                    : `None: nobody here has ranking points${t.rankingVersion ? ` (${date(t.rankingVersion)})` : ""}, so the fair draw is all at random`}
+                {event.seeds.length > 0 && " (marked with their seed number)"}.
               </dd>
             </>
           )}
@@ -429,6 +447,8 @@ function EntryRow({
   const rank = e.result?.groupRank ?? null;
   const marked = placement ? [1, 2, 3, 4] : (event.advance?.ranks ?? [1]);
   const r = e.result;
+  // Seed number in the fair draw (0: not seeded); not shown where there's no draw luck
+  const seed = single ? 0 : event.seeds.indexOf(event.entries.indexOf(e)) + 1;
 
   const expected = single ? { label: "Wins", ex: ex.wins.toFixed(2), fair: null } : placement ? { label: "Placement", ex: ex.place!.toFixed(2), fair: fx.place!.toFixed(2) } : { label: "Rounds", ex: ex.progress.toFixed(2), fair: fx.progress.toFixed(2) };
   const luckValue = (
@@ -478,6 +498,11 @@ function EntryRow({
       {columns.numbered && <td className="py-2 pl-2 sm:pl-4 pr-0 text-right tabular-nums font-semibold">{standing}</td>}
       <td className="py-2 px-2 sm:px-4">
         <EntryNames e={e} clubs={clubs} />
+        {seed > 0 && (
+          <Badge tone="gray">
+            <span title={e.points ? `${num(e.points)} ranking points` : "Seeded by rating"}>Seed {seed}</span>
+          </Badge>
+        )}
         {e.withdrew && <Badge tone="red">Withdrew</Badge>}
         {order === "group" && played && rank && marked.includes(rank) && <Badge tone={rank === 1 ? "green" : "gray"}>{RANK_LABELS[rank] ?? `${rank}. in the group`}</Badge>}
         {/* Phones: the numbers under the names, labelled */}

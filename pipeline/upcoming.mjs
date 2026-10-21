@@ -25,7 +25,7 @@
 // Ratings are from the end of the week before the tournament (weekly histories), so a played
 // tournament is predicted as it would have been beforehand.
 // Draw luck: each event is simulated (draw-sim.mjs) with the actual draw and with random redraws
-// of the same entries (seeds kept in place). An entry's luck is its expected rounds (or, in events
+// of the same entries (the official seeds placed by the rules, see "Official seeding" below). An entry's luck is its expected rounds (or, in events
 // that place everyone, as the X classes, its expected placement) in the actual draw against the
 // average over redraws. Events with a single group have no luck (everyone plays everyone).
 // Played draws: Cup2000 then lists the players who came through instead of "Vinner av Pulje 3",
@@ -36,6 +36,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { call, text } from "./portalen.mjs";
 import { service, unescape, parsePlayer } from "./fetch-tournament.mjs";
 import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
+import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -276,6 +277,81 @@ async function fetchDraws(id) {
   return events;
 }
 
+// ---- Official seeding: the ranking points ----
+
+// NBF's rules seed by the ranking list valid the Wednesday after the registration deadline (a
+// Tuesday): the first version published from the day after the deadline, or until that's out the
+// newest. The version is settled when the draw is first published (fetched) and kept from then on,
+// as the organiser seeds with the list there is then. Each age group's lists of that version are kept as { list: { player id: points } } in
+// data/ranking/seeding/<version>/<age group>.json, fetched once (a version doesn't change).
+const SEEDING = `${DIR}data/ranking/seeding`;
+const ageGroup = (className) => className.trim().split(/\s+/)[0];
+const seasonVersions = new Map();
+async function seedingVersion(deadline) {
+  const day = addDays(deadline, 1);
+  const season = seasonId(day);
+  if (!seasonVersions.has(season)) seasonVersions.set(season, await versions(season));
+  const list = seasonVersions.get(season); // newest first
+  const version = list.filter((v) => v >= day).at(-1) ?? list[0];
+  return version ? { deadline, season, version } : null;
+}
+
+// The lists of the tournament's age groups (those with a ranking: not U11 or "Åpen"), unless saved
+async function fetchSeedingLists({ season, version }, classNames) {
+  for (const age of new Set(classNames.map(ageGroup))) {
+    const file = `${SEEDING}/${version}/${age}.json`;
+    if (!AGE_GROUPS[age] || existsSync(file)) continue;
+    const { group, first } = AGE_GROUPS[age];
+    const lists = {};
+    for (const [list, offset] of Object.entries(LISTS)) {
+      lists[list] = Object.fromEntries((await rankingList(season, group, first + offset, version)).rows.map((r) => [r.id, r.points]));
+    }
+    mkdirSync(`${SEEDING}/${version}`, { recursive: true });
+    writeFileSync(file, JSON.stringify({ version, ageGroup: age, ...lists }));
+  }
+}
+
+// A draw's seeding: the version (from its registration deadline) and its lists, fetched if missing.
+// A failure leaves the seeding by rating (and is tried again on the next run).
+async function withSeeding(raw, deadline) {
+  try {
+    raw.seeding ??= deadline ? await seedingVersion(deadline) : null;
+    if (raw.seeding) await fetchSeedingLists(raw.seeding, raw.draws.map((d) => d.className));
+  } catch (err) {
+    console.error(`${raw.info.name ?? raw.cupId}: ranking for the seeding not fetched: ${err.message}`);
+  }
+  return raw;
+}
+
+const seedingFiles = new Map();
+const seedingLists = (version, className) => {
+  const file = `${SEEDING}/${version}/${ageGroup(className)}.json`;
+  if (!seedingFiles.has(file)) seedingFiles.set(file, existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null);
+  return seedingFiles.get(file);
+};
+
+// An event's seeds by the rules, best first: the entries with ranking points (a pair: the sum of
+// its players'; mixed doubles from the men's and women's mixed lists), ties to the higher singles
+// points, then the higher rating. Null when there's no list for the class (no seeding version, or
+// an age group without a ranking): then the seeds are the strongest by rating. Also each entry's
+// points (null without).
+function officialSeeds(seeding, className, pool, event, entries) {
+  const lists = seeding ? seedingLists(seeding.version, className) : null;
+  if (!lists) return { seeds: null, points: entries.map(() => null) };
+  const own = SINGLES.has(pool) ? [pool] : pool === "mixedDoubles" ? ["mixedMen", "mixedWomen"] : [pool];
+  const sum = (ids, names) => {
+    const found = ids.map((id) => names.map((n) => lists[n][id]).find((x) => x !== undefined)).filter((x) => x !== undefined);
+    return found.length ? found.reduce((a, b) => a + b, 0) : null;
+  };
+  const points = entries.map((e) => sum(e.players.map((p) => p.id), own));
+  const singles = entries.map((e) => sum(e.players.map((p) => p.id), ["men", "women"]) ?? 0);
+  const seeds = [...entries.keys()]
+    .filter((i) => points[i] > 0)
+    .sort((a, b) => points[b] - points[a] || singles[b] - singles[a] || entries[b].rating - entries[a].rating)
+    .slice(0, seedCount(event));
+  return { seeds, points };
+}
+
 // ---- Players and ratings ----
 
 // Only for analysing the draws: not read (nor there yet, in the nightly workflow, which fetches
@@ -389,12 +465,13 @@ async function fetchRaw({ portalen, cup2000 }) {
   const cupId = cup2000 || info.cup2000Id;
   if (!cupId) throw new Error(`No Cup2000 draw linked from badmintonportalen tournament ${portalen.tournamentId}`);
   const draws = await fetchDraws(cupId);
-  const raw = { cupId, portalenId: portalen?.tournamentId ?? null, fetchedAt: new Date().toISOString(), info, draws };
-  if (draws.some((d) => parseEvent(d.pages))) writeFileSync(`${OUT}/raw/${cupId}.json`, JSON.stringify(raw));
+  // The seeding from when the draw was first published, if it was fetched before
+  const raw = { cupId, portalenId: portalen?.tournamentId ?? null, fetchedAt: new Date().toISOString(), info, draws, seeding: savedRaw(cupId)?.seeding ?? null };
+  if (draws.some((d) => parseEvent(d.pages))) writeFileSync(`${OUT}/raw/${cupId}.json`, JSON.stringify(await withSeeding(raw, portalen?.deadline)));
   return raw;
 }
 
-function analyse({ cupId, portalenId, fetchedAt, info, draws }) {
+function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) {
   const unmatched = [];
   const day = info.startDate ?? today;
   const lists = [...info.lists, ...resultLists(portalenId)];
@@ -430,15 +507,17 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws }) {
       return { players, rating: Math.round(players.reduce((s, p) => s + p.rating, 0)) };
     });
     const ratings = entries.map((e) => e.rating);
+    const official = officialSeeds(seeding, d.className, pool, event, entries);
+    const seeds = official.seeds ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event));
     const actual = simulate(event, ratings, { runs: RUNS, seed: 1 });
-    const fair = simulate(event, ratings, { runs: RUNS, redraw: true, seed: 2 });
+    const fair = simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
     const forced = results ?? portalenResults(portalenId, d.className, discipline, event, entries);
     let outcome = forced ? simulate(event, ratings, { runs: 1, forced }) : null;
     // Withdrawals (played draws): entries that lost by walkover are out from that match on. The
     // chances with them out, with the actual draw and with a fair one, give the luck including them.
     const withdrawn = new Map(results?.withdrawals ?? []);
     const after = withdrawn.size ? simulate(event, ratings, { runs: RUNS, seed: 3, withdrawn }) : null;
-    const fairAfter = withdrawn.size ? simulate(event, ratings, { runs: RUNS, redraw: true, seed: 4, withdrawn }) : null;
+    const fairAfter = withdrawn.size ? simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 4, withdrawn }) : null;
     // Results from badmintonportalen count only if they decide the event (someone won it)
     if (outcome && !results && !outcome.some((o) => o.win === 1)) outcome = null;
     const groupOf = new Map(event.groups.flatMap((g, gi) => g.slots.map((s) => [s, gi])));
@@ -453,7 +532,9 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws }) {
       discipline,
       pool,
       title: parsed.title,
-      seeds: [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event)),
+      // The seeds, best first: by the official ranking points, or by rating where there's no list
+      seeds,
+      seededBy: official.seeds ? "ranking" : "rating",
       groups: event.groups.map((g) => ({ name: g.name, number: g.number, entries: g.slots, rating: Math.round(g.slots.reduce((s, e) => s + ratings[e], 0) / g.slots.length) })),
       knockout: event.stages.length > 0,
       stages: event.stages.map((s) => ({ title: s.title, main: s.main, places: s.places })),
@@ -484,6 +565,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws }) {
         }
         return {
           ...e,
+          points: official.points[i],
           group: groupOf.has(i) ? event.groups[groupOf.get(i)].number : null,
           actual: rounded(actual[i]),
           fair: rounded(fair[i]),
@@ -508,6 +590,9 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws }) {
     cancelled: CANCELLED[portalenId] ?? (/avlyst/i.test(name) ? "Cancelled" : null),
     startDate: info.startDate,
     endDate: info.endDate,
+    // The registration deadline and the ranking list the seeds are from
+    deadline: seeding?.deadline ?? null,
+    rankingVersion: seeding?.version ?? null,
     fetchedAt,
     runs: RUNS,
     events,
@@ -609,7 +694,8 @@ if (!offline) {
       }
       // A finished tournament already fetched after it ended has nothing new
       const saved = savedRaw(info.cup2000Id);
-      if (!refetch && saved && info.endDate < today && saved.fetchedAt.slice(0, 10) > info.endDate) targets.push({ raw: saved });
+      // (its seeding added if it was saved without one)
+      if (!refetch && saved && info.endDate < today && saved.fetchedAt.slice(0, 10) > info.endDate) targets.push({ raw: saved, deadline: t.deadline });
       else targets.push({ portalen: t, cup2000: info.cup2000Id });
     }
     if (arg("--cup2000") && !targets.length) {
@@ -625,6 +711,12 @@ for (const target of targets) {
   const label = target.raw?.info.name ?? target.portalen?.title ?? `Cup2000 ${target.cup2000}`;
   try {
     const raw = target.raw ?? (await fetchRaw(target));
+    // A saved draw: its seeding lists fetched if missing, and its seeding added if it has none
+    if (target.raw && !offline) {
+      const had = JSON.stringify(raw.seeding ?? null);
+      await withSeeding(raw, target.deadline);
+      if (JSON.stringify(raw.seeding ?? null) !== had) writeFileSync(`${OUT}/raw/${raw.cupId}.json`, JSON.stringify(raw));
+    }
     if (fetchOnly) {
       if (!target.raw) console.error(`${label}: fetched`);
       continue;
