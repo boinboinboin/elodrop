@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.11 (2026-10-21)
+
+- Club logos without their transparent margins, so they line up and fill their space: `pnpm --filter web trim-logos` saves each logo's visible part as its crop in Sanity, and the site shows the logos cropped (Sanity's image servers do the cropping).
+- The Studio's crop tool for club logos, to adjust a crop by hand (the script leaves those alone).
+
 ## v1.4.10 (2026-10-19)
 
 - The nightly pipeline fetches only what can have changed: team matches only for groups with a tie due (by date, up to 14 days late), tournament results only once a tournament's end date has passed, the official ranking only Wednesday to Friday and only when a new list is out, and the player register on Mondays. A quiet weekday night fetches in about a minute and a half instead of five.
