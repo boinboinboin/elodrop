@@ -61,7 +61,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
                 <tr key={id} className={`border-b border-gray-100 last:border-0 hover:bg-gray-50 ${rank ? "" : "text-gray-500"}`}>
                   <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{rank ?? "–"}</td>
                   <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
-                  <td className="py-3 px-1.5 sm:px-4 [overflow-wrap:anywhere]">
+                  <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                     <Link href={`/players/${id}`} prefetch={false} className="hover:text-blue-600">{name}</Link>
                     <span className="block text-sm text-gray-600 sm:hidden">{club}</span>
                     {!rank && <span className="block text-sm text-gray-500">Last played {date(lastPlayed, "monthYear")}</span>}

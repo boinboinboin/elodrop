@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.4.12 (2026-10-21)
+
+- Fixed: club and player names were broken in the middle of a word in tables on tablets and smaller laptops (such as the combined club ranking at 1024 px). Names now only break inside a word on phones, where there's no other way to fit.
+
 ## v1.4.11 (2026-10-21)
 
 - Club logos without their transparent margins, so they line up and fill their space: `pnpm --filter web trim-logos` saves each logo's visible part as its crop in Sanity, and the site shows the logos cropped (Sanity's image servers do the cropping).

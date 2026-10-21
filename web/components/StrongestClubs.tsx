@@ -82,7 +82,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                         <tr key={club.club} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 align-top">
                         <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>
                         <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={club.rank} previous={club.previousRank} /></td>
-                        <td className="py-3 px-1.5 sm:px-4 [overflow-wrap:anywhere]">
+                        <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                           <span className="flex items-center gap-3">
                             <ClubLogo name={club.club} clubs={entries} size={8} />
                             {entry ? <Link href={`/clubs/${entry.slug}`} className="hover:text-blue-600">{club.club}</Link> : club.club}

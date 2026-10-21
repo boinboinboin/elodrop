@@ -27,7 +27,7 @@ export default function MarginsTable({ mg, names, showPool }: { mg: Margins; nam
             <tr>
               <th scope="col" className="py-2 pr-4 font-normal"><span className="sr-only">Measure</span></th>
               {sides.map((side) => (
-                <th key={side.i} scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right align-bottom [overflow-wrap:anywhere]">
+                <th key={side.i} scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right align-bottom max-sm:[overflow-wrap:anywhere]">
                   <span className="inline-block w-3 h-1 rounded-full align-middle mr-1.5" style={{ background: COLORS[side.i] }} />
                   {side.name}
                 </th>
