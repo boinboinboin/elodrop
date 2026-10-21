@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.5.1 (2026-10-21)
+
+- Charts' detail box lists the lines from highest to lowest (on ranking charts: the best rank first), and glides smoothly as it moves and as the lines change order.
+
 ## v1.5.0 (2026-10-21)
 
 - The week's 10 biggest upsets on the upsets page are a carousel: one card at a time on phones, two on tablets and three on desktop. Swipe or drag it, or use the arrows, which move one card at a time; the dots show and jump to each position.

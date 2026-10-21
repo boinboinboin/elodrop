@@ -10,6 +10,7 @@
 // `ranks` and `counts` show in the tooltip as "#3 of 89 <rankOf>". With `rank`, the values are
 // ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values.
 // Hover or focus and use the arrow keys (PageUp/PageDown a year, Home/End) to read values.
+import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { dayAt, weekAt } from "@/lib/format";
 import { COLORS, MARGIN, OTHER_COLOR, PALETTE, WEEK, DAY, formatNumber, logDomain, yDomain, yearTicks } from "@/lib/chart";
@@ -33,6 +34,9 @@ interface Props {
   signed?: boolean;
   className?: string;
 }
+
+// The detail box's gliding: short, so it keeps up with the pointer
+const GLIDE = { duration: 0.18, ease: "easeOut" } as const;
 
 const Swatch = ({ color }: { color: string }) => <span className="inline-block w-3 h-1 rounded-full shrink-0" style={{ background: color }} />;
 
@@ -227,8 +231,10 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
       const club = series.length === 1 ? clubAt(s, active) : null;
       const detail = rank ? (c ? `of ${formatNumber(c)} ${rankOf}`.trim() : "") : r ? `#${r} of ${formatNumber(c ?? 0)} ${rankOf}`.trim() : "";
       const name = series.length > 1 ? s.label : (club ?? "");
-      return [{ key: i, color: s.colors?.[active - s.offset] ?? s.color, v, text: [name, detail].filter(Boolean).join(" · ") }];
+      return [{ key: i, color: s.colors?.[active - s.offset] ?? s.color, v, y: y(v), text: [name, detail].filter(Boolean).join(" · ") }];
     });
+    // Highest on the chart first (on a rank chart: the best rank)
+    rows.sort((a, b) => a.y - b.y);
     return { px, top, rows };
   })();
 
@@ -324,10 +330,13 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
           </svg>
         )}
         {tooltip && (
-          <div
+          <motion.div
             ref={tip}
             // To the right of the crosshair, or to its left when it doesn't fit, and always inside the
-            // chart (as wide as the chart at most, the lines wrapping)
+            // chart (as wide as the chart at most, the lines wrapping). layout: it glides to each new
+            // place, and its lines glide into their new order (highest first) instead of jumping
+            layout="position"
+            transition={GLIDE}
             className="absolute z-10 pointer-events-none bg-white border border-gray-200 shadow-sm px-3 py-2 text-sm max-w-full"
             style={{
               left: Math.max(0, Math.min(tooltip.px + 12 + tipSize.width <= width ? tooltip.px + 12 : tooltip.px - 12 - tipSize.width, width - tipSize.width)),
@@ -336,13 +345,13 @@ export default function LineChart({ series: input, label = "Rating", rank = fals
           >
             <span className="block text-gray-600 mb-1" title={`Week ending ${dayAt(time(active!))}`}>{weekAt(time(active!))}</span>
             {tooltip.rows.map((r) => (
-              <span key={r.key} className="flex items-center gap-1.5">
+              <motion.span key={r.key} layout="position" transition={GLIDE} className="flex items-center gap-1.5">
                 <Swatch color={r.color} />
                 <strong className="tabular-nums">{fmt(r.v)}</strong>
                 {r.text && <span className="text-gray-600">{r.text}</span>}
-              </span>
+              </motion.span>
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
       {/* Touch screens only: there is no hovering there */}
