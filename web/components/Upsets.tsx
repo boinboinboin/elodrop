@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import Carousel from "@/components/Carousel";
 import { ArrowLeft, ArrowRight } from "@/components/Icons";
 import { ClubLogo } from "@/components/Team";
 import UpsetCard from "@/components/UpsetCard";
@@ -68,11 +69,8 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
               {later && <Link href={`/upsets/${later.week}`} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200">Later <ArrowRight /></Link>}
             </nav>
           </div>
-          <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {current.matches.map((u, i) => (
-              <li key={i}><UpsetCard upset={u} rank={i + 1} clubs={clubs} /></li>
-            ))}
-          </ol>
+          {/* The week's top 10 as a carousel: 1 card at a time on phones, 2 on tablets, 3 on desktop */}
+          <Carousel label={`The biggest upsets, week of ${dateRange(current.week, addDays(current.week, 6), true)}`} slides={current.matches.map((u, i) => <UpsetCard key={i} upset={u} rank={i + 1} clubs={clubs} />)} />
         </div>
       </section>
 
