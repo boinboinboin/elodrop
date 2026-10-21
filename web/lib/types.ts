@@ -236,6 +236,8 @@ export interface EntryPlayer {
 export interface Entry {
   players: EntryPlayer[];
   rating: number;
+  /** Official ranking points for the seeding (a pair: the sum); null without (or no list) */
+  points?: number | null;
   group: number | null;
   actual: Chances;
   fair: Chances;
@@ -252,7 +254,10 @@ export interface TournamentEvent {
   pool: Pool;
   poolLabel?: string;
   title: string;
+  /** The seeds (entry indices), best first */
   seeds: number[];
+  /** What the seeds are by: the official ranking points, or (without a list) the ratings */
+  seededBy?: "ranking" | "rating";
   groups: { name: string; number: number; entries: number[]; rating: number }[];
   knockout: boolean;
   stages: { title: string; main: boolean; places: [number, number] | null }[];
@@ -290,6 +295,9 @@ export interface Tournament {
   cancelled: string | null;
   startDate: string | null;
   endDate: string | null;
+  /** The registration deadline, and the ranking list version the seeding is from */
+  deadline?: string | null;
+  rankingVersion?: string | null;
   fetchedAt: string;
   runs: number;
   events: TournamentEvent[];

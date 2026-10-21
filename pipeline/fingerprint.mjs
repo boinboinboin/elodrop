@@ -4,7 +4,8 @@
 //
 // results: the fetched results (tournaments, team matches), the official ranking, the player
 // register and clubs, and the pipeline itself (code, corrections, rosters).
-// draws: the tournament draws from Cup2000 (data/upcoming/raw).
+// draws: the tournament draws from Cup2000 (data/upcoming/raw) and the ranking lists they're seeded
+// by (data/ranking/seeding/<version>, upcoming.mjs).
 // Fields that only record when something was fetched (fetchedAt, generatedAt) are left out, so
 // fetching the same data again gives the same hash.
 import { createHash } from "node:crypto";
@@ -29,5 +30,5 @@ const results = fingerprint(
   [...json("portalen"), ...json("league"), ...json("ranking"), ...["players.json", "clubs.json", "tournaments.json"].map((f) => `${DATA}/${f}`).filter(existsSync)],
   files(DIR.replace(/\/$/, ""), (f) => /\.(mjs|txt)$/.test(f) && statSync(`${DIR}${f}`).isFile()),
 );
-const draws = fingerprint(json("upcoming/raw"));
+const draws = fingerprint([...json("upcoming/raw"), ...files(`${DATA}/ranking/seeding`, () => true).flatMap((dir) => files(dir, (f) => f.endsWith(".json")))]);
 console.log(`results=${results}\ndraws=${draws}`);

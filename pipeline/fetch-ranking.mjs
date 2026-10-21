@@ -14,7 +14,7 @@
 // fetches the latest version of the lists published before that date (they are updated about twice
 // a week) into data/ranking/<seasonId>-<version date>.json, e.g. for the ranking at a past match.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { call, text } from "./portalen.mjs";
+import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const ALL = Array.from({ length: 13 }, (_, i) => String(2002014 + i));
@@ -23,30 +23,13 @@ const before = beforeIndex > 0 ? process.argv[beforeIndex + 1] : null;
 const ifNew = process.argv.includes("--if-new");
 const plain = process.argv.slice(2).filter((a, i, all) => a !== "--before" && a !== "--if-new" && all[i - 1] !== "--before");
 const seasons = plain[0] === "all" ? ALL : plain.length ? plain : ["2002026"];
-// HS, DS, HD, DD, MD for women, MD for men
-const LISTS = { men: "1", women: "3", mensDoubles: "2", womensDoubles: "4", mixedWomen: "5", mixedMen: "6" };
-
-const args = (season, list, page, version = "") => ({
-  rankinglistagegroupid: version ? "2001" : "", rankinglistid: list, seasonid: season, rankinglistversiondate: version,
-  agegroupid: "", classid: "", gender: "", clubid: "", searchall: null, regionid: "",
-  pointsfrom: "", pointsto: "", rankingfrom: "", rankingto: "", birthdatefromstring: "",
-  birthdatetostring: "", agefrom: "", ageto: "", playerid: "", param: "",
-  pageindex: String(page), sortfield: "0", getversions: false, getplayer: false,
-});
-
-// <tr><td class='rank'>1</td><td class='playerid'>109614</td><td class='name'><a href='/NBF/Spiller/VisSpiller/#36427,...'>Brynjar Hus</a>, NTNUI</td><td class='clas'>E</td><td class='points points'>1224</td></tr>
-const ROW =
-  /<td class='rank'>(\d+)<\/td><td class='playerid'>(\d+)<\/td><td class='name'><a href='[^']*#(\d+),[^']*'[^>]*>(.*?)<\/a>,?(.*?)<\/td><td class='clas'>(.*?)<\/td><td class='points[^']*'>(\d+)/g;
+const { group, first } = AGE_GROUPS.SEN;
+// The lists, in the order they're saved in
+const POOLS = ["men", "women", "mensDoubles", "womensDoubles", "mixedWomen", "mixedMen"];
 
 mkdirSync(`${DIR}data/ranking`, { recursive: true });
-// The list versions (MM/DD/YYYY, as the service takes them), newest first
-const iso = (v) => v.replace(/^(\d\d)\/(\d\d)\/(\d{4})$/, "$3-$1-$2");
-async function versions(season) {
-  const { Versions: list } = await call("GetRankingListPlayers", { ...args(season, "1", 0), getversions: true });
-  return list.map((v) => v.Value).filter(Boolean).sort((a, b) => iso(b).localeCompare(iso(a)));
-}
 // The latest list version published before a date (yyyy-mm-dd)
-const versionBefore = async (season, date) => (await versions(season)).find((v) => iso(v) < date);
+const versionBefore = async (season, date) => (await versions(season)).find((v) => v < date);
 
 for (const season of seasons) {
   const version = before ? await versionBefore(season, before) : "";
@@ -54,8 +37,7 @@ for (const season of seasons) {
   // The current list: when it was published, and with --if-new nothing to do if we have it already
   let published = null;
   if (!before) {
-    const newest = (await versions(season))[0];
-    published = newest ? iso(newest) : null;
+    published = (await versions(season))[0] ?? null;
     const file = `${DIR}data/ranking/${season}.json`;
     const saved = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null;
     if (ifNew && published && saved?.published === published) {
@@ -63,20 +45,12 @@ for (const season of seasons) {
       continue;
     }
   }
-  const result = { season, version: version ? iso(version) : null, published, fetchedAt: new Date().toISOString() };
-  for (const [pool, list] of Object.entries(LISTS)) {
-    const rows = [];
-    for (let page = 0; ; page++) {
-      const { Html: html } = await call("GetRankingListPlayers", args(season, list, page, version));
-      if (page === 0) result.period = text(html.match(/Periode:(.*?)<br/)?.[1] ?? "");
-      const found = [...html.matchAll(ROW)].map(([, rank, number, id, name, club, cls, points]) => ({
-        rank: +rank, number: +number, id: +id, name: text(name), club: text(club), class: cls, points: +points,
-      }));
-      rows.push(...found);
-      if (!html.includes(`SelectRankingListPage(${page + 1})`)) break;
-    }
+  const result = { season, version: version || null, published, fetchedAt: new Date().toISOString() };
+  for (const pool of POOLS) {
+    const { period, rows } = await rankingList(season, group, first + LISTS[pool], version || null);
+    result.period ??= period;
     result[pool] = rows;
   }
   writeFileSync(`${DIR}data/ranking/${season}${result.version ? `-${result.version}` : ""}.json`, JSON.stringify(result, null, 1));
-  console.log(`${season} (${result.period}): ${Object.keys(LISTS).map((pool) => `${result[pool].length} ${pool}`).join(", ")}`);
+  console.log(`${season} (${result.period}): ${POOLS.map((pool) => `${result[pool].length} ${pool}`).join(", ")}`);
 }

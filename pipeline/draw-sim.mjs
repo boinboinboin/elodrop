@@ -19,16 +19,72 @@
 // simply the last one listed, which can be a play-off for third), or the only group if there is
 // no stage.
 //
-// Entry e plays from slot e in the actual draw. In a redraw, the seeds (the strongest entries by
-// rating) keep their slots and everyone else is shuffled over the other slots.
+// Entry e plays from slot e in the actual draw. In a redraw, the seeds (by default the strongest
+// entries by rating; upcoming.mjs passes the official seeding) are placed by the rules (see
+// seedPositions) and everyone else is shuffled over the other slots.
 import { expectedScore } from "./rules.mjs";
 
-// Seeds kept in a redraw: one per group, or by bracket size in a knockout (BWF: 2 seeds below 16
-// entries, 4 below 32, 8 below 64, then 16)
+// Seeds by the number of entries (NBF's rules, as BWF's: 2 below 16, 4 from 16, 8 from 32, 16 from
+// 64, 32 from 128); in group events also at most one per group. The organisers' group draws agree:
+// seeds 3 and 4 are kept apart from 16 entries, but below 16 only seeds 1 and 2.
 export function seedCount(event) {
-  if (event.groups.length > 1) return event.groups.length;
   const n = event.slots;
-  return n < 16 ? 2 : n < 32 ? 4 : n < 64 ? 8 : 16;
+  const count = n < 16 ? 2 : n < 32 ? 4 : n < 64 ? 8 : n < 128 ? 16 : 32;
+  return event.groups.length > 1 ? Math.min(count, event.groups.length) : count;
+}
+
+// The main knockout as a tree, top of the draw first: a match is { sides: [node, node] }, a place
+// in the draw { leaf } and an empty side null. The leaves are slots in a knockout, or groups (their
+// index) in a group event: the places their winners go to. With no such knockout, the groups (or
+// slots) in order, as a balanced tree.
+function drawTree(event) {
+  const grouped = event.groups.length > 1;
+  const main = event.stages.find((s) => s.main);
+  const byNo = new Map((main?.matches ?? []).map((m) => [m.no, m]));
+  const finalNo = main ? stageLevels(main).finalNo : null;
+  const node = (src, depth = 0) =>
+    !src || depth > 12 ? null
+    : src.winnerOf !== undefined ? (byNo.has(src.winnerOf) ? { sides: byNo.get(src.winnerOf).sides.map((x) => node(x, depth + 1)) } : null)
+    : grouped ? (src.group !== undefined && src.rank === 1 ? { leaf: src.group } : null)
+    : src.slot !== undefined ? { leaf: src.slot }
+    : null;
+  const tree = finalNo !== null ? node({ winnerOf: finalNo }) : null;
+  if (tree && leaves(tree).length >= 2) return tree;
+  const balanced = (list) => (list.length === 1 ? { leaf: list[0] } : { sides: [balanced(list.slice(0, Math.ceil(list.length / 2))), balanced(list.slice(Math.ceil(list.length / 2)))] });
+  return balanced(grouped ? event.groups.map((_, i) => i) : [...Array(event.slots).keys()]);
+}
+const leaves = (node) => (!node ? [] : node.leaf !== undefined ? [node.leaf] : node.sides.flatMap(leaves));
+// The draw cut into 2^depth equal parts, top first: each part's leaves. A leaf higher up (an entry
+// with a bye) fills every part under it.
+const parts = (node, depth) =>
+  depth === 0 ? [leaves(node)]
+  : !node ? Array(2 ** depth).fill([])
+  : node.leaf !== undefined ? Array(2 ** depth).fill([node.leaf])
+  : node.sides.flatMap((side) => parts(side, depth - 1));
+
+// Where the seeds go, by the rules: per tier of seeds (1–2, 3–4, 5–8, 9–16, 17–32) the leaves
+// they're drawn into. Seed 1 at the top of the draw and seed 2 at the bottom; seeds 3 and 4 drawn
+// into the top of the second quarter and the bottom of the third; seeds 5–8 into the eighths
+// without a seed, 9–16 the sixteenths and so on, each at the end away from the seed next to it
+// (as BWF's draw of 32: 5–8 at 8, 16, 17 and 25).
+export function seedPositions(event, count = seedCount(event)) {
+  const tree = drawTree(event);
+  const all = leaves(tree);
+  if (count < 1 || !all.length) return [];
+  const tiers = [[...new Set([all[0], all.at(-1)])]];
+  const taken = new Set(tiers[0]);
+  for (let depth = 2; 2 ** (depth - 1) < count; depth++) {
+    const tier = new Set();
+    parts(tree, depth).forEach((part, i) => {
+      if (!part.length || part.some((leaf) => taken.has(leaf))) return;
+      const top = depth === 2 ? i === 1 : i % 2 === 0;
+      tier.add(top ? part[0] : part.at(-1));
+    });
+    for (const leaf of tier) taken.add(leaf);
+    tiers.push([...tier]);
+  }
+  // Leaves as slots: a group's seed plays from its first slot
+  return tiers.map((tier) => tier.map((leaf) => (event.groups.length > 1 ? event.groups[leaf].slots[0] : leaf)));
 }
 
 // The most rounds an entry can get (see simulate's `progress`): the event winner's. With a
@@ -88,19 +144,22 @@ export function rng(seed = 1) {
 // rounds they get through. A round is a level of the main knockout counted back from the final
 // (reaching the semi-final is one round more than the quarter-final, winning one more than the
 // final), so a bye counts as a round got through; with no knockout, progress is the match wins.
-// With `redraw`, every run first redraws the entries as above. With `forced` (a played draw's
+// With `redraw`, every run first redraws the entries as above: `seeding` is the seeds, best first
+// (by default the strongest entries by rating, as many as seedCount). With `forced` (a played draw's
 // results: { winners: { match no: 1 | 2 }, groupOrder: [[slot, ...] per group] }, or for results
 // known only by who beat whom, { pairs: Map("entry|entry" → winning entry) }), the matches go as
 // they did: one run gives each entry's actual outcome.
 // With `withdrawn` (Map entry → match no), an entry that withdrew loses every match from that one
 // on (numbered after it; generated round-robin matches have no number and count as after).
-export function simulate(event, ratings, { runs = 20000, redraw = false, seed = 1, forced = null, withdrawn = null } = {}) {
+export function simulate(event, ratings, { runs = 20000, redraw = false, seeding = null, seed = 1, forced = null, withdrawn = null } = {}) {
   const n = event.slots;
   const random = rng(seed);
   // chance[a][b]: entry a beats entry b
   const chance = ratings.map((ra) => ratings.map((rb) => expectedScore(ra, rb)));
-  const seeds = new Set([...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event)));
-  const free = [...Array(n).keys()].filter((s) => !seeds.has(s)); // slots of non-seeds (= their entries)
+  const seeds = seeding ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event));
+  // Each tier of seeds with the slots it's drawn into (seeds 1 and 2 not drawn: top and bottom)
+  const positions = redraw ? seedPositions(event, seeds.length) : [];
+  const tiers = positions.map((slots, t) => ({ seeds: seeds.slice(t && 2 ** t, 2 ** (t + 1)), slots }));
   const totals = ratings.map(() => ({ wins: 0, groupWin: 0, knockout: 0, win: 0, groupRank: 0 }));
   const groupMatches = event.groups.map((g) =>
     g.matches?.length ? g.matches : g.slots.flatMap((a, i) => g.slots.slice(i + 1).map((b) => [a, b, null]))
@@ -116,8 +175,22 @@ export function simulate(event, ratings, { runs = 20000, redraw = false, seed = 
   const atSlot = [...Array(n).keys()]; // entry playing from each slot
   for (let run = 0; run < runs; run++) {
     if (redraw) {
-      const shuffled = shuffle(free.slice(), random);
-      free.forEach((slot, i) => (atSlot[slot] = shuffled[i]));
+      // The seeds into their places (a tier with more places than seeds takes some at random; seeds
+      // left without one are drawn as the others), then everyone else over the free slots
+      const placed = new Set();
+      const used = new Set();
+      for (const [t, tier] of tiers.entries()) {
+        const slots = t ? shuffle(tier.slots.slice(), random) : tier.slots;
+        const order = t ? shuffle(tier.seeds.slice(), random) : tier.seeds;
+        for (let k = 0; k < Math.min(order.length, slots.length); k++) {
+          atSlot[slots[k]] = order[k];
+          placed.add(order[k]);
+          used.add(slots[k]);
+        }
+      }
+      const rest = shuffle([...Array(n).keys()].filter((e) => !placed.has(e)), random);
+      let k = 0;
+      for (let slot = 0; slot < n; slot++) if (!used.has(slot)) atSlot[slot] = rest[k++];
     }
     const play = (a, b, no) => {
       const side = forced?.winners?.[no];
