@@ -13,7 +13,9 @@ export const club = defineType({
     defineField({ name: "region", title: "Region (krets)", type: "string" }),
     defineField({ name: "website", type: "url" }),
     defineField({ name: "nbfClubId", title: "NBF club id", type: "number", description: "badmintonportalen's club id" }),
-    defineField({ name: "logo", type: "image" }),
+    // hotspot: the crop tool, to trim a logo's margins (scripts/trim-logos.mts sets the crop to the
+    // logo's visible part; the site applies it)
+    defineField({ name: "logo", type: "image", options: { hotspot: true } }),
   ],
   orderings: [{ title: "Name", name: "title", by: [{ field: "title", direction: "asc" }] }],
   preview: { select: { title: "title", subtitle: "fullName", media: "logo" } },
