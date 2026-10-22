@@ -1,20 +1,22 @@
 import { Analytics } from "@vercel/analytics/next";
 import Link from "next/link";
 import { Suspense } from "react";
-import Logo from "@/components/Logo";
-import MenuButton from "@/components/MenuButton";
-import NavigationProgress from "@/components/NavigationProgress";
-import SearchBar from "@/components/SearchBar";
-import UpdatedAt from "@/components/UpdatedAt";
+import Logo from "@/components/layout/Logo";
+import MenuButton from "@/components/layout/MenuButton";
+import NavigationProgress from "@/components/layout/NavigationProgress";
+import SearchBar from "@/components/layout/SearchBar";
+import UpdatedAt from "@/components/layout/UpdatedAt";
+import { rich, t } from "@/messages/i18n";
 
 const NAV = [
-  { href: "/", label: "Rankings" },
-  { href: "/clubs", label: "Clubs" },
-  { href: "/eliteserien", label: "Eliteserien" },
-  { href: "/tournaments", label: "Tournaments" },
-  { href: "/upsets", label: "Upsets" },
-  { href: "/head-to-head", label: "Head to head" },
+  { href: "/", label: t("layout.nav.rankings") },
+  { href: "/clubs", label: t("layout.nav.clubs") },
+  { href: "/eliteserien", label: t("layout.nav.eliteserien") },
+  { href: "/tournaments", label: t("layout.nav.tournaments") },
+  { href: "/upsets", label: t("layout.nav.upsets") },
+  { href: "/head-to-head", label: t("layout.nav.headToHead") },
 ];
+const FOOTER_LINK = "underline hover:text-black";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +30,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <header className="relative bg-white border-b border-gray-200">
         <div className="base-container px-4 py-3 md:py-4 flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-3">
           <Logo />
-          <nav aria-label="Main" className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
+          <nav aria-label={t("layout.nav.label")} className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="hover:text-black">{n.label}</Link>
             ))}
@@ -45,8 +47,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
           <p>
-            Results from <a href="https://badmintonportalen.no" className="underline hover:text-black" rel="noopener">badmintonportalen.no</a> and{" "}
-            <a href="https://www.cup2000.dk" className="underline hover:text-black" rel="noopener">Cup2000</a>.
+            {rich("layout.footer.sources", {
+              portalen: <a href="https://badmintonportalen.no" className={FOOTER_LINK} rel="noopener">badmintonportalen.no</a>,
+              cup2000: <a href="https://www.cup2000.dk" className={FOOTER_LINK} rel="noopener">Cup2000</a>,
+            })}
           </p>
           <Suspense fallback={null}>
             <UpdatedAt />

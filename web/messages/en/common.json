@@ -1,0 +1,77 @@
+{
+  "loading": "Loading…",
+  "backToRankOrder": "Back to rank order",
+  "week": "Week {week}, {year}",
+  "pools": {
+    "men": "Men's singles",
+    "women": "Women's singles",
+    "mensDoubles": "Men's doubles",
+    "womensDoubles": "Women's doubles",
+    "mixedDoubles": "Mixed doubles"
+  },
+  "poolCodes": {
+    "men": "MS",
+    "women": "WS",
+    "mensDoubles": "MD",
+    "womensDoubles": "WD",
+    "mixedDoubles": "XD"
+  },
+  "poolsInSentence": {
+    "men": "men's singles",
+    "women": "women's singles",
+    "mensDoubles": "men's doubles",
+    "womensDoubles": "women's doubles",
+    "mixedDoubles": "mixed doubles"
+  },
+  "carousel": {
+    "slide": "{position} of {count}",
+    "positions": "Positions",
+    "position": "Position {position} of {count}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "movement": {
+    "new": "new",
+    "newTitle": "Not ranked last week",
+    "same": "Same place as last week",
+    "sameScreenReader": "no change since last week",
+    "up": "Up {places} since last week (was #{previous})",
+    "down": "Down {places} since last week (was #{previous})",
+    "upScreenReader": "places up since last week",
+    "downScreenReader": "places down since last week",
+    "ratingGained": "Rating gained since last week",
+    "ratingLost": "Rating lost since last week",
+    "strengthGained": "Strength gained since last week",
+    "strengthLost": "Strength lost since last week",
+    "sinceLastWeek": "since last week"
+  },
+  "chart": {
+    "rating": "Rating",
+    "description": "{label} history, from {from} to {to}.",
+    "descriptionSeries": "{label} history in {series}, from {from} to {to}.",
+    "descriptionEnding": "{label} history, from {from} to {to}, ending at {value}.",
+    "keys": "Use the arrow keys to read values.",
+    "ofCount": "of {count} {what}",
+    "rankOfCount": "#{rank} of {count} {what}",
+    "series": "Series",
+    "clubs": "Clubs",
+    "weekEnding": "Week ending {day}",
+    "touchHint": "Hold the chart to see the values; slide to move through the weeks"
+  },
+  "table": {
+    "rank": "#",
+    "player": "Player",
+    "club": "Club",
+    "rating": "Rating",
+    "matches": "Matches",
+    "season": "Season",
+    "sinceLastWeek": "Since last week",
+    "changeSinceLastWeek": "Change since last week"
+  },
+  "notRanked": "Not ranked",
+  "rankValue": "#{rank}",
+  "matches": {
+    "one": "{count} match",
+    "other": "{count} matches"
+  }
+}

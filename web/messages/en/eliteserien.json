@@ -1,0 +1,119 @@
+{
+  "title": "Eliteserien",
+  "loading": "Loading Eliteserien…",
+  "heading": "Eliteserien {season}",
+  "intro": "How strong the eight teams are, from their players' ratings.",
+  "earlierSeasons": "Earlier seasons in review, predicted against actual results:",
+  "howItWorks": {
+    "tie": "A tie is 8 matches: 2 men's singles, 2 women's singles, 1 men's doubles, 1 women's doubles and 2 mixed doubles, and a player plays at most 2 of them. Each team is assumed to field the lineup that gives it the most expected match wins against an average Eliteserien opponent. As the rules require, the first singles player has more official ranking points than the second, and the first mixed pair more combined mixed doubles points than the second{ranking}. Win chances use the same formula as the ratings, match against match, and a tie is won with 5 matches and drawn at 4-4. Table points per tie are as in the league: 4-0 for winning 6-2 or better, 3-1 for 5-3 and 2-2 for 4-4.",
+    "rankingPeriod": " (ranking {period})",
+    "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, including players on loan from other clubs. Players without a doubles or mixed rating are counted as starting doubles from their singles rating (marked ≈)."
+  },
+  "noData": "No team strengths yet: run pipeline/eliteserien.mjs after rate.mjs.",
+  "table": {
+    "title": "Predicted table",
+    "intro": "The regular season, with one tie against each other team, by expected table points.",
+    "team": "Team",
+    "tablePoints": "Table points",
+    "tablePointsTitle": "Expected table points from one tie against each of the other seven teams",
+    "matchesPerTie": "Matches won per tie",
+    "matchesPerTieTitle": "Average over ties against the other seven teams",
+    "winsTie": "Wins tie",
+    "draw": "Draw",
+    "losesTie": "Loses tie",
+    "ofEight": "of 8",
+    "note": "Expected values: table points add up over the seven ties (28 at most), the other columns are averages per tie."
+  },
+  "headToHead": {
+    "title": "Head to head",
+    "intro": "Chance that the team on the left wins a tie against the team at the top. Hover for the expected score.",
+    "cellTitle": "{a} against {b}: expected {matches} in matches, {points} in table points; wins {win}, draws {draw}, loses {loss}"
+  },
+  "team": {
+    "summary": "{points} expected table points · {matches} matches won per tie · wins {win} of ties",
+    "lineup": "Strongest lineup",
+    "lineupSubtitle": "With the chance of winning each match against an average Eliteserien opponent",
+    "players": "Players",
+    "singles": "Singles",
+    "doubles": "Doubles",
+    "mixed": "Mixed",
+    "points": "Points",
+    "pointsTitle": "Official ranking points: singles / mixed doubles",
+    "loanFrom": "Loan from {club}",
+    "noRatedMatches": "No rated matches",
+    "note": "≈ estimated: no rating in that discipline yet. Points: official ranking points in singles / mixed doubles, which decide who plays first singles and first mixed. Men first, then women, by singles rating."
+  },
+  "review": {
+    "title": "Eliteserien {season} in review",
+    "loading": "Loading season…",
+    "seasons": "Seasons",
+    "intro": "The team strengths before each round against what actually happened.",
+    "howItWorks": "Before each round, every team's best lineup is worked out as for this season, with the players' ratings from the week before and the official ranking from the day before. That gives each tie a <strong>potential</strong>: the expected result if both teams field their best lineup. It is compared with the result <strong>expected with the lineups actually played</strong> (each match's win chance from right before it) and with the <strong>actual result</strong>. Walkovers and matches not played are left out, except in the play-offs (see below).",
+    "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, with the players who played for a team without being on its list added from their first match.",
+    "preseason": {
+      "title": "Before the season",
+      "intro": "The predicted regular-season table before the first round, as on the page for this season: expected table points from one tie against each team (4-0 for winning 6-2 or better, 3-1 for 5-3, 2-2 for 4-4), against the actual table and the final standings after the play-offs.",
+      "predicted": "Predicted",
+      "team": "Team",
+      "expectedPoints": "Expected points",
+      "actualPoints": "Actual points",
+      "matchesPerTie": "Matches won per tie",
+      "regularSeason": "Regular season",
+      "final": "Final",
+      "lower": "({places} lower)",
+      "higher": "({places} higher)"
+    },
+    "potential": {
+      "title": "Who beat their potential",
+      "intro": "Matches won over the season against the potential, split in two: <strong>lineups</strong> (the expected result with the lineups actually played against the potential: players missing or rested, and opponents not at full strength either) and <strong>performance</strong> (matches won against what the lineups played were expected to win). Table points are for the regular season, against the points expected from the potential of each tie.",
+      "team": "Team",
+      "potential": "Potential",
+      "potentialTitle": "Expected matches won with both teams at their best",
+      "expected": "Expected",
+      "expectedTitle": "Expected matches won with the lineups played",
+      "won": "Won",
+      "wonMinusPotential": "Won − potential",
+      "lineups": "Lineups",
+      "performance": "Performance",
+      "tablePoints": "Table points",
+      "tablePointsTitle": "Regular-season table points: potential (both teams at their best, round by round) and actual",
+      "teamSummary": "{ties}, {matches} · final {rank}.",
+      "ties": {
+        "one": "{count} tie",
+        "other": "{count} ties"
+      }
+    },
+    "ties": {
+      "title": "Ties",
+      "intro": "Each tie's expected score and the home team's chance of winning, with both teams' best lineups (<strong>potential</strong>) and with the <strong>lineups actually played</strong> (walkovers counted as won, as in the result), against the actual result. An upset is a tie won by a team that had less than a 30% chance with the lineups played.",
+      "playoffs": "In the play-offs a tie ends as soon as a team has won 5 matches, so the matches left are counted with their listed lineups' chances from before the round. A tie at 4–4 is decided by a golden set: the teams take turns striking out disciplines, and one set is played in the last one left. It is taken to be the discipline where the teams' top players or pairs are closest in rating, so there are no draws.",
+      "tie": "Tie",
+      "potential": "Potential",
+      "potentialTitle": "Both teams' best lineups: expected score, and the home team's chance of winning",
+      "played": "Lineups played",
+      "playedTitle": "The lineups actually played: expected score, and the home team's chance of winning",
+      "result": "Result",
+      "homeWin": "{chance} home win",
+      "goldenOdds": "4–4 {draw}, golden set {discipline} {chance}",
+      "goldenOddsTitle": "Chance of 4–4, and the golden set's discipline and home win chance",
+      "tablePoints": "Table points",
+      "goldenSet": "Golden set {discipline}: {side1} – {side2} {score}",
+      "upset": "Upset"
+    },
+    "players": {
+      "title": "Players",
+      "intro": "Matches won against the expected wins from the players' ratings right before each match, for players with at least 4 Eliteserien matches. Doubles partners share their results.",
+      "above": "Above expectation",
+      "below": "Below expectation",
+      "player": "Player",
+      "won": "Won",
+      "expected": "Expected",
+      "difference": "Difference",
+      "wonOf": "{won} of {games}"
+    },
+    "changes": {
+      "title": "Changes to the list",
+      "intro": "Players who played for a team without being on its list, counted for the team they played for:"
+    }
+  }
+}

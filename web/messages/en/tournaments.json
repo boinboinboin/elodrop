@@ -1,0 +1,219 @@
+{
+  "metadata": {
+    "title": "Tournament draws",
+    "tournament": "Tournament"
+  },
+  "list": {
+    "title": "Tournament draws",
+    "intro": "Who got a lucky or unlucky draw in upcoming tournaments, from the players' ratings.",
+    "about": "Draws are from Cup2000 and the players from the entry lists on badmintonportalen, as soon as the draw is published, with their ratings from the week before. Once a tournament is played, its page shows how the predictions turned out.",
+    "loading": "Loading tournaments…",
+    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw; if the chances are right, about as many favourites win as expected. “Luck showed in the results” compares each entry's result against a fair draw with its draw luck (in rounds, a regression through zero): near 1, a draw rated a round luckier gave about a round more.",
+    "correlation": "Luck explains only a small part of a result (correlation {correlation}): most of it is how the matches go.",
+    "upcoming": "Upcoming",
+    "noUpcoming": "No upcoming tournaments with a published draw.",
+    "played": "Played",
+    "notPlayed": "Not played",
+    "events": {
+      "one": "{count} event",
+      "other": "{count} events"
+    },
+    "entries": {
+      "one": "{count} entry",
+      "other": "{count} entries"
+    },
+    "favouriteWon": "favourite won {won} of {winners} ({expected} expected)"
+  },
+  "predictions": {
+    "title": "How the predictions turned out",
+    "eventsPlayed": "Events played",
+    "ofTotal": "of {total}",
+    "favouritesWon": "Favourites who won",
+    "expected": "{count} expected",
+    "winnersChance": "Winners' predicted chance",
+    "onAverage": "on average",
+    "luckShowed": "Luck showed in the results",
+    "luckShowedTitle": "Results minus the fair-draw expectation against luck, regression slope",
+    "overEntries": "over {count} entries (1 = as predicted)"
+  },
+  "page": {
+    "loading": "Loading tournament…",
+    "cup2000": "Draw and results on Cup2000",
+    "portalen": "badmintonportalen tournament {id}",
+    "cancelled": "<strong>Not played.</strong> {reason}. The draw and its luck are as they were published.",
+    "views": "Views",
+    "events": "Events",
+    "summary": "Summary"
+  },
+  "summary": {
+    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw. “Luck showed in the results”: each entry's rounds minus its fair-draw expectation, against its luck (a regression through zero). Near 1, a draw rated a round luckier gave about a round more; near 0, the luck didn't show.",
+    "lists": "Lists",
+    "surprises": "Most surprising winners",
+    "luckiest": "Luckiest draws",
+    "unluckiest": "Unluckiest draws",
+    "inGroup": "group {group}",
+    "chanceBefore": "chance before",
+    "places": "places",
+    "rounds": "rounds"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "simulation": "How lucky each player's draw is, from their ratings at the end of the week before the tournament. Every event is played out {runs} times with each match decided by the players' win chances, once with the actual draw and once with a fair draw: the same players drawn again by the rules, the seeds placed where the rules put them and everyone else at random.",
+    "seeds": "<strong>Seeds</strong> are by the official ranking{version}, the list valid the Wednesday after registration closed (a pair has the sum of its players' points; without points, no seed): 2, 4 from 16 entries, 8 from 32 and 16 from 64, and in groups at most one per group. Seed 1 goes to the top of the draw, seed 2 to the bottom, seeds 3–4 are drawn into the second and third quarters, 5–8 into the eighths without a seed. A seed the organiser placed differently, or left out, counts as luck. Classes without a ranking (such as U11) are seeded by rating.",
+    "seedsVersion": " of {date}",
+    "rounds": "<strong>Rounds</strong> is how far a player is expected to get: one round for getting out of the group and one for every knockout round after that (a bye counts too), and one more for winning. <strong>Luck</strong> is the rounds expected with the actual draw minus with a fair one.",
+    "placement": "In the X classes everyone gets a final place, so luck there is in places: eight players or pairs in two groups of four, the top two to cross-over semi-finals, the third-placed playing for 5th and the fourth-placed for 7th.",
+    "noLuck": "Events with a single group (everyone plays everyone) or just two players or pairs have no luck: they only show each player's chance of winning."
+  },
+  "event": {
+    "nav": "Events",
+    "title": "{className} {pool}",
+    "players": {
+      "one": "{count} player",
+      "other": "{count} players"
+    },
+    "pairs": {
+      "one": "{count} pair",
+      "other": "{count} pairs"
+    },
+    "noLuck": "{reason}, so there is no draw luck.",
+    "justOneMatch": "Just one match",
+    "everyoneVsEveryone": "Everyone plays everyone",
+    "wonBy": "<strong>Won by {names}</strong>, with a {chance} chance before.",
+    "strongestGroups": "Strongest groups by average rating: {groups}.",
+    "strongestGroup": "group {number} ({rating})",
+    "order": "Order"
+  },
+  "legend": {
+    "outOfGroup": "Out of group",
+    "outOfGroupText": "The chance of finishing high enough in the group to reach the knockout.",
+    "outOfGroupOnlyWinners": "The chance of finishing high enough in the group to reach the knockout, which here means winning it.",
+    "winsEvent": "Wins event",
+    "winsEventKnockout": "The chance of winning the whole event (the final).",
+    "winsEventGroup": "The chance of winning the whole event (the group).",
+    "wins": "Wins",
+    "winsText": "The matches the player is expected to win in the group, out of {max}.",
+    "placement": "Placement",
+    "placementText": "The expected final place, 1 to {count}: the final decides 1st and 2nd, the losing semi-finalists share 3rd–4th (3.5 each), the third-placed in the groups play for 5th and 6th and the fourth-placed for 7th and 8th.",
+    "rounds": "Rounds",
+    "roundsText": "How many rounds the player is expected to get through, out of {max}: {steps}. A bye counts as a round got through, so a player with a bye starts one round ahead.",
+    "luck": "Luck",
+    "luckPlacement": "The placement with a fair draw minus with the actual draw (in brackets in each column): above zero, the draw helps; below, it hurts.",
+    "luckRounds": "Rounds with the actual draw minus with a fair draw (in brackets in each column): above zero, the draw helps; below, it hurts.",
+    "luckWithdrawals": "Players who withdrew (lost by walkover) count too: the numbers are with them out from then on, against a fair draw with the same withdrawals. A * marks luck that withdrawals changed (hover for the split).",
+    "seeds": "Seeds",
+    "seedsByRating": "No ranking list for the seeding here, so the fair draw seeds the {count} strongest by rating",
+    "seedsByRanking": "{count} by the official ranking{version}, placed by the rules in the fair draw",
+    "seedsRankingVersion": " of {date}",
+    "seedsNone": "None: nobody here has ranking points{version}, so the fair draw is all at random",
+    "seedsNoneVersion": " ({date})",
+    "seedsMarked": " (marked with their seed number)",
+    "result": "Result",
+    "resultSingle": "Matches won, and who won the group, and against the expectation with the actual draw (once any withdrawn players were out).",
+    "resultPlacement": "The final place, and against the expectation with the actual draw (once any withdrawn players were out).",
+    "resultRounds": "How far the player got, and against the expectation with the actual draw (once any withdrawn players were out)."
+  },
+  "table": {
+    "place": "#",
+    "pair": "Pair",
+    "group": "Group",
+    "groupHeader": "Group {number}",
+    "groupDetail": "average rating {rating}",
+    "straightToKnockout": "Straight to the knockout",
+    "ratingTitle": "Sum of the players' ratings in doubles",
+    "outOfGroupTitle": "Chance of reaching the knockout from the group: actual draw (fair draw)",
+    "winsEventTitle": "Chance of winning the event",
+    "winsEventTitleFair": "Chance of winning the event: actual draw (fair draw)",
+    "winsTitle": "Expected match wins",
+    "placementTitle": "Expected final place: actual draw (fair draw)",
+    "roundsTitle": "Rounds expected: actual draw (fair draw)",
+    "ofMax": "of {max}"
+  },
+  "entry": {
+    "estimated": "No rating in this discipline: estimated",
+    "seed": "Seed {seed}",
+    "rankingPoints": "{points} ranking points",
+    "seededByRating": "Seeded by rating",
+    "withdrew": "Withdrew",
+    "groupRank": {
+      "1": "Won the group",
+      "2": "2nd in the group",
+      "3": "3rd in the group",
+      "4": "4th in the group",
+      "other": "{rank}. in the group"
+    },
+    "luckSplit": "Draw {draw}, withdrawals {withdrawals}",
+    "won": "Won",
+    "wins": {
+      "one": "{count} win",
+      "other": "{count} wins"
+    },
+    "winsDiff": "{diff} wins",
+    "placesDiff": "{diff} places",
+    "roundsDiff": "{diff} rounds",
+    "group": "group",
+    "firstMatch": "first match"
+  },
+  "orders": {
+    "finalStandings": "Final standings",
+    "mostLikelyWinner": "Most likely winner first",
+    "luckiest": "Luckiest first",
+    "byGroup": "By group",
+    "byRating": "By rating"
+  },
+  "description": {
+    "groups": {
+      "one": "in {count} group",
+      "other": "in {count} groups"
+    },
+    "advance": "{who} go to the knockout",
+    "onlyWinners": "only the group winners",
+    "winners": "the group winners",
+    "top": "the top {count} of each group",
+    "andBest": "{who} and the best {places} of all groups",
+    "and": " and ",
+    "places": {
+      "winner": "winner",
+      "runnerUp": "runner-up",
+      "third": "third",
+      "fourth": "fourth",
+      "other": "{rank}. place"
+    },
+    "numbers": {
+      "two": "two",
+      "three": "three",
+      "four": "four"
+    },
+    "rest": {
+      "one": "the rest to a B play-off",
+      "other": "the rest to {count} further play-offs"
+    },
+    "knockout": "knockout"
+  },
+  "rounds": {
+    "outOfGroup": "getting out of the group",
+    "reaching": "reaching {round}",
+    "winning": "winning the final",
+    "knockout": "knockout",
+    "won": "won",
+    "names": {
+      "final": "the final",
+      "semiFinals": "the semi-finals",
+      "quarterFinals": "the quarter-finals",
+      "last16": "the last 16",
+      "last32": "the last 32",
+      "last64": "the last 64",
+      "last128": "the last 128"
+    },
+    "short": {
+      "final": "final",
+      "semiFinals": "semi-finals",
+      "quarterFinals": "quarter-finals",
+      "last16": "last 16",
+      "last32": "last 32",
+      "last64": "last 64",
+      "last128": "last 128"
+    },
+    "round": "round {number}"
+  }
+}

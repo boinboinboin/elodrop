@@ -1,6 +1,6 @@
 // Crop the transparent margins off the club logos in Sanity: for each logo, the box around its
 // pixels that aren't (almost) transparent is saved as the image's crop, which the site applies
-// (lib/clubs.ts, `rect` in the image URL; Sanity's image servers do the cropping). Logos that already
+// (data/sanity.ts, `rect` in the image URL; Sanity's image servers do the cropping). Logos that already
 // have a crop are left alone (set or adjusted by hand in the Studio), unless --force; logos without
 // transparency (JPEG, or no transparent margin) get no crop.
 // Usage: pnpm --filter web trim-logos [--force] [--dry-run]

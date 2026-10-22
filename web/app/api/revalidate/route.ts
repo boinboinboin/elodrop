@@ -1,7 +1,7 @@
 // Called by the pipeline after it uploads new data (POST with "Authorization: Bearer <secret>"),
 // and by the Sanity webhook after content changes (?tag=sanity): marks the cached data stale, so
 // pages refresh as they are visited. ?tag=elo-data:<area> (e.g. elo-data:tournaments) refreshes only
-// the pages using that area's data (lib/data.ts load()).
+// the pages using that area's data (data/load.ts).
 import { revalidateTag } from "next/cache";
 
 const TAGS = new Set(["elo-data", "sanity"]);

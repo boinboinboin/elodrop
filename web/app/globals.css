@@ -12,11 +12,11 @@
 /* Themes: the site's colours are Tailwind's palette classes (text-gray-600, bg-white, border-black,
    text-blue-600 for links, green-700 and red-700 for good and bad, ...). "yinyang" (the default) is
    Tailwind's own values; another theme re-points the palette variables those classes read, under
-   html[data-theme]. The choice is made in the header's menu (components/ThemePicker.tsx), saved in the browser and set before
+   html[data-theme]. The choice is made in the header's menu (components/layout/ThemePicker.tsx), saved in the browser and set before
    the page paints (app/layout.tsx). Charts, the logo's cork and other non-class colours use the
    tokens below. */
 
-/* Always emitted (static): they're read from code (lib/chart.ts, lib/logo.ts), not by a class */
+/* Always emitted (static): they're read from code (utils/chart.ts, utils/logo.ts), not by a class */
 @theme static {
   /* The logo's cork */
   --color-accent: #f97316;
@@ -149,7 +149,7 @@ body {
   @apply bg-stone-100 text-gray-900 antialiased;
 }
 
-/* The header logo (components/Logo.tsx), on a page load: the line draws itself (its path has
+/* The header logo (components/layout/Logo.tsx), on a page load: the line draws itself (its path has
    pathLength 1 and stroke-dasharray 1), then the cork drops in at the dip */
 @theme {
   --animate-logo-line: logo-line 0.9s cubic-bezier(0.4, 0, 0.2, 1) both;
