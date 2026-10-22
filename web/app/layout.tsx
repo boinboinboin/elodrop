@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { THEME_SCRIPT } from "@/lib/theme";
+import { t } from "@/messages/i18n";
+import { THEME_SCRIPT } from "@/utils/theme";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { default: "elodrop", template: "%s · elodrop" },
-  description: "elodrop: singles and doubles Elo ratings for Norwegian badminton, from every tournament and league result on badmintonportalen.no since 2013.",
+  title: { default: t("layout.siteName"), template: t("layout.titleTemplate") },
+  description: t("layout.description"),
 };
 
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) is full-screen
@@ -18,7 +19,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // The theme attribute is set by THEME_SCRIPT before React hydrates, so it may differ from the server's
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* The saved colour theme, before the page paints (lib/theme.ts) */}
+        {/* The saved colour theme, before the page paints (utils/theme.ts) */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-screen flex flex-col">

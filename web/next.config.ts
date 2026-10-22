@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   // The rankings used to be one page with query parameters (/?pool=women&inactive=1); each list
-  // is now its own static page (lib/rankings.ts). Most specific first. (Old tournament event links,
+  // is now its own static page (utils/rankings.ts). Most specific first. (Old tournament event links,
   // ?event= and ?class=&pool=, open the tournament's first event.)
   async redirects() {
     const query = (key: string, value?: string) => ({ type: "query" as const, key, ...(value ? { value } : {}) });

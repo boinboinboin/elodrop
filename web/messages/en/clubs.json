@@ -1,0 +1,61 @@
+{
+  "loading": "Loading club…",
+  "loadingClubs": "Loading clubs…",
+  "clubs": "Clubs",
+  "metadata": {
+    "club": "Club",
+    "strongest": "Strongest clubs",
+    "strongestPool": "Strongest clubs: {pool}"
+  },
+  "rule": {
+    "weights": "{weights}, best first",
+    "mixed": "a weighted average of the club's best {slots} pairs, its best man with its best woman, its second best man with its second best woman and so on ({weights})",
+    "doubles": "a weighted average of the club's best {slots} pairs: its two best players, the next two and so on ({weights})",
+    "singles": "a weighted average of the club's best {slots} players ({weights})"
+  },
+  "strongest": {
+    "title": "Strongest clubs",
+    "combinedIntro": "Clubs ranked by their average standing in all five disciplines, each counting equally. In each discipline, a club's strength is compared with the other clubs listed here: 0 is average, +1 is one standard deviation above it. Clubs need to be listed in every discipline.",
+    "poolIntro": "Clubs ranked by {rule}. A pair counts at the average of its two players. Places a club can't fill count at the lowest rating among ranked players, so smaller clubs are listed but rank lower.",
+    "disciplines": "Discipline",
+    "combined": "Combined",
+    "noClubs": "No clubs yet: run the pipeline.",
+    "score": "Score",
+    "strength": "Strength",
+    "bestPairs": "Best pairs",
+    "bestPlayers": "Best players",
+    "rankedPlayers": "Ranked players",
+    "sortByRankedPlayers": "Sort by ranked players, most first"
+  },
+  "club": {
+    "combinedRank": "#{rank} of the strongest clubs combined",
+    "disciplines": "Disciplines",
+    "overTime": "Over time",
+    "allDisciplines": "All disciplines",
+    "allDisciplinesText": "Club strength in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.",
+    "strength": "Strength",
+    "combined": "Combined",
+    "combinedText": "Average standard score over all five disciplines, among the clubs with a strength in all five that week: 0 is an average club, +1 one standard deviation above it. Gaps are weeks the club wasn't strong enough to be listed in every discipline.",
+    "combinedScore": "Combined score",
+    "clubs": "clubs",
+    "strengthBySeason": "Strength by season",
+    "seasonValues": "Values at the end of each season (or the latest week for the current one).",
+    "strengthHistory": "Strength history",
+    "strengthHistoryText": "The club's strength at the end of each week: {rule}, counting players who played for the club at the time. Places it couldn't fill count at the lowest rating among ranked players. Gaps are weeks without any ranked player.",
+    "clubStrength": "Club strength",
+    "strengthAtEnd": "Strength at end",
+    "rank": "Rank",
+    "rankOf": "#{rank} of {count}",
+    "noPlayers": "No ranked players: nobody from {club} has played {pool} in the last 12 months.",
+    "rankedPlayers": {
+      "one": "{count} ranked player",
+      "other": "{count} ranked players"
+    },
+    "strongestRank": "#{rank} of the strongest clubs",
+    "strengthValue": "(strength {strength})",
+    "woman": "woman",
+    "man": "man",
+    "rankNote": "# is the national rank in {pool}.",
+    "rankNoteMixed": "# is the national rank in {pool}, among men or among women."
+  }
+}

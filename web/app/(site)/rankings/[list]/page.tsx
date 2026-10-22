@@ -1,20 +1,21 @@
-// A ranking list other than the front page's (lib/rankings.ts): /rankings/women, /rankings/mixedDoubles-women, ...
+// A ranking list other than the front page's (utils/rankings.ts): /rankings/women, /rankings/mixedDoubles-women, ...
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { RankingsFor } from "@/components/Rankings";
-import { POOLS } from "@/lib/data";
-import { RANKING_LISTS } from "@/lib/rankings";
+import { RankingsFor } from "@/components/rankings/Rankings";
+import Loading from "@/components/ui/Loading";
+import { t } from "@/messages/i18n";
+import { RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
 
 export const generateStaticParams = async () => Object.keys(RANKING_LISTS).map((list) => ({ list }));
 
 export async function generateMetadata({ params }: PageProps<"/rankings/[list]">): Promise<Metadata> {
   const list = RANKING_LISTS[(await params).list];
-  return { title: list ? `${POOLS[list.pool]}${list.gender ? (list.gender === "K" ? ", women" : ", men") : ""}` : "Rankings" };
+  return { title: rankingListTitle(list) };
 }
 
 export default function RankingPage(props: PageProps<"/rankings/[list]">) {
   return (
-    <Suspense fallback={<div className="base-container px-4 text-gray-600">Loading rankings…</div>}>
+    <Suspense fallback={<Loading label={t("rankings.loading")} />}>
       <RankingsFor params={props.params} showInactive={false} />
     </Suspense>
   );

@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "title": "Biggest upsets",
+    "year": "Biggest upsets {year}",
+    "week": "Biggest upsets, week of {week}"
+  },
+  "breadcrumb": "Upsets",
+  "title": "Biggest upsets",
+  "intro": "The matches won with the lowest chance of winning, week by week.",
+  "explanation": "The win chance is from the ratings right before the match. Only matches between settled players count: every player has played at least 10 matches and has a rating certain to within ±250 in singles or ±180 in doubles, so a junior improving fast beating a favourite isn't counted as an upset. Walkovers and draws are left out.",
+  "loading": "Loading upsets…",
+  "none": "No upsets calculated yet: run the pipeline.",
+  "weekOf": "Week of {week}",
+  "weeks": "Weeks",
+  "earlier": "Earlier",
+  "later": "Later",
+  "carousel": "The biggest upsets, week of {week}",
+  "eachWeek": "Biggest upset of each week",
+  "year": "Year",
+  "table": {
+    "week": "Week",
+    "upset": "Upset",
+    "chance": "Chance",
+    "chanceTitle": "The winner's chance of winning before the match",
+    "beat": "beat",
+    "chanceOnPhones": "<strong>{chance}</strong> chance"
+  },
+  "card": {
+    "chanceOfWinning": "chance of winning",
+    "beat": "beat",
+    "ratingBefore": "Rating before the match",
+    "headToHead": "head to head"
+  },
+  "ratingGained": "Rating gained",
+  "ratingLost": "Rating lost"
+}

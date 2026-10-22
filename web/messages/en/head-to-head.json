@@ -1,0 +1,153 @@
+{
+  "title": "Head to head",
+  "doublesTitle": "Doubles head to head",
+  "doublesCrumb": "Doubles",
+  "intro": "Two players' matches against each other and together, and their chances if they met now.",
+  "introDoubles": "Two doubles pairs' matches against each other, and their chances if they met now.",
+  "switch": {
+    "label": "Compare",
+    "players": "Players",
+    "pairs": "Pairs"
+  },
+  "form": {
+    "player": "Player",
+    "against": "Against",
+    "partner": "Partner",
+    "compare": "Compare",
+    "swap": "Swap",
+    "swapPlayers": "Swap the players",
+    "swapPairs": "Swap the pairs",
+    "vs": "vs",
+    "twoDifferent": "Choose two different players.",
+    "fourDifferent": "Choose four different players.",
+    "notFound": "One of the players was not found."
+  },
+  "picker": {
+    "placeholder": "Search by name",
+    "none": "No players found"
+  },
+  "pairs": {
+    "a": "Pair A",
+    "b": "Pair B",
+    "names": "{a} and {b}",
+    "rating": "rating",
+    "kinds": {
+      "men": "men's pair",
+      "women": "women's pair",
+      "mixed": "mixed pair"
+    },
+    "against": "{a} against {b}"
+  },
+  "genders": {
+    "M": "men",
+    "K": "women"
+  },
+  "record": {
+    "against": {
+      "one": "{count} match against each other",
+      "other": "{count} matches against each other"
+    },
+    "drawn": ", {count} drawn",
+    "pairAFirst": ", pair A first",
+    "neverMet": "Never met",
+    "together": "Together: {wins} won, {losses} lost",
+    "neverTogether": "Never played together",
+    "met": {
+      "one": "Met {count} time",
+      "other": "Met {count} times"
+    },
+    "metIn": {
+      "one": "Met {count} time in {pool}",
+      "other": "Met {count} times in {pool}"
+    },
+    "theyMetIn": {
+      "one": "They have met {count} time in {pool}",
+      "other": "They have met {count} times in {pool}"
+    },
+    "result": "{name} won {wins}, lost {losses}",
+    "drew": ", drew {draws}",
+    "summary": "{met}: {result}."
+  },
+  "rank": {
+    "among": "#{rank} among {gender}",
+    "notRankedLower": "not ranked",
+    "peak": "peak {rating}",
+    "onMensScale": "{rating} on the men's scale ({own} in {pool}, {rank})"
+  },
+  "margins": {
+    "title": "Winning margins",
+    "intro": {
+      "one": "Over their {count} match against each other with a score (not walkovers), all disciplines.",
+      "other": "Over their {count} matches against each other with a score (not walkovers), all disciplines."
+    },
+    "introDoubles": {
+      "one": "Over their {count} match against each other with a score (not walkovers), all doubles disciplines.",
+      "other": "Over their {count} matches against each other with a score (not walkovers), all doubles disciplines."
+    },
+    "inPool": "Winning margins in {pool}",
+    "measure": "Measure",
+    "matchesWon": "Matches won",
+    "setsWon": "Sets won",
+    "pointsWon": "Points won",
+    "averageMargin": "Average winning margin",
+    "biggestWin": "Biggest win",
+    "points": {
+      "one": "{count} point",
+      "other": "{count} points"
+    },
+    "plusPoints": {
+      "one": "+{count} point",
+      "other": "+{count} points"
+    },
+    "deciding": {
+      "one": "{deciding} of {count} match went to a deciding set.",
+      "other": "{deciding} of {count} matches went to a deciding set."
+    },
+    "closest": "Closest: {name} won {score} ({margin}) on {date}.",
+    "levelOnPoints": "level on points",
+    "by": {
+      "one": "by {count} point",
+      "other": "by {count} points"
+    }
+  },
+  "now": {
+    "title": "If they met now",
+    "tabs": "Disciplines",
+    "intro": "Current ratings in each discipline both play, and {a}'s chance of winning against {b}. Singles and men's or women's doubles are only compared between players of the same gender. In doubles, the chance is with equally rated partners: a pair's rating is the sum of its players'.",
+    "introDoubles": "Current ratings and pair A's chance of winning against pair B. A pair plays at the sum of its players' ratings, and pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two mixed pairs in mixed doubles.",
+    "unrated": "{name} has no rating in {pool}",
+    "unratedJoin": ", and ",
+    "noChances": "{list}, so there are no chances to compare.",
+    "differentDisciplines": "The pairs don't play in the same doubles discipline, so their ratings can't be compared."
+  },
+  "fun": {
+    "title": "Just for fun",
+    "intro": "Men and women are rated in separate disciplines, so their ratings can't be compared as they are. Here are {a}'s and {b}'s chances if they did, with the woman's rating moved onto the men's scale. In doubles, the chance is with equally rated partners.",
+    "introDoubles": "Pair A is a {kindA} and pair B a {kindB}, so they don't play in the same discipline. Here everyone plays on the men's doubles scale: men at their men's doubles rating, women at their women's doubles rating moved onto the men's scale, and a pair at the sum.",
+    "formats": {
+      "singles": "Singles",
+      "doubles": "Doubles"
+    },
+    "onMensScale": "{label}, on the men's scale",
+    "onMensDoublesScale": "on the men's doubles scale"
+  },
+  "history": {
+    "title": "Rating history",
+    "intro": "Rating at the end of each week",
+    "introMensScale": "Rating at the end of each week, on the men's scale",
+    "pairTitle": "Pair rating history",
+    "pairIntro": "The sum of the partners' ratings at the end of each week both were rated",
+    "pairIntroMensScale": "The sum of the partners' ratings at the end of each week both were rated, on the men's doubles scale",
+    "pairLabel": "Pair rating"
+  },
+  "matches": {
+    "against": "Matches against each other",
+    "together": "Together as partners",
+    "fromSide": "From {name}'s side, newest first",
+    "fromPairA": "From pair A's side ({pair}), newest first"
+  },
+  "genderGap": {
+    "note": "Women's ratings are moved onto the men's scale using the {matches} matches women have played against men in {men}, set against their rating in {women} at the time. A woman rated {w1} plays like a man rated about {m1}, one rated {w2} like one rated about {m2}, and one rated {w3} like one rated about {m3}: the gap grows with the level.",
+    "extrapolated": " Ratings marked * are beyond those the matches cover (about {from} to {to}), so for them the gap is extrapolated."
+  }
+}

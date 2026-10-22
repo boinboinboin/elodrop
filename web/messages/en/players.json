@@ -1,0 +1,103 @@
+{
+  "metadata": {
+    "title": "Player"
+  },
+  "loading": "Loading player…",
+  "compare": "Compare head to head with another player",
+  "disciplines": "Disciplines",
+  "rival": {
+    "title": "Biggest rival",
+    "subtitle": "The opponent with the closest matches, in all disciplines together, from at least 3 meetings",
+    "inPool": "{matches} in {pool}",
+    "inPools": "{matches}: {list}",
+    "inOnePool": "{count} in {pool}",
+    "record": "{wins} won, {losses} lost",
+    "recordWithDraws": "{wins} won, {draws} drawn, {losses} lost",
+    "summary": "{matches} · {record} · average margin {margin} of points · last met {date} · <link>head to head</link>",
+    "alsoClose": "Also close:",
+    "score": "{wins}–{losses}",
+    "scoreWithDraws": "{wins}–{losses}–{draws}",
+    "other": "{matches}, {score}, margin {margin} · <link>head to head</link>"
+  },
+  "history": {
+    "title": "History",
+    "rating": "Rating",
+    "ranking": "Ranking",
+    "rank": "Rank",
+    "ratingIntro": "Rating in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.",
+    "rankingIntro": "National rank at the end of each week, among players who had played in the last 12 months; men's disciplines rank only men and women's only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.",
+    "amongWomen": "{pool} (among women)",
+    "amongMen": "{pool} (among men)",
+    "ratingBySeason": "Rating by season",
+    "ratingBySeasonNote": "Rating at the end of each season (or the latest week for the current one).",
+    "rankBySeason": "Rank by season",
+    "rankBySeasonNote": "Rank at the end of each season (or the latest week for the current one).",
+    "ofRanked": " of {count}"
+  },
+  "discipline": {
+    "rating": "Rating",
+    "rank": "Rank",
+    "amongWomen": "among women",
+    "amongMen": "among men",
+    "menOnly": "Men's disciplines rank only men",
+    "womenOnly": "Women's disciplines rank only women",
+    "genderUnknown": "Gender unknown",
+    "inactive": "No matches in the last 12 months",
+    "peak": "Peak",
+    "matches": "Matches",
+    "record": "{wins} won · {losses} lost",
+    "recordWithDraws": "{wins} won · {draws} drawn · {losses} lost",
+    "ratingHistory": "Rating history",
+    "ratingHistoryRange": "Rating at the end of each week, {from} to {to}",
+    "ratingBySeason": "Rating by season",
+    "ratingAtEnd": "Rating at end",
+    "highlights": "Highlights"
+  },
+  "highlights": {
+    "biggestWins": {
+      "label": "Biggest wins",
+      "subtitle": "Wins with the lowest chance of winning before the match"
+    },
+    "biggestLosses": {
+      "label": "Biggest losses",
+      "subtitle": "Losses with the highest chance of winning before the match"
+    },
+    "biggestGains": {
+      "label": "Biggest rating gains",
+      "subtitle": "The matches that raised the rating most"
+    },
+    "biggestDrops": {
+      "label": "Biggest rating losses",
+      "subtitle": "The matches that lowered the rating most"
+    }
+  },
+  "matches": {
+    "title": "Matches",
+    "sorts": {
+      "label": "Sort matches",
+      "date": "Newest",
+      "gain": "Biggest gain",
+      "loss": "Biggest loss"
+    },
+    "date": "Date",
+    "opponent": "Opponent",
+    "opponents": "Opponents",
+    "result": "Result",
+    "resultChanceSuffix": ", %",
+    "winChance": "Win chance",
+    "winChanceTitle": "Chance of winning before the match",
+    "chanceScreenReader": " chance of winning",
+    "rating": "Rating",
+    "ratingTitle": "Rating after the match",
+    "with": "with",
+    "matchKey": "Match key, for corrections",
+    "won": "Won",
+    "lost": "Lost",
+    "draw": "Draw",
+    "pointMargin": "Point margin",
+    "loadingMore": "Loading matches…",
+    "loadFailed": "Couldn't load the matches: try again",
+    "showFewer": "Show fewer",
+    "showAll": "Show all {count} matches"
+  }
+}

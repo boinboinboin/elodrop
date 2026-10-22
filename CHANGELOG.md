@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.11.0 (2026-10-22)
+
+- Icons instead of text symbols: the sort and rank-movement arrows, the search field's magnifier, the "show inactive players" tick, and a chevron on the sections that open (such as "Rating by season") instead of the browser's own triangle.
+- The site's text is in translation files (one per area of the site), ready for a Norwegian version.
+- Cleaner code: components grouped by area, shared building blocks (sections, cards, link tabs, badges, stat tiles) and helpers (formatting, URLs) used throughout instead of copies, and the data, utilities and types in folders of their own. The pages look and behave as before.
+- Small text fixes on the way: counts of one in the singular ("+1 point", "1 player"), a proper minus sign on the strongest clubs' combined scores, and chances near zero shown as "<1%" in Eliteserien's predicted table.
+
 ## v1.10.0 (2026-10-21)
 
 - Colour themes, chosen in the header's menu and remembered in the browser: "Yinyang", today's black and white (the default); "Totebag", light cream with dark olive text and court-green links; and "All England", the All England Open's grey courts. Every text colour passes WCAG AA contrast in each theme, and the chart lines are checked to stay apart for colour-blind readers.

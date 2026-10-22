@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "title": "Rankings",
+    "withGender": "{pool}, {gender}",
+    "allPlayers": "{list}, all players",
+    "everyPlayer": "{list}, every player"
+  },
+  "loading": "Loading rankings…",
+  "disciplines": "Discipline",
+  "showInactive": "Show inactive players",
+  "genders": {
+    "label": "Mixed doubles ranking",
+    "M": "Men",
+    "K": "Women",
+    "men": "men",
+    "women": "women",
+    "explanation": "Men and women are ranked separately in mixed doubles. Every pair has one of each, so results show how men compare with men and women with women, but not how men's and women's ratings compare."
+  },
+  "noRatings": "No ratings yet: run the pipeline (pipeline/rate.mjs and pipeline/export.mjs).",
+  "summary": {
+    "ranked": "{count} ranked players: everyone who has played in the last 12 months.",
+    "someInactive": "{count} players: the ranked ones and the {shown} best of the {inactive} who haven't played in the last 12 months (no rank).",
+    "allInactive": "{count} players, including those who haven't played in the last 12 months (no rank)."
+  },
+  "showAll": "Show all {count} players",
+  "longPage": "(a long page)",
+  "table": {
+    "found": "{found} of {total} players",
+    "search": "Search player or club",
+    "sortByMatches": "Sort by matches, most first",
+    "lastPlayed": "Last played {month}",
+    "noneFound": "No players match your search."
+  },
+  "home": {
+    "title": "elodrop",
+    "intro": "Singles and doubles ratings for Norwegian badminton, calculated from every tournament and league result on badmintonportalen.no since 2013."
+  }
+}

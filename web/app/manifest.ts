@@ -1,12 +1,13 @@
 // The web app manifest: the name and icons for a phone's home screen (icons from
 // scripts/make-icons.mts)
 import type { MetadataRoute } from "next";
+import { t } from "@/messages/i18n";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "elodrop",
-    short_name: "elodrop",
-    description: "Elo ratings for Norwegian badminton",
+    name: t("layout.siteName"),
+    short_name: t("layout.siteName"),
+    description: t("layout.manifestDescription"),
     start_url: "/",
     display: "browser",
     background_color: "#f5f5f4",

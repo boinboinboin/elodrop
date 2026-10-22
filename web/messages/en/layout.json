@@ -1,0 +1,62 @@
+{
+  "siteName": "elodrop",
+  "titleTemplate": "%s · elodrop",
+  "description": "elodrop: singles and doubles Elo ratings for Norwegian badminton, from every tournament and league result on badmintonportalen.no since 2013.",
+  "manifestDescription": "Elo ratings for Norwegian badminton",
+  "nav": {
+    "label": "Main",
+    "rankings": "Rankings",
+    "clubs": "Clubs",
+    "eliteserien": "Eliteserien",
+    "tournaments": "Tournaments",
+    "upsets": "Upsets",
+    "headToHead": "Head to head"
+  },
+  "footer": {
+    "sources": "Results from {portalen} and {cup2000}.",
+    "updated": "Updated {time}"
+  },
+  "menu": {
+    "button": "Menu",
+    "theme": "Colour theme"
+  },
+  "themes": {
+    "yinyang": {
+      "label": "Yinyang",
+      "description": "Black and white"
+    },
+    "totebag": {
+      "label": "Totebag",
+      "description": "Light cream and dark olive"
+    },
+    "allengland": {
+      "label": "All England",
+      "description": "The All England's grey courts"
+    }
+  },
+  "breadcrumbs": {
+    "label": "Breadcrumb",
+    "home": "Home"
+  },
+  "notFound": {
+    "title": "Not found",
+    "text": "There is no such player, club or tournament here, or it has no ratings yet.",
+    "back": "Back to the rankings"
+  },
+  "search": {
+    "label": "Search players, clubs, tournaments and Eliteserien",
+    "results": "Search results",
+    "nothing": "Nothing found",
+    "groups": {
+      "players": "Players",
+      "clubs": "Clubs",
+      "tournaments": "Tournaments",
+      "eliteserien": "Eliteserien"
+    },
+    "eliteserien": "Eliteserien {season}",
+    "teamStrengths": "Team strengths",
+    "seasonInReview": "Season in review",
+    "drawLuck": "Draw luck"
+  },
+  "logoLabel": "elodrop, home"
+}

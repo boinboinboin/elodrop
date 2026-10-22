@@ -1,4 +1,4 @@
-// The site's icons, rendered from the mark in lib/logo.ts: favicon.ico (the 16 px drawing, and 32 and
+// The site's icons, rendered from the mark in utils/logo.ts: favicon.ico (the 16 px drawing, and 32 and
 // 48 px from the full one), apple-icon.png (180 px) for iPhone home screens, and the web app
 // manifest's icons (public/icon-192.png, icon-512.png; app/manifest.ts). The home-screen icons are a
 // plain square (the phone rounds or masks the corners itself; the line runs off the edges anyway,
@@ -7,7 +7,7 @@
 // Run after changing the mark: pnpm --filter web make-icons
 import { writeFileSync } from "node:fs";
 import sharp from "sharp";
-import { MARK, MARK_16, markSvg } from "../lib/logo";
+import { MARK, MARK_16, markSvg } from "../utils/logo";
 
 const dir = new URL("..", import.meta.url).pathname;
 const png = (svg: string, from: number, size: number) => sharp(Buffer.from(svg), { density: (72 * size) / from }).resize(size, size).png().toBuffer();
