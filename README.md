@@ -21,7 +21,7 @@ The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each).
 
 The nightly run fetches only what can have changed:
 
-- **Tournament results**: a tournament once its end date has passed (end dates are remembered; rechecked on Mondays).
+- **Tournament results**: a tournament once its end date has passed (end dates are remembered; rechecked on Mondays), and again each night for up to a week while badmintonportalen has no results for it yet. Until then, the matches played so far come from the tournament's draw (`pipeline/cup2000-results.mjs`), so a weekend's matches are rated the night after they're played.
 - **Team matches**: a league group when one of its ties, by date, was played in the last 14 days and isn't in yet (results registered late). Mondays also list the groups again and sweep every ongoing group (postponed ties).
 - **Tournament draws**: after the registration deadline, until the tournament has ended and been fetched once more for its final results. Sundays rescan the whole season.
 - **Official ranking**: Wednesday to Friday, when it's published; the lists only when a new version is out.

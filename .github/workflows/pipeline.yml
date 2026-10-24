@@ -4,7 +4,8 @@
 #     the Saturday, Sunday and Monday runs (01:15 UTC, after Friday's, Saturday's and Sunday's
 #     matches; also "since last week" in the rankings), on manual runs, and whenever results, the
 #     ranking, the register or the pipeline itself changed (results registered late, on any day,
-#     are picked up the next night).
+#     are picked up the next night; so are the matches played in a tournament still going on, from
+#     its draw, until badmintonportalen has its results: cup2000-results.mjs).
 #   - draws: only new or changed tournament draws: rate (for the ratings before each tournament),
 #     analyse the draws, upload and refresh only the tournament pages.
 #   - none: nothing new: no uploads, and the site keeps its cached pages.
@@ -122,7 +123,8 @@ jobs:
         if: steps.mode.outputs.ranking == 'true'
         run: node fetch-ranking.mjs 200${{ steps.mode.outputs.season }} --if-new
 
-      # Only downloaded here; analysed below if anything is rebuilt
+      # Only downloaded here; analysed below if anything is rebuilt. The draws of tournaments being
+      # played also give their matches so far, rated until badmintonportalen has the results
       - name: Fetch tournament draws (Cup2000)
         run: node upcoming.mjs --fetch-only ${{ steps.mode.outputs.rescan == 'true' && format('--season {0}', steps.mode.outputs.season) || '' }}
 

@@ -8,7 +8,9 @@
 // tournaments are skipped, so it can be stopped and re-run. Failures go to data/portalen-errors.log.
 // The end dates of unfinished tournaments are kept in data/cache/tournament-ends.json, so a
 // tournament isn't asked about again until its end date has passed (or with --check-dates, weekly,
-// in case dates move).
+// in case dates move). A tournament that ended in the last week without any results yet is asked
+// about again each night, as badmintonportalen may get them later (until then its matches are rated
+// from its Cup2000 draw, cup2000-results.mjs); after a week it's saved as it is.
 import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
 import { call, unescape, text } from "./portalen.mjs";
 
@@ -19,6 +21,7 @@ const ENDS = `${DIR}data/cache/tournament-ends.json`;
 const FIRST_SEASON = 2013; // earliest season on badmintonportalen (2013/2014)
 const CONCURRENCY = 2;
 const today = new Date().toISOString().slice(0, 10);
+const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
 
 // Season ids are "200" + start year, e.g. 2002025 for 2025/2026. Seasons start in July.
 const currentSeason = () => {
@@ -143,6 +146,8 @@ async function fetchTournament({ tournamentId, classId, title, season }) {
       }
     }
   }
+  // No results yet: asked about again tomorrow, for a week
+  if (!matches.length && info.endDate >= weekAgo) return { unfinished: true, endDate: info.endDate, noResults: true };
   return {
     tournamentId,
     name: info.name || title,
@@ -195,7 +200,7 @@ async function worker() {
       if (result.unfinished) {
         unfinished++;
         if (result.endDate) ends[t.tournamentId] = result.endDate;
-        console.error(`${label}: not finished (${result.endDate ?? "no date"}), skipped`);
+        console.error(`${label}: ${result.noResults ? "no results yet" : "not finished"} (${result.endDate ?? "no date"}), skipped`);
         continue;
       }
       await writeFile(`${OUT}/${t.tournamentId}.json`, JSON.stringify(result));

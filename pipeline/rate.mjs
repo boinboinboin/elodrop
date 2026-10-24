@@ -2,13 +2,15 @@
 // Usage: node rate.mjs
 // Also importable: collectGames() and computeRatings(games, inactivity) for tuning.
 //
-// Reads data/portalen/*.json and data/league/*.json.
+// Reads data/portalen/*.json, data/league/*.json, and the matches played so far in tournaments not
+// yet on badmintonportalen from their Cup2000 draws (cup2000-results.mjs).
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
 // data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
 // over all pools).
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
+import { provisionalTournaments } from "./cup2000-results.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 // Rating pool per discipline. Every pool is rated separately.
@@ -293,7 +295,7 @@ export function collectGames() {
   checked.clear();
   meetings.clear();
   const games = [];
-  for (const t of readDir("portalen")) {
+  for (const t of [...readDir("portalen"), ...provisionalTournaments()]) {
     t.matches.forEach((m, i) => {
       const g = toGame(m, {
         day: t.startDate,

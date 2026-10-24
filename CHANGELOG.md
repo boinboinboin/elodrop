@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.12.0 (2026-10-24)
+
+- Ratings follow a tournament weekend day by day: the matches played on Friday are in the ratings, rankings, player and club pages the next morning, and so on through the weekend. Until a tournament has ended and its results are on badmintonportalen, they're taken from its draw on Cup2000; the final results from badmintonportalen then replace them. A match with a player who can't be identified from the draw waits for the final results.
+- A tournament fetched from badmintonportalen before its results are there is fetched again each night for a week, instead of being kept without results.
+- A tournament's draw luck is locked when it starts: the players' ratings, the seeds, the chances and the luck stay as they were before the first match, instead of being worked out again every night as the results came in. Only the results, and the luck from withdrawals on top, are added after that.
+
 ## v1.11.0 (2026-10-22)
 
 - Icons instead of text symbols: the sort and rank-movement arrows, the search field's magnifier, the "show inactive players" tick, and a chevron on the sections that open (such as "Rating by season") instead of the browser's own triangle.

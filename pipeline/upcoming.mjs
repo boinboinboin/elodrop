@@ -19,6 +19,8 @@
 //        node upcoming.mjs --fetch-only       only download the draws (with --season too), without
 //                                             analysing them (then --offline does that)
 //        --refetch                            fetch finished tournaments again
+//        --unlock                             analyse started tournaments again (with --offline:
+//                                             every saved one), locking them as they are now
 // Run after rate.mjs. Writes data/upcoming/<cup2000 id>.json and the list data/upcoming.json; the
 // fetched Cup2000 pages and entry list are kept in data/upcoming/raw/<cup2000 id>.json.
 //
@@ -32,12 +34,19 @@
 // and draw positions instead of "Winner of match 12"; the structure is rebuilt from where each
 // player finished in their group and which match each position played before. Replaying the
 // actual winners gives each entry's actual rounds, placement and win.
+// Locked at the start: from the day after a tournament starts (or once its draw has a result), each
+// event keeps what it was before: the players and their ratings, the seeds, the chances and the draw
+// luck, from the last analysis before (lockedOn). Later runs only add the results, and the luck from
+// withdrawals on top, with those ratings. An event whose entries changed after the start is
+// analysed again (and locked as it is then). A tournament first analysed after its start is locked
+// from then on.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { call, text } from "./portalen.mjs";
 import { service, unescape, parsePlayer } from "./fetch-tournament.mjs";
 import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
+import { EVENTS, normalize } from "./cup2000-results.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/upcoming`;
@@ -46,14 +55,6 @@ const today = new Date().toISOString().slice(0, 10);
 const DAY_MS = 86_400_000;
 const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * DAY_MS).toISOString().slice(0, 10);
 
-// Cup2000 event codes (e=) and the matching pool and badmintonportalen discipline heading
-const EVENTS = {
-  0: { pool: "men", discipline: "MensSingles", heading: "Herresingle" },
-  1: { pool: "mensDoubles", discipline: "MensDoubles", heading: "Herredouble" },
-  2: { pool: "women", discipline: "WomensSingles", heading: "Damesingle" },
-  3: { pool: "womensDoubles", discipline: "WomensDoubles", heading: "Damedouble" },
-  4: { pool: "mixedDoubles", discipline: "MixedDoubles", heading: "Mixeddouble" },
-};
 const HEADING = Object.fromEntries(Object.values(EVENTS).map((e) => [e.discipline, e.heading]));
 const SINGLES = new Set(["men", "women"]);
 // Tournaments that were drawn but not played, by badmintonportalen id, with why. A tournament
@@ -61,9 +62,6 @@ const SINGLES = new Set(["men", "women"]);
 const CANCELLED = {
   7093: "Cancelled at the last minute, in mourning for the King",
 };
-
-const normalize = (s) =>
-  s.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z ]/g, " ").replace(/\s+/g, " ").trim();
 
 // ---- badmintonportalen: season plan, tournament info and entry list ----
 
@@ -471,9 +469,33 @@ async function fetchRaw({ portalen, cup2000 }) {
   return raw;
 }
 
-function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) {
+// Whether any match in an event's draw has been played (has a winner)
+const anyPlayed = (pages) =>
+  pages.some((p) => (p.renderMethod === 3 ? p.data[2][0] : p.renderMethod === 4 ? p.data[2].flatMap(([, [list]]) => list) : []).some((m) => m[5] === 1 || m[5] === 2));
+
+// An event's entries in a locked analysis, in the order of `entries` (the same players, by id or
+// name), with the locked event; null if they aren't the same entries
+const samePlayer = (a, b) => (a.id && a.id === b.id) || normalize(a.name) === normalize(b.name);
+function lockedEntries(lock, className, discipline, entries) {
+  const event = lock.events.find((e) => e.className === className && e.discipline === discipline);
+  if (!event || event.entries.length !== entries.length) return null;
+  const left = [...event.entries];
+  const was = entries.map((e) => {
+    const i = left.findIndex((x) => x.players.length === e.players.length && x.players.every((p) => e.players.some((q) => samePlayer(p, q))));
+    return i === -1 ? null : left.splice(i, 1)[0];
+  });
+  return was.includes(null) ? null : { event, was };
+}
+// A locked entry's draw luck (without withdrawals, added again on top)
+const drawLuck = ({ draw, withdrawals, ...luck }) => ({ ...luck, score: draw ?? luck.score });
+
+function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, previous = null) {
   const unmatched = [];
   const day = info.startDate ?? today;
+  // Started: locked to the analysis before (see "Locked at the start" above), or from now on
+  const started = (info.startDate && today > info.startDate) || draws.some((d) => anyPlayed(d.pages));
+  const lock = started ? previous : null;
+  const lockedOn = !started ? null : lock ? (lock.lockedOn ?? lock.analysedOn ?? lock.fetchedAt.slice(0, 10)) : today;
   const lists = [...info.lists, ...resultLists(portalenId)];
   const events = [];
   for (const d of draws) {
@@ -494,7 +516,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) 
     const { pool, discipline, heading } = EVENTS[d.e];
     const level = R.tournamentLevel(d.className);
     const eventList = lists.filter((l) => l.className === d.className && l.heading === heading).flatMap((l) => l.entries);
-    const entries = parsed.entries.map(({ names }) => {
+    const identified = parsed.entries.map(({ names }) => {
       const players = names.map((s, i) => {
         const p = parsePlayer(s);
         const { id, source } = identify(p, eventList, lists.flatMap((l) => l.entries));
@@ -506,11 +528,19 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) 
       });
       return { players, rating: Math.round(players.reduce((s, p) => s + p.rating, 0)) };
     });
+    const locked = lock ? lockedEntries(lock, d.className, discipline, identified) : null;
+    if (lock && !locked) console.error(`${info.name ?? cupId}, ${d.className} ${heading}: the entries changed after the start, analysed again`);
+    const was = locked?.was;
+    const entries = was ? was.map(({ players, rating }) => ({ players, rating })) : identified;
     const ratings = entries.map((e) => e.rating);
-    const official = officialSeeds(seeding, d.className, pool, event, entries);
-    const seeds = official.seeds ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event));
-    const actual = simulate(event, ratings, { runs: RUNS, seed: 1 });
-    const fair = simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
+    const official = was
+      ? { seeds: locked.event.seededBy === "ranking" ? locked.event.seeds.map((s) => was.indexOf(locked.event.entries[s])) : null, points: was.map((x) => x.points) }
+      : officialSeeds(seeding, d.className, pool, event, entries);
+    const seeds = was
+      ? locked.event.seeds.map((s) => was.indexOf(locked.event.entries[s]))
+      : (official.seeds ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event)));
+    const actual = was ? was.map((x) => x.actual) : simulate(event, ratings, { runs: RUNS, seed: 1 });
+    const fair = was ? was.map((x) => x.fair) : simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
     const forced = results ?? portalenResults(portalenId, d.className, discipline, event, entries);
     let outcome = forced ? simulate(event, ratings, { runs: 1, forced }) : null;
     // Withdrawals (played draws): entries that lost by walkover are out from that match on. The
@@ -551,11 +581,15 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) 
       },
       played: !!outcome,
       entries: entries.map((e, i) => {
-        const luck = noLuck ? null : rounded(Object.fromEntries(["wins", "groupWin", "knockout", "win", "progress"].map((k) => [k, actual[i][k] - fair[i][k]])));
-        // Placement: lower is better, so luck is the fair placement minus the actual one
-        if (luck && placement) luck.place = round(fair[i].place - actual[i].place);
-        // The event's luck measure: places when everyone is placed, else rounds
-        if (luck) luck.score = luck.place ?? luck.progress;
+        let luck = null;
+        if (!noLuck && was?.[i].luck) luck = drawLuck(was[i].luck);
+        else if (!noLuck) {
+          luck = rounded(Object.fromEntries(["wins", "groupWin", "knockout", "win", "progress"].map((k) => [k, actual[i][k] - fair[i][k]])));
+          // Placement: lower is better, so luck is the fair placement minus the actual one
+          if (placement) luck.place = round(fair[i].place - actual[i].place);
+          // The event's luck measure: places when everyone is placed, else rounds
+          luck.score = luck.place ?? luck.progress;
+        }
         // With withdrawals: the luck including them, and the part they make
         if (luck && after) {
           const total = placement ? fairAfter[i].place - after[i].place : after[i].progress - fairAfter[i].progress;
@@ -594,6 +628,9 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }) 
     deadline: seeding?.deadline ?? null,
     rankingVersion: seeding?.version ?? null,
     fetchedAt,
+    // The day of this analysis, and once the tournament has started, of the one its numbers are from
+    analysedOn: today,
+    lockedOn,
     runs: RUNS,
     events,
     evaluation: evaluate(events),
@@ -667,6 +704,7 @@ const offline = process.argv.includes("--offline");
 // fetches everything first, to see whether anything is new, and analyses later (--offline) if so
 const fetchOnly = process.argv.includes("--fetch-only");
 const refetch = process.argv.includes("--refetch");
+const unlock = process.argv.includes("--unlock");
 const savedRaw = (cupId) => (existsSync(`${OUT}/raw/${cupId}.json`) ? JSON.parse(readFileSync(`${OUT}/raw/${cupId}.json`, "utf8")) : null);
 
 let targets = [];
@@ -725,7 +763,9 @@ for (const target of targets) {
       console.error(`${label}: saved in an older format, run again without --offline`);
       continue;
     }
-    const t = analyse(raw);
+    // The last analysis, to keep a started tournament's numbers (unless --unlock)
+    const file = `${OUT}/${raw.cupId}.json`;
+    const t = analyse(raw, !unlock && existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : null);
     if (!t.events.length) {
       console.error(`${label}: no draw published yet`);
       continue;
