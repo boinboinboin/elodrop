@@ -1,10 +1,11 @@
-// A ranking list: the discipline tabs, the "show inactive players" switch, in mixed doubles men or
+// A ranking list: the section's heading, the discipline tabs, the "show inactive players" switch, in mixed doubles men or
 // women, and the table. Each list is its own static page (utils/rankings.ts). With inactive players,
 // only the best INACTIVE_SHOWN of them are listed (the full lists run to over 10,000 players), with a
 // link to the page with all of them.
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PoolName from "@/components/format/PoolName";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import RankingTable, { type RankingRow } from "@/components/rankings/RankingTable";
 import { ArrowRight, Check } from "@/components/SVG";
 import LinkTabs from "@/components/ui/LinkTabs";
@@ -32,6 +33,9 @@ export default async function Rankings({ list, showInactive, allInactive = false
 
   return (
     <Section>
+      <Breadcrumbs trail={[{ label: t("rankings.heading") }]} />
+      <h1 className="h1 mt-4">{t("rankings.heading")}</h1>
+      <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.intro")}</p>
       <div className="flex flex-wrap items-end justify-between gap-6 mb-6">
         <LinkTabs label={t("rankings.disciplines")} current={pool} tabs={POOL_KEYS.map((key) => ({ key, href: rankingHref(key, null, showInactive), label: <PoolName pool={key} /> }))} />
         <Link

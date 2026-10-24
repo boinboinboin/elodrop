@@ -9,7 +9,7 @@ import UpdatedAt from "@/components/layout/UpdatedAt";
 import { rich, t } from "@/messages/i18n";
 
 const NAV = [
-  { href: "/", label: t("layout.nav.rankings") },
+  { href: "/rankings", label: t("layout.nav.rankings") },
   { href: "/clubs", label: t("layout.nav.clubs") },
   { href: "/eliteserien", label: t("layout.nav.eliteserien") },
   { href: "/tournaments", label: t("layout.nav.tournaments") },

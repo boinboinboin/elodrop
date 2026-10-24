@@ -1,0 +1,53 @@
+{
+  "title": "elodrop",
+  "intro": "Singles and doubles ratings for Norwegian badminton, calculated from every tournament and league result on badmintonportalen.no since 2013.",
+  "toRankings": "See the rankings",
+  "playersRated": "{count} players rated",
+  "pages": "What's on elodrop",
+  "loading": "Loading…",
+  "noData": "No data yet.",
+  "rankings": {
+    "title": "Rankings",
+    "description": "Every player's rating in singles, doubles and mixed doubles, updated the morning after they play.",
+    "teaser": "Number one in each discipline",
+    "link": "All rankings"
+  },
+  "clubs": {
+    "title": "Clubs",
+    "description": "The strongest clubs, by their best players in all five disciplines, and each club's players and history.",
+    "teaser": "Strongest clubs",
+    "link": "All clubs"
+  },
+  "eliteserien": {
+    "title": "Eliteserien",
+    "description": "Each team's strength from its strongest lineup: the predicted table, and every earlier season in review.",
+    "teaser": "Predicted table, {season}",
+    "points": "{points} points",
+    "link": "Team strengths"
+  },
+  "upsets": {
+    "title": "Upsets",
+    "description": "The week's biggest surprises: the wins the ratings gave the least chance.",
+    "teaser": "Biggest upset, week of {week}",
+    "chance": "chance of winning",
+    "beat": "beat",
+    "link": "The week's upsets"
+  },
+  "tournaments": {
+    "title": "Tournament draws",
+    "description": "How lucky each player's draw is before a tournament starts, and how the predictions turned out.",
+    "next": "Next up",
+    "luckiest": "Luckiest draw",
+    "rounds": "{luck} rounds",
+    "places": "{luck} places",
+    "season": "This season, the favourite won {won} of {winners} events ({expected} expected).",
+    "link": "All tournaments"
+  },
+  "headToHead": {
+    "title": "Head to head",
+    "description": "Any two players, or two pairs: their meetings, winning margins and each side's chance today.",
+    "teaser": "Men's singles: number one against number two",
+    "pair": "{a} against {b}",
+    "link": "Compare two players"
+  }
+}
