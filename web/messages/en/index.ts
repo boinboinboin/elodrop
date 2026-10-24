@@ -3,10 +3,11 @@ import clubs from "./clubs.json";
 import common from "./common.json";
 import eliteserien from "./eliteserien.json";
 import headToHead from "./head-to-head.json";
+import home from "./home.json";
 import layout from "./layout.json";
 import players from "./players.json";
 import rankings from "./rankings.json";
 import tournaments from "./tournaments.json";
 import upsets from "./upsets.json";
 
-export const en = { common, layout, rankings, players, clubs, headToHead, eliteserien, tournaments, upsets };
+export const en = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, upsets };

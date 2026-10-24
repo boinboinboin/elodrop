@@ -31,8 +31,6 @@
     "lastPlayed": "Last played {month}",
     "noneFound": "No players match your search."
   },
-  "home": {
-    "title": "elodrop",
-    "intro": "Singles and doubles ratings for Norwegian badminton, calculated from every tournament and league result on badmintonportalen.no since 2013."
-  }
+  "heading": "Rankings",
+  "intro": "Every player's rating in each discipline. Ranked players have played in the last 12 months; the arrows show the change since last week."
 }

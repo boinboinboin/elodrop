@@ -10,7 +10,7 @@ export default function NotFound() {
       <h1 className="h1">{t("layout.notFound.title")}</h1>
       <p className="text-2xl mt-2 max-w-3xl">{t("layout.notFound.text")}</p>
       <p className="mt-4">
-        <Link href="/" className={TEXT_LINK}>{t("layout.notFound.back")} <ArrowRight /></Link>
+        <Link href="/rankings" className={TEXT_LINK}>{t("layout.notFound.back")} <ArrowRight /></Link>
       </p>
     </Section>
   );
