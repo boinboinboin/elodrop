@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.13.1 (2026-10-24)
+
+- Chart colours that colour-blind readers can tell apart, in every theme: the five disciplines' colours are now distinct from each other in any combination (before, men's singles and men's doubles looked alike with red-green colour blindness in Totebag and All England), and every chart colour has at least 3:1 contrast on its theme's cards. The front page's cards use the same colours, with head to head's in its two sides' colours, so neighbouring cards never look alike.
+
 ## v1.13.0 (2026-10-24)
 
 - A front page: what elodrop is, and a card for each part of the site with a live glimpse of it: the number one in each ranking, the strongest clubs, the predicted Eliteserien table, the week's biggest upset, the next tournament's luckiest draw and the season's favourites, and the top two men head to head.

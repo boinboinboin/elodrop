@@ -10,16 +10,18 @@ import Section from "@/components/ui/Section";
 import { BUTTON } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { t } from "@/messages/i18n";
-import { PALETTE } from "@/utils/chart";
+import { PALETTE, SIDE_COLORS } from "@/utils/chart";
 import { num } from "@/utils/format";
 
+// Each card's colour: the first five chart colours, which are apart in every pair, and head to head
+// its two sides' (the first two), so no card shares a colour with one next to it, in two columns or three
 const CARDS = [
-  { key: "rankings", href: "/rankings", Glimpse: RankingsGlimpse },
-  { key: "clubs", href: "/clubs", Glimpse: ClubsGlimpse },
-  { key: "eliteserien", href: "/eliteserien", Glimpse: EliteserienGlimpse },
-  { key: "upsets", href: "/upsets", Glimpse: UpsetsGlimpse },
-  { key: "tournaments", href: "/tournaments", Glimpse: TournamentsGlimpse },
-  { key: "headToHead", href: "/head-to-head", Glimpse: HeadToHeadGlimpse },
+  { key: "rankings", href: "/rankings", Glimpse: RankingsGlimpse, colors: [PALETTE[0]] },
+  { key: "clubs", href: "/clubs", Glimpse: ClubsGlimpse, colors: [PALETTE[1]] },
+  { key: "eliteserien", href: "/eliteserien", Glimpse: EliteserienGlimpse, colors: [PALETTE[2]] },
+  { key: "upsets", href: "/upsets", Glimpse: UpsetsGlimpse, colors: [PALETTE[3]] },
+  { key: "tournaments", href: "/tournaments", Glimpse: TournamentsGlimpse, colors: [PALETTE[4]] },
+  { key: "headToHead", href: "/head-to-head", Glimpse: HeadToHeadGlimpse, colors: SIDE_COLORS },
 ] as const;
 
 export default function Home() {
@@ -39,8 +41,8 @@ export default function Home() {
       </Section>
       <Section title={t("home.pages")} titleClassName="sr-only">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {CARDS.map(({ key, href, Glimpse }, i) => (
-            <HomeCard key={key} href={href} title={t(`home.${key}.title`)} description={t(`home.${key}.description`)} link={t(`home.${key}.link`)} color={PALETTE[i]}>
+          {CARDS.map(({ key, href, Glimpse, colors }) => (
+            <HomeCard key={key} href={href} title={t(`home.${key}.title`)} description={t(`home.${key}.description`)} link={t(`home.${key}.link`)} colors={colors}>
               <Glimpse />
             </HomeCard>
           ))}

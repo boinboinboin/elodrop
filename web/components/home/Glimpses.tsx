@@ -148,7 +148,7 @@ export async function TournamentsGlimpse() {
       <Link href={tournamentHref(summary.cup2000Id)} className="text-lg font-semibold hover:text-blue-600">{summary.name}</Link>
       <p className="text-sm text-gray-600 tabular-nums">{dateRange(summary.startDate, summary.endDate)}</p>
       {luckiest && (
-        <div className="mt-4 border-l-4 pl-3" style={{ borderColor: "var(--color-chart-4)" }}>
+        <div className="mt-4 border-l-4 pl-3" style={{ borderColor: "var(--color-chart-5)" }}>
           <p className="text-sm text-gray-600">{t("home.tournaments.luckiest")}</p>
           <p>
             {luckiest.x.players.map((p) => p.name).join(" / ")}{" "}

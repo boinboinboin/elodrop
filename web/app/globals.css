@@ -20,13 +20,15 @@
 @theme static {
   /* The logo's cork */
   --color-accent: #f97316;
-  /* Charts: the series in fixed order (validated: CVD and normal-vision separation of adjacent
-     slots on white), then the chart's own colours */
-  --color-chart-1: #2a78d6;
-  --color-chart-2: #eb6834;
-  --color-chart-3: #1baf7a;
-  --color-chart-4: #eda100;
-  --color-chart-5: #e87ba4;
+  /* Charts: the series in fixed order, then the chart's own colours. Validated (dataviz skill's
+     validate_palette.js, Machado 2009 simulation): the first five, a discipline each, are apart in
+     every pair, as any of them can share a chart (worst protan/deutan ΔE 8.1, normal vision 17.6),
+     and every slot from its neighbours (club periods: worst 10.6); all ≥ 3:1 on white */
+  --color-chart-1: #3061d8;
+  --color-chart-2: #ca5956;
+  --color-chart-3: #129495;
+  --color-chart-4: #a7951e;
+  --color-chart-5: #e761cc;
   --color-chart-6: #008300;
   --color-chart-7: #6250d6;
   --color-chart-8: #e34948;
@@ -69,13 +71,13 @@
     --color-red-700: #9a3f27;
     /* The logo's cork: terracotta */
     --color-accent: #b5643a;
-    /* Five series (validated on the card colour: worst adjacent CVD ΔE 18.5, normal 20.1, all
-       ≥ 3:1): court green, blue, terracotta, plum, ochre; a sixth and on share "other" */
-    --color-chart-1: #1e7a4c;
-    --color-chart-2: #3a6fc2;
-    --color-chart-3: #d0603a;
-    --color-chart-4: #8e5bb0;
-    --color-chart-5: #b58a12;
+    /* Five series, apart in every pair (validated on the card colour: worst protan/deutan ΔE 9.4,
+       normal 17.9, all ≥ 3:1): court green, blue, coral, plum, olive; a sixth and on share "other" */
+    --color-chart-1: #026430;
+    --color-chart-2: #1b72d8;
+    --color-chart-3: #de6b6e;
+    --color-chart-4: #984e9f;
+    --color-chart-5: #8d7e18;
     --color-chart-6: #9c9d84;
     --color-chart-7: #9c9d84;
     --color-chart-8: #9c9d84;
@@ -92,8 +94,8 @@
    sampled from Yonex's photo of the arena (#c0c6d0), the cards a light grey (the white lines),
    "black" the near-black floor around the courts (#1f2228). Links and good in a dark Yonex green (the court mat's #00834d, darkened),
    darkened to pass on the grey (4.9:1 and 5.2:1); every text colour passes WCAG AA (the faintest,
-   gray-500, 4.7:1). Charts as in totebag; on the grey cards the fifth, ochre, is 2.8:1, which
-   the charts' legend, tooltip and table make up for (as for three of yinyang's). */
+   gray-500, 4.7:1). Charts as in totebag, stepped for the grey cards: apart in every pair (worst
+   protan/deutan ΔE 10.0, normal 17.6), all ≥ 3:1. */
 @layer theme {
   html[data-theme="allengland"] {
     --color-stone-100: #c0c6d0;
@@ -117,11 +119,11 @@
     --color-red-600: #a2301f;
     --color-red-700: #962c1c;
     --color-accent: #00834d;
-    --color-chart-1: #1e7a4c;
-    --color-chart-2: #3a6fc2;
-    --color-chart-3: #d0603a;
-    --color-chart-4: #8e5bb0;
-    --color-chart-5: #b58a12;
+    --color-chart-1: #026430;
+    --color-chart-2: #2f6fd9;
+    --color-chart-3: #d96571;
+    --color-chart-4: #97449f;
+    --color-chart-5: #91760a;
     --color-chart-6: #7b828e;
     --color-chart-7: #7b828e;
     --color-chart-8: #7b828e;
