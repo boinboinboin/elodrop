@@ -448,9 +448,9 @@ function ratingOf(id, pool, level, male, day) {
   if (own) return { rating: own.rating, rank: own.rank, estimated: false };
   if (!SINGLES.has(pool) && id) {
     const singles = ratingBefore(id, male ? "men" : "women", day) ?? ratingBefore(id, male ? "women" : "men", day);
-    if (singles) return { rating: Math.round(R.P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - R.P0)), rank: null, estimated: true };
+    if (singles) return { rating: Math.round(R.doublesSeed(singles.rating)), rank: null, estimated: true };
   }
-  return { rating: R.startRating(level), rank: null, estimated: true };
+  return { rating: R.startRating(level, pool), rank: null, estimated: true };
 }
 
 // ---- One tournament ----
@@ -494,8 +494,10 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
   const day = info.startDate ?? today;
   // Started: locked to the analysis before (see "Locked at the start" above), or from now on
   const started = (info.startDate && today > info.startDate) || draws.some((d) => anyPlayed(d.pages));
-  const lock = started ? previous : null;
-  const lockedOn = !started ? null : lock ? (lock.lockedOn ?? lock.analysedOn ?? lock.fetchedAt.slice(0, 10)) : today;
+  // An analysis on an earlier rating scale (R.RATING_SCALE) is done again, with the ratings at the
+  // time on the current scale, keeping the day it was locked
+  const lock = started && previous?.ratingScale === R.RATING_SCALE ? previous : null;
+  const lockedOn = !started ? null : previous ? (previous.lockedOn ?? previous.analysedOn ?? previous.fetchedAt.slice(0, 10)) : today;
   const lists = [...info.lists, ...resultLists(portalenId)];
   const events = [];
   for (const d of draws) {
@@ -631,6 +633,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     // The day of this analysis, and once the tournament has started, of the one its numbers are from
     analysedOn: today,
     lockedOn,
+    ratingScale: R.RATING_SCALE,
     runs: RUNS,
     events,
     evaluation: evaluate(events),

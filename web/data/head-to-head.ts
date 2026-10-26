@@ -141,7 +141,7 @@ function summedHistory(histories: PairHistory[]): PairHistory | null {
  */
 function onOneScale(players: Player[], format: Format, gap: GenderGap): { sides: Side[]; histories: PairHistory[] } | null {
   const fit = gap[format];
-  const map = (w: number) => onMensScale(w, fit, gap.p0);
+  const map = (w: number) => onMensScale(w, fit, fit.p0 ?? gap.p0);
   const sides: Side[] = [];
   const histories: PairHistory[] = [];
   for (const player of players) {

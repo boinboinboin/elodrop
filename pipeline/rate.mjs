@@ -340,10 +340,10 @@ const RETURN_GAP_DAYS = 365;
 const RETURN_MATCHES = 5;
 
 // onGame(game, side1, side2, expected1) is called before each rating update, for analysis; sides are
-// arrays of player states. Experiment hooks (defaults follow the README): startRating(level),
-// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r), expectedScore(ra, rb),
+// arrays of player states. Experiment hooks (defaults follow the README): startRating(level, pool),
+// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r, p0), expectedScore(ra, rb),
 // kappa, doublesKappa (base K-factor for doubles), doublesSplit ("rd" or "equal": how a doubles
-// side's rating change is shared between the partners), levelWeight(level), juniorK,
+// side's rating change is shared between the partners), levelWeight(level), juniorK(level) (or a number for every junior match),
 // marginWeight(sets, s), crossRegionK and minRating(pool) (no rating, start or after a match, goes
 // below it). inactivity.floor may be a function of the pool.
 export function computeRatings(
@@ -362,10 +362,10 @@ export function computeRatings(
     doublesKappa = R.DOUBLES_KAPPA,
     doublesSplit = R.DOUBLES_SPLIT,
     levelWeight = (level) => R.TIERS[level.tier].weight,
-    juniorK = R.JUNIOR_K,
+    juniorK = R.juniorWeight,
     marginWeight = R.marginWeight,
     crossRegionK = R.CROSS_REGION_K,
-    minRating = () => -Infinity,
+    minRating = () => R.MIN_RATING,
   } = {}
 ) {
   const players = Object.fromEntries(Object.values(POOLS).map((pool) => [pool, new Map()]));
@@ -398,14 +398,14 @@ export function computeRatings(
   const SINGLES_OF = { mensDoubles: ["men"], womensDoubles: ["women"], mixedDoubles: ["men", "women"] };
   function singlesSeed(pool, side) {
     const singles = (SINGLES_OF[pool] ?? []).map((sp) => players[sp].get(side.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
-    return singles ? R.P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - R.P0) : null;
+    return singles ? R.doublesSeed(singles.rating) : null;
   }
 
   function getPlayer(pool, side, level, day, source) {
     let p = players[pool].get(side.id);
     if (!p) {
       // seedRating(pool, side, level, players) can override the start rating (experiments)
-      const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? startRating(level));
+      const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? startRating(level, pool));
       const week = weekStart(day);
       p = { id: side.id, pool, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], log: [], clubs: [], returning: 0 };
       players[pool].set(side.id, p);
@@ -482,7 +482,7 @@ export function computeRatings(
 
     const doubles = DOUBLES.has(g.pool);
     const crossRegion = g.crossRegion ? crossRegionK : 1;
-    const junior = g.level.junior ? juniorK : 1;
+    const junior = !g.level.junior ? 1 : typeof juniorK === "function" ? juniorK(g.level) : juniorK;
     const k =
       (doubles ? doublesKappa : kappa) * junior *
       levelWeight(g.level) * marginWeight(g.sets, g.s) * R.covidK(g.day) * crossRegion * (kMultiplier?.(g) ?? 1);
@@ -503,7 +503,7 @@ export function computeRatings(
       const variance = side.players.reduce((sum, p) => sum + p.rd ** 2, 0);
       side.changes = side.players.map((p) => {
         const share = !doubles ? 1 : doublesSplit === "rd" ? p.rd ** 2 / variance : 1 / side.players.length;
-        return k * share * ratingMultiplier(p.rating) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
+        return k * share * ratingMultiplier(p.rating, R.p0Of(g.pool)) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
       });
     }
     perSide.forEach((side, i) => side.players.forEach((p, j) => ([p.rd, p.rdDay] = [rdAfter[i][j], g.day])));

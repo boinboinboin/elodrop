@@ -80,7 +80,7 @@ export function readRoster(file = ROSTER) {
 }
 
 // A player's ratings for the three kinds of match. Missing doubles ratings come from the singles
-// rating, as for a new doubles player (R.DOUBLES_SINGLES_SEED); anything else missing counts at
+// rating, as for a new doubles player (R.doublesSeed); anything else missing counts at
 // the lowest rating among ranked players.
 export function playerRatings(p, source) {
   const male = p.gender === "M";
@@ -88,7 +88,7 @@ export function playerRatings(p, source) {
   const singles = p.id ? source.rating(p.id, male ? "men" : "women") : null;
   const doubles = p.id ? source.rating(p.id, male ? "mensDoubles" : "womensDoubles") : null;
   const mixed = p.id ? source.rating(p.id, "mixedDoubles") : null;
-  const seed = singles !== null ? R.P0 + R.DOUBLES_SINGLES_SEED * (singles - R.P0) : null;
+  const seed = singles !== null ? R.doublesSeed(singles) : null;
   return {
     ...p,
     name: (p.id && source.name(p.id)) || p.listName,

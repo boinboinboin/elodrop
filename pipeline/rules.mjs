@@ -1,7 +1,19 @@
 // The rating rules from README.md, as data and small pure functions.
 // Keep this file in sync with the README: it is the spec.
 
-export const P0 = 1500; // top level start rating, reference point of m(r) and the not playing penalty
+// Top level start rating: in singles, and per player in doubles (a new top-level pair is 800). Each is
+// its pool's reference point of m(r) and the not playing penalty. Only rating differences decide the
+// expected score, so the two scales are a choice of where to put zero, not a change in predictions.
+export const P0 = 800;
+export const DOUBLES_P0 = 400;
+const DOUBLES_POOLS = new Set(["mensDoubles", "womensDoubles", "mixedDoubles"]);
+export const p0Of = (pool) => (DOUBLES_POOLS.has(pool) ? DOUBLES_P0 : P0);
+// No rating goes below this, at the start or after a match: on these scales the weakest players
+// would otherwise go below zero. Tested in BENCHMARK.md (it also predicts the weakest doubles better).
+export const MIN_RATING = 0;
+// Bump when the ratings move to a new scale: tournament draw analyses locked on another scale are
+// analysed again (upcoming.mjs), so they don't mix ratings from two scales.
+export const RATING_SCALE = 2;
 export const KAPPA = 54; // base K-factor
 // Doubles: base K-factor for a side, and how its rating change is shared between the partners:
 // "rd" by each partner's uncertainty (RD²), so a new player takes most of it; "equal" half each.
@@ -9,27 +21,31 @@ export const KAPPA = 54; // base K-factor
 export const DOUBLES_KAPPA = 54;
 export const DOUBLES_SPLIT = "rd";
 // A doubles player's start rating comes from their singles rating when they have played singles:
-// P0 + DOUBLES_SINGLES_SEED · (singles rating − P0). Doubles ratings spread over a narrower range.
+// DOUBLES_P0 + DOUBLES_SINGLES_SEED · (singles rating − P0). Doubles ratings spread over a narrower range.
 export const DOUBLES_SINGLES_SEED = 0.6;
+export const doublesSeed = (singles) => Math.max(MIN_RATING, DOUBLES_P0 + DOUBLES_SINGLES_SEED * (singles - P0));
 // K-factor multiplier for matches in junior classes and leagues, in every discipline: juniors
-// improve faster than the junior class weights let their ratings follow.
-export const JUNIOR_K = 1.5;
+// improve faster than the junior class weights let their ratings follow. Not in U19A (tier 1),
+// which counts like SEN B: junior results shouldn't count more than the senior top level.
+export const JUNIOR_K = 1.25;
+export const juniorWeight = (level) => (!level.junior || level.tier <= 1 ? 1 : JUNIOR_K);
 // Rating difference scale of the expected score: a difference of SCALE points means a 91% win chance.
 export const SCALE = 300;
 
-// Level tiers, from the "Class levels" table: K weight and start rating.
-// A player's start rating is the start of the tier of their first rated match.
+// Level tiers, from the "Class levels" table: K weight, and start rating below the top level.
+// A player's start rating is the start of the tier of their first rated match. The weights are the
+// earlier 100/85/60/40/25/10/5% to the power 0.75, which lets lower classes count a little more.
 export const TIERS = [
-  { weight: 1.0, start: P0 }, // 0: SEN X/E/A, Eliteserien, 1st div 1. HS/DS
-  { weight: 0.85, start: 1425 }, // 1: U19A/X, SEN B, O35-O45, 1st div other games, Junior NM for lag
-  { weight: 0.6, start: 1350 }, // 2: U17A/X, SEN C, O50-O55, 2nd div, U17 leagues
-  { weight: 0.4, start: 1275 }, // 3: U15A/X, SEN D, O60+, 3rd div, U15 leagues
-  { weight: 0.25, start: 1200 }, // 4: U13A/X, U19B, U17B, U13 leagues
-  { weight: 0.1, start: 1125 }, // 5: U11A, U15B, U13B, 4th div, other senior series
-  { weight: 0.05, start: 1050 }, // 6: other
+  { weight: 1.0, below: 0 }, // 0: SEN X/E/A, Eliteserien, 1st div 1. HS/DS
+  { weight: 0.85 ** 0.75, below: 75 }, // 1: U19A/X, SEN B, O35-O45, 1st div other games, Junior NM for lag (89%)
+  { weight: 0.6 ** 0.75, below: 150 }, // 2: U17A/X, SEN C, O50-O55, 2nd div, U17 leagues (68%)
+  { weight: 0.4 ** 0.75, below: 225 }, // 3: U15A/X, SEN D, O60+, 3rd div, U15 leagues (50%)
+  { weight: 0.25 ** 0.75, below: 300 }, // 4: U13A/X, U19B, U17B, U13 leagues (35%)
+  { weight: 0.1 ** 0.75, below: 375 }, // 5: U11A, U15B, U13B, 4th div, other senior series (18%)
+  { weight: 0.05 ** 0.75, below: 450 }, // 6: other (11%)
 ];
 
-export const startRating = ({ tier }) => TIERS[tier].start;
+export const startRating = ({ tier }, pool) => Math.max(MIN_RATING, p0Of(pool) - TIERS[tier].below);
 
 // Games between players from clubs in different regional associations (kretser) count
 // this many times more, so isolated regions are calibrated against the rest faster.
@@ -172,12 +188,13 @@ export function result(match, sets) {
 }
 
 // Margin of victory: K scales with the point difference d = |points A - points B| / total points.
-// A typical margin (d = 0.2, e.g. 21-15, 21-13) keeps K; close matches count less, blowouts more.
-const MARGIN = { reference: 0.2, min: 0.02, cap: 3 };
+// A typical margin (d = 0.2, e.g. 21-15, 21-13) keeps K; close matches count less, blowouts more,
+// to the power 0.75 so neither extreme counts as much as a linear weight would.
+const MARGIN = { reference: 0.2, min: 0.02, cap: 3, power: 0.75 };
 export function marginWeight(sets, s) {
   const d = pointMargin(sets);
   if (s === 0.5 || d === null) return 1;
-  return Math.min(MARGIN.cap, Math.max(MARGIN.min, d) / MARGIN.reference);
+  return Math.min(MARGIN.cap, (Math.max(MARGIN.min, d) / MARGIN.reference) ** MARGIN.power);
 }
 
 // d = |points A - points B| / total points, or null without a score.
@@ -186,8 +203,8 @@ export function pointMargin(sets) {
   return a + b ? Math.abs(a - b) / (a + b) : null;
 }
 
-// m(r): bigger rating changes below P0, smaller above.
-export const ratingMultiplier = (r) => 1 + 2 / (1 + 2 ** ((r - P0) / 90));
+// m(r): bigger rating changes below the pool's P0, smaller above.
+export const ratingMultiplier = (r, p0 = P0) => 1 + 2 / (1 + 2 ** ((r - p0) / 90));
 
 export const expectedScore = (ra, rb) => 1 / (1 + 10 ** ((rb - ra) / SCALE));
 
@@ -241,9 +258,9 @@ function weightedDays(from, to, periods, rateOf) {
 export const penaltyDays = (from, to) => weightedDays(from, to, COVID, (p) => p.penalty);
 
 // Not playing penalty. After `graceDays` without playing, the part of the rating above
-// `floor` decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or below
-// the floor are not affected.
-export const INACTIVITY = { graceDays: 365, halfLifeDays: 1095, floor: P0 };
+// `floor` (the pool's P0) decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or
+// below the floor are not affected.
+export const INACTIVITY = { graceDays: 365, halfLifeDays: 1095, floor: p0Of };
 
 // A player is active (ranked, and counted for their club's strength) while they have played within
 // this many days. During Covid-19 the time without playing counts slower: not at all from 2020-03-18

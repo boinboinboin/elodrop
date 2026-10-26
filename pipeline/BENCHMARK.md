@@ -1,8 +1,19 @@
 # Elo settings benchmark
 
-Alternative rating settings tested against the current rules ([README.md](README.md)), using the matches played in **2025/26** and **2026/27** as the benchmark. Run with `node benchmark.mjs` (about 3 seconds per config; `node benchmark.mjs <text>` runs only the configs whose name contains it, plus the current rules). Nothing here changes the ratings on the site.
+Alternative rating settings tested against the rules of the time ([README.md](README.md)), using the matches played in **2025/26** and **2026/27** as the benchmark. Run with `node benchmark.mjs` (about 3 seconds per config; `node benchmark.mjs <text>` runs only the configs whose name contains it, plus the current rules).
 
 Results from the data as of 2026-10-26.
+
+## Adopted in v1.14.0
+
+The [method to adopt](#the-method-to-adopt) and the [rating floor](#rating-floor) are the rules since v1.14.0, on the [shifted scale](README.md#rating-scale): a top level start of 800 in singles and 400 per doubles player, with no rating below 0. In everything below, **"current" means the rules before v1.14.0**. The configs of rounds 1–3 and the floor are in commit `f68b101`. `benchmark.mjs` now compares the current rules with the previous ones, rebuilt through the experiment hooks. With the defaults on the 1500 scale they reproduce the earlier calibration exactly, and the current rules give exactly the "floor 0" results (log loss, current rules in full; the previous rules as the change in thousandths):
+
+| Config | All 25/26 S | All 25/26 D | All 26/27 S | All 26/27 D | Settled 25/26 S | Settled 25/26 D | Settled 26/27 S | Settled 26/27 D | Top 25/26 S | Top 25/26 D | Top 26/27 S | Top 26/27 D |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| current rules (v1.14.0) | 0.5010 | 0.4893 | 0.5460 | 0.5076 | 0.4387 | 0.4354 | 0.4752 | 0.4673 | 0.4434 | 0.4432 | 0.4694 | 0.4441 |
+| previous rules | +11.0 | +14.7 | +7.7 | +16.9 | +6.7 | +1.3 | +2.1 | +4.1 | +5.1 | +0.6 | −0.3 | +1.3 |
+
+The previous rules are 0.3 better in only one cell, top-level singles in 2026/27. In the 2023–25 holdout they are +11.0 and +15.4 on all games, +6.3 and +8.2 settled, and +3.6 and +3.9 at the top level (singles and doubles).
 
 ## Method
 
@@ -37,10 +48,10 @@ $x = \max(d, 0.02)/0.2$, where $d$ is the point difference divided by the total 
 
 | Name | $w_m$ | 22-20 21-19 | 21-15 21-13 | 21-5 21-3 |
 | --- | --- | ---: | ---: | ---: |
-| current | $\min(3, x)$ | 0.25 | 1 | 3 |
-| pow 0.75 | $\min(3, x^{0.75})$ | 0.35 | 1 | 2.3 |
-| pow 0.5 | $\min(3, \sqrt{x})$ | 0.5 | 1 | 1.7 |
-| pow 0.33 | $\min(3, x^{1/3})$ | 0.63 | 1 | 1.4 |
+| current | $\min(3, x)$ | 0.24 | 1 | 3 |
+| pow 0.75 | $\min(3, x^{0.75})$ | 0.35 | 1 | 2.5 |
+| pow 0.5 | $\min(3, \sqrt{x})$ | 0.49 | 1 | 1.8 |
+| pow 0.33 | $\min(3, x^{1/3})$ | 0.63 | 1 | 1.5 |
 | damped 0.5 | $\min(1.5, \max(0.5, 1 + 0.5(x - 1)))$ | 0.62 | 1 | 1.5 |
 | none | 1 | 1 | 1 | 1 |
 

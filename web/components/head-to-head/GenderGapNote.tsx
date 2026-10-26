@@ -13,7 +13,7 @@ export default function GenderGapNote({ gap, format, extrapolated }: { gap: Gend
   const [women, men] = DISCIPLINES[format];
   // Examples across the ratings the fit covers, rounded to 100s
   const [lo, hi] = fit.range.map((r) => Math.round(r / 100) * 100);
-  const examples = [lo, Math.round((lo + hi) / 200) * 100, hi].map((w) => [num(w), num(Math.round(onMensScale(w, fit, gap.p0) / 10) * 10)]);
+  const examples = [lo, Math.round((lo + hi) / 200) * 100, hi].map((w) => [num(w), num(Math.round(onMensScale(w, fit, fit.p0 ?? gap.p0) / 10) * 10)]);
   return (
     <p className="text-sm text-gray-600 mt-4 max-w-3xl">
       {t("headToHead.genderGap.note", {

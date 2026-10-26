@@ -52,6 +52,8 @@ export interface HeadToHead {
 
 /** How women's ratings compare with men's (pipeline/gender-gap.mjs) */
 export interface GenderGapFit {
+  /** The reference rating of b: the top level start rating (singles, or per doubles player) */
+  p0: number;
   a: number;
   b: number;
   matches: number;
@@ -60,7 +62,8 @@ export interface GenderGapFit {
 }
 
 export interface GenderGap {
-  p0: number;
+  /** Data written before the per-format p0 (one p0 for both formats) */
+  p0?: number;
   singles: GenderGapFit;
   doubles: GenderGapFit;
 }

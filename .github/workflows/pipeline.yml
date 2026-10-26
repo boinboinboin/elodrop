@@ -154,6 +154,12 @@ jobs:
         if: steps.build.outputs.mode == 'full'
         run: node eliteserien.mjs > /dev/null
 
+      # The earlier seasons in review, from the ratings at the time: done again with the ratings, so
+      # they follow any change in how ratings are calculated
+      - name: Eliteserien seasons in review
+        if: steps.build.outputs.mode == 'full'
+        run: node eliteserien-review.mjs > /dev/null
+
       - name: Tournament draws
         if: steps.build.outputs.mode != 'none'
         run: node upcoming.mjs --offline

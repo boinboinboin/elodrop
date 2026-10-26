@@ -8,9 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
-## v1.13.2 (2026-10-26)
+## v1.14.0 (2026-10-26)
 
-- Pipeline: a benchmark of alternative Elo settings (`pipeline/benchmark.mjs`, results in `pipeline/BENCHMARK.md`). It tests flat start ratings without class levels, milder class weights, softer margin-of-victory weights, chess.com-style K and Glicko against the current rules on the 2025/26 and 2026/27 matches. The ratings themselves don't change.
+- New rating scale: the top level now starts at 800 in singles and 400 per player in doubles, so a new top-level pair starts at 800. All ratings and rating histories moved down, by 700 in singles and 1100 per player in doubles. The scale change on its own doesn't change rankings or win chances. The top players are now around 2300 in singles and 1100 in doubles. No rating goes below 0.
+- Better predictions: the lower classes count a little more than before, the U19 A classes count like SEN B (they counted more than SEN A before), the junior weight is ×1.25 instead of ×1.5, and big wins and narrow wins move ratings a little less. Together these predict the 2025/26 and 2026/27 matches better overall, and as well as before at the top level.
+- Tournament draw luck and the Eliteserien seasons in review are worked out again with the new ratings.
+- Pipeline: a benchmark of rating settings (`pipeline/benchmark.mjs`, results in `pipeline/BENCHMARK.md`).
 
 ## v1.13.1 (2026-10-24)
 

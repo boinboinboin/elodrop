@@ -7,4 +7,4 @@ const SCALE = 300;
 export const expectedScore = (ra: number, rb: number) => 1 / (1 + 10 ** ((rb - ra) / SCALE));
 
 /** A woman's rating in her own discipline on the men's scale: w + a + b·(w − p0) */
-export const onMensScale = (w: number, fit: GenderGapFit, p0: number) => w + fit.a + fit.b * (w - p0);
+export const onMensScale = (w: number, fit: GenderGapFit, p0 = fit.p0) => w + fit.a + fit.b * (w - p0);
