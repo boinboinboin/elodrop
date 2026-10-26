@@ -10,9 +10,9 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.15.0 (2026-10-26)
 
-- How does elodrop work? (/how-it-works): how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings.
-- What's new (/whats-new): this changelog made readable, a timeline by day with new features and improvements marked, and the versions before the launch folded away.
-- The footer links to both, with the current version, and the front page to how it works.
+- A page on how elodrop works: /how-it-works explains how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings, and a chart shows how the ratings spread over the players in each discipline, the ranked players or everyone ever rated, against a normal distribution with the same average and spread (the ratings lean towards the bottom, with a long tail of strong players).
+- A What's new page: /whats-new is this changelog made readable, a timeline by day with new features and improvements marked, and the versions before the launch folded away.
+- Both pages are on the front page, each with a card (what a win is worth for the favourite and the underdog, and the three newest updates), in the header's menu at every screen size, under "About elodrop", and in the footer, with the current version beside What's new.
 
 ## v1.14.0 (2026-10-26)
 

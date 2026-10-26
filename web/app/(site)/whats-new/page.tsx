@@ -6,7 +6,7 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
 import Section from "@/components/ui/Section";
 import Release, { KindBadge, Markdown, releaseId } from "@/components/whats-new/Release";
-import { plural, rich, t } from "@/messages/i18n";
+import { plural, t } from "@/messages/i18n";
 import { type Release as ReleaseData, getReleases, isFeature } from "@/utils/changelog";
 import { PALETTE } from "@/utils/chart";
 import { date, dateRange } from "@/utils/format";
@@ -45,18 +45,21 @@ export default function WhatsNewPage() {
               {t("whatsNew.latest", { version: `v${latest.version}` })}
             </a>
           )}
-          <p className="text-sm text-gray-700 flex flex-wrap items-center gap-x-1.5 gap-y-1">
-            {rich("whatsNew.legend", { feature: () => <KindBadge feature />, improvement: () => <KindBadge feature={false} /> })}
-          </p>
+          {/* What the badges mean, one per line on phones */}
+          <ul className="text-sm text-gray-700 grid sm:flex sm:flex-wrap gap-x-5 gap-y-1.5">
+            <li className="flex items-center gap-1.5"><KindBadge feature /> {t("whatsNew.legendFeature")}</li>
+            <li className="flex items-center gap-1.5"><KindBadge feature={false} /> {t("whatsNew.legendImprovement")}</li>
+          </ul>
         </div>
       </Section>
 
       <Section>
         <ol className="grid gap-10 md:gap-12">
           {byDay(launched).map((day) => (
-            <li key={day.date} className="grid md:grid-cols-[10rem_minmax(0,1fr)] gap-x-8 gap-y-3">
-              {/* The day stays in view beside its versions while they scroll past */}
-              <div className="md:sticky md:top-6 self-start">
+            <li key={day.date} className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[10rem_minmax(0,1fr)] gap-x-8 gap-y-3">
+              {/* The day stays in view while its versions scroll past: above them on phones (on the
+                  page's background), beside them from md */}
+              <div className="sticky top-0 z-10 py-2 bg-stone-100 flex items-baseline justify-between gap-3 md:top-6 md:self-start md:py-0 md:bg-transparent md:block">
                 <time dateTime={day.date} className="block text-xl">{date(day.date)}</time>
                 <span className="text-sm text-gray-600">{plural("whatsNew.releases", day.releases.length)}</span>
               </div>

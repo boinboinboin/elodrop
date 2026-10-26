@@ -19,6 +19,11 @@ const NAV = [
 ];
 const FOOTER_LINK = "underline hover:text-black";
 const VERSION = getReleases()[0]?.version;
+// About the site, in the menu at every width (and the footer), the current version beside What's new
+const ABOUT = [
+  { href: "/how-it-works", label: t("layout.nav.howItWorks") },
+  { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
+];
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -28,7 +33,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <NavigationProgress />
       </Suspense>
       {/* Phones: the logo and the menu button, the search on its own line; tablets and small laptops:
-          the search between; from xl the links too (the menu then holds just the colour theme). */}
+          the search between; from xl the links too (the menu then holds the pages about the site and the colour theme). */}
       <header className="relative bg-white border-b border-gray-200">
         <div className="base-container px-4 py-3 md:py-4 flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-3">
           <Logo />
@@ -41,19 +46,20 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             <SearchBar />
           </div>
           <div className="ml-auto md:ml-0 flex">
-            <MenuButton links={NAV} />
+            <MenuButton links={NAV} about={ABOUT} />
           </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
-          <nav aria-label={t("layout.footer.label")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
-            <Link href="/how-it-works" className="hover:text-black">{t("layout.footer.howItWorks")}</Link>
-            <Link href="/whats-new" className="hover:text-black">
-              {t("layout.footer.whatsNew")}
-              {VERSION && <span className="ml-2 font-mono text-xs text-gray-500">{t("layout.footer.version", { version: VERSION })}</span>}
-            </Link>
+          <nav aria-label={t("layout.nav.about")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
+            {ABOUT.map((l) => (
+              <Link key={l.href} href={l.href} className="hover:text-black">
+                {l.label}
+                {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
+              </Link>
+            ))}
           </nav>
           <p>
             {rich("layout.footer.sources", {

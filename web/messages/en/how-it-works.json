@@ -39,8 +39,9 @@
     "table": {
       "classes": "Classes and leagues",
       "weight": "Counts",
-      "singles": "Start, singles",
-      "doubles": "Start, doubles"
+      "start": "Start rating",
+      "singles": "Singles",
+      "doubles": "Doubles"
     },
     "tiers": {
       "t0": "SEN X, E and A; Eliteserien; 1st div 1st singles and doubles",
@@ -93,6 +94,39 @@
     "p3": "Results come in every night, so a weekend's matches are in the ratings the morning after they're played.",
     "nerd1": "Mixed doubles is rated as one pool, but nearly every pair is one man and one woman. So results show how men compare with other men and women with other women, but not men with women: adding the same to every man's rating and taking it from every woman's would predict every result just the same.",
     "nerd2": "During Covid-19, time without playing counted slower towards becoming inactive, so players stayed in the rankings through the lockdowns. Every rating also has an uncertainty (a Glicko rating deviation): it isn't shown, but it decides how doubles partners share their points."
+  },
+  "spread": {
+    "title": "How the ratings spread",
+    "p1": "Most players are juniors, beginners and club players, so most ratings sit below 1150, where a new SEN A player starts, and they thin out towards the top. Hover over or touch a bar to see how many players are rated there.",
+    "p2": "If the ratings followed a bell curve (a <strong>normal distribution</strong>), the bars would fill the dashed line. They don't quite: there are more players near the bottom, and a longer tail of strong players at the top, than a bell curve would have. That's fine, as Elo doesn't need one: only the differences between players' ratings matter.",
+    "nerd1": "The dashed line is the normal distribution with the same mean and standard deviation as the ratings, scaled to the number of players. Skewness measures the lopsidedness: 0 for a normal distribution, and around 1 here in every discipline, a clear tail to the right.",
+    "nerd2": "Two things pull the shape away from a bell curve. No rating goes below the minimum (400 in singles, 550 in doubles), so the weakest players pile up on it instead of spreading out below. And \"everyone\" includes players who stopped years ago, many of them juniors who quit young, whose ratings stayed where they stopped: that's why the ranked players alone sit higher.",
+    "chartTitle": "Players by rating",
+    "subtitleAll": "Everyone ever rated, in 50-point steps",
+    "subtitleRanked": "The ranked players (played in the last 12 months), in 50-point steps",
+    "chartLabel": "Players by rating in {pool}: {players} players, half of them rated below {median}, the top 10% at {top10} or above.",
+    "discipline": "Discipline",
+    "who": "Players",
+    "all": "Everyone",
+    "ranked": "Ranked now",
+    "players": "Players",
+    "normal": "Normal distribution",
+    "start": "New SEN A player: {rating}",
+    "range": "Rated {from}–{to}",
+    "playersCount": {
+      "one": "{count} player",
+      "other": "{count} players"
+    },
+    "top": "Top {share} from here up",
+    "touchHint": "Touch a bar to see its players",
+    "half": "Half are below",
+    "top10": "Top 10% from",
+    "top1": "Top 1% from",
+    "rated": "Players",
+    "mean": "Mean",
+    "sd": "Standard deviation",
+    "skew": "Skewness",
+    "onMinimum": "On the minimum"
   },
   "site": {
     "title": "Everything else",

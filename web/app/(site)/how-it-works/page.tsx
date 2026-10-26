@@ -1,15 +1,18 @@
 // How does elodrop work? The ratings and what's built on them, in plain words, with a switch ("I'm a
 // big nerd", components/how-it-works/NerdMode.tsx) that opens the formulas, parameters and tests under
 // each part. The details follow pipeline/README.md, the full specification; keep them in step with it.
-// Fully static: nothing here reads the data.
+// Static: rendered once per data update (the ratings' spread is the only part that reads the data).
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { NerdSwitch } from "@/components/how-it-works/NerdMode";
 import { Formula, Nerdy, Part } from "@/components/how-it-works/Part";
+import RatingDistribution from "@/components/how-it-works/RatingDistribution";
 import WinChance from "@/components/how-it-works/WinChance";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { getDistributions } from "@/data/distribution";
 import { type MessageKey, rich, t } from "@/messages/i18n";
 import { PALETTE } from "@/utils/chart";
 import { num } from "@/utils/format";
@@ -17,9 +20,10 @@ import { repoHref } from "@/utils/hrefs";
 
 export const metadata: Metadata = { title: t("howItWorks.metadata.title"), description: t("howItWorks.metadata.description") };
 
-const PARTS = ["idea", "start", "counts", "doubles", "rankings", "site", "tested", "data"] as const;
+const PARTS = ["idea", "start", "counts", "doubles", "rankings", "spread", "site", "tested", "data"] as const;
 type PartKey = (typeof PARTS)[number];
-/** Each part's colour: the first five chart colours in turn */
+/** Each part's number, and its colour: the first five chart colours in turn */
+const number = (key: PartKey) => PARTS.indexOf(key) + 1;
 const color = (key: PartKey) => PALETTE[PARTS.indexOf(key) % 5];
 
 // The class levels (pipeline/README.md, "Class level weight"): K weight with the junior weight on
@@ -76,7 +80,7 @@ export default function HowItWorksPage() {
           </aside>
 
           <div className="grid gap-16 md:gap-20 min-w-0">
-            <Part id="idea" number={1} color={color("idea")} title={t("howItWorks.idea.title")}>
+            <Part id="idea" number={number("idea")} color={color("idea")} title={t("howItWorks.idea.title")}>
               <P k="howItWorks.idea.p1" />
               <P k="howItWorks.idea.p2" />
               <P k="howItWorks.idea.p3" />
@@ -95,27 +99,31 @@ export default function HowItWorksPage() {
               </div>
             </Part>
 
-            <Part id="start" number={2} color={color("start")} title={t("howItWorks.start.title")}>
+            <Part id="start" number={number("start")} color={color("start")} title={t("howItWorks.start.title")}>
               <P k="howItWorks.start.p1" />
               <P k="howItWorks.start.p2" />
               <Nerdy color={color("start")}>
-                <div className="overflow-x-auto -mx-5 md:mx-0">
+                {/* Compact enough for a phone: the two start ratings under one heading, the classes wrapping */}
+                <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="text-gray-600 border-b border-gray-200">
                       <tr>
-                        <th scope="col" className="py-2 px-5 md:pl-0 md:pr-3 text-left font-normal">{t("howItWorks.start.table.classes")}</th>
-                        <th scope="col" className="py-2 px-3 text-right font-normal">{t("howItWorks.start.table.weight")}</th>
-                        <th scope="col" className="py-2 px-3 text-right font-normal">{t("howItWorks.start.table.singles")}</th>
-                        <th scope="col" className="py-2 pl-3 pr-5 md:pr-0 text-right font-normal">{t("howItWorks.start.table.doubles")}</th>
+                        <th scope="col" rowSpan={2} className="py-2 pr-2 sm:pr-3 text-left font-normal align-bottom">{t("howItWorks.start.table.classes")}</th>
+                        <th scope="col" rowSpan={2} className="py-2 px-2 sm:px-3 text-right font-normal align-bottom">{t("howItWorks.start.table.weight")}</th>
+                        <th scope="colgroup" colSpan={2} className="pt-2 pl-2 sm:pl-3 text-right font-normal">{t("howItWorks.start.table.start")}</th>
+                      </tr>
+                      <tr>
+                        <th scope="col" className="pb-2 px-2 sm:px-3 text-right font-normal">{t("howItWorks.start.table.singles")}</th>
+                        <th scope="col" className="pb-2 pl-2 sm:pl-3 text-right font-normal">{t("howItWorks.start.table.doubles")}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {TIERS.map((tier, i) => (
                         <tr key={i} className={ROW}>
-                          <td className="py-2 px-5 md:pl-0 md:pr-3 min-w-56">{t(`howItWorks.start.tiers.t${i}` as MessageKey)}</td>
-                          <td className="py-2 px-3 text-right tabular-nums">{tier.weight}%</td>
-                          <td className="py-2 px-3 text-right tabular-nums">{num(tier.singles)}</td>
-                          <td className="py-2 pl-3 pr-5 md:pr-0 text-right tabular-nums">{num(tier.doubles)}</td>
+                          <td className="py-2 pr-2 sm:pr-3">{t(`howItWorks.start.tiers.t${i}` as MessageKey)}</td>
+                          <td className="py-2 px-2 sm:px-3 text-right tabular-nums">{tier.weight}%</td>
+                          <td className="py-2 px-2 sm:px-3 text-right tabular-nums">{num(tier.singles)}</td>
+                          <td className="py-2 pl-2 sm:pl-3 text-right tabular-nums">{num(tier.doubles)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -126,7 +134,7 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="counts" number={3} color={color("counts")} title={t("howItWorks.counts.title")}>
+            <Part id="counts" number={number("counts")} color={color("counts")} title={t("howItWorks.counts.title")}>
               <p>{t("howItWorks.counts.intro")}</p>
               <ul className="grid gap-3">
                 {(["level", "junior", "margin", "region", "rating"] as const).map((key) => (
@@ -170,7 +178,7 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="doubles" number={4} color={color("doubles")} title={t("howItWorks.doubles.title")}>
+            <Part id="doubles" number={number("doubles")} color={color("doubles")} title={t("howItWorks.doubles.title")}>
               <P k="howItWorks.doubles.p1" />
               <P k="howItWorks.doubles.p2" />
               <P k="howItWorks.doubles.p3" />
@@ -189,7 +197,7 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="rankings" number={5} color={color("rankings")} title={t("howItWorks.rankings.title")}>
+            <Part id="rankings" number={number("rankings")} color={color("rankings")} title={t("howItWorks.rankings.title")}>
               <P k="howItWorks.rankings.p1" />
               <P k="howItWorks.rankings.p2" />
               <P k="howItWorks.rankings.p3" />
@@ -199,7 +207,25 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="site" number={6} color={color("site")} title={t("howItWorks.site.title")}>
+            <Part id="spread" number={number("spread")} color={color("spread")} title={t("howItWorks.spread.title")}>
+              <P k="howItWorks.spread.p1" />
+              <P k="howItWorks.spread.p2" />
+              <Nerdy color={color("spread")}>
+                <p>{t("howItWorks.spread.nerd1")}</p>
+                <Formula>
+                  f(r) = n · 50 / (σ√(2π)) · e<sup>−(r − μ)² / 2σ²</sup>
+                </Formula>
+                <p>{t("howItWorks.spread.nerd2")}</p>
+              </Nerdy>
+              <div className="text-base mt-2">
+                {/* The only part that reads the data: the rest of the page is static text */}
+                <Suspense fallback={<div className="bg-white h-[34rem]" />}>
+                  <Spread color={color("spread")} />
+                </Suspense>
+              </div>
+            </Part>
+
+            <Part id="site" number={number("site")} color={color("site")} title={t("howItWorks.site.title")}>
               <p>{t("howItWorks.site.intro")}</p>
               <ul className="grid gap-3">
                 {(["clubs", "upsets", "tournaments", "eliteserien", "headToHead"] as const).map((key) => (
@@ -216,7 +242,7 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="tested" number={7} color={color("tested")} title={t("howItWorks.tested.title")}>
+            <Part id="tested" number={number("tested")} color={color("tested")} title={t("howItWorks.tested.title")}>
               <P k="howItWorks.tested.p1" />
               <P k="howItWorks.tested.p2" />
               <dl className="grid grid-cols-2 gap-2 md:gap-4">
@@ -235,7 +261,7 @@ export default function HowItWorksPage() {
               </Nerdy>
             </Part>
 
-            <Part id="data" number={8} color={color("data")} title={t("howItWorks.data.title")}>
+            <Part id="data" number={number("data")} color={color("data")} title={t("howItWorks.data.title")}>
               <p>
                 {rich("howItWorks.data.p1", {
                   portalen: (text) => <a href="https://badmintonportalen.no" className={TEXT_LINK} rel="noopener">{text}</a>,
@@ -253,4 +279,8 @@ export default function HowItWorksPage() {
       </Section>
     </>
   );
+}
+
+async function Spread({ color }: { color: string }) {
+  return <RatingDistribution data={await getDistributions()} color={color} />;
 }

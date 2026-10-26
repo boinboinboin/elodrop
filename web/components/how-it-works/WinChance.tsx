@@ -29,7 +29,7 @@ export default function WinChance() {
   ];
 
   return (
-    <div className="bg-white p-5 md:p-6">
+    <div className="bg-white p-4 sm:p-5 md:p-6">
       <h3 className="text-xl">{t("howItWorks.try.title")}</h3>
       <p className="text-sm text-gray-600 mb-5">{t("howItWorks.try.subtitle")}</p>
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-8">

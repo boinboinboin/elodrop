@@ -17,5 +17,6 @@
   "beforeLaunch": "Before the launch",
   "beforeLaunchIntro": "How elodrop was built, from fetching the first results to the website, in {count} versions, {dates}.",
   "versions": "Versions",
-  "legend": "<feature>New</feature> a new page or feature; <improvement>Improved</improvement> smaller improvements and fixes."
+  "legendFeature": "a new page or feature",
+  "legendImprovement": "smaller improvements and fixes"
 }

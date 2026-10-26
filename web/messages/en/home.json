@@ -3,8 +3,9 @@
   "intro": "Singles and doubles ratings for Norwegian badminton, calculated from every tournament and league result on badmintonportalen.no since 2013.",
   "toRankings": "See the rankings",
   "playersRated": "{count} players rated",
-  "howItWorks": "How does it work?",
+  "howItWorksLink": "How does it work?",
   "pages": "What's on elodrop",
+  "about": "About elodrop",
   "loading": "Loading…",
   "noData": "No data yet.",
   "rankings": {
@@ -50,5 +51,21 @@
     "teaser": "Men's singles: number one against number two",
     "pair": "{a} against {b}",
     "link": "Compare two players"
+  },
+  "howItWorks": {
+    "title": "How does elodrop work?",
+    "description": "How a rating is worked out, in plain words, and every formula behind it for the big nerds.",
+    "teaser": "A player rated {favourite} against one rated {underdog}",
+    "favourite": "The favourite wins",
+    "underdog": "The underdog wins",
+    "chance": "{chance} chance",
+    "point": "A surprise is worth far more than an expected win.",
+    "link": "How it works"
+  },
+  "whatsNew": {
+    "title": "What's new",
+    "description": "Every new page, feature and fix on elodrop, newest first.",
+    "teaser": "The latest updates",
+    "link": "All updates"
   }
 }

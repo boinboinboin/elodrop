@@ -21,7 +21,7 @@ export function Part({ id, number, color, title, children }: { id: string; numbe
 export function Nerdy({ color, children }: { color: string; children: ReactNode }) {
   return (
     <NerdOnly>
-      <div className="bg-white border-l-4 p-5 md:p-6 text-base grid gap-3 mt-1" style={{ borderColor: color }}>
+      <div className="bg-white border-l-4 p-4 sm:p-5 md:p-6 text-base grid gap-3 mt-1" style={{ borderColor: color }}>
         <p className="font-mono text-xs uppercase tracking-widest text-gray-600">{t("howItWorks.nerd.badge")}</p>
         {children}
       </div>
@@ -29,9 +29,12 @@ export function Nerdy({ color, children }: { color: string; children: ReactNode 
   );
 }
 
-/** A formula on a line of its own, scrolling sideways on narrow screens rather than breaking */
+/**
+ * A formula on a line of its own. On phones it wraps at its spaces (between the terms) rather than
+ * running off the side; from sm it keeps to one line, scrolling sideways if it must.
+ */
 export const Formula = ({ children }: { children: ReactNode }) => (
-  <div className="overflow-x-auto bg-gray-50 px-4 py-3">
-    <p className="font-mono text-[0.95rem] whitespace-nowrap [&_sub]:text-[0.7em] [&_sup]:text-[0.7em]">{children}</p>
+  <div className="overflow-x-auto bg-gray-50 px-3 sm:px-4 py-3">
+    <p className="font-mono text-sm sm:text-[0.95rem] leading-relaxed sm:whitespace-nowrap [&_sub]:text-[0.7em] [&_sup]:text-[0.7em]">{children}</p>
   </div>
 );
