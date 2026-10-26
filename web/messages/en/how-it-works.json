@@ -1,0 +1,160 @@
+{
+  "metadata": {
+    "title": "How does elodrop work?",
+    "description": "How elodrop's badminton ratings are calculated: in plain words, or with every formula and parameter."
+  },
+  "title": "How does elodrop work?",
+  "intro": "Every player gets a rating from their results, and the ratings are worked out again every night. Here's how, in plain words.",
+  "contents": "On this page",
+  "nerd": {
+    "label": "I'm a big nerd",
+    "off": "Show the formulas and numbers",
+    "on": "Formulas and numbers on",
+    "badge": "For nerds"
+  },
+  "idea": {
+    "title": "One number per player",
+    "p1": "Every player has a <strong>rating</strong>: a number for how strong they are. The higher, the better. Before a match, the two players' ratings give each of them a chance of winning. After it, the winner takes points from the loser.",
+    "p2": "How many points depends on how surprising the result was. Beat someone much better than you and you gain a lot. Beat someone much weaker and you gain almost nothing, because everyone expected it. Lose to them, and you lose a lot.",
+    "p3": "This is the <strong>Elo system</strong>, made for chess and used in many sports. Only results count: not how many tournaments you play or how far you travel, just who you beat and who beat you.",
+    "nerd1": "The expected score of A against B is the chance the ratings give A of winning. 300 points apart, the stronger player is expected to win about 91% of the time (chess uses 400; 300 spreads the ratings a little less). After the match, A's rating moves by K times the difference between the result S (1 for a win, ½ for a draw, 0 for a loss) and the expected score.",
+    "nerd2": "Draws happen in some junior and lower senior leagues that play at most two sets: 1-1 in sets. No rating goes below 400 (550 in doubles), at the start or after a match."
+  },
+  "try": {
+    "title": "Try it",
+    "subtitle": "Drag the ratings to see each player's chance, and what a win would be worth.",
+    "playerA": "Player A",
+    "playerB": "Player B",
+    "chances": "Player A wins {a} of the time, player B {b}",
+    "ifWins": "If {name} wins",
+    "change": "{winner} +{gain}, {loser} −{loss}",
+    "note": "For a singles match in SEN A with a typical margin, like 21-15, 21-13. The two players can move by different amounts: players below 1150 move more."
+  },
+  "start": {
+    "title": "Where you start",
+    "p1": "A new player's first rating comes from the class of their first match: a newcomer in SEN A starts at 1150, one in a beginners' series at 700. From there, only results move it.",
+    "p2": "Juniors start by the same table, so someone starting in U15 A starts like someone in SEN D. Players from foreign clubs start a little higher, since the class they enter says less about them.",
+    "nerd1": "Start ratings go down 75 points per level in singles and twice as far in doubles, not below the minimum. Foreign players start 100 points higher (160 in doubles), at most at 1150. In doubles, players who have played singles start from their singles rating instead (see doubles below).",
+    "nerd2": "Starting every senior at 1150 whatever their class was tested and predicted results clearly worse: adult beginners started hundreds of points too high, and the extra points ended up with the players who beat them.",
+    "table": {
+      "classes": "Classes and leagues",
+      "weight": "Counts",
+      "start": "Start rating",
+      "singles": "Singles",
+      "doubles": "Doubles"
+    },
+    "tiers": {
+      "t0": "SEN X, E and A; Eliteserien; 1st div 1st singles and doubles",
+      "t1": "U19 A/X; Junior NM for lag (U19)",
+      "t2": "SEN B, O35–O45; the rest of 1st div",
+      "t3": "U17 A/X; U17 leagues and Landsfinale",
+      "t4": "SEN C, O50–O55; 2nd div",
+      "t5": "U15 A/X; U15 leagues and Landsfinalen",
+      "t6": "SEN D, O60+; 3rd div",
+      "t7": "U13 A/X, U19 B, U17 B; U13 leagues",
+      "t8": "U11 A, U15 B, U13 B",
+      "t9": "4th div; other senior series",
+      "t10": "Other junior classes; junior beginners' series",
+      "t11": "Other (Åpen HC and the like); club events"
+    }
+  },
+  "counts": {
+    "title": "Not every match counts the same",
+    "intro": "How far a result moves the ratings depends on the match:",
+    "level": "<strong>The level.</strong> A match in SEN A moves ratings more than one in a club series, which says less about where a player stands nationally.",
+    "junior": "<strong>Juniors</strong> count a little extra, because they improve quickly and their ratings should keep up. No junior class counts more than U19 A, which counts like SEN B.",
+    "margin": "<strong>The margin.</strong> A clear win says more than a close one: 21-5, 21-3 counts about seven times as much as 22-20, 21-19.",
+    "region": "<strong>Matches between regions</strong> count half as much again, so regions where players mostly meet each other don't drift away from the rest of the country.",
+    "rating": "<strong>Your own rating.</strong> Players below the top level move faster, so improving players catch up; at the top, ratings settle.",
+    "nerd1": "K is the base K-factor (59 in singles, 94.4 in doubles) times the weights of the match and the player:",
+    "symbols": {
+      "kappa": "base K-factor",
+      "wc": "class level: 100% at the top level, then 91, 74, 58, 44, 25 and 17% (with juniors on top: see the table above)",
+      "wj": "junior weight: ×1.5, at most U19 A's weight",
+      "wm": "margin of victory, from the point difference d over the total points",
+      "wr": "×1.5 between clubs in different regions",
+      "m": "the player's own rating: 3 far below 1150, 2 at 1150, towards 1 far above",
+      "ct": "×50% from March 2020 to February 2021 (Covid-19)"
+    },
+    "nerd2": "A typical margin (d = 0.2, like 21-15, 21-13) gives w_m = 1, a close match about ⅓ and a blowout up to 3. Adding the margin improved predictions more than any other change tested.",
+    "nerd3": "m(r) depends on each player's own rating, so the two players in a match can gain and lose different amounts."
+  },
+  "doubles": {
+    "title": "Doubles and mixed",
+    "p1": "Every player has their own rating in each doubles discipline; pairs don't have ratings. A pair plays at the <strong>average</strong> of its two players' ratings, so you can change partners and keep your rating.",
+    "p2": "After a match, the partners share the points. Two experienced partners take half each. A newcomer with an experienced partner takes most of it, since the result says more about the newcomer, whose level is still unknown.",
+    "p3": "Your singles helps your doubles too: you start doubles from your singles level, and for your first 200 doubles matches your doubles rating keeps edging towards what your singles says.",
+    "nerd1": "A side plays at the average of its players' ratings, on a scale of 240 instead of 300, so a pair whose players are each 240 points better wins about 91% of the time. The side's change is shared by the partners' rating uncertainty RD (how sure the ratings are of each player):",
+    "nerd2": "A player who has played singles starts doubles from it (a 2050 singles player starts doubles at 2158), and after each doubles match, until their 200th, moves 3% of the way towards that number. This was the biggest gain in the last round of testing. Mixed doubles uses the singles discipline the player has played most."
+  },
+  "rankings": {
+    "title": "From ratings to rankings",
+    "p1": "The rankings list everyone who has played in the last 12 months. Take a break and you drop out of the list, but keep your rating; play again and you're back at the same rating. Ratings don't shrink while you're away: players returning after a break turned out to be about as good as they were.",
+    "p2": "Men's singles and doubles rank men, and women's rank women. Women who play men's singles keep a rating there, just not a rank. Mixed doubles has one list for men and one for women.",
+    "p3": "Results come in every night, so a weekend's matches are in the ratings the morning after they're played.",
+    "nerd1": "Mixed doubles is rated as one pool, but nearly every pair is one man and one woman. So results show how men compare with other men and women with other women, but not men with women: adding the same to every man's rating and taking it from every woman's would predict every result just the same.",
+    "nerd2": "During Covid-19, time without playing counted slower towards becoming inactive, so players stayed in the rankings through the lockdowns. Every rating also has an uncertainty (a Glicko rating deviation): it isn't shown, but it decides how doubles partners share their points."
+  },
+  "spread": {
+    "title": "How the ratings spread",
+    "p1": "Most players are juniors, beginners and club players, so most ratings sit below 1150, where a new SEN A player starts, and they thin out towards the top. Hover over or touch a bar to see how many players are rated there.",
+    "p2": "If the ratings followed a bell curve (a <strong>normal distribution</strong>), the bars would fill the dashed line. They don't quite: there are more players near the bottom, and a longer tail of strong players at the top, than a bell curve would have. That's fine, as Elo doesn't need one: only the differences between players' ratings matter.",
+    "nerd1": "The dashed line is the normal distribution with the same mean and standard deviation as the ratings, scaled to the number of players. Skewness measures the lopsidedness: 0 for a normal distribution, and around 1 here in every discipline, a clear tail to the right.",
+    "nerd2": "Two things pull the shape away from a bell curve. No rating goes below the minimum (400 in singles, 550 in doubles), so the weakest players pile up on it instead of spreading out below. And \"everyone\" includes players who stopped years ago, many of them juniors who quit young, whose ratings stayed where they stopped: that's why the ranked players alone sit higher.",
+    "chartTitle": "Players by rating",
+    "subtitleAll": "Everyone ever rated, in 50-point steps",
+    "subtitleRanked": "The ranked players (played in the last 12 months), in 50-point steps",
+    "chartLabel": "Players by rating in {pool}: {players} players, half of them rated below {median}, the top 10% at {top10} or above.",
+    "discipline": "Discipline",
+    "who": "Players",
+    "all": "Everyone",
+    "ranked": "Ranked now",
+    "players": "Players",
+    "normal": "Normal distribution",
+    "start": "New SEN A player: {rating}",
+    "range": "Rated {from}–{to}",
+    "playersCount": {
+      "one": "{count} player",
+      "other": "{count} players"
+    },
+    "top": "Top {share} from here up",
+    "touchHint": "Touch a bar to see its players",
+    "half": "Half are below",
+    "top10": "Top 10% from",
+    "top1": "Top 1% from",
+    "rated": "Players",
+    "mean": "Mean",
+    "sd": "Standard deviation",
+    "skew": "Skewness",
+    "onMinimum": "On the minimum"
+  },
+  "site": {
+    "title": "Everything else",
+    "intro": "The rest of the site is built on the same ratings:",
+    "clubs": "<strong>Strongest clubs:</strong> a club's best few players, the best counting most, in every discipline.",
+    "upsets": "<strong>Upsets:</strong> each week's wins that the ratings gave the least chance, between settled players.",
+    "tournaments": "<strong>Draw luck:</strong> every tournament draw is played out 20,000 times, with the actual draw and with fair draws, to see who was lucky.",
+    "eliteserien": "<strong>Eliteserien:</strong> each team's best lineup by the rules, played match by match against the others.",
+    "headToHead": "<strong>Head to head:</strong> any two players' or pairs' chance against each other today, and, just for fun, men against women.",
+    "nerd1": "Club strength is a weighted average of the best ranked players: 40, 30, 20 and 10% of the best four in singles, 50, 33 and 17% of the best three pairs in doubles, and in mixed the best man with the best woman and so on (40, 30, 20, 10%). Empty places count at the lowest rating in the list. The combined list averages each discipline's standard score, so every discipline counts the same.",
+    "nerd2": "Upsets count only players with at least 10 matches and a fairly certain rating (RD at most 125, 144 in doubles), or the list fills up with fast-improving juniors. Draw luck is the rounds expected with the actual draw minus with a fair draw, which seeds by NBF's rules from the official ranking.",
+    "nerd3": "Eliteserien teams are compared lineup against lineup, each match independent, giving every result from 8-0 to 0-8 and the table points (4-0 for 6-2 or better, 3-1 for 5-3, 2-2 for 4-4). Men against women: a woman rated w in women's singles plays like a man rated w + a + b·(w − 1150), with a ≈ −186 and b ≈ −0.42, fitted on women's matches in men's singles."
+  },
+  "tested": {
+    "title": "Does it work?",
+    "p1": "Every rule is there because it predicts results better. To check, the ratings pick the winner of matches they weren't tuned on, and we count how often they're right.",
+    "p2": "Against the official ranking, which rewards points collected over the last 12 months, the ratings did clearly better: in 41,046 matches between two players on the official list since 2014, the player with the higher rating won far more often than the one with more ranking points.",
+    "elo": "Higher rating won",
+    "official": "More ranking points won",
+    "nerd1": "Changes are judged by log loss on matches the settings weren't tuned on (lower is better): it rewards confident correct predictions and punishes confident wrong ones. The current rules were tuned on the 2025/26 and 2026/27 seasons, with 2023–25 held out, and checked on every season since 2017/18.",
+    "nerd2": "Tested and not used, because they predicted worse: making repeated matches against the same opponent count less, a higher K-factor for newcomers, discounting results against unsettled opponents (as Glicko does), a home advantage in league ties, rating a whole tournament at once, and ratings decaying while a player is away.",
+    "nerd3": "Every rule, parameter and test is written down in the <spec>specification</spec> and the <benchmark>benchmark</benchmark>."
+  },
+  "data": {
+    "title": "Where the results come from",
+    "p1": "Every tournament and league result on <portalen>badmintonportalen.no</portalen>: league matches since 2013, tournaments since 2014. While a tournament is being played, its matches come from the draw on <cup2000>Cup2000</cup2000>, and the final results replace them once they're in.",
+    "p2": "Walkovers don't count, and scores that can't be right are corrected by hand.",
+    "nerd1": "A 21-0, 21-0 result (15-0, 15-0 from 2026/27, when sets went to 15) counts as a walkover. Scores impossible for the season's set format are listed every night with the most likely intended score, and fixed in a corrections file that survives refetching the data. The first two seasons are a warm-up: most players get their first rated match in 2014/15.",
+    "nerd2": "The nightly run fetches only what can have changed and rebuilds only what's needed; the whole site is refreshed after every weekend."
+  }
+}

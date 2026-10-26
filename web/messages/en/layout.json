@@ -10,11 +10,15 @@
     "eliteserien": "Eliteserien",
     "tournaments": "Tournaments",
     "upsets": "Upsets",
-    "headToHead": "Head to head"
+    "headToHead": "Head to head",
+    "about": "About elodrop",
+    "howItWorks": "How it works",
+    "whatsNew": "What's new"
   },
   "footer": {
     "sources": "Results from {portalen} and {cup2000}.",
-    "updated": "Updated {time}"
+    "updated": "Updated {time}",
+    "version": "v{version}"
   },
   "menu": {
     "button": "Menu",

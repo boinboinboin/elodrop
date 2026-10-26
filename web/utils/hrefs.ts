@@ -12,3 +12,7 @@ export const eliteserienHref = (season: string) => `/eliteserien/${season}`;
 export const headToHeadHref = (a: number, b?: number) => `/head-to-head?a=${a}${b !== undefined ? `&b=${b}` : ""}`;
 /** Two pairs head to head: A1 and A2 against B1 and B2 */
 export const doublesHeadToHeadHref = ([a1, a2]: number[], [b1, b2]: number[]) => `/head-to-head/doubles?a1=${a1}&a2=${a2}&b1=${b1}&b2=${b2}`;
+
+/** The site's code on GitHub, or a file in it ("pipeline/README.md") */
+export const REPO_URL = "https://github.com/boinboinboin/elodrop";
+export const repoHref = (path: string) => `${REPO_URL}/blob/main/${path}`;

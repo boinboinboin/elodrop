@@ -7,6 +7,7 @@ import NavigationProgress from "@/components/layout/NavigationProgress";
 import SearchBar from "@/components/layout/SearchBar";
 import UpdatedAt from "@/components/layout/UpdatedAt";
 import { rich, t } from "@/messages/i18n";
+import { getReleases } from "@/utils/changelog";
 
 const NAV = [
   { href: "/rankings", label: t("layout.nav.rankings") },
@@ -17,6 +18,12 @@ const NAV = [
   { href: "/head-to-head", label: t("layout.nav.headToHead") },
 ];
 const FOOTER_LINK = "underline hover:text-black";
+const VERSION = getReleases()[0]?.version;
+// About the site, in the menu at every width (and the footer), the current version beside What's new
+const ABOUT = [
+  { href: "/how-it-works", label: t("layout.nav.howItWorks") },
+  { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
+];
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -26,7 +33,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <NavigationProgress />
       </Suspense>
       {/* Phones: the logo and the menu button, the search on its own line; tablets and small laptops:
-          the search between; from xl the links too (the menu then holds just the colour theme). */}
+          the search between; from xl the links too (the menu then holds the pages about the site and the colour theme). */}
       <header className="relative bg-white border-b border-gray-200">
         <div className="base-container px-4 py-3 md:py-4 flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-3">
           <Logo />
@@ -39,13 +46,21 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             <SearchBar />
           </div>
           <div className="ml-auto md:ml-0 flex">
-            <MenuButton links={NAV} />
+            <MenuButton links={NAV} about={ABOUT} />
           </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
+          <nav aria-label={t("layout.nav.about")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
+            {ABOUT.map((l) => (
+              <Link key={l.href} href={l.href} className="hover:text-black">
+                {l.label}
+                {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
+              </Link>
+            ))}
+          </nav>
           <p>
             {rich("layout.footer.sources", {
               portalen: <a href="https://badmintonportalen.no" className={FOOTER_LINK} rel="noopener">badmintonportalen.no</a>,

@@ -4,10 +4,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
+import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
 import HomeCard from "@/components/home/HomeCard";
 import { ArrowRight } from "@/components/SVG";
 import Section from "@/components/ui/Section";
-import { BUTTON } from "@/components/ui/styles";
+import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { t } from "@/messages/i18n";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
@@ -23,6 +24,11 @@ const CARDS = [
   { key: "tournaments", href: "/tournaments", Glimpse: TournamentsGlimpse, colors: [PALETTE[4]] },
   { key: "headToHead", href: "/head-to-head", Glimpse: HeadToHeadGlimpse, colors: SIDE_COLORS },
 ] as const;
+// The pages about the site, below: colours apart from the cards above them in two columns
+const ABOUT_CARDS = [
+  { key: "howItWorks", href: "/how-it-works", Glimpse: HowItWorksGlimpse, colors: [PALETTE[2]] },
+  { key: "whatsNew", href: "/whats-new", Glimpse: WhatsNewGlimpse, colors: ["var(--color-accent)"] },
+] as const;
 
 export default function Home() {
   return (
@@ -37,11 +43,21 @@ export default function Home() {
           <Suspense fallback={null}>
             <PlayersRated />
           </Suspense>
+          <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorksLink")}</Link>
         </div>
       </Section>
       <Section title={t("home.pages")} titleClassName="sr-only">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {CARDS.map(({ key, href, Glimpse, colors }) => (
+            <HomeCard key={key} href={href} title={t(`home.${key}.title`)} description={t(`home.${key}.description`)} link={t(`home.${key}.link`)} colors={colors}>
+              <Glimpse />
+            </HomeCard>
+          ))}
+        </div>
+      </Section>
+      <Section title={t("home.about")}>
+        <div className="grid gap-4 md:grid-cols-2">
+          {ABOUT_CARDS.map(({ key, href, Glimpse, colors }) => (
             <HomeCard key={key} href={href} title={t(`home.${key}.title`)} description={t(`home.${key}.description`)} link={t(`home.${key}.link`)} colors={colors}>
               <Glimpse />
             </HomeCard>

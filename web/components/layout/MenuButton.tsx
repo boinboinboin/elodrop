@@ -1,7 +1,7 @@
 "use client";
 
 // The header's menu: a button whose three lines turn into a cross, opening the site's links (on
-// screens too narrow for them in the header, below xl) and the colour theme. On phones the menu is
+// screens too narrow for them in the header, below xl), the pages about the site and the colour theme. On phones the menu is
 // a panel under the whole header; from md a dropdown under the button. It closes on a link (the next
 // page), a theme picked or Escape (focus back on the button), or a press outside it.
 import Link from "next/link";
@@ -10,7 +10,14 @@ import { useEffect, useId, useRef, useState } from "react";
 import ThemePicker from "@/components/layout/ThemePicker";
 import { t } from "@/messages/i18n";
 
-export default function MenuButton({ links }: { links: { href: string; label: string }[] }) {
+interface MenuLink {
+  href: string;
+  label: string;
+  /** Small text after the label ("v1.15.0") */
+  detail?: string;
+}
+
+export default function MenuButton({ links, about }: { links: MenuLink[]; about: MenuLink[] }) {
   const [open, setOpen] = useState(false);
   const [openedAt, setOpenedAt] = useState<string | null>(null);
   const pathname = usePathname();
@@ -78,7 +85,25 @@ export default function MenuButton({ links }: { links: { href: string; label: st
               ))}
             </ul>
           </nav>
-          <section className="pt-4 pb-2 xl:pt-1">
+          <nav aria-label={t("layout.nav.about")} className="pt-4 xl:pt-1">
+            <h2 className="text-sm text-gray-600 mb-1">{t("layout.nav.about")}</h2>
+            <ul>
+              {about.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className={`flex items-baseline gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${pathname === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+                    aria-current={pathname === l.href ? "page" : undefined}
+                  >
+                    {l.label}
+                    {l.detail && <span className="font-mono text-xs font-normal text-gray-500">{l.detail}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <section className="pt-4 pb-2">
             <h2 className="text-sm text-gray-600 mb-2">{t("layout.menu.theme")}</h2>
             {/* Picking a theme closes the menu, with focus back on its button */}
             <ThemePicker
