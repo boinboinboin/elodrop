@@ -18,7 +18,7 @@ import Tabs from "@/components/ui/Tabs";
 import { getClubHistory, getClubPlayers, getClubsFile } from "@/data/clubs";
 import { getClubBySlug, getClubEntries } from "@/data/sanity";
 import { plural, t } from "@/messages/i18n";
-import type { ClubEntry, ClubHistoryPool, ClubsFile, Pool } from "@/types";
+import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
 import { EMPTY, num, seasonLabel, signed } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
@@ -48,7 +48,7 @@ export default function ClubPage(props: PageProps<"/clubs/[slug]">) {
 async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
   const entry = await getClubBySlug(decodeURIComponent((await params).slug));
   if (!entry) notFound();
-  const [history, file] = await Promise.all([entry.nbfClubId ? getClubHistory(entry.nbfClubId) : Promise.resolve({} as Awaited<ReturnType<typeof getClubHistory>>), getClubsFile()]);
+  const [{ pools: history, players: names }, file] = await Promise.all([entry.nbfClubId ? getClubHistory(entry.nbfClubId) : Promise.resolve<ClubHistory>({ players: {}, pools: {} }), getClubsFile()]);
   const combinedStanding = file?.clubs.combined.find((c) => c.club === entry.title);
   const players = await Promise.all(POOL_KEYS.map((pool) => getClubPlayers(entry.title, pool)));
 
@@ -92,7 +92,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
           tabs={POOL_KEYS.map((pool, i) => ({
             id: pool,
             label: <PoolName pool={pool} />,
-            content: <Discipline pool={pool} entry={entry} history={history[pool] ?? null} file={file} players={players[i]} />,
+            content: <Discipline pool={pool} entry={entry} history={history[pool] ?? null} names={names} file={file} players={players[i]} />,
           }))}
         />
       </Section>
@@ -158,16 +158,23 @@ function OverTime({ history }: { history: Partial<Record<Pool | "combined", Club
   );
 }
 
-function Discipline({ pool, entry, history, file, players }: { pool: Pool; entry: ClubEntry; history: ClubHistoryPool | null; file: ClubsFile | null; players: Awaited<ReturnType<typeof getClubPlayers>> }) {
+function Discipline({ pool, entry, history, names, file, players }: { pool: Pool; entry: ClubEntry; history: ClubHistoryPool | null; names: Record<string, string>; file: ClubsFile | null; players: Awaited<ReturnType<typeof getClubPlayers>> }) {
   const label = POOLS[pool];
   const standing = file?.clubs[pool].find((c) => c.club === entry.title);
   const rule = file?.clubStrength[pool];
+  // The players or pairs counted each week, for the graph's detail box (pairs as "A + B"; a pair
+  // with one player counts the other at the lowest rating, as the places not filled)
+  const notes = history?.top?.map(([week, slots]): [number, string[]] => {
+    const lines = slots.map((slot) => [...slot.map((id) => names[id] ?? ""), ...(rule?.pairs && slot.length === 1 ? [t("clubs.club.noPartner")] : [])].join(" + "));
+    const unfilled = (rule?.slots ?? 0) - slots.length;
+    return [week, unfilled > 0 ? [...lines, plural("clubs.club.unfilled", unfilled)] : lines];
+  });
   return (
     <div>
       <h2 className="text-3xl mb-2">{label}</h2>
       {history && history.strength.length > 1 && rule && (
         <Card title={t("clubs.club.strengthHistory")} subtitle={t("clubs.club.strengthHistoryText", { rule: clubRule(rule) })} className="my-6">
-          <LineChart series={[{ label: t("clubs.club.clubStrength"), from: history.from, values: history.strength, ranks: history.rank, counts: history.clubs }]} label={t("clubs.club.clubStrength")} rankOf={t("clubs.club.clubs")} className="relative h-72" />
+          <LineChart series={[{ label: t("clubs.club.clubStrength"), from: history.from, values: history.strength, ranks: history.rank, counts: history.clubs, notes }]} label={t("clubs.club.clubStrength")} rankOf={t("clubs.club.clubs")} className="relative h-72" />
           {/* Table view of the chart: strength and rank at the end of each season, precomputed by rate.mjs */}
           <Disclosure summary={t("clubs.club.strengthBySeason")} className="mt-4">
             <table className="mt-2 text-left">

@@ -7,6 +7,8 @@
 // position in the list).
 // A single series with `clubs` ([week index, club], ...) is coloured by the club played for at the
 // time, with a club legend; several series get a legend of their labels.
+// A single series with `notes` ([week index, lines], ...) lists those lines in the detail box from
+// that week on (a club's strength: the players counted).
 // `ranks` and `counts` show in the tooltip as "#3 of 89 <rankOf>". With `rank`, the values are
 // ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values.
 // Hover or focus and use the arrow keys (PageUp/PageDown a year, Home/End) to read values.
@@ -25,6 +27,7 @@ export interface ChartSeries {
   ranks?: (number | null)[];
   counts?: (number | null)[];
   clubs?: [number, string][];
+  notes?: [number, string[]][];
 }
 
 interface Props {
@@ -85,6 +88,12 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
     let club = s.clubs[0][1];
     for (const [w, c] of s.clubs) if (w <= i) club = c;
     return club;
+  };
+  const notesAt = (s: (typeof series)[number], week: number) => {
+    const i = week - s.offset;
+    let lines: string[] = [];
+    for (const [w, l] of s.notes ?? []) if (w <= i) lines = l;
+    return lines;
   };
   const fmt = (v: number) => (rank ? `#${formatNumber(v)}` : formatNumber(v, decimals, signed));
 
@@ -235,7 +244,8 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
     });
     // Highest on the chart first (on a rank chart: the best rank)
     rows.sort((a, b) => a.y - b.y);
-    return { px, top, rows };
+    const notes = series.length === 1 && rows.length ? notesAt(series[0], active) : [];
+    return { px, top, rows, notes };
   })();
 
   const lastWeek = ends.filter(Boolean).at(-1);
@@ -356,6 +366,11 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
                 {r.text && <span className="text-gray-600">{r.text}</span>}
               </motion.span>
             ))}
+            {tooltip.notes.length > 0 && (
+              <span className="block mt-1 text-gray-600">
+                {tooltip.notes.map((line, i) => <span key={i} className="block">{line}</span>)}
+              </span>
+            )}
           </motion.div>
         )}
       </div>

@@ -164,6 +164,14 @@ export interface ClubHistoryPool {
   rank: (number | null)[];
   clubs: (number | null)[];
   seasons?: { season: number; strength: number | null; rank: number | null; clubs: number | null }[];
+  /** The players or pairs counted, as periods [week index, [[id], [id, id], ...]] (best first) */
+  top?: [number, number[][]][];
+}
+
+export interface ClubHistory {
+  /** Names of the players counted (in `top`), by id */
+  players: Record<string, string>;
+  pools: Partial<Record<Pool | "combined", ClubHistoryPool>>;
 }
 
 export interface Meta {

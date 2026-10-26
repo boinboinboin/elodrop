@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.15.1 (2026-10-26)
+
+- Club pages: hovering a week on a discipline's strength history now also lists the players (or pairs) counted for the club's strength that week, best first, with any places the club couldn't fill.
+
 ## v1.15.0 (2026-10-26)
 
 - A page on how elodrop works: /how-it-works explains how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings, and a chart shows how the ratings spread over the players in each discipline, the ranked players or everyone ever rated, against a normal distribution with the same average and spread (the ratings lean towards the bottom, with a long tail of strong players).

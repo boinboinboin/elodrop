@@ -776,8 +776,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Covid-adjusted days without playing from the first week to the end of each week, so the time
   // between two weeks is a subtraction (same as R.inactiveDays)
   const activityClock = Array.from({ length: weekCount }, (_, w) => R.inactiveDays(firstWeek, addDays(firstWeek, (w + 1) * 7)));
-  const clubHistory = new Map(); // club -> { pool: { strength: [], rank: [] } }
+  const clubHistory = new Map(); // club -> { pool: { strength: [], rank: [], top: [] } }
+  const playerNames = new Map(); // id -> name, for the players counted in the club history
   const clubCounts = {}; // pool -> clubs with a strength per week
+  // The players or pairs counted for a club's strength, as periods [week, [[id], [id, id], ...]]
+  // (best first) that start whenever they change
+  const addTop = (top, w, filled) => {
+    for (const slot of filled) for (const m of slot) playerNames.set(m.id, m.name);
+    const ids = filled.map((slot) => slot.map((m) => m.id));
+    if (JSON.stringify(top.at(-1)?.[1]) !== JSON.stringify(ids)) top.push([w, ids]);
+  };
   const rankCounts = {}; // pool -> ranked players per week (mixed doubles: per gender)
   const lastWeekActive = {}; // pool -> the active players at the end of baseWeek, with their rating then
   for (const [pool, map] of Object.entries(players)) {
@@ -808,7 +816,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         const name = p.clubs[club]?.[1];
         if (!name) continue;
         const members = byWeek[w].get(name) ?? [];
-        members.push({ rating, gender });
+        members.push({ id: p.id, name: p.name, rating, gender });
         byWeek[w].set(name, members);
       }
     }
@@ -846,15 +854,16 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       for (const [name, members] of byClub) {
         members.sort((a, b) => b.rating - a.rating);
         const result = clubStrength(pool, members, replacement);
-        if (result) strengths.push([name, Math.round(result.strength)]);
+        if (result) strengths.push([name, Math.round(result.strength), result.filled]);
       }
       strengths.sort((a, b) => b[1] - a[1]);
       clubCounts[pool][w] = strengths.length;
-      strengths.forEach(([name, strength], i) => {
+      strengths.forEach(([name, strength, filled], i) => {
         const history = clubHistory.get(name) ?? {};
-        history[pool] ??= { strength: Array(weekCount).fill(null), rank: Array(weekCount).fill(null) };
+        history[pool] ??= { strength: Array(weekCount).fill(null), rank: Array(weekCount).fill(null), top: [] };
         history[pool].strength[w] = strength;
         history[pool].rank[w] = i + 1;
+        addTop(history[pool].top, w, filled);
         clubHistory.set(name, history);
       });
     });
@@ -866,14 +875,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   for (const [pool, ranked] of Object.entries(clubs)) {
     if (pool === "combined") continue;
     for (const history of clubHistory.values()) {
-      if (history[pool]) history[pool].strength[now] = history[pool].rank[now] = null;
+      if (history[pool]) {
+        history[pool].strength[now] = history[pool].rank[now] = null;
+        history[pool].top = history[pool].top.filter(([w]) => w < now);
+      }
     }
     clubCounts[pool][now] = ranked.length;
     for (const c of ranked) {
       const history = clubHistory.get(c.club) ?? {};
-      history[pool] ??= { strength: Array(weekCount).fill(null), rank: Array(weekCount).fill(null) };
+      history[pool] ??= { strength: Array(weekCount).fill(null), rank: Array(weekCount).fill(null), top: [] };
       history[pool].strength[now] = Math.round(c.strength);
       history[pool].rank[now] = c.rank;
+      addTop(history[pool].top, now, c.top);
       clubHistory.set(c.club, history);
     }
   }
@@ -956,7 +969,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const history = clubHistory.get(c.name);
     if (!history) continue;
     const pools = {};
-    for (const [pool, { strength, rank }] of Object.entries(history)) {
+    const names = {};
+    for (const [pool, { strength, rank, top }] of Object.entries(history)) {
       const first = strength.findIndex((x) => x !== null);
       const last = strength.findLastIndex((x) => x !== null);
       // seasons: strength, rank and number of clubs at the last week of each season with a value,
@@ -975,8 +989,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         clubs: clubCounts[pool].slice(first, last + 1),
         seasons: [...seasons.values()],
       };
+      if (top) {
+        // The period that started by the first week, and those after it up to the last
+        const start = top.findLastIndex(([w]) => w <= first);
+        pools[pool].top = top.slice(Math.max(start, 0)).filter(([w]) => w <= last).map(([w, slots]) => [Math.max(w - first, 0), slots]);
+        for (const [, slots] of pools[pool].top) for (const slot of slots) for (const id of slot) names[id] = playerNames.get(id);
+      }
     }
-    writeFileSync(`${DIR}data/club-history/${c.id}.json`, JSON.stringify({ club: c.name, pools }));
+    writeFileSync(`${DIR}data/club-history/${c.id}.json`, JSON.stringify({ club: c.name, players: names, pools }));
   }
 
   // Per player: `from` is the Monday of their first week; ratings[i] is the rating at the end

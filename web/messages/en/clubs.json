@@ -47,6 +47,11 @@
     "rank": "Rank",
     "rankOf": "#{rank} of {count}",
     "noPlayers": "No ranked players: nobody from {club} has played {pool} in the last 12 months.",
+    "noPartner": "no partner",
+    "unfilled": {
+      "one": "{count} place not filled",
+      "other": "{count} places not filled"
+    },
     "rankedPlayers": {
       "one": "{count} ranked player",
       "other": "{count} ranked players"

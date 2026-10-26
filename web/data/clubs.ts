@@ -1,6 +1,6 @@
 // The clubs' ratings: the strongest clubs, each club's players and its history (the clubs' own
 // content, names and logos, is in Sanity: data/sanity.ts)
-import type { ClubHistoryPool, ClubsFile, Pool, RatingEntry } from "@/types";
+import type { ClubHistory, ClubsFile, Pool, RatingEntry } from "@/types";
 import { load } from "./load";
 import { getRankings } from "./rankings";
 
@@ -11,6 +11,7 @@ export async function getClubPlayers(club: string, pool: Pool): Promise<RatingEn
   return (await getRankings(pool)).filter((p) => p.club === club);
 }
 
-export async function getClubHistory(nbfClubId: number): Promise<Partial<Record<Pool | "combined", ClubHistoryPool>>> {
-  return (await load<{ pools: Partial<Record<Pool | "combined", ClubHistoryPool>> }>(`club-history/${nbfClubId}.json`))?.pools ?? {};
+export async function getClubHistory(nbfClubId: number): Promise<ClubHistory> {
+  const history = await load<ClubHistory>(`club-history/${nbfClubId}.json`);
+  return { players: history?.players ?? {}, pools: history?.pools ?? {} };
 }
