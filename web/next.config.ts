@@ -28,6 +28,8 @@ const nextConfig: NextConfig = {
   },
   turbopack: {
     rules: {
+      // The changelog, read as text by the "What's new" page (utils/changelog.ts)
+      "CHANGELOG.md": { type: "text" },
       "*.css": {
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",

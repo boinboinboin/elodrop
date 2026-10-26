@@ -14,7 +14,11 @@
   },
   "footer": {
     "sources": "Results from {portalen} and {cup2000}.",
-    "updated": "Updated {time}"
+    "updated": "Updated {time}",
+    "label": "About elodrop",
+    "howItWorks": "How elodrop works",
+    "whatsNew": "What's new",
+    "version": "v{version}"
   },
   "menu": {
     "button": "Menu",

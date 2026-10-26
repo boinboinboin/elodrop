@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.15.0 (2026-10-26)
+
+- How does elodrop work? (/how-it-works): how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings.
+- What's new (/whats-new): this changelog made readable, a timeline by day with new features and improvements marked, and the versions before the launch folded away.
+- The footer links to both, with the current version, and the front page to how it works.
+
 ## v1.14.0 (2026-10-26)
 
 - New rating calculation, which predicts results clearly better: in the 2025/26 and 2026/27 seasons, about 28 thousandths better in log loss in singles and 63 in doubles, and better in every season since 2017/18 and at every level. The rankings are also steadier from week to week.

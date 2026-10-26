@@ -37,10 +37,11 @@ Then it rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inp
 ## The site's code (`web/`)
 
 - `app/`: the pages and API routes (Next.js App Router); the site's pages are in `app/(site)`, the Sanity Studio in `app/studio`.
-- `components/`: React components by area (`home/` for the front page's cards, `players/`, `clubs/`, `rankings/`, `head-to-head/`, `tournaments/`, `upsets/`, `eliteserien/`), the header and footer parts in `layout/`, building blocks used everywhere in `ui/` (sections, cards, link tabs, badges, disclosures, buttons' classes), `charts/` and `format/`; `SVG/` has the icons, one per file.
+- `components/`: React components by area (`home/` for the front page's cards, `how-it-works/` and `whats-new/` for those pages, `players/`, `clubs/`, `rankings/`, `head-to-head/`, `tournaments/`, `upsets/`, `eliteserien/`), the header and footer parts in `layout/`, building blocks used everywhere in `ui/` (sections, cards, link tabs, badges, disclosures, buttons' classes), `charts/` and `format/`; `SVG/` has the icons, one per file.
 - `data/`: reading the site's data: the cached loaders for the pipeline's export (one module per area, sharing `load.ts`) and the club content from Sanity (`sanity.ts`).
 - `utils/`: functions used across the site: formatting (`format.ts`), the site's URLs (`hrefs.ts`), pools, ratings, rankings, tournaments, charts, sorting, the logo and the colour themes.
 - `types/`: the shapes of the exported data.
+- `app/(site)/how-it-works`: the ratings explained, in plain words and (with the "I'm a big nerd" switch) with the formulas; its text (`messages/en/how-it-works.json`) and numbers follow `pipeline/README.md`, so update it when the rules change. `app/(site)/whats-new` is `CHANGELOG.md`, read when the site is built.
 - `messages/`: the site's text, one JSON file per area (`messages/en/`), read through `t()`, `plural()` and `rich()` in `messages/i18n.ts`. English is the only language so far; another (Norwegian) is a new folder with the same keys.
 
 ## Local development

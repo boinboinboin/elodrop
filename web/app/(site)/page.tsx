@@ -7,7 +7,7 @@ import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, T
 import HomeCard from "@/components/home/HomeCard";
 import { ArrowRight } from "@/components/SVG";
 import Section from "@/components/ui/Section";
-import { BUTTON } from "@/components/ui/styles";
+import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { t } from "@/messages/i18n";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
@@ -37,6 +37,7 @@ export default function Home() {
           <Suspense fallback={null}>
             <PlayersRated />
           </Suspense>
+          <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorks")}</Link>
         </div>
       </Section>
       <Section title={t("home.pages")} titleClassName="sr-only">

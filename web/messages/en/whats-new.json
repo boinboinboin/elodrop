@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "title": "What's new"
+  },
+  "title": "What's new",
+  "intro": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes.",
+  "latest": "Now on {version}",
+  "feature": "New",
+  "improvement": "Improved",
+  "launch": "Launch",
+  "launchTitle": "elodrop goes live",
+  "developers": "For developers",
+  "releases": {
+    "one": "{count} update",
+    "other": "{count} updates"
+  },
+  "beforeLaunch": "Before the launch",
+  "beforeLaunchIntro": "How elodrop was built, from fetching the first results to the website, in {count} versions, {dates}.",
+  "versions": "Versions",
+  "legend": "<feature>New</feature> a new page or feature; <improvement>Improved</improvement> smaller improvements and fixes."
+}

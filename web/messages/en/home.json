@@ -3,6 +3,7 @@
   "intro": "Singles and doubles ratings for Norwegian badminton, calculated from every tournament and league result on badmintonportalen.no since 2013.",
   "toRankings": "See the rankings",
   "playersRated": "{count} players rated",
+  "howItWorks": "How does it work?",
   "pages": "What's on elodrop",
   "loading": "Loading…",
   "noData": "No data yet.",

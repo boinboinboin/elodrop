@@ -7,6 +7,7 @@ import NavigationProgress from "@/components/layout/NavigationProgress";
 import SearchBar from "@/components/layout/SearchBar";
 import UpdatedAt from "@/components/layout/UpdatedAt";
 import { rich, t } from "@/messages/i18n";
+import { getReleases } from "@/utils/changelog";
 
 const NAV = [
   { href: "/rankings", label: t("layout.nav.rankings") },
@@ -17,6 +18,7 @@ const NAV = [
   { href: "/head-to-head", label: t("layout.nav.headToHead") },
 ];
 const FOOTER_LINK = "underline hover:text-black";
+const VERSION = getReleases()[0]?.version;
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,6 +48,13 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <main className="flex-1">{children}</main>
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
+          <nav aria-label={t("layout.footer.label")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
+            <Link href="/how-it-works" className="hover:text-black">{t("layout.footer.howItWorks")}</Link>
+            <Link href="/whats-new" className="hover:text-black">
+              {t("layout.footer.whatsNew")}
+              {VERSION && <span className="ml-2 font-mono text-xs text-gray-500">{t("layout.footer.version", { version: VERSION })}</span>}
+            </Link>
+          </nav>
           <p>
             {rich("layout.footer.sources", {
               portalen: <a href="https://badmintonportalen.no" className={FOOTER_LINK} rel="noopener">badmintonportalen.no</a>,
