@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.13.2 (2026-10-26)
+
+- Pipeline: a benchmark of alternative Elo settings (`pipeline/benchmark.mjs`, results in `pipeline/BENCHMARK.md`). It tests flat start ratings without class levels, milder class weights, softer margin-of-victory weights, chess.com-style K and Glicko against the current rules on the 2025/26 and 2026/27 matches. The ratings themselves don't change.
+
 ## v1.13.1 (2026-10-24)
 
 - Chart colours that colour-blind readers can tell apart, in every theme: the five disciplines' colours are now distinct from each other in any combination (before, men's singles and men's doubles looked alike with red-green colour blindness in Totebag and All England), and every chart colour has at least 3:1 contrast on its theme's cards. The front page's cards use the same colours, with head to head's in its two sides' colours, so neighbouring cards never look alike.
