@@ -151,11 +151,11 @@ export function rng(seed = 1) {
 // they did: one run gives each entry's actual outcome.
 // With `withdrawn` (Map entry → match no), an entry that withdrew loses every match from that one
 // on (numbered after it; generated round-robin matches have no number and count as after).
-export function simulate(event, ratings, { runs = 20000, redraw = false, seeding = null, seed = 1, forced = null, withdrawn = null } = {}) {
+export function simulate(event, ratings, { runs = 20000, redraw = false, seeding = null, seed = 1, forced = null, withdrawn = null, pool } = {}) {
   const n = event.slots;
   const random = rng(seed);
   // chance[a][b]: entry a beats entry b
-  const chance = ratings.map((ra) => ratings.map((rb) => expectedScore(ra, rb)));
+  const chance = ratings.map((ra) => ratings.map((rb) => expectedScore(ra, rb, pool)));
   const seeds = seeding ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event));
   // Each tier of seeds with the slots it's drawn into (seeds 1 and 2 not drawn: top and bottom)
   const positions = redraw ? seedPositions(event, seeds.length) : [];

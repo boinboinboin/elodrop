@@ -541,15 +541,15 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     const seeds = was
       ? locked.event.seeds.map((s) => was.indexOf(locked.event.entries[s]))
       : (official.seeds ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event)));
-    const actual = was ? was.map((x) => x.actual) : simulate(event, ratings, { runs: RUNS, seed: 1 });
-    const fair = was ? was.map((x) => x.fair) : simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
+    const actual = was ? was.map((x) => x.actual) : simulate(event, ratings, { pool, runs: RUNS, seed: 1 });
+    const fair = was ? was.map((x) => x.fair) : simulate(event, ratings, { pool, runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
     const forced = results ?? portalenResults(portalenId, d.className, discipline, event, entries);
-    let outcome = forced ? simulate(event, ratings, { runs: 1, forced }) : null;
+    let outcome = forced ? simulate(event, ratings, { pool, runs: 1, forced }) : null;
     // Withdrawals (played draws): entries that lost by walkover are out from that match on. The
     // chances with them out, with the actual draw and with a fair one, give the luck including them.
     const withdrawn = new Map(results?.withdrawals ?? []);
-    const after = withdrawn.size ? simulate(event, ratings, { runs: RUNS, seed: 3, withdrawn }) : null;
-    const fairAfter = withdrawn.size ? simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 4, withdrawn }) : null;
+    const after = withdrawn.size ? simulate(event, ratings, { pool, runs: RUNS, seed: 3, withdrawn }) : null;
+    const fairAfter = withdrawn.size ? simulate(event, ratings, { pool, runs: RUNS, redraw: true, seeding: seeds, seed: 4, withdrawn }) : null;
     // Results from badmintonportalen count only if they decide the event (someone won it)
     if (outcome && !results && !outcome.some((o) => o.win === 1)) outcome = null;
     const groupOf = new Map(event.groups.flatMap((g, gi) => g.slots.map((s) => [s, gi])));

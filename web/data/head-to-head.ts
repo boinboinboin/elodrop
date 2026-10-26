@@ -25,7 +25,7 @@ import { comparableIn, pairKind, pairPlaysIn, playerGender } from "@/utils/gende
 import { t } from "@/messages/i18n";
 import { capitalize } from "@/utils/format";
 import { DOUBLES_POOLS, POOLS } from "@/utils/pools";
-import { equalPartnersChance, expectedScore, onMensScale, pairRating } from "@/utils/rating";
+import { DOUBLES_SCALE, equalPartnersChance, expectedScore, onMensScale, pairRating } from "@/utils/rating";
 import { load } from "./load";
 import { getPlayer, getPlayerMatches } from "./players";
 
@@ -220,7 +220,7 @@ export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b
       a: [sides[0], sides[1]],
       b: [sides[2], sides[3]],
       ratings,
-      chance: expectedScore(...ratings),
+      chance: expectedScore(...ratings, DOUBLES_SCALE),
       record: record(inPools),
       margins: margins(inPools),
       history: [pairHistory(histories.slice(0, 2)), pairHistory(histories.slice(2))],

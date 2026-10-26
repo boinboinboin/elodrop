@@ -12,7 +12,7 @@
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { sideRating } from "./rules.mjs";
-import { SLOTS, bestLineup, lowestRatings, playerRatings, rankingPoints, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
+import { SLOTS, SLOT_POOL, bestLineup, lowestRatings, playerRatings, rankingPoints, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 // Per season: the team list, the rounds with the ranking version from right before each
@@ -276,7 +276,7 @@ function decided(odds, golden) {
 const RATING_OF = { MensSingles: "singles", WomensSingles: "singles", MensDoubles: "doubles", WomensDoubles: "doubles", MixedDoubles: "mixed" };
 function listedChance(game, home, away) {
   const side = (players, team) => sideRating(players.map((p) => team.players.find((x) => x.id === p.id)?.[RATING_OF[game.discipline]] ?? replacementFor(game.discipline, p)));
-  return win(side(game.side1, home), side(game.side2, away));
+  return win(side(game.side1, home), side(game.side2, away), POOL_OF[game.discipline]);
 }
 function replacementFor(discipline, p) {
   const male = current.get(p.id)?.gender !== "K";
@@ -290,7 +290,7 @@ const tieResults = ties.map((tie) => {
   const home = byTeam.get(tie.home);
   const away = byTeam.get(tie.away);
   // Potential: both teams at their best
-  const potentialChances = SLOTS.map((s) => win(home.lineup[s.key].rating, away.lineup[s.key].rating));
+  const potentialChances = SLOTS.map((s) => win(home.lineup[s.key].rating, away.lineup[s.key].rating, SLOT_POOL[s.type]));
   const playoff = isPlayoff(tie);
   let potential = tieOdds(potentialChances);
   if (playoff && GOLDEN) potential = decided(potential, goldenSet((key) => potentialChances[SLOTS.findIndex((s) => s.key === key)]));
@@ -392,7 +392,7 @@ const teamResults = teams.map((t) => {
 const first = roundTeams.get(ROUNDS[0].name).byTeam;
 // The predicted regular-season table: expected table points from one tie against each team
 const preseason = [...first.values()].map((a) => {
-  const odds = [...first.values()].filter((b) => b !== a).map((b) => tieOdds(SLOTS.map((s) => win(a.lineup[s.key].rating, b.lineup[s.key].rating))));
+  const odds = [...first.values()].filter((b) => b !== a).map((b) => tieOdds(SLOTS.map((s) => win(a.lineup[s.key].rating, b.lineup[s.key].rating, SLOT_POOL[s.type]))));
   const mean = (key) => odds.reduce((s, o) => s + o[key], 0) / odds.length;
   return { team: a.team, tablePoints: round2(mean("points") * odds.length, 1), expected: round2(mean("expected")), win: round2(mean("win")) };
 }).sort((a, b) => b.tablePoints - a.tablePoints || b.expected - a.expected).map((t, i) => ({ rank: i + 1, ...t, regularRank: STANDINGS.regular.indexOf(t.team) + 1, finalRank: STANDINGS.final.indexOf(t.team) + 1 }));

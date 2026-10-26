@@ -6,14 +6,19 @@ Results from the data as of 2026-10-26.
 
 ## Adopted in v1.14.0
 
-The [method to adopt](#the-method-to-adopt) and the [rating floor](#rating-floor) are the rules since v1.14.0, on the [shifted scale](README.md#rating-scale-and-minimum-rating): a top level start of 1100, doubles ratings twice the size (a pair plays at the average of its players' ratings, which predicts exactly the same; see [doubles scale](README.md#doubles-scale)), and no rating below 350 (see [the floor on the 1100 scale](#the-floor-on-the-1100-scale)). In everything below, **"current" means the rules before v1.14.0**. The configs of rounds 1–3 and the floor are in commit `f68b101`. `benchmark.mjs` now compares the current rules with the previous ones, rebuilt through the experiment hooks. With the defaults on the 1500 scale they reproduce the earlier calibration exactly (log loss, current rules in full; the previous rules as the change in thousandths):
+v1.14.0 adopts the [tuned rules of rounds 4–8](#rounds-48-the-tuned-rules), which build on the [method of round 3](#the-method-to-adopt) and the [rating floor](#rating-floor). On the [README's scale](README.md#rating-scale-and-minimum-rating): a top level start of 1150, which puts the top ratings around 2650; doubles ratings 1.6 times the half-size scale the doubles model was tuned on, with a pair at the average of its players' ratings, which predicts exactly the same as any other factor (see [doubles scale](README.md#doubles-scale)); and a minimum rating of 400 in singles and 550 in doubles.
 
-| Config | All 25/26 S | All 25/26 D | All 26/27 S | All 26/27 D | Settled 25/26 S | Settled 25/26 D | Settled 26/27 S | Settled 26/27 D | Top 25/26 S | Top 25/26 D | Top 26/27 S | Top 26/27 D |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| current rules (v1.14.0) | 0.5006 | 0.4857 | 0.5457 | 0.5041 | 0.4387 | 0.4355 | 0.4752 | 0.4675 | 0.4434 | 0.4427 | 0.4694 | 0.4437 |
-| previous rules | +11.4 | +18.2 | +7.9 | +20.4 | +6.7 | +1.2 | +2.1 | +3.9 | +5.1 | +1.2 | −0.3 | +1.7 |
+`benchmark.mjs` compares the current rules with the rules before rounds 4–8 and with the rules before v1.14.0, both rebuilt through the experiment hooks (the latter reproduces their own calibration exactly). Log loss, current rules in full and the others as the change in thousandths, with a 95% interval (see [rounds 4–8](#rounds-48-the-tuned-rules) for the columns):
 
-The previous rules are 0.3 better in only one cell, top-level singles in 2026/27. In the 2023–25 holdout they are +11.5 and +18.6 on all games, +6.4 and +9.0 settled, and +3.6 and +4.5 at the top level (singles and doubles).
+| Config | All S | All D | Settled S | Settled D | Top S | Top D | Holdout S | Holdout D | Seasons better / worse |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| current rules (v1.14.0) | 0.4895 | 0.4436 | 0.4326 | 0.4055 | 0.4388 | 0.4173 | 0.4803 | 0.4437 | |
+| before rounds 4–8 (round 3 and the floor) | +17.4 ±2.4 | +44.7 ±4.9 | +10.8 ±2.3 | +34.4 ±6.3 | +8.5 ±4.0 | +25.5 ±7.9 | +18.1 ±1.7 | +45.7 ±3.9 | 0 / 20 |
+| previous rules (before v1.14.0) | +28.2 ±3.5 | +63.2 ±6.7 | +16.9 ±3.3 | +36.0 ±7.2 | +12.7 ±5.8 | +26.7 ±8.7 | +29.6 ±2.7 | +64.3 ±5.1 | 0 / 20 |
+
+The previous rules are worse in every season since 2017/18, by 19–34 thousandths in singles and 52–87 in doubles.
+
+In the sections below, **"current" means the rules each round started from**: the rules before v1.14.0 in rounds 1–3 and the rating floor, and the rules of round 3 with the floor (start 1100, minimum 350) in rounds 4–8. The configs of rounds 1–3 and the floor are in commit `f68b101`; those of rounds 4–8 in the commit before they were adopted.
 
 ## Method
 
@@ -265,18 +270,100 @@ To put the top singles ratings around 2600, the start moved from 800 to 1100. Mo
 
 Settled singles is within ±1 for every floor. A higher floor keeps improving the doubles predictions overall and at the top level, but from 400 it costs on settled doubles in the benchmark seasons and inflates doubles ratings, since the floor adds points at the bottom. **350** improves all doubles games by 3.5, keeps settled games and singles within ±0.2 (better in the holdout) and inflates little, so it is the floor used.
 
+## Rounds 4–8: the tuned rules
+
+Everything else worth trying, against the rules of round 3 with the floor (start 1100, minimum 350; "current" in this section). `benchmark.mjs` now reports, for each config:
+
+- **The change with a 95% interval.** Games in the same tournament or tie involve the same players and move together, so the interval is clustered by tournament and tie: a change is only real if it is larger than its interval.
+- **Every season since 2017/18** (`--seasons`): the change on all games per season, and in how many of the 20 season columns (10 seasons, singles and doubles) it is better or worse beyond the interval.
+- **Calibration** (`--calibration`): the favourites' predicted against actual win rate.
+- **Rank stability and drift** (`--stability`): how many places the top 100 of each list moves per week, and the average rating at the end.
+
+The columns are the benchmark seasons (2025/26 and 2026/27): all games, settled games and top-level games, singles (S) and doubles (D), and the 2023–25 holdout. Changes are in thousandths of log loss; negative is better.
+
+### Round 4 and 5: one change at a time
+
+| Config | All S | All D | Settled S | Settled D | Top S | Top D | Holdout S | Holdout D | Seasons better / worse |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| current (log loss) | 0.5068 | 0.4883 | 0.4434 | 0.4399 | 0.4473 | 0.4428 | 0.4984 | 0.4894 | |
+| **Doubles pulled 0.05 towards singles, first 100 doubles matches** | ±0.0 | **−28.3 ±3.8** | ±0.0 | **−20.2 ±4.8** | ±0.0 | **−14.4 ±5.7** | ±0.0 | **−29.9 ±3.2** | 10 / 0 |
+| Doubles pulled 0.1 towards singles, first 20 | ±0.0 | −15.0 ±2.6 | ±0.0 | −6.1 ±2.8 | ±0.0 | −5.1 ±3.4 | ±0.0 | −15.1 ±2.3 | 9 / 0 |
+| Doubles pulled 0.2 towards singles, first 100 | ±0.0 | −24.5 ±6.9 | ±0.0 | −8.3 ±8.8 | ±0.0 | −1.6 ±9.4 | ±0.0 | −27.3 ±5.6 | 8 / 0 |
+| **Class weights ^0.6** (instead of ^0.75) | −5.3 ±1.2 | −5.8 ±1.0 | −1.2 ±1.0 | −0.8 ±0.8 | +1.5 ±0.9 | −1.0 ±0.7 | −6.5 ±1.0 | −5.6 ±0.7 | 19 / 0 |
+| Class weights ^0.5 | −8.3 ±2.0 | −9.1 ±1.6 | −1.1 ±1.7 | −0.9 ±1.4 | +3.1 ±1.5 | −1.4 ±1.3 | −10.0 ±1.7 | −8.6 ±1.2 | |
+| **Cross-region ×1.5** (instead of ×2) | −3.7 ±1.4 | −0.4 ±1.2 | −2.9 ±1.4 | −1.5 ±1.5 | −5.5 ±2.4 | −2.6 ±2.1 | −3.6 ±1.1 | −0.8 ±1.1 | 10 / 0 |
+| Cross-region ×1 | −3.2 ±3.0 | +3.1 ±2.5 | −1.3 ±2.8 | +1.6 ±3.1 | −6.2 ±5.1 | −0.6 ±4.4 | −3.6 ±2.3 | +1.5 ±2.2 | 3 / 2 |
+| **Junior ×1.5** (instead of ×1.25) | −2.1 ±0.9 | −3.5 ±0.7 | −1.3 ±0.8 | −1.4 ±0.9 | −0.1 ±1.1 | −2.2 ±0.8 | −2.6 ±0.7 | −3.1 ±0.6 | 18 / 0 |
+| **Doubles seed ×1.4** (instead of ×1.2) | ±0.0 | −3.8 ±1.2 | ±0.0 | +0.2 ±0.8 | ±0.0 | +0.4 ±1.0 | ±0.0 | −3.5 ±1.0 | 9 / 0 |
+| **Doubles start offsets ×2.5** (instead of ×2) | ±0.0 | −2.5 ±1.4 | ±0.0 | −0.9 ±0.7 | ±0.0 | −1.6 ±0.9 | ±0.0 | −2.3 ±1.0 | 6 / 0 |
+| **Foreign players start 100 higher** | −1.5 ±0.8 | +0.8 ±1.6 | −0.8 ±0.3 | −0.4 ±0.3 | −0.3 ±0.8 | +0.2 ±0.8 | −1.3 ±1.1 | −0.6 ±0.7 | 10 / 0 |
+| **No not playing penalty** | −2.2 ±0.8 | −0.8 ±0.9 | −3.4 ±1.1 | −1.0 ±1.1 | −3.9 ±2.9 | −1.0 ±2.2 | −1.5 ±0.7 | −1.0 ±0.4 | |
+| Half-life 5 years (instead of 3) | −0.9 ±0.3 | −0.4 ±0.3 | −1.3 ±0.4 | −0.5 ±0.3 | −1.9 ±0.9 | −0.6 ±0.6 | −0.7 ±0.2 | −0.5 ±0.1 | |
+| κ 59 (instead of 54) | −0.4 ±0.5 | −2.3 ±0.6 | +0.2 ±0.5 | +0.1 ±0.6 | +1.4 ±0.9 | −0.3 ±0.8 | −0.9 ±0.4 | −2.3 ±0.4 | 17 / 0 |
+| m(r) amplitude 2.5 (instead of 2) | −0.4 ±0.8 | −3.5 ±0.9 | +1.1 ±0.8 | +0.7 ±0.9 | +2.6 ±1.1 | +0.2 ±1.2 | −1.1 ±0.7 | −3.6 ±0.6 | 16 / 0 |
+| Margin with sets to 15: typical 0.16 (2026/27 only) | −0.2 ±0.4 | −0.3 ±0.3 | +0.2 ±0.4 | +0.1 ±0.2 | +0.2 ±0.6 | +0.1 ±0.4 | | | 0 / 0 |
+| Home advantage 20 (league ties) | +0.1 ±0.4 | +1.0 ±1.0 | +0.4 ±0.4 | +1.4 ±1.3 | +0.4 ±0.8 | +1.1 ±1.5 | +0.3 ±0.2 | +0.7 ±0.7 | 0 / 4 |
+| Expected score scale 270 | ±0.0 ±0.7 | +0.3 ±0.8 | −0.8 ±0.7 | −0.6 ±0.9 | +0.7 ±1.2 | +0.5 ±1.3 | −0.3 ±0.6 | +0.2 ±0.7 | 7 / 1 |
+| m(r) width 120 (instead of 90) | −0.1 ±0.3 | +0.8 ±0.3 | −0.4 ±0.3 | −0.6 ±0.3 | −0.5 ±0.6 | −0.6 ±0.5 | −0.1 ±0.2 | +1.0 ±0.2 | 0 / 9 |
+| Doubles split equal | ±0.0 | +1.2 ±1.3 | ±0.0 | −0.2 ±1.9 | ±0.0 | +1.3 ±2.3 | ±0.0 | +0.5 ±1.0 | 0 / 1 |
+| Rating period: a whole tournament or tie at once | +41.9 ±5.1 | +49.8 ±6.1 | +26.4 ±4.5 | +29.2 ±5.1 | +40.7 ±9.4 | +36.1 ±6.9 | +40.6 ±4.5 | +47.4 ±5.4 | 0 / 20 |
+
+- **Doubles pulled towards singles** is by far the biggest gain. After each doubles match, a player with fewer than 100 doubles matches who has played singles moves 5% of the way from their doubles rating towards the doubles rating their singles rating would give a newcomer (the [start rating from singles](README.md#start-rating-from-singles)). Today singles only sets the first doubles rating; afterwards a player's doubles rating lags behind their level, since few doubles matches and the shared change move it slowly. A gentle, long pull works better than a strong or short one.
+- **Stronger class weights for the lower classes, cross-region ×1.5 and junior ×1.5** all help overall. Stronger class weights (and κ, and m(r)) cost a little on top-level singles alone.
+- **The not playing penalty predicts worse than none**, by a little: players returning after a break are about as good as they were. Rankings already leave out players who haven't played for 12 months, so it isn't needed there either.
+- **No help:** home advantage (side 1 is the home team in every league tie, but many ties are played at shared venues), rating periods (much worse: ratings need to follow results within a tournament), the expected score scale, the m(r) width, an equal doubles split, and a separate margin for sets to 15.
+
+### Round 6 and 7: together
+
+All the helpful changes together, then each left out again, then tuned (pull 0.03 over the first 200 doubles matches, class weights ^0.6, κ 59):
+
+| Config | All S | All D | Settled S | Settled D | Top S | Top D | Holdout S | Holdout D | Seasons better / worse |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Combined: pull 0.05/100, seed ×1.4, offsets ×2.5, foreign +100, cross-region ×1.5, junior ×1.5, no penalty | −10.1 ±1.8 | −36.2 ±4.9 | −9.0 ±1.8 | −25.6 ±5.9 | −10.1 ±3.8 | −18.4 ±7.0 | −9.5 ±1.5 | −38.9 ±3.4 | 20 / 0 |
+| … without the pull | −10.1 ±1.8 | −10.9 ±2.6 | −9.0 ±1.8 | −5.9 ±2.0 | −10.1 ±3.8 | −7.1 ±3.1 | −9.5 ±1.5 | −12.6 ±1.9 | 20 / 0 |
+| … without foreign starts | −8.5 ±1.5 | −37.1 ±4.8 | −8.2 ±1.8 | −25.3 ±5.9 | −9.9 ±3.5 | −18.6 ±7.0 | −8.2 ±1.1 | −37.8 ±3.8 | 20 / 0 |
+| … cross-region ×2 | −6.1 ±1.3 | −36.1 ±5.1 | −5.7 ±1.5 | −25.2 ±6.0 | −4.8 ±3.4 | −16.2 ±7.0 | −5.7 ±1.2 | −38.0 ±3.7 | 19 / 0 |
+| … junior ×1.25 | −7.1 ±1.9 | −33.3 ±4.8 | −6.7 ±1.8 | −23.9 ±5.7 | −9.2 ±3.8 | −17.0 ±6.8 | −6.2 ±1.8 | −36.4 ±3.3 | 19 / 0 |
+| … with the penalty | −8.0 ±1.7 | −35.4 ±4.9 | −5.9 ±1.4 | −24.3 ±5.8 | −6.2 ±2.5 | −18.0 ±6.8 | −8.1 ±1.5 | −38.3 ±3.3 | 19 / 0 |
+| **Tuned** | **−17.0 ±2.4** | **−44.6 ±4.9** | **−10.9 ±2.3** | **−34.8 ±6.4** | **−8.4 ±4.0** | **−25.8 ±8.0** | **−17.6 ±1.7** | **−45.6 ±3.9** | **20 / 0** |
+| Tuned, class weights ^0.75 | −11.3 ±1.8 | −40.4 ±4.6 | −9.6 ±1.8 | −34.2 ±5.9 | −9.9 ±3.7 | −26.3 ±7.5 | −11.1 ±1.4 | −42.0 ±3.5 | 20 / 0 |
+| Tuned, κ 54 | −16.2 ±2.2 | −42.4 ±4.8 | −10.8 ±2.1 | −33.9 ±6.2 | −8.9 ±3.9 | −24.7 ±7.9 | −16.5 ±1.6 | −43.8 ±3.7 | 20 / 0 |
+
+Every part adds to the others. The tuned combination is better than the current rules in all 20 season columns, from 2017/18 (−12 to −20 in singles, −32 to −64 in doubles per season), at every level and in the holdout: a bigger step than v1.14.0 was over the rules before it (11 in singles and 19 in doubles), in doubles more than twice as big.
+
+**Calibration** (favourites' predicted → actual win rate, 2023/24 on, for the tuned rules before the cap): doubles is well calibrated with both (e.g. 82.6 → 82.2% tuned, 82.5 → 80.8% now). Singles favourites win a little less often than predicted with both, by 1–3 points from 65% up (92.6 → 89.7% with both): a singles-only expected score scale is worth testing next.
+
+**Rank stability:** the top 100 moves fewer places per week with the tuned rules, 0.70 against 0.81 (men's singles 0.82 against 0.85, mixed doubles 0.59 against 0.80), so the rankings get steadier, mostly in doubles.
+
+### Round 8: no junior class above U19A
+
+With class weights ^0.6 and junior ×1.5, U17A would count 110%, more than U19A (91%) and SEN A. Capping every junior class at U19A's weight (U17A at 91%), or at SEN A's, changes nothing beyond noise:
+
+| Config | All S | All D | Settled S | Settled D | Top S | Top D | Holdout S | Holdout D | Seasons better / worse |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Tuned | −17.0 ±2.4 | −44.6 ±4.9 | −10.9 ±2.3 | −34.8 ±6.4 | −8.4 ±4.0 | −25.8 ±8.0 | −17.6 ±1.7 | −45.6 ±3.9 | 20 / 0 |
+| **Tuned, juniors at most U19A (adopted)** | **−17.4 ±2.4** | **−44.4 ±4.9** | **−10.8 ±2.3** | **−34.4 ±6.3** | **−8.5 ±4.0** | **−25.5 ±7.9** | **−18.1 ±1.7** | **−45.8 ±3.8** | **20 / 0** |
+| Tuned, juniors at most SEN A | −17.2 ±2.3 | −44.5 ±4.9 | −10.9 ±2.3 | −34.6 ±6.3 | −8.5 ±4.0 | −25.7 ±8.0 | −17.9 ±1.7 | −45.7 ±3.8 | 20 / 0 |
+
+So no junior class counts more than U19A, which counts like SEN B.
+
+### Calibration, stability and drift
+
+**Drift:** the average rating of active players at the end is higher with the tuned rules: by 17 and 22 points in men's and women's singles and by 20, 44 and 63 in men's, women's and mixed doubles. The pull and the higher doubles seed lift doubles players with a strong singles rating; without the penalty, nobody's rating decays. Ratings are compared within a pool and within a week, so this doesn't change rankings, but the levels aren't comparable with today's.
+
 ## Recommendation
 
-- **Adopt the method in [round 3](#the-method-to-adopt).** It beats the current rules on all games and on settled games in every window, and is level with them at the top. In `rules.mjs` the change is:
-  - The tier weights become `weight ** 0.75`.
-  - The junior weight becomes 1.25, except for tier 1 (U19A/X, Junior NM for lag), where it is 1.
-  - The margin weight becomes `min(3, x ** 0.75)`.
+Adopted in v1.14.0: the [tuned rules](#round-6-and-7-together) with [no junior class above U19A](#round-8-no-junior-class-above-u19a), on the scale above. Compared with the rules before:
 
-  With the cosmetic shift to 800 / 400, add the [rating floor](#rating-floor) at 0.
+- **Doubles:** pulled towards singles (3% per match for a player's first 200 doubles matches), the singles seed 0.7 (half-size scale) instead of 0.6, and the class start ratings 1.25 times as far apart as in singles (half-size scale).
+- **Class weights** ^0.6 of the original ones; **junior weight** ×1.5, at most U19A's weight; **κ** 59; **cross-region weight** ×1.5.
+- **Foreign players** start 100 points higher (160 in doubles), at most at the top level start.
+- **No not playing penalty.**
+- The margin weight (power 0.75), the minimum rating (750 below the start) and the start ratings by class are as in round 3 and the floor.
 
-  The README sections on the class level weight, the junior weight and the margin weight need their numbers updated, with the class table listing juniors and seniors separately.
-- **Don't adopt the proposal** (flat 800 / 400 start, no levels). Its best version predicts the whole field better, but costs 13–55 thousandths on top-level games, the ones that decide the rankings.
-- **Not worth pursuing:** chess.com-style fixed K, Glicko's K (alone or after a player's first matches), and juniors at full class weight.
+Next worth testing: a separate expected score scale for singles, whose favourites win 1–3 points less often than predicted.
+
+Not worth pursuing: the proposal of round 1 (flat start, no levels), chess.com-style fixed K, Glicko's K (alone or after a player's first matches), juniors at full class weight, home advantage, rating periods.
 
 ## Full results
 

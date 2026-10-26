@@ -40,7 +40,8 @@ function spearman(xs, ys) {
 const percent = (a, b) => (b ? `${((100 * a) / b).toFixed(1)}%` : "-").padStart(6);
 const total = { n: 0, official: 0, elo: 0, disagree: 0, eloRight: 0 };
 console.log("season   pool   games  official  elo     | disagree: elo right | spearman (players)");
-for (const file of readdirSync(`${DIR}ranking`).sort()) {
+// Each season's final list (<season id>.json); the seeding lists and earlier versions are in subfolders
+for (const file of readdirSync(`${DIR}ranking`).filter((f) => /^\d+\.json$/.test(f)).sort()) {
   const list = JSON.parse(readFileSync(`${DIR}ranking/${file}`, "utf8"));
   const end = list.period.split(" til ")[1].split(".").reverse().join("-"); // "30.06.2026" -> "2026-06-30"
   const until = new Date(Date.parse(end) + 365 * DAY_MS).toISOString().slice(0, 10);
