@@ -16,9 +16,9 @@ export default function Release({ release, color }: { release: ReleaseData; colo
   const items = release.items.filter((i) => !isTechnical(i.text));
   const technical = release.items.filter((i) => isTechnical(i.text));
   return (
-    <article id={releaseId(release)} className="bg-white px-5 pb-5 md:px-6 md:pb-6 scroll-mt-20">
+    <article id={releaseId(release)} className="bg-white px-4 pb-5 sm:px-5 md:px-6 md:pb-6 scroll-mt-20 [overflow-wrap:anywhere]">
       {/* A coloured top edge on new features and the launch, a plain line on the rest */}
-      <div aria-hidden="true" className="h-1 -mx-5 md:-mx-6 mb-4 md:mb-5" style={{ background: feature || launch ? color : "var(--color-gray-200)" }} />
+      <div aria-hidden="true" className="h-1 -mx-4 sm:-mx-5 md:-mx-6 mb-4 md:mb-5" style={{ background: feature || launch ? color : "var(--color-gray-200)" }} />
       <header className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
         <a href={`#${releaseId(release)}`} className="font-mono text-sm text-gray-600 hover:text-black">v{release.version}</a>
         {launch ? (
