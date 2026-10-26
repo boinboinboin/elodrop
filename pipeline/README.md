@@ -24,7 +24,7 @@ $$
 E_A = \frac{1}{1 + 10^{(R_B - R_A)/300}}
 $$
 
-and $E_A + E_B = 1$. A rating difference of 300 points means the stronger player is expected to win about 91% of the time. (Standard Elo uses 400; this system uses a 0.75 scale throughout, which spreads the ratings so that the top singles players are around 2300.)
+and $E_A + E_B = 1$. A rating difference of 300 points means the stronger player is expected to win about 91% of the time. (Standard Elo uses 400; this system uses a 0.75 scale throughout, which spreads the ratings so that the top singles players are around 2600.)
 
 ### Rating update
 
@@ -56,47 +56,51 @@ $$
 | $m(R_A)$ | [Current rating multiplier](#current-rating-multiplier)     |
 | $c_t$    | [Covid-19 K-factor adjustment](#covid-19-period-adjustment) |
 
-$m(R_A)$ depends on each player's own rating, so the two players in a match can gain and lose different amounts. No rating goes below the [minimum rating](#rating-scale) of 0.
+$m(R_A)$ depends on each player's own rating, so the two players in a match can gain and lose different amounts. No rating goes below the [minimum rating](#rating-scale) of 350.
 
 ### Doubles
 
-Each player has their own doubles rating; pairs have no rating of their own. A side plays at the sum of its two players' ratings, and the expected score compares the sums:
+Each player has their own doubles rating; pairs have no rating of their own. A side plays at the average of its two players' ratings, and the expected score compares the averages:
 
 $$
-E_{AB} = \frac{1}{1 + 10^{\left((R_C + R_D) - (R_A + R_B)\right)/300}}
+E_{AB} = \frac{1}{1 + 10^{\left(\frac{R_C + R_D}{2} - \frac{R_A + R_B}{2}\right)/300}}
 $$
 
-So a pair whose players are each 100 points better than their opponents is a 200-point favourite. The side's rating change $K \, (S - E_{AB})$ is shared between the partners by their [rating uncertainty](#rating-uncertainty):
+So a pair whose players are each 200 points better than their opponents is a 200-point favourite. The side's rating change $K \, (S - E_{AB})$ is shared between the partners by their [rating uncertainty](#rating-uncertainty):
 
 $$
 R_A' = R_A + K_A \cdot \frac{RD_A^2}{RD_A^2 + RD_B^2} \, (S - E_{AB})
 $$
 
-with $K_A$ as above. Two equally established partners get half each. A newcomer playing with an established partner takes most of the change, since the result says more about the newcomer's unknown level than about the partner's well-known one.
+with $K_A$ as above, with the doubles base K-factor $\kappa_d = 108$. Two equally established partners get half each. A newcomer playing with an established partner takes most of the change, since the result says more about the newcomer's unknown level than about the partner's well-known one.
 
-Tuning used doubles matches before 2023 and was tested on 2023 onwards, counting only games where all four players have 10+ matches in the discipline (log loss, lower is better):
+Tuning used doubles matches before 2023 and was tested on 2023 onwards, counting only games where all four players have 10+ matches in the discipline (log loss, lower is better). This was on doubles ratings half the size of today's (see [doubles scale](#doubles-scale)), where the sum of the partners' ratings is today's average:
 
-| Side rating                                           | 2023 onwards |
-| ----------------------------------------------------- | -----------: |
-| Sum of the partners' ratings, $\kappa = 54$ (used)    |       0.4519 |
-| Average of the partners' ratings, best $\kappa$ (120) |       0.4560 |
-| Average of the partners' ratings, $\kappa = 54$       |       0.4723 |
+| Side rating (half-size scale)                                               | 2023 onwards |
+| --------------------------------------------------------------------------- | -----------: |
+| Sum of the partners' ratings, $\kappa = 54$ (used: today's average, $\kappa_d = 108$) |       0.4519 |
+| Average of the partners' ratings, best $\kappa$ (120)                       |       0.4560 |
+| Average of the partners' ratings, $\kappa = 54$                             |       0.4723 |
 
-- **Average:** averaging the ratings made every doubles match look closer than it was, and a larger K-factor only partly made up for it. The same holds with stricter thresholds of 30 or 60 matches.
-- **K-factor:** with the sum, the best $\kappa$ is the same as in singles.
+- **Average on the same scale:** averaging ratings tuned like singles ratings made every doubles match look closer than it was, and a larger K-factor only partly made up for it. The same holds with stricter thresholds of 30 or 60 matches. Doubling the scale and averaging, as since v1.14.0, is the same as the sum.
+- **K-factor:** with the sum, the best $\kappa$ is the same as in singles (54, which is 108 on today's doubled scale).
 - **Split:** sharing the change equally instead of by uncertainty predicted the pre-2023 matches equally well, and later matches slightly worse.
 
-Doubles ratings are their own scale. The top doubles players are around 1100 per player (a top pair about 2200), against about 2300 in singles, so the two can't be compared directly.
+#### Doubles scale
+
+Doubles ratings are on a scale twice the size of the one the doubles model was tuned on, so that they read like singles ratings: a new top-level player starts at 1100 in both, and the top doubles players are around 2500, against about 2600 in singles. A pair plays at the average of its players' ratings, and everything doubles measures in rating points is twice as large: $\kappa_d = 2 \cdot 54$, the class start ratings are twice as far below $p_0$, the singles seed factor is $2 \cdot 0.6$, $m(r)$ is twice as wide, and the [rating deviation](#rating-uncertainty) is twice as large. So every expected score and rating change is exactly the same as on the half-size scale, doubled (checked on every player and match when the scale changed in v1.14.0).
+
+Singles and doubles are still separate pools, so a singles rating and a doubles rating can't be compared directly; the scales are only similar in size.
 
 #### Start rating from singles
 
 A player who has played singles before their first doubles match starts doubles from their singles rating at that moment, instead of the class start rating:
 
 $$
-R_{\text{doubles}} = p_0^{d} + 0.6 \cdot (R_{\text{singles}} - p_0)
+R_{\text{doubles}} = p_0 + 2 \cdot 0.6 \cdot (R_{\text{singles}} - p_0)
 $$
 
-with $p_0 = 800$ and $p_0^{d} = 400$ the top level start ratings in singles and in doubles (see [rating scale](#rating-scale)). A 1700 singles player starts doubles at 940. The factor 0.6 brings the singles rating onto the narrower doubles scale. Mixed doubles uses the singles discipline the player has played most. Players without singles keep the class start rating.
+with $p_0 = 1100$ the top level start rating (see [rating scale](#rating-scale)). A 2000 singles player starts doubles at 2180. The factor 0.6 was fitted on the half-size doubles scale (see [doubles scale](#doubles-scale)), so it is doubled here. Mixed doubles uses the singles discipline the player has played most. Players without singles keep the class start rating.
 
 This and the [junior weight](#junior-weight) were inspired by table tennis rating systems (such as Germany's TTR, which raises the K-factor for juniors) and tuned on doubles matches before 2023, then tested on 2023 onwards. Here all doubles games count, including those with newcomers, where the start rating matters most (log loss, lower is better):
 
@@ -113,14 +117,15 @@ The pre-2023 matches improved as much. Seeding from singles is most of the gain:
 
 | Parameter                        |    Value |
 | -------------------------------- | -------: |
-| Top level start rating $p_0$, singles |  800 |
-| Top level start rating $p_0^{d}$, doubles (per player) | 400 |
-| Minimum rating                   |        0 |
+| Top level start rating $p_0$     |     1100 |
+| Doubles scale                    |       ×2 |
+| Minimum rating                   |      350 |
 | Base K-factor $\kappa$           |       54 |
+| Doubles base K-factor $\kappa_d$ |      108 |
 | Doubles start from singles       |     ×0.6 |
 | Junior weight $w_j$ (not U19A)   |    ×1.25 |
 | Margin of victory power          |     0.75 |
-| Doubles maximum rating deviation |      130 |
+| Doubles maximum rating deviation |      260 |
 | Expected score scale             |      300 |
 | Cross-region weight              |       ×2 |
 | Not playing grace period $g$     | 365 days |
@@ -128,7 +133,7 @@ The pre-2023 matches improved as much. Seeding from singles is most of the gain:
 
 ## Start rating
 
-A player's start rating is set by the level of their first rated match, for juniors and seniors alike: from $p_0 = 800$ at the top level down to 350 in singles, and from $p_0^{d} = 400$ down to 0 per player in doubles (see the [class levels table](#class-level-weight)). A newcomer in SEN D starts at 575 in singles, the same as one in U15A, since the two levels are treated as equal.
+A player's start rating is set by the level of their first rated match, for juniors and seniors alike: from $p_0 = 1100$ at the top level down to 650 in singles, and down to the minimum of 350 in doubles (see the [class levels table](#class-level-weight)). A newcomer in SEN D starts at 875 in singles, the same as one in U15A, since the two levels are treated as equal.
 
 Starting every senior at the top level start rating regardless of level was tested and predicted results clearly worse: adult beginners started several hundred points too high, and the extra points ended up with the players who beat them.
 
@@ -138,9 +143,9 @@ After the start, ratings only change through results. Juniors who improve quickl
 
 ### Rating scale
 
-Only rating differences decide the expected score, so where the scale starts is a choice. Since v1.14.0, the top level start rating is 800 in singles and 400 per player in doubles, so a new top-level pair starts at 800. Before, it was 1500 in both. The singles ratings moved down by 700 and the doubles ratings by 1100 per player, and $m(r)$ and the [not playing penalty](#not-playing-penalty) moved with them, so this alone changed no prediction.
+Only rating differences decide the expected score, so where the scale starts is a choice. Since v1.14.0, the top level start rating is 1100 in singles and doubles, which puts the top singles players around 2600. Before, it was 1500 in both, and doubles ratings were half their size (see [doubles scale](#doubles-scale)). The singles ratings moved down by 400, and each doubles rating $r$ became $2r - 1900$. $m(r)$ and the [not playing penalty](#not-playing-penalty) moved with them, so this alone changed no prediction.
 
-On these scales the weakest players would go below zero, so no rating goes below a **minimum rating** of 0, at the start or after a match. A player on the minimum loses less than their opponent gains. This changes their rating, unlike the shift, and predicts the weakest doubles players better (see [BENCHMARK.md](BENCHMARK.md#rating-floor)). The lowest class's doubles start, 400 − 450, is 0. In October 2026, 14 active singles players and 187 active doubles players are on the minimum.
+No rating goes below a **minimum rating** of 350 (750 below the start), at the start or after a match. A player on the minimum loses less than their opponent gains. This changes their rating, unlike the shift: the weakest players' ratings, mostly in doubles, otherwise sink further than their results justify. Of the minimums tested, 350 predicted best without costing anything on settled players (see [BENCHMARK.md](BENCHMARK.md#rating-floor)). The lowest class's doubles start, 1100 − 2 · 450 = 200, is raised to 350. In October 2026, 19 active singles players and 254 active doubles players are on the minimum.
 
 > [!NOTE]
 > The 2013/2014 and 2014/2015 seasons are a warm-up. 2013/2014 only has team matches (senior, U15 and U13 leagues), and most players get their first rated match in 2014/2015 when tournament data starts, so ratings need until about the end of 2014/2015 to settle.
@@ -153,17 +158,17 @@ $w_c$ depends on the tournament class or team league the match is played in. The
 
 | Tournament class       | Team league                                                                                                            | $w_c$ | Start rating, singles | Start rating, doubles |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----: | --------------------: | --------------------: |
-| SEN X, SEN E, SEN A    | Eliteserien (incl. qualification); 1. HS and 1. DS in 1st div                                                          |  100% |                   800 |                   400 |
-| U19A/X, SEN B, O35–O45 | 2. and 3. HS and 2. DS in 1st div; Junior NM for lag (U19)                                                             |   89% |                   725 |                   325 |
-| U17A/X, SEN C, O50–O55 | 2nd div; 1st div qualification; U17 leagues, Landsfinale U17; U17/U19 singles series                                   |   68% |                   650 |                   250 |
-| U15A/X, SEN D, O60+    | 3rd div (incl. combined 2nd/3rd div); U15 leagues, Landsfinalen U15                                                    |   50% |                   575 |                   175 |
-| U13A/X, U19B, U17B     | U13 leagues, Landsfinalen U13; U13/U15 singles series                                                                  |   35% |                   500 |                   100 |
-| U11A, U15B, U13B       | 4th div; other senior series (Oslofjordserien, Klubbserie, Trimliga, Pizzaliga, Herreserien, adult beginner series, …) |   18% |                   425 |                    25 |
-| Other (incl. Åpen HC)  | Junior beginner series (Nybegynnerserie); internal club events                                                         |   11% |                   350 |                     0 |
+| SEN X, SEN E, SEN A    | Eliteserien (incl. qualification); 1. HS and 1. DS in 1st div                                                          |  100% |                  1100 |                  1100 |
+| U19A/X, SEN B, O35–O45 | 2. and 3. HS and 2. DS in 1st div; Junior NM for lag (U19)                                                             |   89% |                  1025 |                   950 |
+| U17A/X, SEN C, O50–O55 | 2nd div; 1st div qualification; U17 leagues, Landsfinale U17; U17/U19 singles series                                   |   68% |                   950 |                   800 |
+| U15A/X, SEN D, O60+    | 3rd div (incl. combined 2nd/3rd div); U15 leagues, Landsfinalen U15                                                    |   50% |                   875 |                   650 |
+| U13A/X, U19B, U17B     | U13 leagues, Landsfinalen U13; U13/U15 singles series                                                                  |   35% |                   800 |                   500 |
+| U11A, U15B, U13B       | 4th div; other senior series (Oslofjordserien, Klubbserie, Trimliga, Pizzaliga, Herreserien, adult beginner series, …) |   18% |                   725 |                   350 |
+| Other (incl. Åpen HC)  | Junior beginner series (Nybegynnerserie); internal club events                                                         |   11% |                   650 |                   350 |
 
 League names vary by region and season ("1. divisjon Østlandet", "1. Div Oslofjorden 18/19", "2.div. Sør", …), so they are matched by pattern.
 
-The weights are the earlier 100/85/60/40/25/10/5% to the power 0.75 (since v1.14.0), so the lower classes count a little more than before. That predicted better in every season tested, at every level, including the top (see [BENCHMARK.md](BENCHMARK.md)). The doubles start ratings are the singles ones less 400, with the lowest at the [minimum rating](#rating-scale) of 0.
+The weights are the earlier 100/85/60/40/25/10/5% to the power 0.75 (since v1.14.0), so the lower classes count a little more than before. That predicted better in every season tested, at every level, including the top (see [BENCHMARK.md](BENCHMARK.md)). In doubles the start ratings are twice as far below 1100 as in singles (see [doubles scale](#doubles-scale)), the lowest two at the [minimum rating](#rating-scale) of 350.
 
 With the [junior weight](#junior-weight), juniors and seniors on the same level count differently. The weight each class counts at, $w_c \cdot w_j$:
 
@@ -227,7 +232,7 @@ $$
 m(r) = 1 + \frac{2}{1 + 2^{(r - p_0)/90}}
 $$
 
-where $r$ is the player's current rating, and $p_0$ is 800 in singles and $p_0^{d} = 400$ in doubles. $m(r)$ approaches 3 far below $p_0$, equals 2 at $p_0$ and approaches 1 far above $p_0$.
+where $r$ is the player's current rating, and $p_0 = 1100$. In doubles the 90 is 180 (see [doubles scale](#doubles-scale)). $m(r)$ approaches 3 far below $p_0$, equals 2 at $p_0$ and approaches 1 far above $p_0$.
 
 ### Walkovers
 
@@ -254,7 +259,7 @@ Nothing is changed until a line is in `corrections.txt`. The 575 scores listed i
 
 ## Not playing penalty
 
-After a grace period of $g = 365$ days without playing, the part of the rating above $p_0$ (800 in singles, 400 in doubles) decays with a half-life of $h = 3$ years (1095 days). A player with rating $r > p_0$ who has not played for $t > g$ days has the rating
+After a grace period of $g = 365$ days without playing, the part of the rating above $p_0 = 1100$ decays with a half-life of $h = 3$ years (1095 days). A player with rating $r > p_0$ who has not played for $t > g$ days has the rating
 
 $$
 r(t) = p_0 + (r - p_0) \cdot 2^{-(t - g)/h}
@@ -262,7 +267,7 @@ $$
 
 Ratings at or below $p_0$ are not affected, so juniors taking a break keep their rating. During the [Covid-19 period](#covid-19-period-adjustment), days count at the reduced not playing penalty rate.
 
-For example, a singles player at 1700 who stops playing keeps that rating for a year, has about 1514 after two years away and about 1250 after four.
+For example, a singles player at 2000 who stops playing keeps that rating for a year, has about 1814 after two years away and about 1550 after four.
 
 The grace period covers the summer break: the season runs from about September to April, so active players often go more than six months between matches. The half-life is fitted to the data: players above $p_0$ returning after a year or more away perform as their decayed rating predicts.
 
@@ -270,7 +275,7 @@ The grace period covers the summer break: the season runs from about September t
 
 Every rating comes with a $\pm$ range showing how reliable it is, based on the [Glicko](https://en.wikipedia.org/wiki/Glicko_rating_system) rating deviation $RD$. The range is $\pm 2 \cdot RD$, so the player's true level is within it with about 95% probability. It is in the data (`plusMinus`) but no longer shown on the site, where the rating gained or lost since last week took its place. In singles it does not change how ratings move; in doubles it decides how a side's rating change is shared between the partners.
 
-New players start at $RD = 260$ ($\pm 520$), or $130$ in doubles (see below). Time without playing increases it:
+New players start at $RD = 260$ ($\pm 520$), in singles and doubles alike (see below). Time without playing increases it:
 
 $$
 RD' = \min\left(260,\ \sqrt{RD^2 + c^2 t}\right)
@@ -286,13 +291,13 @@ where $E$ is the expected score against opponent $B$, adjusted for $B$'s uncerta
 
 The growth rate and the use of all matches (without class level weights) were fitted to the data: with these settings, players' actual results match the uncertainty the ranges predict.
 
-In doubles, a player is measured against the opposing side's summed rating, with $RD_B = \sqrt{RD_C^2 + RD_D^2}$. The doubles maximum, and with it the growth rate, is half the singles one: $RD_{max} = 130$. This was checked by splitting each player's games into blocks of 10. For each block, the rating that best explains its results (given the other players' ratings) differs from the player's rating before the block by the measurement noise of 10 games plus the player's true error. That error should match the $RD$:
+In doubles, a player is measured against the opposing side's rating (the average), with $RD_B = \sqrt{RD_C^2 + RD_D^2}/2$. The update itself is worked out on the half-size scale the model was tuned on and doubled (see [doubles scale](#doubles-scale)). On that scale, the doubles maximum, and with it the growth rate, is half the singles one: $RD_{max} = 130$, which is 260 on today's doubled scale. This was checked by splitting each player's games into blocks of 10. For each block, the rating that best explains its results (given the other players' ratings) differs from the player's rating before the block by the measurement noise of 10 games plus the player's true error. That error should match the $RD$:
 
 | Pool                             | True error / $RD$ |
 | -------------------------------- | ----------------: |
 | Singles                          |               1.1 |
-| Doubles, $RD_{max} = 260$        |              0.78 |
-| Doubles, $RD_{max} = 130$ (used) |              1.05 |
+| Doubles, $RD_{max} = 260$ on the half-size scale |              0.78 |
+| Doubles, $RD_{max} = 130$ on the half-size scale (used) |              1.05 |
 
 With the singles maximum, doubles ranges were about 30% too wide.
 
@@ -356,15 +361,15 @@ A player's biggest rival is the opponent they have had the closest matches again
 
 ### Biggest upsets
 
-`rate.mjs` writes each week's (Monday to Sunday) 10 biggest upsets to `data/upsets.json`: the matches won with the lowest chance of winning, from the ratings right before the match. Only matches between settled players count: every player has at least 10 matches (as for biggest wins) and a rating certain to within ±250 in singles or ±180 in doubles (RD before the match at most 125 or 90, about the more certain half of ranked players). Without the RD limit, the list filled up with juniors improving faster than their rating (one rated 543 points below the favourite winning). Walkovers and draws are left out. The rankings page highlights the top 3 of the current week, or of the last week with matches; `/upsets` shows the newest week's top 10, `/upsets/<Monday>` any other week's and `/upsets/<year>` that year's newest week, each with the biggest upset of every week of its year. Each player is shown with their rating before the match, the rating the match gained or cost them, and their club at the time and its logo (when the club has an entry with one).
+`rate.mjs` writes each week's (Monday to Sunday) 10 biggest upsets to `data/upsets.json`: the matches won with the lowest chance of winning, from the ratings right before the match. Only matches between settled players count: every player has at least 10 matches (as for biggest wins) and a rating certain to within ±250 in singles or ±360 in doubles (RD before the match at most 125 or 180, about the more certain half of ranked players). Without the RD limit, the list filled up with juniors improving faster than their rating (one rated 543 points below the favourite winning). Walkovers and draws are left out. The rankings page highlights the top 3 of the current week, or of the last week with matches; `/upsets` shows the newest week's top 10, `/upsets/<Monday>` any other week's and `/upsets/<year>` that year's newest week, each with the biggest upset of every week of its year. Each player is shown with their rating before the match, the rating the match gained or cost them, and their club at the time and its logo (when the club has an entry with one).
 
 ### Head to head
 
-`/elo/head-to-head?a=<player id>&b=<player id>` compares two players, chosen with name search (`/elo/players/search?q=<name>`; every word must be in the name, accents ignored and æ/ø/å read as ae/o/a; ranked players first). It shows their record against each other (all disciplines, from player A's side) and together as partners, both from the complete match logs. For each discipline both are rated in, it shows the current ratings and A's chance of beating B now from the expected score; in doubles the chance is with equally rated partners, since a pair's rating is the sum of its players' and equal partners cancel out. Both players' rating histories in that discipline are drawn on one chart. Winning margins, overall and per discipline, come from the scores of their meetings (walkovers left out): matches, sets and points won by each, each player's average point margin in the matches they won and their biggest win, how many went to a deciding set, and the closest match (smallest point difference). Each meeting in the list shows its point margin. Player pages link to it, also from each rival.
+`/elo/head-to-head?a=<player id>&b=<player id>` compares two players, chosen with name search (`/elo/players/search?q=<name>`; every word must be in the name, accents ignored and æ/ø/å read as ae/o/a; ranked players first). It shows their record against each other (all disciplines, from player A's side) and together as partners, both from the complete match logs. For each discipline both are rated in, it shows the current ratings and A's chance of beating B now from the expected score; in doubles the chance is with equally rated partners, since a pair's rating is the average of its players' and equal partners cancel out (two players 200 apart make pairs 100 apart). Both players' rating histories in that discipline are drawn on one chart. Winning margins, overall and per discipline, come from the scores of their meetings (walkovers left out): matches, sets and points won by each, each player's average point margin in the matches they won and their biggest win, how many went to a deciding set, and the closest match (smallest point difference). Each meeting in the list shows its point margin. Player pages link to it, also from each rival.
 
 ### Doubles head to head
 
-`/head-to-head/doubles?a1=&a2=&b1=&b2=` compares two pairs the same way: their record against each other (the same four players, from pair A's side), each pair's record together, winning margins, and pair A's chance of beating pair B now, from the sums of the partners' ratings. Pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two women's pairs in women's doubles, two mixed pairs in mixed doubles. The players' head to head likewise compares singles and men's or women's doubles only between players of the same gender, since women mostly play men's singles when there are too few for women's singles; mixed doubles is compared between anyone. An unknown gender rules nothing out.
+`/head-to-head/doubles?a1=&a2=&b1=&b2=` compares two pairs the same way: their record against each other (the same four players, from pair A's side), each pair's record together, winning margins, and pair A's chance of beating pair B now, from the averages of the partners' ratings. Pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two women's pairs in women's doubles, two mixed pairs in mixed doubles. The players' head to head likewise compares singles and men's or women's doubles only between players of the same gender, since women mostly play men's singles when there are too few for women's singles; mixed doubles is compared between anyone. An unknown gender rules nothing out.
 
 ### Men against women: the gender gap
 
@@ -372,16 +377,16 @@ The disciplines are rated separately, so a woman's rating in women's singles say
 
 $$w + a + b\,(w - p_0)$$
 
-in men's singles, with $a$ and $b$ fitted by maximum likelihood over those matches (the expected score as above; her rating from the end of the week before the match). $p_0$ is the top level start rating: 800 in singles, 400 in doubles. In doubles, only matches with a male partner count, and her side plays at her mapped women's doubles rating plus his men's doubles rating. With the data up to October 2026:
+in men's singles, with $a$ and $b$ fitted by maximum likelihood over those matches (the expected score as above; her rating from the end of the week before the match). $p_0 = 1100$ is the top level start rating. In doubles, only matches with a male partner count, and her side plays at the average of her mapped women's doubles rating and his men's doubles rating. With the data up to October 2026:
 
 | Format  | Matches | $a$ (at $p_0$) |           $b$ | Gap at $p_0 - 300$ | $p_0 + 300$ | $p_0 + 600$ | Log loss (no gap) |
 |---------|--------:|---------------:|--------------:|-------------------:|------------:|------------:|------------------:|
-| Singles |   4,092 |       −190 ± 6 | −0.42 ± 0.01  |                −63 |        −317 |        −444 |   0.572 (0.725)   |
-| Doubles |   2,169 |       −105 ± 8 | −0.42 ± 0.04  |                +21 |        −232 |        −358 |   0.545 (0.593)   |
+| Singles |   4,092 |       −190 ± 6 | −0.42 ± 0.01  |                −63 |        −317 |        −443 |   0.572 (0.724)   |
+| Doubles |   2,169 |      −209 ± 15 | −0.42 ± 0.04  |                −84 |        −333 |        −458 |   0.542 (0.590)   |
 
-The gap grows with the level: girls in the lowest junior classes play about level with boys, and the best women play like men rated several hundred points lower. Fitted separately on bands of women's ratings (with the ratings before v1.14.0, shifted to today's scale), the gap followed the line (singles: +18 below 400, −180 at 600–800, −254 at 800–1000, −304 at 1000–1200, −472 above 1200), and fitted on settled players only (50+ matches, 2018 on) it was about the same. The fit covers women rated about 220–1250 in singles and 60–610 in doubles (5th to 95th percentile); beyond that the line is extrapolated.
+The gap grows with the level: girls in the lowest junior classes play about level with boys, and the best women play like men rated several hundred points lower. Fitted separately on bands of women's ratings (with the ratings before v1.14.0, shifted to today's scale), the gap followed the line (singles: +18 below 700, −180 at 900–1100, −254 at 1100–1300, −304 at 1300–1500, −472 above 1500), and fitted on settled players only (50+ matches, 2018 on) it was about the same. The fit covers women rated about 520–1550 in singles and 420–1520 in doubles (5th to 95th percentile); beyond that the line is extrapolated.
 
-The head-to-head pages use it "just for fun", where the players or pairs don't meet in a shared discipline: a man and a woman in singles and in doubles (with equally rated partners), and pairs of different kinds (a men's pair against a women's or mixed pair). Everyone is then put on the men's scale: men at their men's singles or doubles rating, women at their mapped women's rating, a pair at the sum.
+The head-to-head pages use it "just for fun", where the players or pairs don't meet in a shared discipline: a man and a woman in singles and in doubles (with equally rated partners), and pairs of different kinds (a men's pair against a women's or mixed pair). Everyone is then put on the men's scale: men at their men's singles or doubles rating, women at their mapped women's rating, a pair at the average.
 
 ### Search
 
@@ -411,7 +416,7 @@ Clubs are entries in the Clubs section (`elo/clubs/<slug>`), created and updated
 - **Cancelled tournaments.** A tournament drawn but not played is listed in `CANCELLED` in `upcoming.mjs` (badmintonportalen id and why), or has "AVLYST" in its name: it is marked "Not played" on the list and its page, with its draw and luck as published. MAHI Sports Open 2026 (#7093) was cancelled at the last minute, in mourning for the King.
 - **Played draws.** Once played, Cup2000 lists the players who came through instead of "Vinner av Pulje 3", and draw positions instead of "Winner of match 12" (and each player's final place). The structure is rebuilt from that: a knockout player who played in a group came through as their group place (their actual rank), and a position that played an earlier match in the stage is that match's winner (or loser). The results (each match's winner, each group's final order) are replayed through the same simulation to give each entry's actual rounds, placement and win. An event counts as played once every match has a winner. A tournament whose results were never entered on Cup2000 can use its results on badmintonportalen (`data/portalen`): who beat whom among the entries, by player ids, with groups ranked by wins, then set and point difference; they count only if they decide the event (MAHI Sports Open 2026 was cancelled). Events with a single entry are left out.
 - **Withdrawals.** In a played event, an entry that lost a match by walkover withdrew: from that match on (by match number) it loses every match, earlier matches stand. Two more simulations give the chances with the withdrawals, with the actual draw and with a fair redraw that has the same withdrawals (wherever the withdrawn entry lands). Luck then includes them: the expectation with the actual draw minus the fair one, both with the withdrawals; the page shows the chances once the withdrawn players were out (actual and fair draw) by default, marks luck that withdrawals changed with * (hovering shows the split into draw luck and withdrawals), and compares results with those chances. E.g. Trondheim's SEN X: Kai Roger Stensen withdrew, so William Aaberg Rølvåg, expected 7.6th, was expected 5.7th once he was out (and finished 6th); being in his group was worth +0.6 places of luck. The withdrawn entries are left out of the check of whether luck showed in the results, which uses the draw luck only. A group standings row without a place (a withdrawn player) ranks after the ranked ones, and a group place left empty in the knockout ("Nr. 4 fra Pulje 2" with nobody) is still that place.
-- **Simulation.** Each event is played out 20,000 times with each match won by the expected score of the entries' ratings (a pair's rating is the sum of its players'), once with the actual draw and once with a fair draw: the same entries drawn again every time by NBF's rules, the seeds placed as the rules say and everyone else at random.
+- **Simulation.** Each event is played out 20,000 times with each match won by the expected score of the entries' ratings (a pair's rating is the average of its players'), once with the actual draw and once with a fair draw: the same entries drawn again every time by NBF's rules, the seeds placed as the rules say and everyone else at random.
 - **Seeding.** The fair draw seeds by the rules, not by our ratings, and whatever the organiser did: a seed placed elsewhere, or a seed left out, counts as luck.
   - **Points.** The seeds are the entries with the most points on the official ranking list valid the Wednesday after the registration deadline (a Tuesday): the first version published from the day after the deadline (`deadline` from the season plan; the lists come out on Wednesdays and Fridays), or, until that's out, the newest. The version is settled the first time the draw is fetched with a draw published, and kept from then on (later lists don't change the seeds; the organiser seeds with the list there is when they make the draw). Draws saved before this (played tournaments) got the version from the deadline alone. Each class uses its age group's lists (SEN, U13–U19, O35–O80); a pair has the sum of its players' points (mixed doubles from the men's and women's mixed lists). Ties go to the higher singles points (a pair's sum), then the higher rating. An entry without points is never seeded, so an event can have fewer seeds than its draw allows, or none.
   - **How many.** 2 below 16 entries, 4 from 16, 8 from 32, 16 from 64, 32 from 128; in group events at most one per group. Group events too are seeded by the number of entries, not one per group: in this season's draws (222 group events) the organisers kept seeds 1 and 2 apart in 203, seeds 3 and 4 in 30 and 29 of the 30 events with 16 entries or more, and seeds 5–8 in all 4 with 32 or more; below 16 entries, seed 3 was apart from seeds 1 and 2 no more often than by chance (35 against 38 of 75).
@@ -424,7 +429,7 @@ Clubs are entries in the Clubs section (`elo/clubs/<slug>`), created and updated
 - **How it turned out.** For played events: how many favourites (the best chance of winning with the actual draw) won, against the number expected (the sum of their chances), the winners' average predicted chance, and the most surprising winners. Whether luck showed in the results: each entry's result minus its fair-draw expectation, regressed (through zero) on its luck; a slope of 1 means a draw rated a round luckier gave a round more on average. The event table shows each entry's result against its expectation with the actual draw.
 - **Links from matches.** The match lists and highlights on player pages (and head to head) link a match's tournament to its page when it has one (matched by the badmintonportalen tournament id in the match key), opening the event of that class and discipline (`/tournaments/<id>/sen-x/men`).
 - **Pages.** A tournament page has two views: the events (the default: buttons per class and the event's table) and a summary (`/tournaments/<id>/summary`): how the predictions turned out, one box with tabs for the most surprising winners and the luckiest and unluckiest draws, and how it works, explaining only what the tournament's events need (rounds, X-class places, single groups).
-- **2026/27 so far** (15 played tournaments, 306 events): the favourite won 153 events, against 169 expected, and the winners had a 39% chance on average beforehand. The draw luck showed in the results with a slope of 0.83 over 1,617 entries (correlation 0.23: luck is real but small next to how the matches go). Foreign players without Norwegian results start at the class's start rating, so they are underrated, and they win more than predicted.
+- **2026/27 so far** (15 played tournaments, 306 events): the favourite won 153 events, against 168 expected, and the winners had a 39% chance on average beforehand. The draw luck showed in the results with a slope of 0.84 over 1,617 entries (correlation 0.23: luck is real but small next to how the matches go). Foreign players without Norwegian results start at the class's start rating, so they are underrated, and they win more than predicted.
 - **Event table order.** A single group, or an event with just two entries (one match), has no luck and one order: the most likely winner first before it is played (the same as by rating), the final standings after. Otherwise luckiest first, or by group: each group, in number order, under a header with its average rating and its players by rating (players who start in the knockout last; in a played event the places going through are marked: the group winner, the runner-up when the top two go through, and in the X classes all four places); events without groups can be ordered by rating instead; played events also by final standings: the winner first, then by place (X classes) or by how far they got and their group place, ties by rating, numbered with shared places (1, 2, 3, 3, 5, 5, 5, 5, 9, ...: the same round, or the same group place for those out in the groups) (`?order=group`, `?order=rating`, `?order=standings`).
 - The event page lists the events by class, seniors first and juniors from the oldest, levels in the order X (grand prix: the 6 highest ranked on badmintonportalen plus 2 wildcards, seniors and juniors alike), E (elite), A, B, C, D, each in the order men's singles, women's singles, men's, women's and mixed doubles.
 
@@ -438,9 +443,9 @@ The Eliteserien page (`/elo/eliteserien`) estimates how strong the eight teams i
 
 **Ratings.** Each player's current singles, doubles and mixed doubles ratings. A missing doubles or mixed rating is estimated from the singles rating, as for a [new doubles player](#start-rating-from-singles); anything else missing counts at the lowest rating among ranked players.
 
-**Lineup.** Each team is assumed to field the lineup with the most expected match wins against an average Eliteserien opponent in each match: the average of the best players over all eight teams (for the two singles, the 8 best and the next 8; doubles and mixed as pair sums). All lineups allowed by the rules are tried, including who plays mixed with whom and, on equal ranking points, the order.
+**Lineup.** Each team is assumed to field the lineup with the most expected match wins against an average Eliteserien opponent in each match: the average of the best players over all eight teams (for the two singles, the 8 best and the next 8; doubles and mixed as pair averages). All lineups allowed by the rules are tried, including who plays mixed with whom and, on equal ranking points, the order.
 
-**Strength.** Teams are compared lineup against lineup, match by match (first men's singles against first men's singles, and so on), with the expected score of the ratings ($E_A$, pair sums in doubles). The matches are taken as independent, which gives the chance of winning a tie (5 or more matches), drawing (4-4) or losing it. A team's strength is its expected number of matches won per tie, averaged over ties against the other seven teams.
+**Strength.** Teams are compared lineup against lineup, match by match (first men's singles against first men's singles, and so on), with the expected score of the ratings ($E_A$, pair averages in doubles). The matches are taken as independent, which gives the chance of winning a tie (5 or more matches), drawing (4-4) or losing it. A team's strength is its expected number of matches won per tie, averaged over ties against the other seven teams.
 
 **Table points.** The league table counts points per tie: 4-0 for winning 6-2 or better, 3-1 for 5-3 and 2-2 for 4-4 (this reproduces the official 2025/2026 table exactly). The match win chances give the chance of every result from 8-0 to 0-8, and so each team's expected table points per tie. The predicted table ranks teams by their expected table points from the regular season, one tie against each other team (28 at most).
 
@@ -461,7 +466,7 @@ Real lineups vary (injuries, tactics, players' availability), so the chances are
 - **Play-offs.** In the play-offs (Sluttspill) a tie ends as soon as a team has won 5 matches, and a tie at 4-4 is decided by a golden set: the teams take turns striking out one of the five disciplines (MS, WS, MD, WD, XD), and one set is played in the last one left. In the model the golden set is played in the discipline where the teams' top players or pairs (1st singles, the doubles, 1st mixed) are closest in rating, with that match's win chance, so a play-off tie has no draw: the home team wins with P(5+ of 8) + P(4-4) × P(golden set). Stopping at 5 wins doesn't change who wins, so the odds are still over all 8 matches; with the lineups played, the matches left unplayed count with their listed players' chances from the ratings before the round. The golden set is stored with the tie (`goldenSet` in data/league, from the tie page's "Golden Set" row) but is not rated, being a single set; it decides the tie's winner (2025/26: Haugerud–Moss 4-4, Aleksander Jakovlevs beat Shubham 23-21 in MS, so Haugerud took 3rd; 2024/25: the final Bergen–Kristiansand 4-4, Vilde Espeseth beat Katja Botcharova Ellingsen 21-10 in WS, so Kristiansand won). In 2021/22 there was no golden set yet: the final (Kristiansand–Frogner) and the match for 5th (Sandefjord–Moss) ended 4-4 and were left drawn, so that season's play-off odds keep the draw (`goldenSet: false`).
 - **Won − potential** splits into **lineups** (expected with the lineups played, minus the potential: players missing or rested, and opponents not at full strength either) and **performance** (matches won minus the expected with the lineups played).
 
-Before the season the model had Kristiansand first and Bergen second, which is how the play-offs ended; Bergen won the regular season by winning 6.3 matches more than its lineups were expected to. Frogner was predicted third and finished sixth, mostly because it seldom fielded its best lineup.
+Before the season the model had Kristiansand first and Bergen second, which is how the play-offs ended; Bergen won the regular season by winning 6.4 matches more than its lineups were expected to. Frogner was predicted third and finished sixth, mostly because it seldom fielded its best lineup.
 
 ## Tested and not used
 

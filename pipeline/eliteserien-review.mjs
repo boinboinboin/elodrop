@@ -11,6 +11,7 @@
 // Writes data/eliteserien-<season>.json.
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { sideRating } from "./rules.mjs";
 import { SLOTS, bestLineup, lowestRatings, playerRatings, rankingPoints, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -274,7 +275,7 @@ function decided(odds, golden) {
 // players' ratings before the round
 const RATING_OF = { MensSingles: "singles", WomensSingles: "singles", MensDoubles: "doubles", WomensDoubles: "doubles", MixedDoubles: "mixed" };
 function listedChance(game, home, away) {
-  const side = (players, team) => players.reduce((sum, p) => sum + (team.players.find((x) => x.id === p.id)?.[RATING_OF[game.discipline]] ?? replacementFor(game.discipline, p)), 0);
+  const side = (players, team) => sideRating(players.map((p) => team.players.find((x) => x.id === p.id)?.[RATING_OF[game.discipline]] ?? replacementFor(game.discipline, p)));
   return win(side(game.side1, home), side(game.side2, away));
 }
 function replacementFor(discipline, p) {

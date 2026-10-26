@@ -528,7 +528,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
         const player = id ? (rated[pool].get(id) ?? rated.men.get(id) ?? rated.women.get(id) ?? rated.mensDoubles.get(id) ?? rated.womensDoubles.get(id) ?? rated.mixedDoubles.get(id)) : null;
         return { id, name: player?.name ?? p.name, club: p.club, matchedBy: source, ...ratingOf(id, pool, level, male, day) };
       });
-      return { players, rating: Math.round(players.reduce((s, p) => s + p.rating, 0)) };
+      return { players, rating: Math.round(R.sideRating(players.map((p) => p.rating))) };
     });
     const locked = lock ? lockedEntries(lock, d.className, discipline, identified) : null;
     if (lock && !locked) console.error(`${info.name ?? cupId}, ${d.className} ${heading}: the entries changed after the start, analysed again`);

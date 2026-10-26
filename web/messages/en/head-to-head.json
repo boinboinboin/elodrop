@@ -113,8 +113,8 @@
   "now": {
     "title": "If they met now",
     "tabs": "Disciplines",
-    "intro": "Current ratings in each discipline both play, and {a}'s chance of winning against {b}. Singles and men's or women's doubles are only compared between players of the same gender. In doubles, the chance is with equally rated partners: a pair's rating is the sum of its players'.",
-    "introDoubles": "Current ratings and pair A's chance of winning against pair B. A pair plays at the sum of its players' ratings, and pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two mixed pairs in mixed doubles.",
+    "intro": "Current ratings in each discipline both play, and {a}'s chance of winning against {b}. Singles and men's or women's doubles are only compared between players of the same gender. In doubles, the chance is with equally rated partners: a pair's rating is the average of its players'.",
+    "introDoubles": "Current ratings and pair A's chance of winning against pair B. A pair plays at the average of its players' ratings, and pairs are compared in the discipline their genders put them in: two men's pairs in men's doubles, two mixed pairs in mixed doubles.",
     "unrated": "{name} has no rating in {pool}",
     "unratedJoin": ", and ",
     "noChances": "{list}, so there are no chances to compare.",
@@ -123,7 +123,7 @@
   "fun": {
     "title": "Just for fun",
     "intro": "Men and women are rated in separate disciplines, so their ratings can't be compared as they are. Here are {a}'s and {b}'s chances if they did, with the woman's rating moved onto the men's scale. In doubles, the chance is with equally rated partners.",
-    "introDoubles": "Pair A is a {kindA} and pair B a {kindB}, so they don't play in the same discipline. Here everyone plays on the men's doubles scale: men at their men's doubles rating, women at their women's doubles rating moved onto the men's scale, and a pair at the sum.",
+    "introDoubles": "Pair A is a {kindA} and pair B a {kindB}, so they don't play in the same discipline. Here everyone plays on the men's doubles scale: men at their men's doubles rating, women at their women's doubles rating moved onto the men's scale, and a pair at the average.",
     "formats": {
       "singles": "Singles",
       "doubles": "Doubles"
@@ -136,8 +136,8 @@
     "intro": "Rating at the end of each week",
     "introMensScale": "Rating at the end of each week, on the men's scale",
     "pairTitle": "Pair rating history",
-    "pairIntro": "The sum of the partners' ratings at the end of each week both were rated",
-    "pairIntroMensScale": "The sum of the partners' ratings at the end of each week both were rated, on the men's doubles scale",
+    "pairIntro": "The average of the partners' ratings at the end of each week both were rated",
+    "pairIntroMensScale": "The average of the partners' ratings at the end of each week both were rated, on the men's doubles scale",
     "pairLabel": "Pair rating"
   },
   "matches": {

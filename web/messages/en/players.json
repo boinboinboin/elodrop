@@ -24,7 +24,7 @@
     "rating": "Rating",
     "ranking": "Ranking",
     "rank": "Rank",
-    "ratingIntro": "Rating in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.",
+    "ratingIntro": "Rating in each discipline at the end of each week. Doubles ratings are on the same kind of scale as singles, but each discipline is rated on its own, so compare how each line moves rather than the levels between disciplines.",
     "rankingIntro": "National rank at the end of each week, among players who had played in the last 12 months; men's disciplines rank only men and women's only women, and mixed doubles ranks men and women separately. Gaps are periods without a rank. The scale is logarithmic, so moving from #100 to #50 looks as big as from #20 to #10.",
     "amongWomen": "{pool} (among women)",
     "amongMen": "{pool} (among men)",

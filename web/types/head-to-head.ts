@@ -104,7 +104,7 @@ export interface DoublesHeadToHeadPool {
   crossover: boolean;
   a: [Side, Side];
   b: [Side, Side];
-  /** The pairs' ratings: the sum of the partners' */
+  /** The pairs' ratings: the average of the partners' */
   ratings: [number, number];
   /** Pair A's chance of beating pair B now */
   chance: number;

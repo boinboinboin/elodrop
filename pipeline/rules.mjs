@@ -1,29 +1,37 @@
 // The rating rules from README.md, as data and small pure functions.
 // Keep this file in sync with the README: it is the spec.
 
-// Top level start rating: in singles, and per player in doubles (a new top-level pair is 800). Each is
-// its pool's reference point of m(r) and the not playing penalty. Only rating differences decide the
-// expected score, so the two scales are a choice of where to put zero, not a change in predictions.
-export const P0 = 800;
-export const DOUBLES_P0 = 400;
+// Top level start rating, in singles and doubles alike: the reference point of m(r) and the not
+// playing penalty. Only rating differences decide the expected score, so where the scale starts is a
+// choice, not a change in predictions.
+export const P0 = 1100;
+// Doubles ratings are on a scale twice the one the doubles model was tuned on, so they read like
+// singles ratings: a side plays at the average of its two players' ratings (rather than the sum of
+// half-size ratings), and everything doubles measures in rating points (K, the class start ratings
+// below P0, the singles seed, m(r)'s width, the rating deviation) is DOUBLES_UNIT times as large.
+// Every expected score and every rating change is the same as on the half-size scale, doubled.
+export const DOUBLES_UNIT = 2;
 const DOUBLES_POOLS = new Set(["mensDoubles", "womensDoubles", "mixedDoubles"]);
-export const p0Of = (pool) => (DOUBLES_POOLS.has(pool) ? DOUBLES_P0 : P0);
-// No rating goes below this, at the start or after a match: on these scales the weakest players
-// would otherwise go below zero. Tested in BENCHMARK.md (it also predicts the weakest doubles better).
-export const MIN_RATING = 0;
+export const unitOf = (pool) => (DOUBLES_POOLS.has(pool) ? DOUBLES_UNIT : 1);
+// A side's rating: its player's, or in doubles the average of the two
+export const sideRating = (ratings) => ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+// No rating goes below this, at the start or after a match (750 below P0): the weakest players'
+// ratings, mostly in doubles, otherwise sink further than their results justify. Tested in
+// BENCHMARK.md: 350 predicted best without costing on settled players.
+export const MIN_RATING = 350;
 // Bump when the ratings move to a new scale: tournament draw analyses locked on another scale are
 // analysed again (upcoming.mjs), so they don't mix ratings from two scales.
-export const RATING_SCALE = 2;
+export const RATING_SCALE = 4;
 export const KAPPA = 54; // base K-factor
 // Doubles: base K-factor for a side, and how its rating change is shared between the partners:
 // "rd" by each partner's uncertainty (RD²), so a new player takes most of it; "equal" half each.
 // Tuned on doubles games before 2023: best at the singles κ; "rd" and "equal" tied, "rd" better on 2023+.
-export const DOUBLES_KAPPA = 54;
+export const DOUBLES_KAPPA = KAPPA * DOUBLES_UNIT;
 export const DOUBLES_SPLIT = "rd";
 // A doubles player's start rating comes from their singles rating when they have played singles:
-// DOUBLES_P0 + DOUBLES_SINGLES_SEED · (singles rating − P0). Doubles ratings spread over a narrower range.
+// P0 + DOUBLES_SINGLES_SEED · DOUBLES_UNIT · (singles rating − P0), so 1.2 times as far from P0.
 export const DOUBLES_SINGLES_SEED = 0.6;
-export const doublesSeed = (singles) => Math.max(MIN_RATING, DOUBLES_P0 + DOUBLES_SINGLES_SEED * (singles - P0));
+export const doublesSeed = (singles) => Math.max(MIN_RATING, P0 + DOUBLES_SINGLES_SEED * DOUBLES_UNIT * (singles - P0));
 // K-factor multiplier for matches in junior classes and leagues, in every discipline: juniors
 // improve faster than the junior class weights let their ratings follow. Not in U19A (tier 1),
 // which counts like SEN B: junior results shouldn't count more than the senior top level.
@@ -32,7 +40,8 @@ export const juniorWeight = (level) => (!level.junior || level.tier <= 1 ? 1 : J
 // Rating difference scale of the expected score: a difference of SCALE points means a 91% win chance.
 export const SCALE = 300;
 
-// Level tiers, from the "Class levels" table: K weight, and start rating below the top level.
+// Level tiers, from the "Class levels" table: K weight, and start rating below the top level
+// (in doubles DOUBLES_UNIT times as far).
 // A player's start rating is the start of the tier of their first rated match. The weights are the
 // earlier 100/85/60/40/25/10/5% to the power 0.75, which lets lower classes count a little more.
 export const TIERS = [
@@ -45,7 +54,7 @@ export const TIERS = [
   { weight: 0.05 ** 0.75, below: 450 }, // 6: other (11%)
 ];
 
-export const startRating = ({ tier }, pool) => Math.max(MIN_RATING, p0Of(pool) - TIERS[tier].below);
+export const startRating = ({ tier }, pool) => Math.max(MIN_RATING, P0 - TIERS[tier].below * unitOf(pool));
 
 // Games between players from clubs in different regional associations (kretser) count
 // this many times more, so isolated regions are calibrated against the rest faster.
@@ -203,8 +212,8 @@ export function pointMargin(sets) {
   return a + b ? Math.abs(a - b) / (a + b) : null;
 }
 
-// m(r): bigger rating changes below the pool's P0, smaller above.
-export const ratingMultiplier = (r, p0 = P0) => 1 + 2 / (1 + 2 ** ((r - p0) / 90));
+// m(r): bigger rating changes below P0, smaller above (in doubles over DOUBLES_UNIT times the width).
+export const ratingMultiplier = (r, pool) => 1 + 2 / (1 + 2 ** ((r - P0) / (90 * unitOf(pool))));
 
 export const expectedScore = (ra, rb) => 1 / (1 + 10 ** ((rb - ra) / SCALE));
 
@@ -213,7 +222,7 @@ export const expectedScore = (ra, rb) => 1 / (1 + 10 ** ((rb - ra) / SCALE));
 // playing grows it back to RD_MAX over about RD_RETURN_DAYS (from an RD of 40).
 // Fitted on the data: with these values, predictions widened by RD fit best unscaled.
 export const RD_MAX = 260;
-export const DOUBLES_RD_MAX = 130; // calibrated on doubles (block performance check, see README)
+export const DOUBLES_RD_MAX = 130 * DOUBLES_UNIT; // calibrated on doubles (block performance check, see README)
 const RD_RETURN_DAYS = 10 * 365;
 const RD_GROWTH = Math.sqrt((RD_MAX ** 2 - 40 ** 2) / RD_RETURN_DAYS); // c in Glicko, per day
 const Q = Math.LN10 / SCALE;
@@ -223,12 +232,14 @@ const glickoG = (rd) => 1 / Math.sqrt(1 + (3 * Q ** 2 * rd ** 2) / Math.PI ** 2)
 export const rdAfterTime = (rd, days, max = RD_MAX) =>
   Math.min(max, Math.sqrt(rd ** 2 + (RD_GROWTH * max / RD_MAX) ** 2 * days));
 
-// RD after one match against an opponent with rating rb and deviation rdb.
-export function rdAfterMatch(ra, rd, rb, rdb) {
+// RD after one match against an opponent with rating rb and deviation rdb. In doubles (unit
+// DOUBLES_UNIT) a player's RD is on the doubled scale, while the sides' ratings and the opposing
+// side's deviation are on the scale of the expected score: the RD is worked out there and scaled back.
+export function rdAfterMatch(ra, rd, rb, rdb, unit = 1) {
   const g = glickoG(rdb);
   const e = 1 / (1 + 10 ** ((-g * (ra - rb)) / SCALE));
   const information = Q ** 2 * g ** 2 * e * (1 - e); // 1 / d^2 in Glicko
-  return Math.sqrt(1 / (1 / rd ** 2 + information));
+  return unit * Math.sqrt(1 / (1 / (rd / unit) ** 2 + information));
 }
 
 // Covid-19 periods (inclusive dates, ISO strings compare correctly).
@@ -258,9 +269,9 @@ function weightedDays(from, to, periods, rateOf) {
 export const penaltyDays = (from, to) => weightedDays(from, to, COVID, (p) => p.penalty);
 
 // Not playing penalty. After `graceDays` without playing, the part of the rating above
-// `floor` (the pool's P0) decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or
+// `floor` (P0) decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or
 // below the floor are not affected.
-export const INACTIVITY = { graceDays: 365, halfLifeDays: 1095, floor: p0Of };
+export const INACTIVITY = { graceDays: 365, halfLifeDays: 1095, floor: P0 };
 
 // A player is active (ranked, and counted for their club's strength) while they have played within
 // this many days. During Covid-19 the time without playing counts slower: not at all from 2020-03-18

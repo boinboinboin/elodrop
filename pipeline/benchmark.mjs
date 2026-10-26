@@ -26,21 +26,22 @@ const margin = (f) => (sets, s) => {
 
 // The rules before v1.14.0: top level start 1500 in both singles and doubles, class weights
 // 100/85/60/40/25/10/5%, junior ×1.5 (U19A included), a linear margin weight and no rating floor.
+// Doubles on the doubled scale of today's rules (R.DOUBLES_UNIT), which predicts the same.
 const OLD_P0 = 1500;
 const OLD_WEIGHTS = [1, 0.85, 0.6, 0.4, 0.25, 0.1, 0.05];
 const SINGLES_OF = { mensDoubles: ["men"], womensDoubles: ["women"], mixedDoubles: ["men", "women"] };
 const PREVIOUS = {
-  startRating: (level) => OLD_P0 - R.TIERS[level.tier].below,
+  startRating: (level, pool) => R.unitOf(pool) * (OLD_P0 - R.TIERS[level.tier].below),
   // Doubles from the singles rating; null leaves it to startRating
   seedRating: (pool, side, _level, players) => {
     const singles = (SINGLES_OF[pool] ?? []).map((sp) => players[sp].get(side.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
-    return singles ? OLD_P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - OLD_P0) : null;
+    return singles ? R.unitOf(pool) * (OLD_P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - OLD_P0)) : null;
   },
   levelWeight: (level) => OLD_WEIGHTS[level.tier],
   juniorK: 1.5,
   marginWeight: margin((x) => Math.min(3, x)),
-  ratingMultiplier: (r) => R.ratingMultiplier(r, OLD_P0),
-  floor: OLD_P0,
+  ratingMultiplier: (r, pool) => 1 + 2 / (1 + 2 ** ((r - R.unitOf(pool) * OLD_P0) / (90 * R.unitOf(pool)))),
+  floor: (pool) => R.unitOf(pool) * OLD_P0,
   minRating: () => -Infinity,
 };
 

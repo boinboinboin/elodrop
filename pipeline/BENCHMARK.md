@@ -6,14 +6,14 @@ Results from the data as of 2026-10-26.
 
 ## Adopted in v1.14.0
 
-The [method to adopt](#the-method-to-adopt) and the [rating floor](#rating-floor) are the rules since v1.14.0, on the [shifted scale](README.md#rating-scale): a top level start of 800 in singles and 400 per doubles player, with no rating below 0. In everything below, **"current" means the rules before v1.14.0**. The configs of rounds 1–3 and the floor are in commit `f68b101`. `benchmark.mjs` now compares the current rules with the previous ones, rebuilt through the experiment hooks. With the defaults on the 1500 scale they reproduce the earlier calibration exactly, and the current rules give exactly the "floor 0" results (log loss, current rules in full; the previous rules as the change in thousandths):
+The [method to adopt](#the-method-to-adopt) and the [rating floor](#rating-floor) are the rules since v1.14.0, on the [shifted scale](README.md#rating-scale): a top level start of 1100, doubles ratings twice the size (a pair plays at the average of its players' ratings, which predicts exactly the same; see [doubles scale](README.md#doubles-scale)), and no rating below 350 (see [the floor on the 1100 scale](#the-floor-on-the-1100-scale)). In everything below, **"current" means the rules before v1.14.0**. The configs of rounds 1–3 and the floor are in commit `f68b101`. `benchmark.mjs` now compares the current rules with the previous ones, rebuilt through the experiment hooks. With the defaults on the 1500 scale they reproduce the earlier calibration exactly (log loss, current rules in full; the previous rules as the change in thousandths):
 
 | Config | All 25/26 S | All 25/26 D | All 26/27 S | All 26/27 D | Settled 25/26 S | Settled 25/26 D | Settled 26/27 S | Settled 26/27 D | Top 25/26 S | Top 25/26 D | Top 26/27 S | Top 26/27 D |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| current rules (v1.14.0) | 0.5010 | 0.4893 | 0.5460 | 0.5076 | 0.4387 | 0.4354 | 0.4752 | 0.4673 | 0.4434 | 0.4432 | 0.4694 | 0.4441 |
-| previous rules | +11.0 | +14.7 | +7.7 | +16.9 | +6.7 | +1.3 | +2.1 | +4.1 | +5.1 | +0.6 | −0.3 | +1.3 |
+| current rules (v1.14.0) | 0.5006 | 0.4857 | 0.5457 | 0.5041 | 0.4387 | 0.4355 | 0.4752 | 0.4675 | 0.4434 | 0.4427 | 0.4694 | 0.4437 |
+| previous rules | +11.4 | +18.2 | +7.9 | +20.4 | +6.7 | +1.2 | +2.1 | +3.9 | +5.1 | +1.2 | −0.3 | +1.7 |
 
-The previous rules are 0.3 better in only one cell, top-level singles in 2026/27. In the 2023–25 holdout they are +11.0 and +15.4 on all games, +6.3 and +8.2 settled, and +3.6 and +3.9 at the top level (singles and doubles).
+The previous rules are 0.3 better in only one cell, top-level singles in 2026/27. In the 2023–25 holdout they are +11.5 and +18.6 on all games, +6.4 and +9.0 settled, and +3.6 and +4.5 at the top level (singles and doubles).
 
 ## Method
 
@@ -247,6 +247,23 @@ The changes are against the current rules, as in the other tables.
   - The cost is a few points of inflation in doubles (average +4 to +6) and a little less gain on settled doubles in 2025/26 (−1.3 against −2.3).
 - **Higher floors gain more on all games, but inflate doubles.** At 100 and 200, the average doubles rating rises by 20–90 points. Settled doubles gets worse (up to +9.3), because the floor then holds up players who really are that weak.
 - **Recommended: floor 0** (700 / 1100 on today's scale) together with the shift. There are no negative ratings, predictions are as good or better everywhere except settled doubles 2025/26, where the gain is a little smaller, and inflation is negligible.
+
+### The floor on the 1100 scale
+
+To put the top singles ratings around 2600, the start moved from 800 to 1100. Moving the start alone changes nothing, as long as the floor moves with it (0 became 300). Floors around that were tested with the start at 1100, as the change from a floor of 300 (thousandths of log loss):
+
+| Floor | All 25/26 S | All 25/26 D | All 26/27 S | All 26/27 D | Settled 25/26 D | Settled 26/27 D | Settled holdout D | Top 25/26 D | Top 26/27 S | Top 26/27 D | Average doubles rating |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| none | +0.5 | +6.6 | +0.1 | +8.0 | −0.9 | +1.1 | +2.4 | +0.6 | −0.0 | +0.5 | −7 to −12 |
+| 0 | +0.5 | +6.4 | +0.1 | +7.5 | −0.8 | +0.9 | +2.4 | +0.6 | −0.0 | +0.6 | −7 to −12 |
+| 200 | +0.5 | +4.4 | +0.1 | +4.8 | −0.3 | +0.2 | +1.3 | +0.4 | −0.0 | +0.6 | −5 to −8 |
+| 300 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **350** | **−0.4** | **−3.5** | **−0.3** | **−3.5** | **+0.1** | **+0.2** | **−0.7** | **−0.6** | **+0.0** | **−0.4** | **+5 to +8** |
+| 400 | −1.3 | −7.5 | −0.8 | −7.0 | +0.5 | +1.4 | −1.2 | −1.2 | +0.3 | −0.9 | +13 to +19 |
+| 450 | −3.4 | −11.1 | −2.8 | −10.1 | +1.4 | +2.9 | −1.3 | −1.6 | +0.9 | −1.4 | +24 to +33 |
+| 500 | −6.2 | −13.7 | −6.0 | −12.9 | +2.6 | +4.4 | −0.7 | −1.8 | +1.8 | −1.8 | +38 to +51 |
+
+Settled singles is within ±1 for every floor. A higher floor keeps improving the doubles predictions overall and at the top level, but from 400 it costs on settled doubles in the benchmark seasons and inflates doubles ratings, since the floor adds points at the bottom. **350** improves all doubles games by 3.5, keeps settled games and singles within ±0.2 (better in the holdout) and inflates little, so it is the floor used.
 
 ## Recommendation
 

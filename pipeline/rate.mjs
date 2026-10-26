@@ -23,10 +23,10 @@ const CALIBRATION_MIN_MATCHES = 10;
 const BIGGEST_MATCHES = 5;
 // Upsets kept per week (data/upsets.json): the matches won with the lowest win chance. Only
 // matches between settled players count: every player has 10+ matches (as for biggest wins) and a
-// rating certain to within ±250 in singles, ±180 in doubles (RD before the match, about the more
+// rating certain to within ±250 in singles, ±360 in doubles (RD before the match, about the more
 // certain half of ranked players), so a fast-improving junior beating a favourite isn't an upset.
 const WEEKLY_UPSETS = 10;
-const UPSET_MAX_RD = { singles: 125, doubles: 90 };
+const UPSET_MAX_RD = { singles: 125, doubles: 180 };
 // Rivals: opponents met at least RIVAL_MIN_MATCHES times in all disciplines together, closest first by the average point
 // margin d (as in the margin of victory weight). The average is pulled towards a typical margin
 // as if there were RIVAL_PRIOR_MATCHES more matches, so many close matches beat a few: with 10, a
@@ -341,7 +341,7 @@ const RETURN_MATCHES = 5;
 
 // onGame(game, side1, side2, expected1) is called before each rating update, for analysis; sides are
 // arrays of player states. Experiment hooks (defaults follow the README): startRating(level, pool),
-// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r, p0), expectedScore(ra, rb),
+// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r, pool), expectedScore(ra, rb),
 // kappa, doublesKappa (base K-factor for doubles), doublesSplit ("rd" or "equal": how a doubles
 // side's rating change is shared between the partners), levelWeight(level), juniorK(level) (or a number for every junior match),
 // marginWeight(sets, s), crossRegionK and minRating(pool) (no rating, start or after a match, goes
@@ -450,9 +450,9 @@ export function computeRatings(
       applyInactivity(p, g.day);
     }
 
-    // A doubles side plays at the sum of its two players' ratings: a pair whose players are each
-    // 100 points better is a 200-point favourite. (The average predicted too cautiously.)
-    const teamRating = (side) => side.reduce((sum, p) => sum + p.rating, 0);
+    // A doubles side plays at the average of its two players' ratings (R.sideRating), on the doubled
+    // doubles scale: a pair whose players are each 200 points better is a 200-point favourite.
+    const teamRating = (side) => R.sideRating(side.map((p) => p.rating));
     const ea = expectedScore(teamRating(sides[0]), teamRating(sides[1]));
     onGame?.(g, sides[0], sides[1], ea);
     const decisive = g.s !== 0.5;
@@ -488,13 +488,14 @@ export function computeRatings(
       levelWeight(g.level) * marginWeight(g.sets, g.s) * R.covidK(g.day) * crossRegion * (kMultiplier?.(g) ?? 1);
 
     // Uncertainty: grows with time since the last match, shrinks with this match (from pre-match
-    // values). In doubles each player is measured against the opposing side's summed rating and
-    // the uncertainty of that sum.
+    // values). In doubles each player is measured against the opposing side's rating and the
+    // uncertainty of that rating (on the scale of the expected score: R.rdAfterMatch).
     for (const p of all) p.rd = R.rdAfterTime(p.rd, (toTime(g.day) - toTime(p.rdDay)) / DAY_MS, rdMax(g.pool));
     const certain = all.every((p) => p.rd <= UPSET_MAX_RD[DOUBLES.has(g.pool) ? "doubles" : "singles"]);
-    const teamRd = (side) => Math.sqrt(side.reduce((sum, p) => sum + p.rd ** 2, 0));
+    const unit = R.unitOf(g.pool);
+    const teamRd = (side) => Math.sqrt(side.reduce((sum, p) => sum + p.rd ** 2, 0)) / unit;
     const rdAfter = perSide.map(({ players: side, opponents }) =>
-      side.map((p) => R.rdAfterMatch(teamRating(side), p.rd, teamRating(opponents), teamRd(opponents)))
+      side.map((p) => R.rdAfterMatch(teamRating(side), p.rd, teamRating(opponents), teamRd(opponents), unit))
     );
 
     // Rating changes: a side's change K·(S − E) is shared between its players, by each one's
@@ -503,7 +504,7 @@ export function computeRatings(
       const variance = side.players.reduce((sum, p) => sum + p.rd ** 2, 0);
       side.changes = side.players.map((p) => {
         const share = !doubles ? 1 : doublesSplit === "rd" ? p.rd ** 2 / variance : 1 / side.players.length;
-        return k * share * ratingMultiplier(p.rating, R.p0Of(g.pool)) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
+        return k * share * ratingMultiplier(p.rating, g.pool) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
       });
     }
     perSide.forEach((side, i) => side.players.forEach((p, j) => ([p.rd, p.rdDay] = [rdAfter[i][j], g.day])));
