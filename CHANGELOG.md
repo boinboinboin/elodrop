@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.15.2 (2026-10-26)
+
+- The comparison with the official ranking is up to date (41,290 games, Elo's favourite won 76.7% against 64.3%), on the How it works page and in the pipeline's README. It now also reports the games between established players (20+ rated games each), where Elo's favourite won 78.5%.
+
 ## v1.15.1 (2026-10-26)
 
 - Club pages: hovering a week on a discipline's strength history now also lists the players (or pairs) counted for the club's strength that week, best first, with any places the club couldn't fill.

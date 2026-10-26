@@ -4,12 +4,15 @@
 // For each season's final official list, both systems pick a favourite for every game in the
 // 12 months after the list date between two players on that list: the one with more official
 // points, and the one with the higher Elo rating at the same date (from data/ratings-weekly.json).
-// Also prints the Spearman rank correlation between official points and Elo.
+// Also prints the Spearman rank correlation between official points and Elo, and both systems'
+// results on the games between established players: ESTABLISHED_GAMES or more rated games each in
+// the discipline before the list date, so their ratings had time to settle.
 import { readFileSync, readdirSync } from "node:fs";
 import { collectGames } from "./rate.mjs";
 
 const DIR = new URL("data/", import.meta.url).pathname;
 const DAY_MS = 86_400_000;
+const ESTABLISHED_GAMES = 20;
 const weekly = JSON.parse(readFileSync(`${DIR}ratings-weekly.json`, "utf8")).pools;
 const games = collectGames();
 
@@ -39,6 +42,7 @@ function spearman(xs, ys) {
 
 const percent = (a, b) => (b ? `${((100 * a) / b).toFixed(1)}%` : "-").padStart(6);
 const total = { n: 0, official: 0, elo: 0, disagree: 0, eloRight: 0 };
+const established = { n: 0, official: 0, elo: 0 };
 console.log("season   pool   games  official  elo     | disagree: elo right | spearman (players)");
 // Each season's final list (<season id>.json); the seeding lists and earlier versions are in subfolders
 for (const file of readdirSync(`${DIR}ranking`).filter((f) => /^\d+\.json$/.test(f)).sort()) {
@@ -50,6 +54,11 @@ for (const file of readdirSync(`${DIR}ranking`).filter((f) => /^\d+\.json$/.test
     const elo = new Map(list[pool].map((p) => [p.id, eloAt(pool, p.id, end)]));
     const both = list[pool].filter((p) => elo.get(p.id) != null);
     const rho = spearman(both.map((p) => p.points), both.map((p) => elo.get(p.id)));
+    const played = new Map();
+    for (const g of games) {
+      if (g.pool !== pool || g.day > end) continue;
+      for (const id of [g.side1[0].id, g.side2[0].id]) played.set(id, (played.get(id) ?? 0) + 1);
+    }
 
     const s = { n: 0, official: 0, elo: 0, disagree: 0, eloRight: 0 };
     for (const g of games) {
@@ -61,6 +70,11 @@ for (const file of readdirSync(`${DIR}ranking`).filter((f) => /^\d+\.json$/.test
       s.n++;
       s.official += officialRight;
       s.elo += eloRight;
+      if ((played.get(g.side1[0].id) ?? 0) >= ESTABLISHED_GAMES && (played.get(g.side2[0].id) ?? 0) >= ESTABLISHED_GAMES) {
+        established.n++;
+        established.official += officialRight;
+        established.elo += eloRight;
+      }
       if (officialRight !== eloRight) {
         s.disagree++;
         s.eloRight += eloRight;
@@ -77,4 +91,8 @@ console.log(
   `Total ${total.n} games: official favourite won ${percent(total.official, total.n).trim()}, ` +
     `Elo favourite ${percent(total.elo, total.n).trim()}. ` +
     `They disagree on ${total.disagree} games; Elo was right in ${percent(total.eloRight, total.disagree).trim()} of them.`
+);
+console.log(
+  `Between established players (${ESTABLISHED_GAMES}+ rated games each before the list date): ${established.n} games, ` +
+    `official favourite won ${percent(established.official, established.n).trim()}, Elo favourite ${percent(established.elo, established.n).trim()}.`
 );
