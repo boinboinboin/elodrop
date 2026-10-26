@@ -120,7 +120,7 @@
     "groupHeader": "Group {number}",
     "groupDetail": "average rating {rating}",
     "straightToKnockout": "Straight to the knockout",
-    "ratingTitle": "Sum of the players' ratings in doubles",
+    "ratingTitle": "Average of the players' ratings in doubles",
     "outOfGroupTitle": "Chance of reaching the knockout from the group: actual draw (fair draw)",
     "winsEventTitle": "Chance of winning the event",
     "winsEventTitleFair": "Chance of winning the event: actual draw (fair draw)",

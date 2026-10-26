@@ -25,7 +25,7 @@ import { comparableIn, pairKind, pairPlaysIn, playerGender } from "@/utils/gende
 import { t } from "@/messages/i18n";
 import { capitalize } from "@/utils/format";
 import { DOUBLES_POOLS, POOLS } from "@/utils/pools";
-import { expectedScore, onMensScale } from "@/utils/rating";
+import { DOUBLES_SCALE, equalPartnersChance, expectedScore, onMensScale, pairRating } from "@/utils/rating";
 import { load } from "./load";
 import { getPlayer, getPlayerMatches } from "./players";
 
@@ -99,7 +99,8 @@ export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | 
     const q = playerB.pools[pool];
     if (!q || !comparableIn(pool, genders)) continue;
     const inPool = meetings.filter((m) => m.pool === pool);
-    pools[pool] = { label: p.label, a: p, b: q, chance: expectedScore(p.rating, q.rating), record: record(inPool), margins: margins(inPool) };
+    const chance = DOUBLES_POOLS.includes(pool) ? equalPartnersChance(p.rating, q.rating) : expectedScore(p.rating, q.rating);
+    pools[pool] = { label: p.label, a: p, b: q, chance, record: record(inPool), margins: margins(inPool) };
   }
   return { a: playerA, b: playerB, meetings, together, record: record(meetings), margins: margins(meetings), togetherRecord: record(together), pools, crossovers: await crossovers(playerA, playerB, meetings) };
 }
@@ -115,8 +116,8 @@ const scaled = (side: Side, map: ((w: number) => number) | null) => ({
   ratings: (side.entry.history?.ratings ?? []).map((r) => (r == null ? null : map ? map(r) : r)),
 });
 
-/** Summed weekly ratings, over the weeks every player has a rating */
-function summedHistory(histories: PairHistory[]): PairHistory | null {
+/** A pair's weekly ratings (the average of its players'), over the weeks both have a rating */
+function pairHistory(histories: PairHistory[]): PairHistory | null {
   if (histories.some((h) => !h.from || !h.ratings.length)) return null;
   const from = histories.reduce((latest, h) => (h.from > latest ? h.from : latest), histories[0].from);
   const offsets = histories.map((h) => differenceInCalendarDays(parseISO(from), parseISO(h.from)) / 7);
@@ -129,7 +130,7 @@ function summedHistory(histories: PairHistory[]): PairHistory | null {
       if (r == null) return null;
       sum += r;
     }
-    return sum;
+    return sum / histories.length;
   });
   return { from, ratings };
 }
@@ -141,7 +142,7 @@ function summedHistory(histories: PairHistory[]): PairHistory | null {
  */
 function onOneScale(players: Player[], format: Format, gap: GenderGap): { sides: Side[]; histories: PairHistory[] } | null {
   const fit = gap[format];
-  const map = (w: number) => onMensScale(w, fit, gap.p0);
+  const map = (w: number) => onMensScale(w, fit, fit.p0 ?? gap.p0);
   const sides: Side[] = [];
   const histories: PairHistory[] = [];
   for (const player of players) {
@@ -174,7 +175,7 @@ async function crossovers(a: Player, b: Player, meetings: Match[]): Promise<Head
       label: t(`headToHead.fun.formats.${format}`),
       a: sa,
       b: sb,
-      chance: expectedScore(sa.rating, sb.rating),
+      chance: format === "doubles" ? equalPartnersChance(sa.rating, sb.rating) : expectedScore(sa.rating, sb.rating),
       record: record(meetings.filter((m) => m.pool === MENS_POOLS[format])),
       history,
     });
@@ -212,17 +213,17 @@ export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b
   const disciplines = DOUBLES_POOLS.filter((pool) => pairPlaysIn(pool, pairA) && pairPlaysIn(pool, pairB));
   // The pairs from their sides (four players: A1, A2, B1, B2) and weekly histories
   const compare = (label: string, sides: Side[], histories: PairHistory[], inPools: Match[], crossover: boolean): DoublesHeadToHeadPool => {
-    const ratings: [number, number] = [sides[0].rating + sides[1].rating, sides[2].rating + sides[3].rating];
+    const ratings: [number, number] = [pairRating(sides[0].rating, sides[1].rating), pairRating(sides[2].rating, sides[3].rating)];
     return {
       label,
       crossover,
       a: [sides[0], sides[1]],
       b: [sides[2], sides[3]],
       ratings,
-      chance: expectedScore(...ratings),
+      chance: expectedScore(...ratings, DOUBLES_SCALE),
       record: record(inPools),
       margins: margins(inPools),
-      history: [summedHistory(histories.slice(0, 2)), summedHistory(histories.slice(2))],
+      history: [pairHistory(histories.slice(0, 2)), pairHistory(histories.slice(2))],
     };
   };
   const pools: Partial<Record<Pool, DoublesHeadToHeadPool>> = {};

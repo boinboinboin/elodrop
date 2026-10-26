@@ -448,9 +448,9 @@ function ratingOf(id, pool, level, male, day) {
   if (own) return { rating: own.rating, rank: own.rank, estimated: false };
   if (!SINGLES.has(pool) && id) {
     const singles = ratingBefore(id, male ? "men" : "women", day) ?? ratingBefore(id, male ? "women" : "men", day);
-    if (singles) return { rating: Math.round(R.P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - R.P0)), rank: null, estimated: true };
+    if (singles) return { rating: Math.round(R.doublesSeed(singles.rating)), rank: null, estimated: true };
   }
-  return { rating: R.startRating(level), rank: null, estimated: true };
+  return { rating: R.startRating(level, pool), rank: null, estimated: true };
 }
 
 // ---- One tournament ----
@@ -494,8 +494,10 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
   const day = info.startDate ?? today;
   // Started: locked to the analysis before (see "Locked at the start" above), or from now on
   const started = (info.startDate && today > info.startDate) || draws.some((d) => anyPlayed(d.pages));
-  const lock = started ? previous : null;
-  const lockedOn = !started ? null : lock ? (lock.lockedOn ?? lock.analysedOn ?? lock.fetchedAt.slice(0, 10)) : today;
+  // An analysis on an earlier rating scale (R.RATING_SCALE) is done again, with the ratings at the
+  // time on the current scale, keeping the day it was locked
+  const lock = started && previous?.ratingScale === R.RATING_SCALE ? previous : null;
+  const lockedOn = !started ? null : previous ? (previous.lockedOn ?? previous.analysedOn ?? previous.fetchedAt.slice(0, 10)) : today;
   const lists = [...info.lists, ...resultLists(portalenId)];
   const events = [];
   for (const d of draws) {
@@ -526,7 +528,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
         const player = id ? (rated[pool].get(id) ?? rated.men.get(id) ?? rated.women.get(id) ?? rated.mensDoubles.get(id) ?? rated.womensDoubles.get(id) ?? rated.mixedDoubles.get(id)) : null;
         return { id, name: player?.name ?? p.name, club: p.club, matchedBy: source, ...ratingOf(id, pool, level, male, day) };
       });
-      return { players, rating: Math.round(players.reduce((s, p) => s + p.rating, 0)) };
+      return { players, rating: Math.round(R.sideRating(players.map((p) => p.rating))) };
     });
     const locked = lock ? lockedEntries(lock, d.className, discipline, identified) : null;
     if (lock && !locked) console.error(`${info.name ?? cupId}, ${d.className} ${heading}: the entries changed after the start, analysed again`);
@@ -539,15 +541,15 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     const seeds = was
       ? locked.event.seeds.map((s) => was.indexOf(locked.event.entries[s]))
       : (official.seeds ?? [...ratings.keys()].sort((a, b) => ratings[b] - ratings[a]).slice(0, seedCount(event)));
-    const actual = was ? was.map((x) => x.actual) : simulate(event, ratings, { runs: RUNS, seed: 1 });
-    const fair = was ? was.map((x) => x.fair) : simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
+    const actual = was ? was.map((x) => x.actual) : simulate(event, ratings, { pool, runs: RUNS, seed: 1 });
+    const fair = was ? was.map((x) => x.fair) : simulate(event, ratings, { pool, runs: RUNS, redraw: true, seeding: seeds, seed: 2 });
     const forced = results ?? portalenResults(portalenId, d.className, discipline, event, entries);
-    let outcome = forced ? simulate(event, ratings, { runs: 1, forced }) : null;
+    let outcome = forced ? simulate(event, ratings, { pool, runs: 1, forced }) : null;
     // Withdrawals (played draws): entries that lost by walkover are out from that match on. The
     // chances with them out, with the actual draw and with a fair one, give the luck including them.
     const withdrawn = new Map(results?.withdrawals ?? []);
-    const after = withdrawn.size ? simulate(event, ratings, { runs: RUNS, seed: 3, withdrawn }) : null;
-    const fairAfter = withdrawn.size ? simulate(event, ratings, { runs: RUNS, redraw: true, seeding: seeds, seed: 4, withdrawn }) : null;
+    const after = withdrawn.size ? simulate(event, ratings, { pool, runs: RUNS, seed: 3, withdrawn }) : null;
+    const fairAfter = withdrawn.size ? simulate(event, ratings, { pool, runs: RUNS, redraw: true, seeding: seeds, seed: 4, withdrawn }) : null;
     // Results from badmintonportalen count only if they decide the event (someone won it)
     if (outcome && !results && !outcome.some((o) => o.win === 1)) outcome = null;
     const groupOf = new Map(event.groups.flatMap((g, gi) => g.slots.map((s) => [s, gi])));
@@ -631,6 +633,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     // The day of this analysis, and once the tournament has started, of the one its numbers are from
     analysedOn: today,
     lockedOn,
+    ratingScale: R.RATING_SCALE,
     runs: RUNS,
     events,
     evaluation: evaluate(events),

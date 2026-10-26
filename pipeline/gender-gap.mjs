@@ -6,16 +6,19 @@
 //
 // The model: a woman rated w in her own discipline plays like a man rated
 //   w + a + b · (w − P0)
-// on the men's scale, with a and b fitted by maximum likelihood over those matches (the expected
-// score as in rules.mjs). Women's own-discipline ratings at the time are from the weekly history,
+// on the men's scale (P0: the top level start rating), with a and b fitted by maximum likelihood over
+// those matches (the expected score as in rules.mjs). Women's own-discipline ratings at the time are from the weekly history,
 // at the end of the week before the match, so the result doesn't feed its own predictor. In
-// doubles only matches with a male partner count, and the side plays at her mapped rating plus his.
+// doubles only matches with a male partner count, and the side plays at the average of her mapped
+// rating and his.
 import { readFileSync, writeFileSync } from "node:fs";
-import { SCALE } from "./rules.mjs";
+import { DOUBLES_UNIT, P0, SCALE } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const DATA = `${DIR}data`;
-const P0 = 1500;
+// Rating difference scale per format: a doubles side is the average of two players, so a difference
+// in her rating moves the side by half as much
+const SCALES = { singles: SCALE, doubles: SCALE * DOUBLES_UNIT };
 const WEEK_MS = 7 * 86_400_000;
 const FORMATS = { singles: { men: "men", women: "women" }, doubles: { men: "mensDoubles", women: "womensDoubles" } };
 
@@ -31,14 +34,14 @@ function before(history, day) {
   return i >= 0 && i < history.ratings.length ? history.ratings[i] : null;
 }
 
-/** Maximum likelihood a, b by Newton's method; the side's rating difference is w + a + b·(w − P0) + rest */
-function fit(rows) {
-  const k = Math.LN10 / SCALE;
+/** Maximum likelihood a, b by Newton's method; the sides' rating difference is (w + a + b·(w − P0) + rest) · SCALE / scale */
+function fit(rows, scale) {
+  const k = Math.LN10 / scale;
   let a = 0, b = 0;
   for (let step = 0; step < 50; step++) {
     let ga = 0, gb = 0, haa = 0, hab = 0, hbb = 0;
     for (const { t, rest, y } of rows) {
-      const p = 1 / (1 + 10 ** (-(t + P0 + a + b * t + rest) / SCALE));
+      const p = 1 / (1 + 10 ** (-(t + P0 + a + b * t + rest) / scale));
       const v = p * (1 - p);
       ga += y - p;
       gb += (y - p) * t;
@@ -60,8 +63,8 @@ function fit(rows) {
   throw new Error("The gender gap fit did not converge");
 }
 
-const logLoss = (rows, a, b) => rows.reduce((s, { t, rest, y }) => {
-  const p = 1 / (1 + 10 ** (-(t + P0 + a + b * t + rest) / SCALE));
+const logLoss = (rows, scale, a, b) => rows.reduce((s, { t, rest, y }) => {
+  const p = 1 / (1 + 10 ** (-(t + P0 + a + b * t + rest) / scale));
   return s - (y * Math.log(p) + (1 - y) * Math.log(1 - p));
 }, 0) / rows.length;
 
@@ -87,11 +90,13 @@ for (const [id, g] of gender) {
   }
 }
 
-const out = { generatedAt: ratings.generatedAt, p0: P0 };
+const out = { generatedAt: ratings.generatedAt };
 for (const [format, list] of Object.entries(rows)) {
-  const f = fit(list);
+  const scale = SCALES[format];
+  const f = fit(list, scale);
   const ws = list.map((r) => r.t + P0).sort((x, y) => x - y);
   out[format] = {
+    p0: P0,
     a: Math.round(f.a * 10) / 10,
     b: Math.round(f.b * 1000) / 1000,
     aError: Math.round(f.aError * 10) / 10,
@@ -99,12 +104,12 @@ for (const [format, list] of Object.entries(rows)) {
     matches: list.length,
     // The women's ratings the fit covers (5th to 95th percentile): beyond them it's extrapolated
     range: [Math.round(ws[Math.floor(ws.length * 0.05)]), Math.round(ws[Math.floor(ws.length * 0.95)])],
-    logLoss: { fitted: Math.round(logLoss(list, f.a, f.b) * 1e4) / 1e4, noGap: Math.round(logLoss(list, 0, 0) * 1e4) / 1e4 },
+    logLoss: { fitted: Math.round(logLoss(list, scale, f.a, f.b) * 1e4) / 1e4, noGap: Math.round(logLoss(list, scale, 0, 0) * 1e4) / 1e4 },
   };
-  const at = (w) => Math.round(f.a + f.b * (w - P0));
+  const gaps = [-300, 0, 300, 600].map((x) => `${P0 + x}: ${Math.round(f.a + f.b * x)}`).join(", ");
   console.log(
     `${format}: ${list.length} matches, a = ${f.a.toFixed(0)} ± ${f.aError.toFixed(0)}, b = ${f.b.toFixed(2)} ± ${f.bError.toFixed(2)};` +
-      ` gap at 1200: ${at(1200)}, 1500: ${at(1500)}, 1800: ${at(1800)}, 2100: ${at(2100)}; log loss ${out[format].logLoss.fitted} (no gap: ${out[format].logLoss.noGap})`,
+      ` gap at ${gaps}; log loss ${out[format].logLoss.fitted} (no gap: ${out[format].logLoss.noGap})`,
   );
 }
 writeFileSync(`${DATA}/gender-gap.json`, JSON.stringify(out, null, 2));

@@ -1,7 +1,7 @@
 // Two doubles pairs head to head (?a1=<id>&a2=<id>&b1=<id>&b2=<id>): their record against each
 // other and each pair's record together, winning margins, and in the doubles discipline the pairs'
 // genders put them in (two men's pairs: men's doubles, two mixed pairs: mixed doubles, ...) the
-// pairs' ratings (the sum of the partners'), pair A's chance of beating pair B now and both pairs'
+// pairs' ratings (the average of the partners'), pair A's chance of beating pair B now and both pairs'
 // rating histories; then the matches. Pairs that don't play in the same discipline (a men's pair
 // against a women's or mixed pair) get a comparison just for fun on the men's doubles scale, with
 // women's ratings moved onto it by the gender gap (pipeline/gender-gap.mjs). Pair A is blue and

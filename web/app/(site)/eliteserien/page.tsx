@@ -16,7 +16,7 @@ import { rich, t } from "@/messages/i18n";
 import type { Loose } from "@/types";
 import { chance, EMPTY, pct } from "@/utils/format";
 import { eliteserienHref, playerHref } from "@/utils/hrefs";
-import { expectedScore } from "@/utils/rating";
+import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
 export const metadata: Metadata = { title: t("eliteserien.title") };
 
@@ -194,7 +194,7 @@ async function Content() {
                                   );
                                 })}
                               </td>
-                              <td className="py-2 text-right tabular-nums whitespace-nowrap">{pct(expectedScore(l.rating, refFor[s.key]))}</td>
+                              <td className="py-2 text-right tabular-nums whitespace-nowrap">{pct(expectedScore(l.rating, refFor[s.key], /^(MD|WD|XD)/.test(s.key) ? DOUBLES_SCALE : undefined))}</td>
                             </tr>
                           );
                         })}

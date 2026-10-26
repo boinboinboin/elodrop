@@ -8,6 +8,17 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.14.0 (2026-10-26)
+
+- New rating calculation, which predicts results clearly better: in the 2025/26 and 2026/27 seasons, about 28 thousandths better in log loss in singles and 63 in doubles, and better in every season since 2017/18 and at every level. The rankings are also steadier from week to week.
+  - Lower classes count more than before. No junior class counts more than U19 A, which counts like SEN B (it counted more than SEN A before), and the junior weight is ×1.5 up to that.
+  - A doubles rating now also follows the player's singles rating: for their first 200 doubles matches, each match moves it a little towards what their singles rating suggests. New doubles players start closer to their singles level too.
+  - Ratings no longer decay while a player is away. Players who haven't played for 12 months are still left out of the rankings.
+  - Players from foreign clubs start a little higher, games between regions count ×1.5 (×2 before), and very one-sided and very close matches move ratings a little less.
+- New rating scale: a new top-level player starts at 1150 (1500 before), and the best players are now around 2650, in singles and in doubles. Doubles ratings are on a scale like singles', and a pair plays at the average of its players' ratings (the sum before). No rating goes below 400 (550 in doubles). The scale on its own doesn't change rankings or win chances.
+- Tournament draw luck and the Eliteserien seasons in review are worked out again with the new ratings, and the seasons in review are now redone on every full nightly rebuild.
+- Pipeline: a benchmark of rating settings (`pipeline/benchmark.mjs`, results in `pipeline/BENCHMARK.md`), with intervals, every season since 2017/18, calibration and rank stability; `compare-ranking.mjs` runs again.
+
 ## v1.13.1 (2026-10-24)
 
 - Chart colours that colour-blind readers can tell apart, in every theme: the five disciplines' colours are now distinct from each other in any combination (before, men's singles and men's doubles looked alike with red-green colour blindness in Totebag and All England), and every chart colour has at least 3:1 contrast on its theme's cards. The front page's cards use the same colours, with head to head's in its two sides' colours, so neighbouring cards never look alike.

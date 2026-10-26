@@ -80,7 +80,7 @@ export function readRoster(file = ROSTER) {
 }
 
 // A player's ratings for the three kinds of match. Missing doubles ratings come from the singles
-// rating, as for a new doubles player (R.DOUBLES_SINGLES_SEED); anything else missing counts at
+// rating, as for a new doubles player (R.doublesSeed); anything else missing counts at
 // the lowest rating among ranked players.
 export function playerRatings(p, source) {
   const male = p.gender === "M";
@@ -88,7 +88,7 @@ export function playerRatings(p, source) {
   const singles = p.id ? source.rating(p.id, male ? "men" : "women") : null;
   const doubles = p.id ? source.rating(p.id, male ? "mensDoubles" : "womensDoubles") : null;
   const mixed = p.id ? source.rating(p.id, "mixedDoubles") : null;
-  const seed = singles !== null ? R.P0 + R.DOUBLES_SINGLES_SEED * (singles - R.P0) : null;
+  const seed = singles !== null ? R.doublesSeed(singles) : null;
   return {
     ...p,
     name: (p.id && source.name(p.id)) || p.listName,
@@ -109,7 +109,9 @@ const pairs = (list) => list.flatMap((a, i) => list.slice(i + 1).map((b) => [a, 
 // The orders two players or pairs may play in: more ranking points first; either on equal points
 const allowedOrders = ([a, b], pointsOf) =>
   pointsOf(a) > pointsOf(b) ? [[a, b]] : pointsOf(a) < pointsOf(b) ? [[b, a]] : [[a, b], [b, a]];
-export const win = (side, opponent) => R.expectedScore(side, opponent);
+// The pool of each slot type, for the expected score's scale
+export const SLOT_POOL = { MS: "men", WS: "women", MD: "mensDoubles", WD: "womensDoubles", XD: "mixedDoubles" };
+export const win = (side, opponent, pool) => R.expectedScore(side, opponent, pool);
 
 // The lineup with the most expected match wins against the reference (average) opponent in each
 // slot. Men and women are chosen separately (singles and their doubles) for each possible mixed
@@ -123,7 +125,7 @@ export function bestLineup(men, women, ref) {
       const singlesValue = (pair) => win(pair[0].singles, singlesRef[0]) + win(pair[1].singles, singlesRef[1]);
       const singles = allowedOrders(unordered, (p) => p.points.singles).reduce((x, y) => (singlesValue(y) > singlesValue(x) ? y : x));
       for (const doubles of pairs(players)) {
-        const value = singlesValue(singles) + win(doubles[0].doubles + doubles[1].doubles, doublesRef);
+        const value = singlesValue(singles) + win(R.sideRating([doubles[0].doubles, doubles[1].doubles]), doublesRef, "mensDoubles");
         for (const mixed of mixedPairs) {
           const used = [...singles, ...doubles, ...mixed];
           if (players.some((p) => used.filter((u) => u === p).length > MAX_MATCHES)) continue;
@@ -142,12 +144,12 @@ export function bestLineup(men, women, ref) {
       for (const order of [[0, 1], [1, 0]]) {
         const twoPairs = [[m.mixed[0], w.mixed[order[0]]], [m.mixed[1], w.mixed[order[1]]]].map((pair) => ({
           players: pair,
-          rating: pair[0].mixed + pair[1].mixed,
+          rating: R.sideRating([pair[0].mixed, pair[1].mixed]),
           points: pair[0].points.mixed + pair[1].points.mixed,
         }));
         // First mixed: the pair with more combined mixed doubles points (the better order on equal points)
         for (const mixed of allowedOrders(twoPairs, (pair) => pair.points)) {
-          const value = m.value + w.value + win(mixed[0].rating, ref.XD[0]) + win(mixed[1].rating, ref.XD[1]);
+          const value = m.value + w.value + win(mixed[0].rating, ref.XD[0], "mixedDoubles") + win(mixed[1].rating, ref.XD[1], "mixedDoubles");
           if (!best || value > best.value) best = { value, men: m, women: w, mixed };
         }
       }
@@ -155,7 +157,7 @@ export function bestLineup(men, women, ref) {
   }
   if (!best) return null;
   const single = (p) => ({ players: [p], rating: p.singles });
-  const double = (pair) => ({ players: pair, rating: pair[0].doubles + pair[1].doubles });
+  const double = (pair) => ({ players: pair, rating: R.sideRating([pair[0].doubles, pair[1].doubles]) });
   return {
     MS1: single(best.men.singles[0]),
     MS2: single(best.men.singles[1]),
@@ -169,7 +171,7 @@ export function bestLineup(men, women, ref) {
 }
 
 // The average opponent in each slot: the average rating of the best players across all teams
-// (for two slots, the 8 best and the next 8; doubles and mixed as pair sums).
+// (for two slots, the 8 best and the next 8; doubles and mixed as pair averages, R.sideRating).
 export function references(teams) {
   const all = teams.flatMap((t) => t.players);
   const top = (list, key) => list.map((p) => p[key]).sort((a, b) => b - a);
@@ -183,9 +185,9 @@ export function references(teams) {
   return {
     MS: [avg(ms.slice(0, n)), avg(ms.slice(n, 2 * n))],
     WS: [avg(ws.slice(0, n)), avg(ws.slice(n, 2 * n))],
-    MD: 2 * avg(md.slice(0, 2 * n)),
-    WD: 2 * avg(wd.slice(0, 2 * n)),
-    XD: [avg(xm.slice(0, n)) + avg(xk.slice(0, n)), avg(xm.slice(n, 2 * n)) + avg(xk.slice(n, 2 * n))],
+    MD: avg(md.slice(0, 2 * n)),
+    WD: avg(wd.slice(0, 2 * n)),
+    XD: [R.sideRating([avg(xm.slice(0, n)), avg(xk.slice(0, n))]), R.sideRating([avg(xm.slice(n, 2 * n)), avg(xk.slice(n, 2 * n))])],
   };
 }
 
@@ -231,7 +233,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     headToHead[a.team] = {};
     for (const b of teams) {
       if (a === b) continue;
-      const chances = SLOTS.map((s) => win(a.lineup[s.key].rating, b.lineup[s.key].rating));
+      const chances = SLOTS.map((s) => win(a.lineup[s.key].rating, b.lineup[s.key].rating, SLOT_POOL[s.type]));
       const odds = tieOdds(chances);
       headToHead[a.team][b.team] = { ...Object.fromEntries(Object.entries(odds).map(([k, v]) => [k, round(v)])), matches: chances.map((c) => round(c)) };
     }

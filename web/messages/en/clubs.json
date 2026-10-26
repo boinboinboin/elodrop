@@ -32,7 +32,7 @@
     "disciplines": "Disciplines",
     "overTime": "Over time",
     "allDisciplines": "All disciplines",
-    "allDisciplinesText": "Club strength in each discipline at the end of each week. Doubles ratings spread over a narrower range than singles, so compare how each line moves rather than the levels between singles and doubles.",
+    "allDisciplinesText": "Club strength in each discipline at the end of each week. Doubles ratings are on the same kind of scale as singles, but each discipline is rated on its own, so compare how each line moves rather than the levels between disciplines.",
     "strength": "Strength",
     "combined": "Combined",
     "combinedText": "Average standard score over all five disciplines, among the clubs with a strength in all five that week: 0 is an average club, +1 one standard deviation above it. Gaps are weeks the club wasn't strong enough to be listed in every discipline.",

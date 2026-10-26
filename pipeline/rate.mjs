@@ -23,10 +23,10 @@ const CALIBRATION_MIN_MATCHES = 10;
 const BIGGEST_MATCHES = 5;
 // Upsets kept per week (data/upsets.json): the matches won with the lowest win chance. Only
 // matches between settled players count: every player has 10+ matches (as for biggest wins) and a
-// rating certain to within ±250 in singles, ±180 in doubles (RD before the match, about the more
+// rating certain to within ±250 in singles, ±180 on the half-size doubles scale (RD before the match, about the more
 // certain half of ranked players), so a fast-improving junior beating a favourite isn't an upset.
 const WEEKLY_UPSETS = 10;
-const UPSET_MAX_RD = { singles: 125, doubles: 90 };
+const UPSET_MAX_RD = { singles: 125, doubles: 90 * R.DOUBLES_UNIT };
 // Rivals: opponents met at least RIVAL_MIN_MATCHES times in all disciplines together, closest first by the average point
 // margin d (as in the margin of victory weight). The average is pulled towards a typical margin
 // as if there were RIVAL_PRIOR_MATCHES more matches, so many close matches beat a few: with 10, a
@@ -287,6 +287,8 @@ function toGame(original, meta) {
 }
 
 let regionOf;
+// A club's regional association (after collectGames), or null for foreign clubs and combined teams
+export const clubRegion = (club) => regionOf?.(club) ?? null;
 
 export function collectGames() {
   regionOf = regionLookup();
@@ -314,6 +316,7 @@ export function collectGames() {
           day: tie.time.slice(0, 10),
           source: `L${tie.matchId}`,
           order: i,
+          home: 1, // side 1 is the home team in every league tie
           level: R.leagueLevel(group.ageGroup, group.division, m.game),
           event: `${group.division} ${group.group} (${m.game})`,
         });
@@ -340,10 +343,16 @@ const RETURN_GAP_DAYS = 365;
 const RETURN_MATCHES = 5;
 
 // onGame(game, side1, side2, expected1) is called before each rating update, for analysis; sides are
-// arrays of player states. Experiment hooks (defaults follow the README): startRating(level),
-// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r), expectedScore(ra, rb),
-// kappa, doublesKappa (base K-factor for doubles) and doublesSplit ("rd" or "equal": how a doubles
-// side's rating change is shared between the partners).
+// arrays of player states. Experiment hooks (defaults follow the README): startRating(level, pool),
+// seedRating(pool, side, level, players), kMultiplier(game), playerMultiplier(player, game, opponents), ratingMultiplier(r, pool), expectedScore(ra, rb, pool),
+// kappa, doublesKappa (base K-factor for doubles), doublesSplit ("rd" or "equal": how a doubles
+// side's rating change is shared between the partners), levelWeight(level), juniorK(level) (or a number for every junior match),
+// marginWeight(sets, s, game), crossRegionK, minRating(pool) (no rating, start or after a match, goes
+// below it), foreignBonus (null: foreign players start at their class's start), doublesPull
+// (null: off), homeAdvantage(game) (rating points added to side 1, the home team in league ties),
+// afterMatch(player, game, players) (after each match's update) and ratingPeriod(game) (a key: games
+// with the same key are rated from the ratings before the first and updated together). inactivity.floor
+// may be a function of the pool.
 export function computeRatings(
   games,
   inactivity = R.INACTIVITY,
@@ -359,6 +368,16 @@ export function computeRatings(
     kappa = R.KAPPA,
     doublesKappa = R.DOUBLES_KAPPA,
     doublesSplit = R.DOUBLES_SPLIT,
+    levelWeight = (level) => R.TIERS[level.tier].weight,
+    juniorK = R.juniorWeight,
+    marginWeight = R.marginWeight,
+    crossRegionK = R.CROSS_REGION_K,
+    minRating = R.minRatingOf,
+    foreignBonus = R.FOREIGN_START_BONUS,
+    doublesPull = R.DOUBLES_PULL,
+    homeAdvantage,
+    afterMatch,
+    ratingPeriod,
   } = {}
 ) {
   const players = Object.fromEntries(Object.values(POOLS).map((pool) => [pool, new Map()]));
@@ -376,9 +395,10 @@ export function computeRatings(
     let from = addDays(p.lastPlayed, inactivity.graceDays);
     if (p.penalizedUntil > from) from = p.penalizedUntil;
     if (day <= from) return;
-    if (p.rating > inactivity.floor) {
+    const floor = typeof inactivity.floor === "function" ? inactivity.floor(p.pool) : inactivity.floor;
+    if (p.rating > floor) {
       const factor = 0.5 ** (R.penaltyDays(from, day) / inactivity.halfLifeDays);
-      p.rating = inactivity.floor + (p.rating - inactivity.floor) * factor;
+      p.rating = floor + (p.rating - floor) * factor;
     }
     p.penalizedUntil = day;
   }
@@ -390,16 +410,22 @@ export function computeRatings(
   const SINGLES_OF = { mensDoubles: ["men"], womensDoubles: ["women"], mixedDoubles: ["men", "women"] };
   function singlesSeed(pool, side) {
     const singles = (SINGLES_OF[pool] ?? []).map((sp) => players[sp].get(side.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
-    return singles ? R.P0 + R.DOUBLES_SINGLES_SEED * (singles.rating - R.P0) : null;
+    return singles ? R.doublesSeed(singles.rating) : null;
+  }
+  // The class's start rating; players from foreign clubs (no Norwegian region) start higher
+  function classStart(level, pool, side) {
+    const start = startRating(level, pool);
+    const foreign = foreignBonus != null && side.club && !side.club.includes("/") && regionOf(side.club) === null;
+    return foreign ? Math.min(R.P0, start + foreignBonus * R.unitOf(pool)) : start;
   }
 
   function getPlayer(pool, side, level, day, source) {
     let p = players[pool].get(side.id);
     if (!p) {
       // seedRating(pool, side, level, players) can override the start rating (experiments)
-      const start = seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? startRating(level);
+      const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? classStart(level, pool, side));
       const week = weekStart(day);
-      p = { id: side.id, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], log: [], clubs: [], returning: 0 };
+      p = { id: side.id, pool, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], log: [], clubs: [], returning: 0 };
       players[pool].set(side.id, p);
     }
     p.name = side.name;
@@ -442,10 +468,10 @@ export function computeRatings(
       applyInactivity(p, g.day);
     }
 
-    // A doubles side plays at the sum of its two players' ratings: a pair whose players are each
-    // 100 points better is a 200-point favourite. (The average predicted too cautiously.)
-    const teamRating = (side) => side.reduce((sum, p) => sum + p.rating, 0);
-    const ea = expectedScore(teamRating(sides[0]), teamRating(sides[1]));
+    // A doubles side plays at the average of its two players' ratings (R.sideRating), on the doubled
+    // doubles scale: a pair whose players are each 200 points better is a 200-point favourite.
+    const teamRating = (side) => R.sideRating(side.map((p) => p.rating));
+    const ea = expectedScore(teamRating(sides[0]) + (homeAdvantage?.(g) ?? 0), teamRating(sides[1]), g.pool);
     onGame?.(g, sides[0], sides[1], ea);
     const decisive = g.s !== 0.5;
     const settled = all.every((p) => p.matches >= CALIBRATION_MIN_MATCHES);
@@ -473,20 +499,21 @@ export function computeRatings(
     }
 
     const doubles = DOUBLES.has(g.pool);
-    const crossRegion = g.crossRegion ? R.CROSS_REGION_K : 1;
-    const junior = g.level.junior ? R.JUNIOR_K : 1;
+    const crossRegion = g.crossRegion ? crossRegionK : 1;
+    const junior = !g.level.junior ? 1 : typeof juniorK === "function" ? juniorK(g.level) : juniorK;
     const k =
       (doubles ? doublesKappa : kappa) * junior *
-      R.TIERS[g.level.tier].weight * R.marginWeight(g.sets, g.s) * R.covidK(g.day) * crossRegion * (kMultiplier?.(g) ?? 1);
+      levelWeight(g.level) * marginWeight(g.sets, g.s, g) * R.covidK(g.day) * crossRegion * (kMultiplier?.(g) ?? 1);
 
     // Uncertainty: grows with time since the last match, shrinks with this match (from pre-match
-    // values). In doubles each player is measured against the opposing side's summed rating and
-    // the uncertainty of that sum.
+    // values). In doubles each player is measured against the opposing side's rating and the
+    // uncertainty of that rating (on the scale of the expected score: R.rdAfterMatch).
     for (const p of all) p.rd = R.rdAfterTime(p.rd, (toTime(g.day) - toTime(p.rdDay)) / DAY_MS, rdMax(g.pool));
     const certain = all.every((p) => p.rd <= UPSET_MAX_RD[DOUBLES.has(g.pool) ? "doubles" : "singles"]);
-    const teamRd = (side) => Math.sqrt(side.reduce((sum, p) => sum + p.rd ** 2, 0));
+    // The deviation of a side's rating (in doubles, of the average of two)
+    const teamRd = (side) => Math.sqrt(side.reduce((sum, p) => sum + p.rd ** 2, 0)) / side.length;
     const rdAfter = perSide.map(({ players: side, opponents }) =>
-      side.map((p) => R.rdAfterMatch(teamRating(side), p.rd, teamRating(opponents), teamRd(opponents)))
+      side.map((p) => R.rdAfterMatch(teamRating(side), p.rd, teamRating(opponents), teamRd(opponents), g.pool))
     );
 
     // Rating changes: a side's change K·(S − E) is shared between its players, by each one's
@@ -495,7 +522,7 @@ export function computeRatings(
       const variance = side.players.reduce((sum, p) => sum + p.rd ** 2, 0);
       side.changes = side.players.map((p) => {
         const share = !doubles ? 1 : doublesSplit === "rd" ? p.rd ** 2 / variance : 1 / side.players.length;
-        return k * share * ratingMultiplier(p.rating) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
+        return k * share * ratingMultiplier(p.rating, g.pool) * (playerMultiplier?.(p, g, side.opponents) ?? 1) * (side.s - side.e);
       });
     }
     perSide.forEach((side, i) => side.players.forEach((p, j) => ([p.rd, p.rdDay] = [rdAfter[i][j], g.day])));
@@ -538,7 +565,8 @@ export function computeRatings(
     }
     for (const side of perSide) {
       side.players.forEach((p, j) => {
-        p.rating += side.changes[j];
+        if (ratingPeriod) pending.push([p, g.pool, side.changes[j]]);
+        else p.rating = Math.max(minRating(g.pool), p.rating + side.changes[j]);
         p.peak = Math.max(p.peak, p.rating);
         p.matches++;
         if (side.s === 1) p.wins++;
@@ -547,16 +575,46 @@ export function computeRatings(
         p.lastPlayed = g.day;
       });
     }
+    // Doubles pulled towards singles (R.DOUBLES_PULL) for players with few doubles matches
+    if (doubles && doublesPull) {
+      for (const p of all) {
+        if (p.matches >= doublesPull.matches) continue;
+        const singles = (SINGLES_OF[g.pool] ?? []).map((sp) => players[sp].get(p.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
+        if (singles) p.rating += doublesPull.share * (R.doublesSeed(singles.rating) - p.rating);
+      }
+    }
+    if (afterMatch) for (const p of all) afterMatch(p, g, players);
   }
 
-  for (const g of games) rate(g);
+  // Rating periods (experiments): with ratingPeriod(game) a key, every game with the same key is
+  // rated from the ratings before the first of them, and the changes are applied together after
+  // the last (e.g. a whole tournament or tie at once)
+  const pending = [];
+  let period = null;
+  const flush = () => {
+    for (const [p, pool, change] of pending) {
+      p.rating = Math.max(minRating(pool), p.rating + change);
+      p.peak = Math.max(p.peak, p.rating);
+    }
+    pending.length = 0;
+  };
+
+  for (const g of games) {
+    if (ratingPeriod && ratingPeriod(g) !== period) {
+      flush();
+      period = ratingPeriod(g);
+    }
+    rate(g);
+  }
+  flush();
 
   const today = new Date().toISOString().slice(0, 10);
   for (const [pool, map] of Object.entries(players)) {
     for (const p of map.values()) {
       // Weekly series run to the last played week; after that the rating stays the same.
       // Ratings above the floor keep decaying while inactive, so those run to the current week.
-      const decays = inactivity.halfLifeDays && p.rating > inactivity.floor;
+      const floor = typeof inactivity.floor === "function" ? inactivity.floor(pool) : inactivity.floor;
+      const decays = inactivity.halfLifeDays && p.rating > floor;
       closeWeeks(p, addDays(weekStart(decays ? today : p.lastPlayed), 7));
       applyInactivity(p, today);
       p.rd = R.rdAfterTime(p.rd, (toTime(today) - toTime(p.rdDay)) / DAY_MS, rdMax(pool));
@@ -602,7 +660,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const genderOf = (id) => genders.get(id) ?? inferred.get(id) ?? null;
   // Fields only used while rating
-  const INTERNAL = new Set(["weekly", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks"]);
+  const INTERNAL = new Set(["weekly", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool"]);
 
   // Rankings only include active players (R.isActive) of the pool's gender (R.rankedIn); others get rank null.
   for (const [pool, map] of Object.entries(players)) {
