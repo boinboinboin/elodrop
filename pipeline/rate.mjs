@@ -92,7 +92,7 @@ const COMBINED_POOLS = { M: ["men", "mensDoubles", "mixedDoubles"], K: ["women",
 // it, divided by their standard deviation), as for the clubs' combined list: the pools are separate
 // scales with different spreads, so each discipline counts equally this way. A discipline a player
 // isn't ranked in counts with their rating there if they have one that `inactiveRating(pool, id)`
-// returns (ratings don't decay, so it is their level when they last played it). Otherwise it counts as
+// returns (their level when they last played it, less any not playing penalty). Otherwise it counts as
 // their weaker one, so specialists (doubles players who don't play singles) are ranked too, but
 // leaving a discipline out never raises a score; and at most as anyone ranked in
 // it who is at least as good in both the player's other disciplines, so a specialist never ranks
@@ -1088,7 +1088,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // The inactive ratings counted in the combined rankings: from adult play only (19 or older that
   // year, or birth year unknown). A junior's old rating is far below their level when they come back
   // (see pipeline/README.md, Not playing penalty), so a discipline last played as a junior counts as
-  // never played. An inactive rating doesn't change, so last week's list uses the same ones.
+  // never played. Last week's list uses the same ones (the not playing penalty only moves them a little in a week).
   const seniorRatings = Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
   const inactiveRating = (pool, id) => {
     const p = seniorRatings[pool].get(id);

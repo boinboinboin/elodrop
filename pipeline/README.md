@@ -111,7 +111,7 @@ $m(R_A)$ depends on each player's own rating, so the two players in a match can 
 | Doubles start from singles                 |              ×1.12 (0.7 · 1.6) |
 | Doubles pulled towards singles             |  3% per match, first 200 matches |
 | Maximum rating deviation                   |                   260 (208) |
-| Not playing penalty                        |                        none |
+| Not playing penalty                        | above 1850: 1 year grace, half-life 2 years |
 
 ## Start rating
 
@@ -201,7 +201,7 @@ where $r$ is the player's current rating and $p_0 = 1150$; in doubles the 90 is 
 | 2021-11-16 – 2022-03-08 | $\times 90\%$       | Normal         | Normal                |
 | From 2022-03-09         | Normal              | Normal         | Normal                |
 
-The not playing penalty column applied while there was one (until v1.14.0). _Time towards inactive_ is how fast time without playing counts towards a player becoming inactive (12 months, see [Rankings](#rankings)). A player who was active when Covid-19 started stays active through the lockdown, until well into 2021. Without it, most players went inactive at once and [club strengths](#club-strength-history) dropped through 2020 and 2021: in June 2021 only 33 clubs had a men's singles strength, against 81 with it.
+The not playing penalty column is how fast time without playing counts towards the [not playing penalty](#not-playing-penalty). _Time towards inactive_ is how fast time without playing counts towards a player becoming inactive (12 months, see [Rankings](#rankings)). A player who was active when Covid-19 started stays active through the lockdown, until well into 2021. Without it, most players went inactive at once and [club strengths](#club-strength-history) dropped through 2020 and 2021: in June 2021 only 33 clubs had a men's singles strength, against 81 with it.
 
 ## Doubles
 
@@ -247,9 +247,17 @@ A doubles rating therefore moves partly with the player's singles results. This 
 
 ## Not playing penalty
 
-There is none since v1.14.0: a rating stays as it is while the player doesn't play. Ranking lists already leave out players who haven't played for 12 months (see [Rankings](#rankings)).
+Only top ratings decay (since v1.16.0): after a grace period of 365 days without playing in a discipline, the part of the rating above 1850 (in singles and doubles alike) halves every 2 years:
 
-Until then, after a grace period of 365 days without playing, the part of the rating above $p_0$ decayed with a half-life of 3 years: $r(t) = p_0 + (r - p_0) \cdot 2^{-(t - 365)/1095}$ after $t$ days away. Players returning after a break turned out to be about as good as they were, and every half-life tested (2 to 5 years) predicted worse than none (see [BENCHMARK.md](BENCHMARK.md#rounds-48-the-tuned-rules)). `INACTIVITY` in `rules.mjs` can switch it back on.
+$$
+r(t) = 1850 + (r - 1850) \cdot 2^{-(t - 365)/730}
+$$
+
+after $t$ days away, with time during Covid-19 counting slower (see [Covid-19 period adjustment](#covid-19-period-adjustment)). Ratings at or below 1850 never change while the player doesn't play. A 2300 player away for 2 years comes back at 2168, and after 3 years at 2075. Ranking lists also leave out players who haven't played for 12 months (see [Rankings](#rankings)).
+
+Most players come back from a break about as good as they were, or better: juniors keep improving while they don't play, and in their first 5 matches back players aged under 50 score 2 to 6 points of expected score above their rating. So a penalty for everyone predicts worse. Top players are the exception: from about 1850, returning players do somewhat worse than their rating, more so after 2 years or more. Decaying only the part above 1850 predicts as well as no penalty overall (no season better or worse), leans the right way on top players' returns, and keeps a top player who stopped playing from holding a rating they no longer play at, which counts in the [combined rankings](#combined-rankings). See [BENCHMARK.md](BENCHMARK.md#round-9-the-not-playing-penalty-again).
+
+Until v1.14.0, the part of every rating above $p_0$ decayed after 365 days with a half-life of 3 years; from v1.14.0 to v1.16.0 there was no penalty.
 
 ## Rating uncertainty
 
@@ -311,7 +319,7 @@ Gender comes from badmintonportalen's player register. For players not in it, it
 
 `/rankings/combined` (men) and `/rankings/combined/women` rank singles, doubles and mixed doubles together; `/rankings/junior/combined` and `/rankings/junior/combined/women` do the same with the junior rankings. A player's score is the average of their standard score in each of their three disciplines (mixed doubles among their own gender): their rating minus the mean rating of the listed players ranked in that discipline, divided by the standard deviation, as for the clubs' [combined list](#strongest-clubs). The disciplines are separate rating scales with different spreads, so averaging the ratings themselves would let the widest spread count most; standard scores make each count the same. 0 is an average listed player, +1 one standard deviation above.
 
-Everyone ranked in at least two of their three disciplines is listed. In a discipline they aren't ranked in (not played in the last 12 months), their rating there counts: ratings don't decay, so it is their level when they last played it (Jonas Østhassel's 2186 in singles from January 2025, Aimee Hong's 1551 in singles from November 2024; 190 men and 71 women in October 2026). Only ratings from adult play count (19 or older that year, or birth year unknown): juniors come back far better than their old rating (see [Not playing penalty](#not-playing-penalty)), so Mathias Ji Hong's singles rating from 2019, at 15, would put him far below his level. The junior combined lists therefore never use one.
+Everyone ranked in at least two of their three disciplines is listed. In a discipline they aren't ranked in (not played in the last 12 months), their rating there counts: their level when they last played it, less any [not playing penalty](#not-playing-penalty) (Jonas Østhassel's 2106 in singles from January 2025, Aimee Hong's 1551 in singles from November 2024; 190 men and 71 women in October 2026). Only ratings from adult play count (19 or older that year, or birth year unknown): juniors come back far better than their old rating (see [Not playing penalty](#not-playing-penalty)), so Mathias Ji Hong's singles rating from 2019, at 15, would put him far below his level. The junior combined lists therefore never use one.
 
 A discipline they never played as an adult counts as their weaker one, so doubles specialists who don't play singles are ranked (Mathias Ji Hong is #17 among men in October 2026, from #13 in men's doubles and #14 in mixed doubles), but leaving a discipline out never raises a score. It also counts at most as the score in it of anyone at least as good in both their other disciplines, so a specialist never ranks above a player who is as good everywhere they play and plays the third discipline too. Without this, 2,436 such pairs among men and 267 among women were the wrong way round: the same rank is worth a different standard score in each discipline (men's mixed doubles has 977 listed players against about 1,500 in singles and doubles, so its scores are lower at the same rank: 2.32 at #30 against 2.44 in singles), and a weaker one from singles or doubles could come out above a better player's actual mixed doubles score. Most of the specialists it applies to are held down by it, by a little. Requiring all three left out 741 men and 225 women, among them some of the best doubles players; averaging only the disciplines played would let a player gain by not playing their weakest. Players ranked in one discipline only are in that discipline's ranking. "Since last week" compares with the same list made from the ratings and ranks at the end of last week; Matches is the matches in the disciplines counted, together. In `data/combined.json`; exported as `rankings/combined-<men|women>.json` and `junior/combined-<men|women>.json`.
 

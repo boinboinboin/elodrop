@@ -291,10 +291,12 @@ function weightedDays(from, to, periods, rateOf) {
 export const penaltyDays = (from, to) => weightedDays(from, to, COVID, (p) => p.penalty);
 
 // Not playing penalty. After `graceDays` without playing, the part of the rating above
-// `floor` (P0) decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or
-// below the floor are not affected. Off: ratings without it predicted better than with any
-// half-life tested (BENCHMARK.md, rounds 4-7); a half-life of 3 years was used before.
-export const INACTIVITY = { graceDays: 365, halfLifeDays: null, floor: P0 };
+// `floor` decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or below the
+// floor are not affected. Only top ratings (above 1850, in singles and doubles alike): top players
+// come back from a break somewhat worse than their rating, everyone else about as good or better,
+// so a penalty for everyone predicted worse (BENCHMARK.md, rounds 4-7 and round 9). Until v1.14.0
+// it was the part above P0 with a half-life of 3 years; none from v1.14.0 to v1.16.0.
+export const INACTIVITY = { graceDays: 365, halfLifeDays: 730, floor: 1850 };
 
 // A player is active (ranked, and counted for their club's strength) while they have played within
 // this many days. During Covid-19 the time without playing counts slower: not at all from 2020-03-18

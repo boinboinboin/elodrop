@@ -365,6 +365,41 @@ Next worth testing: a separate expected score scale for singles, whose favourite
 
 Not worth pursuing: the proposal of round 1 (flat start, no levels), chess.com-style fixed K, Glicko's K (alone or after a player's first matches), juniors at full class weight, home advantage, rating periods.
 
+## Round 9: the not playing penalty again
+
+v1.14.0 dropped the not playing penalty (round 4 and 5). Round 9 tested it again in many shapes, with a decay hook on `computeRatings` that was not kept (the adopted rule and "no not playing penalty" are in `benchmark.mjs`). Adopted in v1.16.0: **the part of a rating above 1850 decays after a year away, with a half-life of 2 years**. Besides the usual columns, the change is reported on all games since 2017/18 and on the games where a player is in their first 5 matches after a year or more away in the discipline ("returning"), since only these games can tell penalties apart.
+
+**How returning players do**, under the rules without a penalty: their actual score minus the expected score in their first 5 matches back, since 2013.
+
+| Returning players | Singles | Doubles |
+| --- | ---: | ---: |
+| All | +0.033 (13,314) | +0.021 (24,909) |
+| Left as juniors | +0.057 | +0.042 |
+| Left as juniors, away 2+ years | +0.095 | +0.039 |
+| Aged 20–49 | +0.028 to +0.050 | +0.018 to +0.031 |
+| Aged 50+ | −0.023 | −0.022 |
+| Rated 1150–1650 before the break | −0.002 | −0.001 |
+| Rated 1850–2050 | −0.057 (88) | −0.024 (101) |
+| Rated 2250+ | −0.216 (8) | −0.100 (7) |
+
+Most players come back better than they left; only players aged 50+ and top-rated players come back worse.
+
+**Penalties tested** (change in thousandths on all games since 2017/18, singles / doubles; seasons better / worse of 20):
+
+| Penalty | All games | Returning | Seasons |
+| --- | ---: | ---: | ---: |
+| Above 1150, 1 year grace, half-life 3 years (until v1.14.0) | +1.2 / +0.9 | +3.6 / +1.3 | 0 / 13 |
+| The same with half-lives of 2, 5 and 10 years, graces of 6 months to 3 years, capped, adults only, or only when inactive in every discipline | +0.1 to +2.5 | | 0 / 3 to 0 / 16 |
+| Only players aged 30+, 40+, 50+ (birth years from badmintonportalen) | +0.4, +0.1, ±0.0 / +0.3, +0.1, ±0.0 | | 1 / 6, 1 / 5, 2 / 1 |
+| Above 1450, 1 year grace, half-life 3 years | +0.2 / +0.1 | +0.2 / ±0.0 | 0 / 5 |
+| Above 1650, 1 year grace, half-life 3 years | ±0.0 / ±0.0 | −0.3 / ±0.0 | 0 / 2 |
+| **Above 1850, 1 year grace, half-life 2 years (adopted)** | **±0.0 / ±0.0** | **−0.2 / ±0.0** | **0 / 0** |
+| Above 2050, 1 year grace, half-life 2 years | ±0.0 / ±0.0 | −0.1 / ±0.0 | 0 / 2 |
+
+On the games of returning players rated 1650+ before the break (364 in singles, 564 in doubles), the adopted penalty is −4.6 ±7.6 in singles and +0.7 ±2.2 in doubles: the right way, but within the noise, as there are few such games. In `benchmark.mjs`, without the penalty: ±0.0 in every column and season.
+
+**Upward instead of down.** What helps is the opposite of a penalty: ratings below 1150 moving up towards 1150 while the player doesn't play (half-life 5 years, after 3 months: −9.3 in singles and −5.1 in doubles on all games since 2017/18, better in 19 of 20 seasons). The shorter the grace period, the bigger the gain (−19.3 and −9.6 with none), so it isn't about breaks: juniors improve faster than their ratings follow, even between matches. Worth testing next, as a change to how junior ratings move.
+
 ## Full results
 
 Output of `node benchmark.mjs` on 2026-10-26 (log loss: current in full, others as the change in thousandths).

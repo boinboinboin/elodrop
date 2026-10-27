@@ -67,6 +67,7 @@ const CONFIGS = [
   ["current", {}],
   ["before rounds 4-8 (start 1100, minimum 350)", BEFORE_ROUND_4],
   ["previous rules (before v1.14.0)", PREVIOUS],
+  ["no not playing penalty (v1.14.0 to v1.16.0)", { inactivity: { ...R.INACTIVITY, halfLifeDays: null } }],
 ];
 
 // Per game (by index in games): what it is, for the subsets, filled in on the first run
