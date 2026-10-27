@@ -16,10 +16,12 @@ export function num(value: number, decimals = 0): string {
   return numberFormat(decimals).format(value);
 }
 
-/** "+1.23" / "−0.40" / "±0.00" (a proper minus sign); `zero` is zero's sign ("+0" for a rating change) */
-export function signed(value: number, decimals = 2, zero: "±" | "+" | "" = "±"): string {
+/** "+1.23" / "−0.40" / "±0.00" (a proper minus sign); a value that rounds to zero is zero ("±0.0", not "+0.0" or "−0.0");
+ * `zero` is zero's sign, "" for none */
+export function signed(value: number, decimals = 2, zero: "±" | "" = "±"): string {
   const text = numberFormat(decimals).format(Math.abs(value));
-  return (value > 0 ? "+" : value < 0 ? "−" : zero) + text;
+  const rounded = Number(Math.abs(value).toFixed(decimals));
+  return (rounded === 0 ? zero : value > 0 ? "+" : "−") + text;
 }
 
 /** A chance as a percentage: "37%", "<1%" (above zero), ">99%" (below one); with decimals a share as it is, "10.7%" */

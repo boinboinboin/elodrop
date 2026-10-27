@@ -139,7 +139,7 @@ function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<s
         {p.club && <span className="text-gray-500">{p.club}</span>}
         {p.change !== undefined && (
           <span className={`tabular-nums ${p.club ? "ml-1.5 " : ""}${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>
-            {signed(p.change, 1, "+")}
+            {signed(p.change, 1)}
           </span>
         )}
       </span>

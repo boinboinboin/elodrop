@@ -29,7 +29,7 @@ export default function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?:
                 <span className="text-sm text-gray-500 tabular-nums" title={t("upsets.card.ratingBefore")}>{p.rating}</span>
                 {p.change !== undefined && (
                   <span className={`text-sm font-semibold tabular-nums ${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>
-                    {" "}{signed(p.change, 1, "+")}
+                    {" "}{signed(p.change, 1)}
                   </span>
                 )}
                 {p.club && (

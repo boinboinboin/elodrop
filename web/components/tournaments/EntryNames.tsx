@@ -27,7 +27,7 @@ export default function EntryNames({
         const change = changes?.[i];
         const changed = change != null && (
           <span className={`ml-1 ${toneClass(change)}`} title={t("tournaments.result.ratingChangeTitle")}>
-            {signed(change, 0, "+")}
+            {signed(change, 0)}
           </span>
         );
         return (

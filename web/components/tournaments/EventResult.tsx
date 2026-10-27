@@ -2,7 +2,7 @@
 // them gained in the tournament's week, how they won the final and their chance before the tournament, and in events with a final (a knockout, more than two entries), the final: the winner's and the
 // runner-up's rows with each set's points (lost sets in grey; both rows' points next to the line between them), or a
 // walkover. Side by side from tablet width, stacked
-// on phones; without a final, the winner's tile takes the whole width.
+// on phones; without a final, the winner's tile keeps its half of the width.
 import EntryNames from "@/components/tournaments/EntryNames";
 import { plural, t } from "@/messages/i18n";
 import type { ClubEntry, Entry, TournamentEvent } from "@/types";
@@ -26,7 +26,7 @@ export default function EventResult({ event, winner, clubs }: { event: Tournamen
         : t("tournaments.result.marginSets", { sets: `${won}–${final.sets.length - won}` }); // won with fewer points overall
 
   return (
-    <div className={`grid gap-4 mb-6 ${final ? "md:grid-cols-2" : ""}`}>
+    <div className="grid gap-4 mb-6 md:grid-cols-2">
       <div className="bg-white p-4 min-w-0">
         <p className="text-sm text-gray-600 mb-2">{winnerLabel}</p>
         <div className="max-sm:[overflow-wrap:anywhere]">

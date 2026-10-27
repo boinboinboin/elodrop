@@ -176,7 +176,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                   <td className="py-2 pr-4 text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
                   <td className="py-2 text-right tabular-nums whitespace-nowrap">
                     {Math.round(m.rating + m.change)}
-                    <span className={`block text-sm ${toneClass(m.change)}`}>{signed(m.change, 1, "+")}</span>
+                    <span className={`block text-sm ${toneClass(m.change)}`}>{signed(m.change, 1)}</span>
                   </td>
                 </tr>
               );
