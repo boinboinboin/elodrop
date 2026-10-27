@@ -1,6 +1,7 @@
 // Strongest clubs in one pool, or combined over all five: the average rating of each club's best
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
-// /clubs/strongest/<pool>. The table can be sorted by ranked players (components/ui/SortableTable.tsx).
+// /clubs/strongest/<pool>. The table can be sorted by ranked players and, per discipline, by the strength
+// gained or lost since last week (components/ui/SortableTable.tsx).
 import Link from "next/link";
 import { ClubLogo } from "@/components/clubs/Team";
 import PoolName from "@/components/format/PoolName";
@@ -55,16 +56,19 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                   <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.sinceLastWeek")}</span></th>
                   <th scope="col" className="py-3 px-1.5 sm:px-4 font-normal">{t("common.table.club")}</th>
                   <th scope="col" className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 font-normal text-right">{t(combined ? "clubs.strongest.score" : "clubs.strongest.strength")}</th>
-                  <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.changeSinceLastWeek")}</span></th>
-                  {combined ? (
-                    POOL_KEYS.map((key) => (
-                      <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{POOLS[key]}</th>
-                    ))
-                  ) : (
-                    <th scope="col" className="py-3 px-4 font-normal hidden md:table-cell">{t(rule?.pairs ? "clubs.strongest.bestPairs" : "clubs.strongest.bestPlayers")}</th>
+                  {/* The combined score has no change since last week to sort by */}
+                  {combined && (
+                    <>
+                      <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.changeSinceLastWeek")}</span></th>
+                      {POOL_KEYS.map((key) => (
+                        <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{POOLS[key]}</th>
+                      ))}
+                    </>
                   )}
                 </>
               }
+              changeClassName={combined ? undefined : "py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"}
+              headAfter={!combined && <th scope="col" className="py-3 px-4 font-normal hidden md:table-cell">{t(rule?.pairs ? "clubs.strongest.bestPairs" : "clubs.strongest.bestPlayers")}</th>}
               sortLabel={t("clubs.strongest.rankedPlayers")}
               sortTitle={t("clubs.strongest.sortByRankedPlayers")}
               sortClassName="py-3 px-4 font-normal text-right hidden sm:table-cell"
@@ -73,6 +77,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                   return {
                     key: club.club,
                     value: club.players,
+                    change: "strengthChange" in club ? club.strengthChange : null,
                     row: (
                       <tr key={club.club} className={`${ROW} hover:bg-gray-50 align-top`}>
                       <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>

@@ -303,6 +303,13 @@ export interface TournamentEvent {
   placement: boolean;
   advance: { ranks: number[]; best: number[] };
   played: boolean;
+  /**
+   * The main knockout's final once the event is played (missing in older exports; null without one): the winner's and
+   * the runner-up's entry indices, and each set's points from the winner's side, or a walkover
+   */
+  final?: { winner: number; runnerUp: number; walkover: boolean; sets: [number, number][] } | null;
+  /** Played: the rating each of the winner's players gained or lost in the tournament's week (null: no rating before) */
+  winnerRatingChange?: (number | null)[] | null;
   entries: Entry[];
   unknownPlaceholders: string[];
 }

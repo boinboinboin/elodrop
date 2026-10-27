@@ -157,6 +157,7 @@ function parseEvent(pages) {
   };
   const groups = [];
   const stages = new Map();
+  const finals = new Map(); // stage -> its final, once played
   const winners = {}; // match no -> 1 | 2 (0: not played)
   const walkovers = new Set();
   const groupOrder = []; // group index -> slots in final order, once played
@@ -217,10 +218,15 @@ function parseEvent(pages) {
     // winner (or, if it lost there, its loser: a play-off for third)
     const seen = new Map(); // position -> { no, won }
     const matches = [];
-    for (const [, [list]] of data[2]) {
+    for (const [size, [list]] of data[2]) {
       for (const m of list) {
         const no = String(m[0]);
         record(m, [slotAt.get(m[8]), slotAt.get(m[9])]);
+        // The final: the round of one match (a play-off for third comes after it, as round -3).
+        // Played: both players, the winner and the score ("21/15 18/21 21/19", side 1's points first)
+        if (size === 1 && (m[5] === 1 || m[5] === 2) && slotAt.has(m[8]) && slotAt.has(m[9])) {
+          finals.set(page.stage, { sides: [slotAt.get(m[8]), slotAt.get(m[9])], winner: m[5], score: m[3] ?? "" });
+        }
         const sides = [[m[8], m[6]], [m[9], m[7]]].map(([position, label], i) => {
           if (position >= 0) {
             const before = seen.get(position);
@@ -250,15 +256,27 @@ function parseEvent(pages) {
   // is another stage), or the first
   const fedByWinners = stageList.findIndex((s) => s.matches.some((m) => m.sides.some((src) => src?.rank === 1)));
   stageList.forEach((s, i) => (s.main = i === (fedByWinners >= 0 ? fedByWinners : 0)));
+  // The main knockout's final, from the winner's side: [winner's points, runner-up's] per set, or a walkover
+  const mainStage = [...stages.keys()][stageList.findIndex((s) => s.main)];
+  const played = finals.get(mainStage);
+  const final = !played
+    ? null
+    : {
+        winner: played.sides[played.winner - 1],
+        runnerUp: played.sides[2 - played.winner],
+        walkover: /w\.?\s*o/i.test(played.score),
+        sets: [...played.score.matchAll(/(\d+)\s*[/-]\s*(\d+)/g)].map(([, a, b]) => (played.winner === 1 ? [+a, +b] : [+b, +a])),
+      };
   // Played once every match with two players has a winner
   const event = { slots: entries.length, groups, stages: stageList };
   const decided = Object.values(winners);
-  const played = decided.length > 0 && decided.every((w) => w > 0);
+  const done = decided.length > 0 && decided.every((w) => w > 0);
   return {
     title: pages[0].stageTitle,
     entries,
     event,
-    results: played ? { winners, groupOrder, walkovers: [...walkovers], withdrawals: [...withdrawals] } : null,
+    results: done ? { winners, groupOrder, walkovers: [...walkovers], withdrawals: [...withdrawals] } : null,
+    final: done ? final : null,
     unknownPlaceholders: [...unknownPlaceholders],
   };
 }
@@ -441,6 +459,18 @@ function ratingBefore(id, pool, day) {
   return rating === null ? null : { rating, rank: h.ranks?.[week - 1] ?? null };
 }
 
+// A player's rating at the end of the week of `day` (the current rating if the history doesn't
+// reach it yet; null without one)
+function ratingAfter(id, pool, day) {
+  if (!id) return null;
+  ratingBefore(id, pool, day); // loads the history
+  const h = histories.get(id)[pool];
+  const current = rated[pool].get(id)?.rating ?? null;
+  if (!h) return current;
+  const week = Math.floor((Date.parse(`${day}T00:00:00Z`) - Date.parse(`${h.from}T00:00:00Z`)) / DAY_MS / 7);
+  return week < h.ratings.length ? (h.ratings[week] ?? current) : current;
+}
+
 // A player's rating in the event's pool before the tournament. Without one: doubles from their
 // singles rating (as for a new doubles player in rate.mjs), else the class's start rating.
 function ratingOf(id, pool, level, male, day) {
@@ -582,6 +612,21 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
         best: [...new Set(sources.filter((x) => x.bestOfRank).map((x) => x.bestOfRank))].sort(),
       },
       played: !!outcome,
+      // The main knockout's final once the event is played on Cup2000: the winner's and the runner-up's
+      // entries, and the score from the winner's side (null without a final, or with the results
+      // from badmintonportalen)
+      final: results && outcome ? parsed.final : null,
+      // Played: the rating each of the winner's players gained or lost in the tournament's week
+      // (their rating at the end of the week of the last day minus the one before; null for a
+      // player without a rating before, marked ≈)
+      winnerRatingChange: (() => {
+        const w = outcome?.findIndex((o) => o.win === 1) ?? -1;
+        if (w < 0) return null;
+        return entries[w].players.map((p) => {
+          const after = p.estimated ? null : ratingAfter(p.id, pool, info.endDate ?? day);
+          return after === null ? null : Math.round(after - p.rating);
+        });
+      })(),
       entries: entries.map((e, i) => {
         let luck = null;
         if (!noLuck && was?.[i].luck) luck = drawLuck(was[i].luck);

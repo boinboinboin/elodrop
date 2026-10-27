@@ -9,6 +9,7 @@ import { Suspense, type ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import EntryNames from "@/components/tournaments/EntryNames";
+import EventResult from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -255,8 +256,9 @@ function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament;
         {entryCount(event)}
         {formatDescription(event)}.{" "}
         {single && `${t("tournaments.event.noLuck", { reason: t(event.entries.length <= 2 ? "tournaments.event.justOneMatch" : "tournaments.event.everyoneVsEveryone") })} `}
-        {winner && rich("tournaments.event.wonBy", { strong }, { names: winner.players.map((p) => p.name).join(" / "), chance: pct(winner.actual.win) })}
       </p>
+
+      {winner && <EventResult event={event} winner={winner} clubs={clubs} />}
 
       <dl className="grid gap-2 md:grid-cols-[auto_1fr] md:gap-x-6 mb-6 max-w-4xl text-gray-700">
         {knockoutColumn && (

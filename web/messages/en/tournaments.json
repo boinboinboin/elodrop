@@ -79,7 +79,6 @@
     "noLuck": "{reason}, so there is no draw luck.",
     "justOneMatch": "Just one match",
     "everyoneVsEveryone": "Everyone plays everyone",
-    "wonBy": "<strong>Won by {names}</strong>, with a {chance} chance before.",
     "strongestGroups": "Strongest groups by average rating: {groups}.",
     "strongestGroup": "group {number} ({rating})",
     "order": "Order"
@@ -215,5 +214,22 @@
       "last128": "last 128"
     },
     "round": "round {number}"
+  },
+  "result": {
+    "winner": "Winner",
+    "winners": "Winners",
+    "runnerUp": "Runner-up",
+    "runnersUp": "Runners-up",
+    "final": "Final",
+    "walkover": "Won by walkover",
+    "chanceBefore": "{chance} chance of winning before the tournament",
+    "ratingChangeTitle": "Rating gained or lost in the tournament's week",
+    "margin": "Won the final {sets}, by {points}.",
+    "marginWalkover": "Won the final by walkover.",
+    "points": {
+      "one": "{count} point",
+      "other": "{count} points"
+    },
+    "marginSets": "Won the final {sets}."
   }
 }

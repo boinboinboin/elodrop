@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.16.1 (2026-10-27)
+
+- The rankings and the strongest clubs can be sorted by the biggest gain or loss since last week: click the ± column's header.
+- A finished tournament event shows its winner in a box of its own, and in events with a final, the final's score with the winner and the runner-up.
+
 ## v1.16.0 (2026-10-27)
 
 - Junior rankings (U19): a ranking for every discipline of everyone born in 2008 or later, rated from matches in junior classes and junior leagues only. Switch between all players and juniors at the top of the rankings.

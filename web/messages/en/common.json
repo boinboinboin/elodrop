@@ -73,5 +73,9 @@
   "matches": {
     "one": "{count} match",
     "other": "{count} matches"
+  },
+  "changeSort": {
+    "gain": "Sort by the biggest gain since last week",
+    "loss": "Sort by the biggest loss since last week"
   }
 }

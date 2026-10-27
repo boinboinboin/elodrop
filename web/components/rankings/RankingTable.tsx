@@ -1,7 +1,8 @@
 "use client";
 
-// The rankings table, with a search for player or club, in rank order or (a click on the Matches
-// header, and again to go back) by matches played. Rows come as compact arrays (sent once,
+// The rankings table, with a search for player or club, in rank order, by matches played (a click on the Matches
+// header, and again to go back) or by the rating change since last week (a click on its header: the biggest gain first,
+// again: the biggest loss first, again: back). Rows come as compact arrays (sent once,
 // instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
 // rating, matches, last played, rank last week, rating change since last week]. `clubs`: the clubs in the table with a
 // page, short name → [slug, logo].
@@ -9,23 +10,25 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import { Search } from "@/components/SVG";
+import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { t } from "@/messages/i18n";
 import { date, EMPTY, num } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
-import { sortByDesc } from "@/utils/sort";
+import { sortByChange, sortByDesc } from "@/utils/sort";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, string, (number | null)?, (number | null)?];
 
 export default function RankingTable({ rows, clubs, summary }: { rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
+  const [byChange, setByChange] = useState<ChangeOrder>(null);
   const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   const search = useMemo(() => rows.map(([, name, club]) => `${name} ${club ?? ""}`.toLowerCase()), [rows]);
   const found = terms.length ? rows.filter((_, i) => terms.every((t) => search[i].includes(t))) : rows;
   // Most matches first; equal ones keep their rank order (the rows' order)
-  const shown = byMatches ? sortByDesc(found, (row) => row[5]) : found;
+  const shown = byMatches ? sortByDesc(found, (row) => row[5]) : byChange ? sortByChange(found, (row) => (row[3] === null ? null : row[8]), byChange) : found;
 
   return (
     <>
@@ -42,17 +45,19 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
 
       <div className="bg-white overflow-x-clip">
         {/* clip, not auto: a scrolling box would keep the sticky header from sticking to the page (narrow screens hide the wide columns) */}
-        <table className="w-full text-left" data-sorted={byMatches || undefined}>
+        <table className="w-full text-left" data-sorted={byMatches ? "matches" : byChange ? "change" : undefined}>
           <thead className={STICKY_HEAD}>
             <tr>
-              <th scope="col" className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 font-normal text-right w-10 sm:w-16" aria-sort={byMatches ? "none" : "ascending"}>{t("common.table.rank")}</th>
+              <th scope="col" className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 font-normal text-right w-10 sm:w-16" aria-sort={byMatches || byChange ? "none" : "ascending"}>{t("common.table.rank")}</th>
               <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.sinceLastWeek")}</span></th>
               <th scope="col" className="py-3 px-1.5 sm:px-4 font-normal">{t("common.table.player")}</th>
               <th scope="col" className="py-3 px-4 font-normal hidden sm:table-cell">{t("common.table.club")}</th>
               <th scope="col" className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 font-normal text-right">{t("common.table.rating")}</th>
-              <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.changeSinceLastWeek")}</span></th>
+              <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14" aria-sort={byChange === "gain" ? "descending" : byChange === "loss" ? "ascending" : "none"}>
+                <ChangeSortButton order={byChange} onClick={() => { setByChange(nextChangeOrder(byChange)); setByMatches(false); }} />
+              </th>
               <th scope="col" className="py-3 px-4 font-normal text-right hidden md:table-cell" aria-sort={byMatches ? "descending" : "none"}>
-                <SortButton active={byMatches} onClick={() => setByMatches(!byMatches)} label={t("common.table.matches")} sortTitle={t("rankings.table.sortByMatches")} />
+                <SortButton active={byMatches} onClick={() => { setByMatches(!byMatches); setByChange(null); }} label={t("common.table.matches")} sortTitle={t("rankings.table.sortByMatches")} />
               </th>
             </tr>
           </thead>
