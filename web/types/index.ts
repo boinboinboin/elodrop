@@ -57,8 +57,11 @@ export interface CombinedEntry {
   /** Matches played in the disciplines ranked in, together */
   matches: number;
   lastPlayed: string;
-  /** Singles, doubles and mixed doubles: the rank and rating in each (null: not ranked in it) */
-  pools: Partial<Record<Pool, { rank: number; rating: number } | null>>;
+  /**
+   * Singles, doubles and mixed doubles: the rank and rating in each; an inactive rating counted has rank null and the day
+   * last played; null: no rating counted (a discipline counted as their weaker one)
+   */
+  pools: Partial<Record<Pool, { rank: number | null; rating: number; lastPlayed?: string } | null>>;
 }
 
 export interface SeasonRow {

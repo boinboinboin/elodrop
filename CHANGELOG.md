@@ -11,7 +11,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.16.0 (2026-10-27)
 
 - Junior rankings (U19): a ranking for every discipline of everyone born in 2008 or later, rated from matches in junior classes and junior leagues only. Switch between all players and juniors at the top of the rankings.
-- Combined rankings for men and for women, for everyone and for juniors: singles, doubles and mixed doubles together. Everyone ranked in at least two of the three is listed, so doubles specialists are ranked too, with a discipline they don't play counting as their weaker one. Each list shows the player's rating and rank in every discipline and their matches, and can be sorted by matches.
+- Combined rankings for men and for women, for everyone and for juniors: singles, doubles and mixed doubles together. Everyone ranked in at least two of the three is listed, so doubles specialists are ranked too: a discipline they no longer play counts with their rating from when they last played it, and one they never played as an adult as their weaker one. Each list shows the player's rating and rank in every discipline and their matches, and can be sorted by matches.
 - Player pages show the player's birth year.
 
 ## v1.15.2 (2026-10-26)

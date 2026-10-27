@@ -91,11 +91,18 @@ const COMBINED_POOLS = { M: ["men", "mensDoubles", "mixedDoubles"], K: ["women",
 // average of their standard score in each (their rating minus the mean of those players ranked in
 // it, divided by their standard deviation), as for the clubs' combined list: the pools are separate
 // scales with different spreads, so each discipline counts equally this way. A discipline a player
-// isn't ranked in counts as their weaker one, so specialists (doubles players who don't play singles)
-// are ranked too, but leaving a discipline out never raises a score. `ranked`: pool -> ranked players
+// isn't ranked in counts with their rating there if they have one that `inactiveRating(pool, id)`
+// returns (ratings don't decay, so it is their level when they last played it). Otherwise it counts as
+// their weaker one, so specialists (doubles players who don't play singles) are ranked too, but
+// leaving a discipline out never raises a score; and at most as anyone ranked in
+// it who is at least as good in both the player's other disciplines, so a specialist never ranks
+// above someone as good everywhere they play who plays the third one too (the same rank is worth a
+// different standard score in each discipline: men's mixed doubles has far fewer players, so its
+// scores are lower at the same rank, and a weaker one from singles or doubles came out higher than
+// the actual mixed doubles score of a better player). `ranked`: pool -> ranked players
 // ({ id, rating, gender }; mixed doubles both genders), each with any other fields to keep. Each
-// player's `entries` are per discipline, undefined where they aren't ranked.
-function combinedRanking(ranked) {
+// player's `entries` are per discipline: the inactive rating used, or undefined where none counted.
+function combinedRanking(ranked, inactiveRating = () => null) {
   return Object.fromEntries(
     Object.entries(COMBINED_POOLS).map(([gender, pools]) => {
       const byPool = pools.map((pool) => new Map(ranked[pool].filter((p) => pool !== "mixedDoubles" || p.gender === gender).map((p) => [p.id, p])));
@@ -109,8 +116,21 @@ function combinedRanking(ranked) {
       const list = ids
         .map((id) => {
           const scores = byPool.flatMap((map, i) => (map.has(id) ? [zScore[i](map.get(id).rating)] : []));
-          if (scores.length < pools.length) scores.push(Math.min(...scores));
-          return { id, entries: byPool.map((map) => map.get(id)), score: scores.reduce((a, b) => a + b, 0) / pools.length };
+          const entries = byPool.map((map) => map.get(id));
+          const missing = byPool.findIndex((map) => !map.has(id));
+          const inactive = missing >= 0 ? inactiveRating(pools[missing], id) : null;
+          if (inactive) {
+            scores.push(zScore[missing](inactive.rating));
+            entries[missing] = inactive;
+          } else if (missing >= 0) {
+            const played = byPool.filter((map) => map.has(id));
+            let fill = Math.min(...scores);
+            for (const [other, p] of byPool[missing]) {
+              if (played.every((map) => map.get(other)?.rating >= map.get(id).rating)) fill = Math.min(fill, zScore[missing](p.rating));
+            }
+            scores.push(fill);
+          }
+          return { id, entries, score: scores.reduce((a, b) => a + b, 0) / pools.length };
         })
         .sort((a, b) => b.score - a.score)
         .map((p, i) => ({ rank: i + 1, ...p }));
@@ -1039,8 +1059,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Combined rankings (combinedRanking), of the rankings and of the junior rankings, with "since last
   // week" from the same lists at the end of baseWeek: the rank then
-  function combined(now, then) {
-    const [current, before] = [combinedRanking(now), combinedRanking(then)];
+  function combined(now, then, inactiveRating) {
+    const [current, before] = [combinedRanking(now, inactiveRating), combinedRanking(then, inactiveRating)];
     return Object.fromEntries(
       Object.entries(current).map(([gender, list]) => {
         const previous = new Map(before[gender].map((p) => [p.id, p.rank]));
@@ -1052,13 +1072,29 @@ if (import.meta.url === `file://${process.argv[1]}`) {
             score: Math.round(score * 100) / 100,
             matches: entries.reduce((sum, e) => sum + (e?.matches ?? 0), 0), // in the disciplines ranked in, together
             lastPlayed: entries.filter(Boolean).map((e) => e.lastPlayed).sort().at(-1),
-            // Each discipline's rank and rating (null: not ranked in it)
-            pools: Object.fromEntries(COMBINED_POOLS[gender].map((pool, i) => [pool, entries[i] ? { rank: entries[i].rank, rating: entries[i].rating } : null])),
+            // Each discipline's rank and rating; an inactive rating counted has rank null and the day
+            // last played; null: none counted
+            pools: Object.fromEntries(
+              COMBINED_POOLS[gender].map((pool, i) => {
+                const e = entries[i];
+                return [pool, !e ? null : e.rank === null ? { rank: null, rating: e.rating, lastPlayed: e.lastPlayed } : { rank: e.rank, rating: e.rating }];
+              }),
+            ),
           })),
         ];
       }),
     );
   }
+  // The inactive ratings counted in the combined rankings: from adult play only (19 or older that
+  // year, or birth year unknown). A junior's old rating is far below their level when they come back
+  // (see pipeline/README.md, Not playing penalty), so a discipline last played as a junior counts as
+  // never played. An inactive rating doesn't change, so last week's list uses the same ones.
+  const seniorRatings = Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
+  const inactiveRating = (pool, id) => {
+    const p = seniorRatings[pool].get(id);
+    const age = birthYears[id] ? +p?.lastPlayed.slice(0, 4) - birthYears[id] : null;
+    return p && p.rank === null && (age === null || age >= JUNIOR_AGE) ? p : null;
+  };
   const seniorThen = Object.fromEntries(Object.entries(lastWeekActive).map(([pool, list]) => [pool, list.map(({ p, rating, gender }) => ({ id: p.id, rating, gender }))]));
   const juniorBefore = Object.fromEntries(
     Object.entries(juniorThen).map(([pool, map]) => [pool, juniorRanking(pool, map, addDays(baseEnd, -1)).map(({ p }) => ({ id: p.id, rating: p.rating, gender: genderOf(p.id) }))]),
@@ -1067,7 +1103,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     `${DIR}data/combined.json`,
     JSON.stringify({
       generatedAt: new Date().toISOString(),
-      senior: combined(Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, list.filter((p) => p.rank !== null)])), seniorThen),
+      senior: combined(Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, list.filter((p) => p.rank !== null)])), seniorThen, inactiveRating),
       junior: combined(junior, juniorBefore),
     }),
   );

@@ -46,12 +46,14 @@
   "combined": {
     "tab": "Combined",
     "crumb": "Combined",
-    "explanation": "Singles, doubles and mixed doubles together, for everyone ranked in at least two of them: the average of how far each of their ratings is above or below the others', in standard deviations, so each discipline counts the same. A discipline a player isn't ranked in counts as their weaker one, so specialists are ranked too, but leaving one out never helps.",
+    "explanation": "Singles, doubles and mixed doubles together, for everyone ranked in at least two of them: the average of how far each of their ratings is above or below the others', in standard deviations, so each discipline counts the same. In a discipline a player isn't ranked in, their rating from when they last played it counts (ratings don't change while away); one they never played as an adult counts as their weaker one, but never above anyone who plays it and is at least as good in the other two.",
     "summary": "{count} players ranked in at least two of the three disciplines.",
     "juniorSummary": "{count} juniors ranked in at least two of the three disciplines: born in {year} or later, with junior matches in the last 12 months.",
     "score": "Score",
     "title": "Combined, {gender}",
     "juniorTitle": "Combined, {gender}, juniors (U19)",
-    "notRanked": "Not ranked in this discipline: counts as their weaker one"
+    "notRanked": "Never played as an adult: counts as their weaker one, at most as anyone at least as good in the other two",
+    "inactive": "inactive",
+    "inactiveTitle": "Not played in the last 12 months: their rating from when they last played it counts"
   }
 }

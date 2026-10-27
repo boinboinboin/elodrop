@@ -2,8 +2,8 @@
 
 // A combined ranking's table (singles, doubles and mixed doubles together), with a search for player or club, in rank
 // order or (a click on the Matches header, and again to go back) by matches played, as the rankings table. Rows come as
-// compact arrays: [id, name, club, rank, score, matches in the three disciplines, [rank, rating] in each of `pools` (null:
-// not ranked in it), rank last week]. `clubs`: the clubs in the table with a page, short name → [slug, logo].
+// compact arrays: [id, name, club, rank, score, matches in the three disciplines, [rank, rating] in each of `pools` (rank
+// null: an inactive rating; null: none counted), rank last week]. `clubs`: the clubs in the table with a page, short name → [slug, logo].
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import PoolName from "@/components/format/PoolName";
@@ -17,7 +17,7 @@ import { EMPTY, num, signed } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
 
-export type CombinedRow = [number, string, string | null, number, number, number, ([number, number] | null)[], number | null];
+export type CombinedRow = [number, string, string | null, number, number, number, ([number | null, number] | null)[], number | null];
 
 export default function CombinedTable({ pools, rows, clubs, summary }: { pools: Pool[]; rows: CombinedRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
   const [query, setQuery] = useState("");
@@ -86,10 +86,17 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                   {ratings.map((entry, i) => (
                     <td key={pools[i]} className="py-3 px-4 text-right tabular-nums hidden lg:table-cell">
                       {entry ? (
-                        <>
-                          {entry[1]}
-                          <span className="block text-sm text-gray-600">{t("common.rankValue", { rank: entry[0] })}</span>
-                        </>
+                        entry[0] === null ? (
+                          <span className="text-gray-500" title={t("rankings.combined.inactiveTitle")}>
+                            {entry[1]}
+                            <span className="block text-sm">{t("rankings.combined.inactive")}</span>
+                          </span>
+                        ) : (
+                          <>
+                            {entry[1]}
+                            <span className="block text-sm text-gray-600">{t("common.rankValue", { rank: entry[0] })}</span>
+                          </>
+                        )
                       ) : (
                         <span className="text-gray-400" title={t("rankings.combined.notRanked")}>{EMPTY}</span>
                       )}
