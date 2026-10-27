@@ -90,6 +90,8 @@ export interface Match {
   opponents: PlayerRef[];
   rating: number;
   change: number;
+  /** Doubles: how far the rating was pulled towards the player's singles after the match (missing when none) */
+  pull?: number;
   result: number;
   winChance: number;
   score: string;

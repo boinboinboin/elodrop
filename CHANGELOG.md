@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.17.2 (2026-10-27)
+
+- A doubles match in a player's match list now shows the pull towards their singles that followed it ("−13.6 to singles"), below the match's own change, and the rating after includes it. Until their 200th doubles match, a player's doubles rating moves a little towards the level their singles gives after every match, so the matches didn't add up to the rating or to the rating change in a tournament's winner box.
+
 ## v1.17.1 (2026-10-27)
 
 - A finished event's winner box keeps half the width when there's no final or no score to show next to it, instead of stretching across the page.

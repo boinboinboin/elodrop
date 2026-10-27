@@ -243,7 +243,7 @@ $$
 R_A'' = R_A' + 0.03 \cdot \left(R_{\text{doubles}}(R_{\text{singles}}) - R_A'\right)
 $$
 
-A doubles rating therefore moves partly with the player's singles results. This was the biggest gain in the benchmark of v1.14.0 (about 28 thousandths of log loss on doubles games, in every season since 2017/18): see [BENCHMARK.md](BENCHMARK.md#rounds-48-the-tuned-rules).
+A doubles rating therefore moves partly with the player's singles results. The match list shows the pull below the match's own change ("−13.6 to singles", `pull` in the match log) and the rating after both, so the matches add up to the rating: Adrian Olsen-Loe Pedersen won Båtsfjord Open 2026's mixed doubles with +37 from his five matches, but his singles (955, a doubles level of 932) pulled his 1402 down about 13 after each, and he ended the week on 1372. This was the biggest gain in the benchmark of v1.14.0 (about 28 thousandths of log loss on doubles games, in every season since 2017/18): see [BENCHMARK.md](BENCHMARK.md#rounds-48-the-tuned-rules).
 
 ## Not playing penalty
 
@@ -341,7 +341,7 @@ On the page of a woman (by gender in badmintonportalen's player register) who ha
 
 ### Matches
 
-A player's page has one tab per discipline they have played, with a graph of all their disciplines together above the tabs. Each tab lists all their matches, showing the last 20 with a button to show all (`data/matches/<id>.json` holds every match, newest first). Every opponent and partner is shown with their rating before the match and the club they played for at the time (their club history, as on the rating graph); rivals with the club they play for now. A Highlights box, with a tab for each, lists their 5 biggest wins and losses and the 5 matches that raised and lowered their rating most (largest rating change, in any match). Biggest wins are the wins with the lowest win chance before the match ($E_A$); biggest losses are the losses with the highest. Only matches where both players already had 10 rated matches count, since start ratings are too uncertain to make an upset meaningful.
+A player's page has one tab per discipline they have played, with a graph of all their disciplines together above the tabs. Each tab lists all their matches, showing the last 20 with a button to show all (`data/matches/<id>.json` holds every match, newest first). Each match shows the rating after it and the change it brought, and in doubles the pull towards singles that followed it (see [Doubles pulled towards singles](#doubles-pulled-towards-singles)). Every opponent and partner is shown with their rating before the match and the club they played for at the time (their club history, as on the rating graph); rivals with the club they play for now. A Highlights box, with a tab for each, lists their 5 biggest wins and losses and the 5 matches that raised and lowered their rating most (largest rating change, in any match). Biggest wins are the wins with the lowest win chance before the match ($E_A$); biggest losses are the losses with the highest. Only matches where both players already had 10 rated matches count, since start ratings are too uncertain to make an upset meaningful.
 
 ### Rivals
 

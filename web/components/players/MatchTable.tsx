@@ -1,7 +1,8 @@
 "use client";
 
 // A table of one player's matches (opponents, and the partner in doubles): result and score, win
-// chance before the match and the rating after. With `limit`, only that many rows with a button to
+// chance before the match and the rating after, with the match's change below it and, in doubles, the pull towards the
+// player's singles that followed it. With `limit`, only that many rows with a button to
 // show all; `sortable` adds sorting by date or rating change; `embedded` leaves out the box and
 // title; `showMargin` shows each match's point margin (head to head). A match whose tournament has
 // a draw-luck page (`tournamentLinks`: badmintonportalen id → Cup2000 id, from the match key
@@ -175,8 +176,13 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                   </td>
                   <td className="py-2 pr-4 text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
                   <td className="py-2 text-right tabular-nums whitespace-nowrap">
-                    {Math.round(m.rating + m.change)}
+                    {Math.round(m.rating + m.change + (m.pull ?? 0))}
                     <span className={`block text-sm ${toneClass(m.change)}`}>{signed(m.change, 1)}</span>
+                    {m.pull != null && (
+                      <span className="block text-xs text-gray-500" title={t("players.matches.pullTitle")}>
+                        {t("players.matches.pull", { pull: signed(m.pull, 1) })}
+                      </span>
+                    )}
                   </td>
                 </tr>
               );

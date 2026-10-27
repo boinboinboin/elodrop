@@ -637,7 +637,11 @@ export function computeRatings(
       for (const p of all) {
         if (p.matches >= doublesPull.matches) continue;
         const singles = (SINGLES_OF[g.pool] ?? []).map((sp) => players[sp].get(p.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
-        if (singles) p.rating += doublesPull.share * (R.doublesSeed(singles.rating) - p.rating);
+        if (!singles) continue;
+        const pull = doublesPull.share * (R.doublesSeed(singles.rating) - p.rating);
+        p.rating += pull;
+        // The match's log entry shows the pull beside the match's own change
+        if (keepWeekly && Math.abs(pull) >= 0.05) p.log.at(-1).pull = Math.round(pull * 10) / 10;
       }
     }
     if (afterMatch) for (const p of all) afterMatch(p, g, players);

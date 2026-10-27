@@ -96,6 +96,8 @@
     "lost": "Lost",
     "draw": "Draw",
     "pointMargin": "Point margin",
+    "pull": "{pull} to singles",
+    "pullTitle": "After each doubles match, until the 200th, the rating moves 3% of the way towards the level the player's singles rating gives",
     "loadingMore": "Loading matches…",
     "loadFailed": "Couldn't load the matches: try again",
     "showFewer": "Show fewer",
