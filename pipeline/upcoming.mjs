@@ -46,7 +46,7 @@ import { service, unescape, parsePlayer } from "./fetch-tournament.mjs";
 import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
-import { EVENTS, normalize } from "./cup2000-results.mjs";
+import { EVENTS, knownAs, normalize } from "./cup2000-results.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/upcoming`;
@@ -380,9 +380,11 @@ for (const list of Object.values(pools)) for (const p of list) {
   if (!(byName.get(key) ?? []).some((q) => q.id === p.id)) byName.set(key, [...(byName.get(key) ?? []), p]);
 }
 
-// The player id for a name in the draw: from the event's entry list (same name), then anyone on
+// The player id for a name in the draw: from identities.txt, the event's entry list (same name), then anyone on
 // the tournament's lists, then a rated player of that name (the one from that club if several)
 function identify({ name, club }, eventList, allLists) {
+  const known = knownAs(name);
+  if (known) return { id: known, source: "identities" };
   const key = normalize(name);
   const same = (p) => normalize(p.name) === key;
   const found = eventList.flat().find(same) ?? allLists.flat().find(same);

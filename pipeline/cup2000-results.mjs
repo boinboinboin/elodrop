@@ -4,9 +4,11 @@
 // is a data/portalen/<id>.json for it, its matches played so far are taken from the draw, in the
 // same shape as fetch-portalen.mjs writes, and once there is, that is used instead (also if it has
 // no matches), so finished tournaments are rated from badmintonportalen as before.
-// Players are identified by name: from the tournament's entry list on badmintonportalen (the event's,
-// then the whole tournament's), then the player register if only one player has that name. Matches
+// Players are identified by name: from identities.txt (a name in the draw that isn't the player's on
+// badmintonportalen), the tournament's entry list on badmintonportalen (the event's, then the whole
+// tournament's), then the player register if only one player has that name. Matches
 // with a player not identified are left out until the tournament's results are fetched.
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { unescape, parsePlayer } from "./fetch-tournament.mjs";
 
@@ -61,6 +63,18 @@ function playedMatches(pages) {
   return out;
 }
 
+// identities.txt: a draw's name, by its hash (so the file doesn't name anyone), -> player id
+export const nameHash = (name) => createHash("sha256").update(normalize(name)).digest("hex").slice(0, 16);
+let identities = null;
+export function knownAs(name) {
+  if (!identities) {
+    const file = `${DIR}identities.txt`;
+    const lines = existsSync(file) ? readFileSync(file, "utf8").split("\n") : [];
+    identities = new Map(lines.map((l) => l.replace(/#.*/, "").trim().split(/\s+/)).filter((f) => f.length === 2).map(([hash, id]) => [hash, +id]));
+  }
+  return identities.get(nameHash(name)) ?? null;
+}
+
 let register = null; // normalized name -> [player] from data/players.json
 function fromRegister(name) {
   if (!register) {
@@ -82,7 +96,7 @@ function side(names, eventPlayers, allPlayers) {
     const key = normalize(name);
     const same = (p) => normalize(p.name) === key;
     const listed = eventPlayers.find(same) ?? allPlayers.find(same);
-    return { id: listed?.id ?? fromRegister(name), name, club: club ?? "" };
+    return { id: knownAs(name) ?? listed?.id ?? fromRegister(name), name, club: club ?? "" };
   });
 }
 
@@ -120,3 +134,7 @@ export function provisionalTournaments() {
   }
   return tournaments;
 }
+
+// node cup2000-results.mjs --hash "First Last": the name's hash for identities.txt
+const hashAt = process.argv.indexOf("--hash");
+if (process.argv[1] === new URL(import.meta.url).pathname && hashAt !== -1) console.log(nameHash(process.argv[hashAt + 1] ?? ""));

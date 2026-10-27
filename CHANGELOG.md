@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.17.3 (2026-10-27)
+
+- A player whose name in a tournament's draw differs from the one on badmintonportalen can now be identified by hand (`pipeline/identities.txt`, which keeps names out of the repository by storing a hash). A player listed under another name in Sandefjord Ranking U17*AB and ÅlesundCupen 2026 now shows with her rating there instead of an estimate.
+
 ## v1.17.2 (2026-10-27)
 
 - A doubles match in a player's match list now shows the pull towards their singles that followed it ("−13.6 to singles"), below the match's own change, and the rating after includes it. Until their 200th doubles match, a player's doubles rating moves a little towards the level their singles gives after every match, so the matches didn't add up to the rating or to the rating change in a tournament's winner box.

@@ -1,0 +1,11 @@
+# Players whose name in a Cup2000 draw isn't the one they have on badmintonportalen (e.g. a new
+# surname), so they aren't identified by name. Read by upcoming.mjs and cup2000-results.mjs, before
+# the entry lists and the player register.
+#
+# One player per line:  <name hash>  <badmintonportalen player id>  # note, without the name
+#
+# The name hash keeps names out of the repository: the first 16 hex digits of the SHA-256 of the
+# draw's name (without the club) as normalized for matching. Print it with:
+#   node cup2000-results.mjs --hash "First Last"
+
+686f9809bebd3953  45318  # Norborg, 2026: Sandefjord Ranking U17*AB, ÅlesundCupen
