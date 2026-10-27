@@ -4,7 +4,7 @@
 //
 // results: the fetched results (tournaments, team matches, and the matches played so far in
 // tournaments being played, from their draws: cup2000-results.mjs), the official ranking, the
-// player register and clubs, and the pipeline itself (code, corrections, rosters).
+// player register, clubs and birth years, and the pipeline itself (code, corrections, rosters).
 // draws: the tournament draws from Cup2000 (data/upcoming/raw) and the ranking lists they're seeded
 // by (data/ranking/seeding/<version>, upcoming.mjs).
 // Fields that only record when something was fetched (fetchedAt, generatedAt) are left out, so
@@ -30,7 +30,7 @@ function fingerprint(dataFiles, codeFiles = [], extra = null) {
 }
 
 const results = fingerprint(
-  [...json("portalen"), ...json("league"), ...json("ranking"), ...["players.json", "clubs.json", "tournaments.json"].map((f) => `${DATA}/${f}`).filter(existsSync)],
+  [...json("portalen"), ...json("league"), ...json("ranking"), ...["players.json", "clubs.json", "birth-years.json", "tournaments.json"].map((f) => `${DATA}/${f}`).filter(existsSync)],
   files(DIR.replace(/\/$/, ""), (f) => /\.(mjs|txt)$/.test(f) && statSync(`${DIR}${f}`).isFile()),
   provisionalTournaments(),
 );

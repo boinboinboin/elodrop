@@ -38,6 +38,12 @@ export interface RatingEntry {
   plusMinus: number;
 }
 
+/** A player in the junior rankings (junior/<pool>.json): from junior matches only, ranked players only */
+export type JuniorEntry = Pick<RatingEntry, "rank" | "previousRank" | "ratingChange" | "id" | "name" | "club" | "gender" | "rating" | "rd" | "plusMinus" | "peak" | "matches" | "wins" | "draws" | "losses" | "firstPlayed" | "lastPlayed"> & {
+  rank: number;
+  birthYear: number;
+};
+
 export interface SeasonRow {
   season: number;
   rating: number;
@@ -112,6 +118,8 @@ export interface Player {
   id: number;
   name: string;
   club: string | null;
+  /** From their profile on badmintonportalen (null: not shown there; missing in older exports) */
+  birthYear?: number | null;
   /** The closest rivals over all disciplines (missing in exports from before they were) */
   rivals?: Rival[];
   /** In page order: the player's own gender's disciplines first */

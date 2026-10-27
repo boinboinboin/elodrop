@@ -303,6 +303,12 @@ Mixed doubles is rated as one pool, but men and women are ranked in separate lis
 
 Gender comes from badmintonportalen's player register. For players not in it, it is the opposite of most of their mixed doubles partners' genders, or otherwise female if they have played women's singles or doubles. Players whose gender is still unknown get no mixed doubles rank.
 
+### Junior rankings (U19)
+
+`/rankings/junior` (men's singles) and `/rankings/junior/<list>` rank the juniors in each discipline from junior matches only: every match in a junior class (U11 to U19) or a junior league is rated again on its own, with the same rules, starting from nothing, so only results between juniors count. Juniors who also play senior classes keep those results in the main rankings, where their rating comes from every match; mixing the two here would rate a junior's senior matches against opponents who aren't in the junior pool. The list is everyone under 19 in the season by birth year, as badmintonportalen's age groups: in a season starting in year S everyone born in S − 18 or later (2008 or later in 2026/27). Players without a known birth year aren't ranked. Active, gender (men's and women's disciplines rank their own gender, mixed doubles ranks men and women separately) and "since last week" (the junior ratings and ranks from the junior matches up to the end of last week) are as in the main rankings. In `data/junior.json`; exported as `junior/<pool>.json`.
+
+Birth years come from each player's profile on badmintonportalen ("Født 2006"): `node fetch-birth-years.mjs` fetches the players in the register and the fetched results who don't have one yet, one request each, into `data/birth-years.json` (null where the profile shows none). The first run takes about 45 minutes; the nightly run only fetches new players. The player pages show the birth year.
+
 ### Ranking history
 
 At the top of a player's page, one chart shows their national rank at the end of every week since they started, with a line per discipline, and a table of their rank at the end of each season. The weekly rank uses the same rules as the ranking lists: players are ranked by their rating at the end of the week, among players active then (Covid-adjusted), and in mixed doubles among men or among women. The current week is the ranking itself. The chart has a logarithmic scale with #1 at the top, so a climb from #100 to #50 looks as big as one from #20 to #10.

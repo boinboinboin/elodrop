@@ -9,8 +9,10 @@
 //   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months; not players of
 //                                 the other gender, see rules.mjs rankedIn)
 //   clubs.json                    strongest clubs per pool and how club strength is calculated
+//   junior/<pool>.json            the junior rankings (U19, from junior matches only), ranked
+//                                 players, best first
 //   club-history/<NBF id>.json    a club's strength and rank per week
-//   players/<id>.json             one player: per pool their rating, weekly history (with the
+//   players/<id>.json             one player (with their birth year): per pool their rating, weekly history (with the
 //                                 number of ranked players each week) and match log, with only the
 //                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`),
 //                                 and their rivals over all disciplines
@@ -71,6 +73,9 @@ for (const [pool, players] of Object.entries(ratings.pools)) {
   write(`rankings/${pool}-inactive.json`, { generatedAt, pool, players: players.filter((p) => p.rank === null && rankedIn(pool, p.gender)) });
 }
 write("clubs.json", { generatedAt, clubs: ratings.clubs, clubStrength: ratings.clubStrength });
+// Junior rankings (U19, from junior matches only: rate.mjs), ranked players only
+const junior = existsSync(`${DATA}/junior.json`) ? read("junior.json") : null;
+for (const [pool, players] of Object.entries(junior?.pools ?? {})) write(`junior/${pool}.json`, { generatedAt, pool, season: junior.season, bornFrom: junior.bornFrom, players });
 for (const f of readdirSync(`${DATA}/club-history`)) write(`club-history/${f}`, read(`club-history/${f}`));
 
 // Players: each pool's rating with its history (and the number ranked each week) and match log
@@ -91,6 +96,8 @@ for (const [pool, players] of Object.entries(ratings.pools)) {
   }
 }
 const optional = (file) => (existsSync(`${DATA}/${file}`) ? read(file) : {});
+// From the players' profiles on badmintonportalen (fetch-birth-years.mjs); null if not shown
+const birthYears = optional("birth-years.json");
 // A player page shows this many matches per pool; the rest are loaded when asked for
 const RECENT_MATCHES = 20;
 for (const [id, entries] of byPlayer) {
@@ -107,7 +114,7 @@ for (const [id, entries] of byPlayer) {
   }
   const first = Object.values(pools)[0];
   // No generatedAt here: a file whose content hasn't changed isn't uploaded again (R2 counts writes)
-  write(`players/${id}.json`, { id, name: first.name, club: first.club, rivals: matches.rivals ?? [], pools });
+  write(`players/${id}.json`, { id, name: first.name, club: first.club, birthYear: birthYears[id] ?? null, rivals: matches.rivals ?? [], pools });
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 

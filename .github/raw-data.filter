@@ -15,5 +15,6 @@
 + /tournaments.json
 + /players.json
 + /clubs.json
++ /birth-years.json
 + /eliteserien-*.json
 - *

@@ -72,6 +72,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
             {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
           </p>
         )}
+        {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>
         </p>

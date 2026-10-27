@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
       // Men's singles was the front page until the landing page; its list is /rankings
       { source: "/ranking", destination: "/rankings", permanent: true },
       { source: "/rankings/men", destination: "/rankings", permanent: true },
+      { source: "/rankings/junior/men", destination: "/rankings/junior", permanent: true },
       // Likewise the strongest clubs (/clubs?pool=women), the upsets (?week=, ?year=) and a tournament's summary
       { source: "/clubs", has: [pool], destination: "/clubs/strongest/:pool", permanent: true },
       { source: "/upsets", has: [query("week", "(?<week>\\d{4}-\\d{2}-\\d{2})")], destination: "/upsets/:week", permanent: true },

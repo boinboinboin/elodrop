@@ -1,6 +1,7 @@
 // The ranking lists and their URLs. Each list is its own static page, so it is rendered once per
 // data update and served from the cache: "/rankings" is men's singles, "/rankings/<list>" the others and
-// "/rankings/<list>/inactive" a list with the players who haven't played in the last 12 months.
+// "/rankings/<list>/inactive" a list with the players who haven't played in the last 12 months, and
+// "/rankings/junior" and "/rankings/junior/<list>" the junior rankings (U19).
 // The strongest clubs likewise: "/clubs" combined, "/clubs/strongest/<pool>" per discipline.
 // (The old "/?pool=...&gender=...&inactive=1" and "/clubs?pool=..." links redirect here, and "/ranking"
 // and "/rankings/men" to "/rankings", see next.config.ts.)
@@ -29,6 +30,12 @@ export function rankingHref(pool: Pool, gender: Gender | null = null, inactive =
   const slug = rankingSlug(pool, gender);
   if (slug === "men" && !inactive) return "/rankings";
   return `/rankings/${slug}${inactive ? "/inactive" : ""}`;
+}
+
+/** A junior ranking (U19): "/rankings/junior" is men's singles, "/rankings/junior/<list>" the others */
+export function juniorRankingHref(pool: Pool, gender: Gender | null = null): string {
+  const slug = rankingSlug(pool, gender);
+  return slug === "men" ? "/rankings/junior" : `/rankings/junior/${slug}`;
 }
 
 export const strongestClubsHref = (pool: Pool | "combined") => (pool === "combined" ? "/clubs" : `/clubs/strongest/${pool}`);

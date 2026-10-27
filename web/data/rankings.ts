@@ -1,5 +1,5 @@
 // The rankings per pool
-import type { Gender, Pool, RatingEntry } from "@/types";
+import type { Gender, JuniorEntry, Pool, RatingEntry } from "@/types";
 import { load } from "./load";
 
 /**
@@ -15,4 +15,15 @@ export async function getRankings(pool: Pool, includeInactive = false, gender: G
     players = [...active, ...inactive].sort((a, b) => b.rating - a.rating);
   }
   return gender ? players.filter((p) => p.gender === gender) : players;
+}
+
+/**
+ * The junior ranking (U19) of a pool, best first: rated from junior matches only, everyone born in
+ * `bornFrom` or later who has played a junior match in the last 12 months. With a gender, only
+ * players of that gender (mixed doubles).
+ */
+export async function getJuniorRankings(pool: Pool, gender: Gender | null = null): Promise<{ players: JuniorEntry[]; bornFrom: number | null }> {
+  const data = await load<{ players: JuniorEntry[]; bornFrom: number }>(`junior/${pool}.json`);
+  const players = data?.players ?? [];
+  return { players: gender ? players.filter((p) => p.gender === gender) : players, bornFrom: data?.bornFrom ?? null };
 }

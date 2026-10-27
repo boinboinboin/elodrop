@@ -7,8 +7,8 @@
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
 // data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
-// over all pools).
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+// over all pools) and data/junior.json (the U19 rankings, from junior matches only).
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
 import { provisionalTournaments } from "./cup2000-results.mjs";
 
@@ -35,6 +35,8 @@ const RIVAL_MIN_MATCHES = 3;
 const RIVAL_PRIOR_MATCHES = 10;
 const TYPICAL_MARGIN = 0.2;
 const RIVALS = 3;
+// The junior rankings: players under this age in the season (U19), by birth year
+const JUNIOR_AGE = 19;
 // Club history: a tournament club counts for this long; otherwise the league team's club is used.
 const TOURNAMENT_CLUB_DAYS = 365;
 // Club strength per pool: a weighted average of the club's best ranked players (singles) or pairs
@@ -959,6 +961,46 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     }
   }
   writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
+
+  // Junior rankings (U19): the matches in junior classes and leagues (level.junior) rated again on
+  // their own, with the same rules, so only results between juniors count. Ranked: everyone under 19
+  // in the season by birth year (fetch-birth-years.mjs; players without one aren't ranked), so in a
+  // season starting in year S everyone born in S - 18 or later, as on badmintonportalen. Active and
+  // gender as in the rankings (mixed doubles ranks men and women separately). "Since last week" as
+  // there: the ratings and ranks from the junior matches up to the end of baseWeek.
+  const birthYears = existsSync(`${DIR}data/birth-years.json`) ? JSON.parse(readFileSync(`${DIR}data/birth-years.json`, "utf8")) : {};
+  const season = +today.slice(5, 7) >= 7 ? +today.slice(0, 4) : +today.slice(0, 4) - 1;
+  const bornFrom = season - (JUNIOR_AGE - 1);
+  const juniorGames = games.filter((g) => g.level.junior);
+  const baseEnd = addDays(firstWeek, (baseWeek + 1) * 7); // the Monday after baseWeek
+  const juniorNow = computeRatings(juniorGames, R.INACTIVITY, { weekly: false }).players;
+  const juniorThen = computeRatings(juniorGames.filter((g) => g.day < baseEnd), R.INACTIVITY, { weekly: false }).players;
+  // The ranked juniors of a pool on `day`, best first, each with their rank
+  function juniorRanking(pool, map, day) {
+    const counts = {};
+    return [...map.values()]
+      .filter((p) => birthYears[p.id] >= bornFrom && R.isActive(p.lastPlayed, day) && R.rankedIn(pool, genderOf(p.id)))
+      .sort((a, b) => b.rating - a.rating)
+      .map((p) => {
+        const key = pool === "mixedDoubles" ? genderOf(p.id) : "all";
+        return { p, rank: (counts[key] = (counts[key] ?? 0) + 1) };
+      });
+  }
+  const junior = {};
+  for (const [pool, map] of Object.entries(juniorNow)) {
+    const before = new Map(juniorRanking(pool, juniorThen[pool], addDays(baseEnd, -1)).map(({ p, rank }) => [p.id, rank]));
+    junior[pool] = juniorRanking(pool, map, today).map(({ p, rank }) => {
+      const then = juniorThen[pool].get(p.id);
+      return {
+        rank, previousRank: before.get(p.id) ?? null,
+        id: p.id, name: p.name, club: clubOf(p), gender: genderOf(p.id), birthYear: birthYears[p.id],
+        rating: round(p.rating), ratingChange: then ? Math.round(p.rating) - Math.round(then.rating) : null,
+        rd: Math.round(p.rd), plusMinus: Math.round(2 * p.rd), peak: round(p.peak),
+        matches: p.matches, wins: p.wins, draws: p.draws, losses: p.losses, firstPlayed: p.firstPlayed, lastPlayed: p.lastPlayed,
+      };
+    });
+  }
+  writeFileSync(`${DIR}data/junior.json`, JSON.stringify({ generatedAt: new Date().toISOString(), season, bornFrom, pools: junior }));
 
   // Per club file, keyed by NBF club id (clubs no longer in the club list have no club page).
   // Each pool keeps only the weeks from its first to its last value: `from` is that first week's

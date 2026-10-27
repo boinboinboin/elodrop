@@ -91,6 +91,7 @@ jobs:
             pipeline/data/cache
             pipeline/data/players.json
             pipeline/data/clubs.json
+            pipeline/data/birth-years.json
             pipeline/data/tournaments.json
             pipeline/data/eliteserien-*.json
             pipeline/data/build-fingerprint.txt
@@ -116,6 +117,11 @@ jobs:
       - name: Fetch the player register and clubs
         if: steps.mode.outputs.weekly == 'true'
         run: node fetch-players.mjs && node fetch-clubs.mjs
+
+      # The birth years of players not seen before (one request each), for the junior rankings and
+      # the player pages; after the results and the register, which bring the new players
+      - name: Fetch new players' birth years
+        run: node fetch-birth-years.mjs
 
       # The official ranking, published once a week, Wednesday to Friday: one request to check,
       # and the lists (about 20 seconds) only when a new one is out
