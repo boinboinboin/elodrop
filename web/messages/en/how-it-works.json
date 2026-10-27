@@ -143,7 +143,7 @@
   "tested": {
     "title": "Does it work?",
     "p1": "Every rule is there because it predicts results better. To check, the ratings pick the winner of matches they weren't tuned on, and we count how often they're right.",
-    "p2": "Against the official ranking, which rewards points collected over the last 12 months, the ratings did clearly better: in 41,290 matches between two players on the official list since 2015, the player with the higher rating won far more often than the one with more ranking points.",
+    "p2": "Against the official ranking, which rewards points collected over the last 12 months, the ratings did clearly better: in 41,285 matches between two players on the official list since 2015, the player with the higher rating won far more often than the one with more ranking points.",
     "elo": "Higher rating won",
     "official": "More ranking points won",
     "nerd1": "Changes are judged by log loss on matches the settings weren't tuned on (lower is better): it rewards confident correct predictions and punishes confident wrong ones. The current rules were tuned on the 2025/26 and 2026/27 seasons, with 2023–25 held out, and checked on every season since 2017/18.",

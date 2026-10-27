@@ -539,7 +539,7 @@ The official NBF ranking lists (badmintonportalen.no/NBF/Ranglister/) rank senio
 
 |                                |  Games | Favourite won |
 | ------------------------------ | -----: | ------------: |
-| Official ranking (more points) | 41,290 |         64.3% |
-| Elo (higher rating)            | 41,290 |         76.7% |
+| Official ranking (more points) | 41,285 |         64.3% |
+| Elo (higher rating)            | 41,285 |         76.7% |
 
-Elo predicted better in every season and both pools, best on the 2021/2022 list (79.7% against 64.3%; only the 486 games after the 2019/2020 list, when Covid stopped most play, did better). When the two disagreed on the favourite (14,417 games), the Elo favourite won 67.8% of the time. In the 28,650 games between established players, with at least 20 rated games each before the list date, the Elo favourite won 78.5% and the official favourite 65.5%: a settled rating predicts a little better, and the testing starts after the warm-up, so new players are the only ones still settling. The rank correlation between official points and Elo is only about 0.4–0.6: official points reward playing many tournaments, Elo only rewards results.
+Elo predicted better in every season and both pools, best on the 2021/2022 list (79.7% against 64.3%; only the 486 games after the 2019/2020 list, when Covid stopped most play, did better). When the two disagreed on the favourite (14,412 games), the Elo favourite won 67.8% of the time. In the 28,648 games between established players, with at least 20 rated games each before the list date, the Elo favourite won 78.5% and the official favourite 65.5%: a settled rating predicts a little better, and the testing starts after the warm-up, so new players are the only ones still settling. The rank correlation between official points and Elo is only about 0.4–0.6: official points reward playing many tournaments, Elo only rewards results.
