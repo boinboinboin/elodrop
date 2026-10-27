@@ -23,7 +23,7 @@
 //   search-index.json             [id, name, club, ranked, matches] for the name search
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
-//   eliteserien.json, eliteserien-<season>.json
+//   eliteserien.json, eliteserien-<season>.json, eliteserien-ten-matches.json
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
 //   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)
@@ -146,13 +146,14 @@ for (const w of upsets.weeks ?? []) {
 for (const [year, weeks] of years) write(`upsets/${year}.json`, { year, weeks });
 write("upsets/index.json", { generatedAt: upsets.generatedAt ?? generatedAt, years: [...years.keys()], latest: upsets.weeks?.[0] ?? null });
 
-// Eliteserien: this season's strengths and each season in review
+// Eliteserien: this season's strengths, each season in review and the 10-match test
 const eliteserienSeasons = readdirSync(DATA)
   .map((f) => f.match(/^eliteserien-(\d{4}-\d{2})\.json$/)?.[1])
   .filter(Boolean)
   .sort()
   .reverse();
 if (existsSync(`${DATA}/eliteserien.json`)) write("eliteserien.json", read("eliteserien.json"));
+if (existsSync(`${DATA}/eliteserien-ten-matches.json`)) write("eliteserien-ten-matches.json", read("eliteserien-ten-matches.json"));
 for (const season of eliteserienSeasons) write(`eliteserien-${season}.json`, read(`eliteserien-${season}.json`));
 
 // Tournaments with a draw

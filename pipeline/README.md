@@ -456,6 +456,15 @@ The Eliteserien page (`/eliteserien`) estimates how strong the eight teams in th
 
 Real lineups vary (injuries, tactics, players' availability), so the chances are for each team at full strength.
 
+### What if a tie were 10 matches
+
+`/eliteserien/ten-matches` runs the same model on this season's teams with a tie of 10 matches: a 3rd men's singles and a 2nd men's doubles. `node eliteserien-ten-matches.mjs` (after `rate.mjs`, in every nightly full rebuild) writes `data/eliteserien-ten-matches.json`, with both formats side by side.
+
+- **Rules.** As today: a player plays at most 2 matches and at most one in each discipline; the three singles players play in order of singles ranking points, the first men's doubles pair has more combined men's doubles ranking points than the second, and the first mixed pair more combined mixed doubles points (either order on equal points).
+- **Average opponent.** As for 8 matches, with the 3rd men's singles at the average of the 17th to 24th best men's singles ratings and the 2nd men's doubles at the average of the 17th to 32nd best men's doubles ratings.
+- **Table points** by the same margins as today: 4-0 for 7-3 or better, 3-1 for 6-4, 2-2 for 5-5. A tie is won with 6 matches.
+- **Teams.** 9 men's places need at least 5 men. Haugerud's list has 4, so Advait Mital (Kristiansand) is added to Haugerud for the test (`ADDED` in the script), and the page says so. Both formats use the same players, so the differences are the format's; Advait Mital doesn't make Haugerud's 8-match lineup, so the 8-match numbers equal `/eliteserien`'s.
+
 ### Earlier seasons in review
 
 `/eliteserien/<season>` (2021-22 to 2025-26) runs the same model on an earlier season and compares it with what happened. `node eliteserien-review.mjs [season]` (after `rate.mjs`; all seasons without an argument, as in every nightly full rebuild) writes `data/eliteserien-<season>.json`, from the teams in `pipeline/eliteserien-<season>.txt`, the season's ties in the league data and the ranking versions from the day before each round (`node fetch-ranking.mjs 2002025 --before <round's first day>`). Each season's rounds, list and official standings are set in the script's `SEASONS`.

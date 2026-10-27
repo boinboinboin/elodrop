@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.17.0 (2026-10-27)
+
+- What if an Eliteserien tie were 10 matches instead of 8? A new page, /eliteserien/ten-matches, adds a 3rd men's singles and a 2nd men's doubles to every tie of this season, with the same players and rules, and compares it with today's format: the predicted table in both, how each team's points and places change, head to head with the change in every pairing, and each team's strongest lineup of 10 with who plays what. Haugerud's list has too few men for 10 matches, so one player is added to Haugerud for the test, as the page says at the top. Linked from the Eliteserien page and found in the search.
+
 ## v1.16.1 (2026-10-27)
 
 - The rankings and the strongest clubs can be sorted by the biggest gain or loss since last week: click the ± column's header.

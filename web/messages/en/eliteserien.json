@@ -115,5 +115,64 @@
       "title": "Changes to the list",
       "intro": "Players who played for a team without being on its list, counted for the team they played for:"
     }
+  },
+  "tenMatchesLink": "What if a tie were 10 matches instead of 8? <link>This season with a 3rd men's singles and a 2nd men's doubles</link>.",
+  "tenMatches": {
+    "title": "What if a tie were 10 matches?",
+    "heading": "What if a tie were 10 matches instead of 8?",
+    "loading": "Loading the 10-match test…",
+    "intro": "Eliteserien {season} with a 3rd men's singles and a 2nd men's doubles in every tie: the same teams, players and rules, against today's 8 matches.",
+    "disclaimer": {
+      "title": "A test, not the real league",
+      "text": "Nothing here is a real lineup or result: it is today's Eliteserien model run on a format that doesn't exist, to see what it would change.",
+      "added": "One change to the teams: {reason} (a player plays at most 2 matches), so <player>{name}</player> ({club}) is added to {team} for this test, without being on {team}'s list.",
+      "addedEight": "{name} would also make {team}'s 8-match lineup, so {team}'s 8-match numbers here differ from the Eliteserien page.",
+      "addedNotEight": "{name} wouldn't make {team}'s 8-match lineup, so the 8-match numbers here are the same as on <link>the Eliteserien page</link>."
+    },
+    "howItWorks": "A tie of 10 is 3 men's singles, 2 women's singles, 2 men's doubles, 1 women's doubles and 2 mixed doubles. Everything else is as today: a player plays at most 2 matches and at most one in each discipline, the singles players play in order of their singles ranking points, and the first pair in order of combined ranking points (men's doubles points for the two men's doubles){ranking}. Each team fields the lineup with the most expected match wins against an average opponent in each match (for the 3rd men's singles, the average of the 17th to 24th best men; for the 2nd men's doubles, of the 17th to 32nd best doubles ratings). A tie is won with 6 matches and drawn at 5-5, and table points are by the same margins as today: 4-0 for winning 7-3 or better, 3-1 for 6-4 and 2-2 for 5-5.",
+    "rankingPeriod": " (ranking {period})",
+    "findings": {
+      "title": "What changes",
+      "men": "Men play 7 of the 10 matches (5 of 8 today), so each team needs at least 5 men, and its 5th man and its second men's doubles pair count.",
+      "gain": "Gains most: {team}, {change} table points ({from} → {to}).",
+      "loss": "Loses most: {team}, {change} table points ({from} → {to}).",
+      "moves": "Places changed: {moves}.",
+      "noMoves": "No team changes place in the predicted table.",
+      "move": "{team} {from} → {to}"
+    },
+    "table": {
+      "title": "Predicted table, 8 and 10 matches",
+      "intro": "The regular season, one tie against each other team, by expected table points with 10 matches a tie, and the same with 8 matches underneath.",
+      "placeTitle": "Place with 10 matches, and with 8 underneath when it differs",
+      "team": "Team",
+      "tablePoints": "Table points",
+      "matches": "Matches won per tie",
+      "winsTie": "Wins tie",
+      "draw": "Draw",
+      "tablePointsTitle": "Expected table points from one tie against each of the other seven teams, with the change from 8 matches",
+      "matchesTitle": "Average over ties against the other seven teams",
+      "ofTen": "of 10",
+      "withEight": "{value} with 8",
+      "note": "Expected values: table points add up over the seven ties (28 at most in both formats), the other columns are averages per tie."
+    },
+    "headToHead": {
+      "title": "Head to head with 10 matches",
+      "intro": "Chance that the team on the left wins a tie of 10 against the team at the top, with the change from 8 matches underneath. Hover for the expected scores.",
+      "cellTitle": "{a} against {b} with 10 matches: expected {matches} in matches, {points} in table points; wins {win}, draws {draw}, loses {loss}. With 8: wins {win8}, expected {matches8}"
+    },
+    "team": {
+      "summary": "{points} expected table points ({change} from 8 matches) · {matches} of 10 matches won per tie · wins {win} of ties",
+      "lineup": "Strongest lineup of 10",
+      "lineupSubtitle": "With the chance of winning each match against an average opponent; the two new matches are marked, and where the 8-match lineup has other players in a match, they're shown under it",
+      "new": "New",
+      "was": "With 8: {players}",
+      "changes": "Who plays what",
+      "changesSubtitle": "The players whose matches change from 8 to 10",
+      "player": "Player",
+      "eight": "With 8",
+      "ten": "With 10",
+      "none": "–",
+      "added": "Added for the test"
+    }
   }
 }

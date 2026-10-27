@@ -8,7 +8,7 @@ import { getTournamentsIndex } from "@/data/tournaments";
 import { searchPlayers } from "@/data/players";
 import { t } from "@/messages/i18n";
 import { date, normalize, seasonLabel, words as splitWords } from "@/utils/format";
-import { clubHref, eliteserienHref, playerHref, tournamentHref } from "@/utils/hrefs";
+import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, tournamentHref } from "@/utils/hrefs";
 
 export async function GET(request: Request) {
   const q = (new URL(request.url).searchParams.get("q") ?? "").slice(0, 60);
@@ -28,7 +28,8 @@ export async function GET(request: Request) {
 
   const pages: { name: string; detail: string; url: string; terms: string }[] = [];
   // The terms are searched too, not shown
-  if (meta?.eliteserien.current) pages.push({ name: t("layout.search.eliteserien", { season: meta.eliteserien.current }), detail: t("layout.search.teamStrengths"), url: "/eliteserien", terms: "team strengths lineups" });
+  if (meta?.eliteserien.current) pages.push({ name: t("layout.search.eliteserien", { season: meta.eliteserien.current }), detail: t("layout.search.teamStrengths"), url: ELITESERIEN_HREF, terms: "team strengths lineups" });
+  if (meta?.eliteserien.current) pages.push({ name: t("layout.search.eliteserien", { season: meta.eliteserien.current }), detail: t("layout.search.tenMatches"), url: ELITESERIEN_TEN_MATCHES_HREF, terms: "10 ten matches what if format" });
   for (const season of meta?.eliteserien.seasons ?? []) {
     const name = t("layout.search.eliteserien", { season: seasonLabel(+season.slice(0, 4)) });
     pages.push({ name, detail: t("layout.search.seasonInReview"), url: eliteserienHref(season), terms: `${season} review results` });

@@ -15,7 +15,7 @@ import { getClubMap } from "@/data/sanity";
 import { rich, t } from "@/messages/i18n";
 import type { Loose } from "@/types";
 import { chance, EMPTY, pct } from "@/utils/format";
-import { eliteserienHref, playerHref } from "@/utils/hrefs";
+import { ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref } from "@/utils/hrefs";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
 export const metadata: Metadata = { title: t("eliteserien.title") };
@@ -57,6 +57,15 @@ async function Content() {
             ))}
           </p>
         )}
+        <p className="mt-2">
+          {rich("eliteserien.tenMatchesLink", {
+            link: (text) => (
+              <Link href={ELITESERIEN_TEN_MATCHES_HREF} className={TEXT_LINK}>
+                {text}
+              </Link>
+            ),
+          })}
+        </p>
         <div className="max-w-3xl mt-4 text-gray-700 space-y-2">
           <p>{t("eliteserien.howItWorks.tie", { ranking: data?.rankingPeriod ? t("eliteserien.howItWorks.rankingPeriod", { period: data.rankingPeriod }) : "" })}</p>
           <p>

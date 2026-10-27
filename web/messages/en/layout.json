@@ -60,7 +60,8 @@
     "eliteserien": "Eliteserien {season}",
     "teamStrengths": "Team strengths",
     "seasonInReview": "Season in review",
-    "drawLuck": "Draw luck"
+    "drawLuck": "Draw luck",
+    "tenMatches": "What if a tie were 10 matches"
   },
   "logoLabel": "elodrop, home"
 }

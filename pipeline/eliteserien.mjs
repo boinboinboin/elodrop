@@ -14,11 +14,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
-const SEASON = "2026/2027";
+export const SEASON = "2026/2027";
 const ROSTER = `${DIR}eliteserien-2026-27.txt`;
-const SOURCE = "https://www.badminton.no/siteassets/spillere-i-eliteserien-2026-27.pdf";
+export const SOURCE = "https://www.badminton.no/siteassets/spillere-i-eliteserien-2026-27.pdf";
 const MAX_MATCHES = 2;
-const RANKING = `${DIR}data/ranking/2002026.json`; // official ranking lists for the season
+export const RANKING = `${DIR}data/ranking/2002026.json`; // official ranking lists for the season
 // Slots in the order they are listed, and the pools their ratings come from
 export const SLOTS = [
   { key: "MS1", label: "1. Men's singles", type: "MS" },
@@ -48,10 +48,10 @@ export function lowestRatings(pools) {
 // Official ranking points by player id, per list (players not on a list have 0)
 export function rankingPoints(file) {
   const ranking = JSON.parse(readFileSync(file, "utf8"));
-  const lists = Object.fromEntries(["men", "women", "mixedMen", "mixedWomen"].map((list) => [list, new Map((ranking[list] ?? []).map((r) => [r.id, r.points]))]));
+  const lists = Object.fromEntries(["men", "women", "mensDoubles", "womensDoubles", "mixedMen", "mixedWomen"].map((list) => [list, new Map((ranking[list] ?? []).map((r) => [r.id, r.points]))]));
   return { period: ranking.period, points: (id, list) => lists[list].get(id) ?? 0 };
 }
-function currentSource() {
+export function currentSource() {
   const { pools } = JSON.parse(readFileSync(`${DIR}data/ratings.json`, "utf8"));
   const byId = Object.fromEntries(Object.entries(pools).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
   const find = (id) => Object.values(byId).map((m) => m.get(id)).find(Boolean);
@@ -191,11 +191,14 @@ export function references(teams) {
   };
 }
 
-// Chances of winning, drawing (4-4) and losing a tie from the 8 match win chances
-// Table points for a tie by matches won: 6-2 or better 4, 5-3 3, 4-4 2, 3-5 1, otherwise 0
-export const tablePoints = (won) => (won >= 6 ? 4 : won === 5 ? 3 : won === 4 ? 2 : won === 3 ? 1 : 0);
+// Table points for a tie by matches won, from the winning margin: 6-2 or better 4, 5-3 3, 4-4 2,
+// 3-5 1, otherwise 0 (in a tie of 10 matches, eliteserien-ten-matches.mjs: 7-3 or better 4, 6-4 3, 5-5 2)
+export const tablePoints = (won, matches = 8) => {
+  const margin = 2 * won - matches;
+  return margin >= 4 ? 4 : margin >= 2 ? 3 : margin === 0 ? 2 : margin >= -2 ? 1 : 0;
+};
 
-// Chances of winning, drawing (4-4) and losing a tie from the 8 match win chances, the expected
+// Chances of winning, drawing (4-4) and losing a tie from the match win chances, the expected
 // matches won and the expected table points
 export function tieOdds(chances) {
   let dist = [1];
@@ -214,7 +217,7 @@ export function tieOdds(chances) {
     draw: dist[half],
     loss: sum(0, half),
     expected: chances.reduce((a, b) => a + b, 0),
-    points: dist.reduce((total, p, won) => total + p * tablePoints(won), 0),
+    points: dist.reduce((total, p, won) => total + p * tablePoints(won, chances.length), 0),
   };
 }
 

@@ -5,6 +5,9 @@ export const clubHref = (slug: string) => `/clubs/${slug}`;
 export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournaments/${cup2000Id}${view ? `/${view}` : ""}`;
 /** A week's upsets (its Monday, "2026-10-12"), or a year's newest week ("2026") */
 export const upsetsHref = (period: string) => `/upsets/${period}`;
+/** Eliteserien this season, and what if a tie were 10 matches */
+export const ELITESERIEN_HREF = "/eliteserien";
+export const ELITESERIEN_TEN_MATCHES_HREF = "/eliteserien/ten-matches";
 /** An Eliteserien season in review ("2024-25") */
 export const eliteserienHref = (season: string) => `/eliteserien/${season}`;
 

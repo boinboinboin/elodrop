@@ -160,6 +160,11 @@ jobs:
         if: steps.build.outputs.mode == 'full'
         run: node eliteserien.mjs > /dev/null
 
+      # What if a tie were 10 matches: this season's teams in a format with 2 more men's matches
+      - name: Eliteserien with 10 matches a tie
+        if: steps.build.outputs.mode == 'full'
+        run: node eliteserien-ten-matches.mjs > /dev/null
+
       # The earlier seasons in review, from the ratings at the time: done again with the ratings, so
       # they follow any change in how ratings are calculated
       - name: Eliteserien seasons in review
