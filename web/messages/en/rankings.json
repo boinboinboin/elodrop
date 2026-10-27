@@ -42,5 +42,16 @@
     "tab": "Juniors (U19)",
     "summary": "{count} ranked juniors: everyone born in {year} or later who has played a junior match in the last 12 months.",
     "title": "{list}, juniors (U19)"
+  },
+  "combined": {
+    "tab": "Combined",
+    "crumb": "Combined",
+    "explanation": "Singles, doubles and mixed doubles together, for everyone ranked in at least two of them: the average of how far each of their ratings is above or below the others', in standard deviations, so each discipline counts the same. A discipline a player isn't ranked in counts as their weaker one, so specialists are ranked too, but leaving one out never helps.",
+    "summary": "{count} players ranked in at least two of the three disciplines.",
+    "juniorSummary": "{count} juniors ranked in at least two of the three disciplines: born in {year} or later, with junior matches in the last 12 months.",
+    "score": "Score",
+    "title": "Combined, {gender}",
+    "juniorTitle": "Combined, {gender}, juniors (U19)",
+    "notRanked": "Not ranked in this discipline: counts as their weaker one"
   }
 }

@@ -7,7 +7,8 @@
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
 // data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
-// over all pools) and data/junior.json (the U19 rankings, from junior matches only).
+// over all pools), data/junior.json (the U19 rankings, from junior matches only) and data/combined.json
+// (the combined rankings of singles, doubles and mixed doubles, men and women, also for juniors).
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
 import { provisionalTournaments } from "./cup2000-results.mjs";
@@ -82,6 +83,40 @@ function replacementRating(pool, ranked) {
   const lowest = (list) => Math.min(...list.map((p) => p.rating), Infinity);
   if (pool !== "mixedDoubles") return lowest(ranked);
   return { M: lowest(ranked.filter((p) => p.gender === "M")), K: lowest(ranked.filter((p) => p.gender === "K")) };
+}
+
+// Combined rankings: men's and women's singles, doubles and mixed doubles together
+const COMBINED_POOLS = { M: ["men", "mensDoubles", "mixedDoubles"], K: ["women", "womensDoubles", "mixedDoubles"] };
+// Per gender, the players ranked in at least two of their three disciplines, best first, by the
+// average of their standard score in each (their rating minus the mean of those players ranked in
+// it, divided by their standard deviation), as for the clubs' combined list: the pools are separate
+// scales with different spreads, so each discipline counts equally this way. A discipline a player
+// isn't ranked in counts as their weaker one, so specialists (doubles players who don't play singles)
+// are ranked too, but leaving a discipline out never raises a score. `ranked`: pool -> ranked players
+// ({ id, rating, gender }; mixed doubles both genders), each with any other fields to keep. Each
+// player's `entries` are per discipline, undefined where they aren't ranked.
+function combinedRanking(ranked) {
+  return Object.fromEntries(
+    Object.entries(COMBINED_POOLS).map(([gender, pools]) => {
+      const byPool = pools.map((pool) => new Map(ranked[pool].filter((p) => pool !== "mixedDoubles" || p.gender === gender).map((p) => [p.id, p])));
+      const ids = [...new Set(byPool.flatMap((map) => [...map.keys()]))].filter((id) => byPool.filter((map) => map.has(id)).length >= 2);
+      const zScore = byPool.map((map) => {
+        const values = ids.filter((id) => map.has(id)).map((id) => map.get(id).rating);
+        const mean = values.reduce((a, b) => a + b, 0) / values.length;
+        const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
+        return (rating) => (rating - mean) / sd;
+      });
+      const list = ids
+        .map((id) => {
+          const scores = byPool.flatMap((map, i) => (map.has(id) ? [zScore[i](map.get(id).rating)] : []));
+          if (scores.length < pools.length) scores.push(Math.min(...scores));
+          return { id, entries: byPool.map((map) => map.get(id)), score: scores.reduce((a, b) => a + b, 0) / pools.length };
+        })
+        .sort((a, b) => b.score - a.score)
+        .map((p, i) => ({ rank: i + 1, ...p }));
+      return [gender, list];
+    }),
+  );
 }
 
 const readDir = (sub) =>
@@ -1001,6 +1036,41 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
   }
   writeFileSync(`${DIR}data/junior.json`, JSON.stringify({ generatedAt: new Date().toISOString(), season, bornFrom, pools: junior }));
+
+  // Combined rankings (combinedRanking), of the rankings and of the junior rankings, with "since last
+  // week" from the same lists at the end of baseWeek: the rank then
+  function combined(now, then) {
+    const [current, before] = [combinedRanking(now), combinedRanking(then)];
+    return Object.fromEntries(
+      Object.entries(current).map(([gender, list]) => {
+        const previous = new Map(before[gender].map((p) => [p.id, p.rank]));
+        return [
+          gender,
+          list.map(({ rank, id, entries, score }) => ({
+            rank, previousRank: previous.get(id) ?? null,
+            id, name: entries.find(Boolean).name, club: entries.find(Boolean).club, gender,
+            score: Math.round(score * 100) / 100,
+            matches: entries.reduce((sum, e) => sum + (e?.matches ?? 0), 0), // in the disciplines ranked in, together
+            lastPlayed: entries.filter(Boolean).map((e) => e.lastPlayed).sort().at(-1),
+            // Each discipline's rank and rating (null: not ranked in it)
+            pools: Object.fromEntries(COMBINED_POOLS[gender].map((pool, i) => [pool, entries[i] ? { rank: entries[i].rank, rating: entries[i].rating } : null])),
+          })),
+        ];
+      }),
+    );
+  }
+  const seniorThen = Object.fromEntries(Object.entries(lastWeekActive).map(([pool, list]) => [pool, list.map(({ p, rating, gender }) => ({ id: p.id, rating, gender }))]));
+  const juniorBefore = Object.fromEntries(
+    Object.entries(juniorThen).map(([pool, map]) => [pool, juniorRanking(pool, map, addDays(baseEnd, -1)).map(({ p }) => ({ id: p.id, rating: p.rating, gender: genderOf(p.id) }))]),
+  );
+  writeFileSync(
+    `${DIR}data/combined.json`,
+    JSON.stringify({
+      generatedAt: new Date().toISOString(),
+      senior: combined(Object.fromEntries(Object.entries(ratings).map(([pool, list]) => [pool, list.filter((p) => p.rank !== null)])), seniorThen),
+      junior: combined(junior, juniorBefore),
+    }),
+  );
 
   // Per club file, keyed by NBF club id (clubs no longer in the club list have no club page).
   // Each pool keeps only the weeks from its first to its last value: `from` is that first week's

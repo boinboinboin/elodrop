@@ -9,8 +9,10 @@
 //   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months; not players of
 //                                 the other gender, see rules.mjs rankedIn)
 //   clubs.json                    strongest clubs per pool and how club strength is calculated
+//   rankings/combined-<men|women>.json  the combined rankings: singles, doubles and mixed doubles
+//                                 together, players ranked in all three, best first
 //   junior/<pool>.json            the junior rankings (U19, from junior matches only), ranked
-//                                 players, best first
+//                                 players, best first; junior/combined-<men|women>.json likewise
 //   club-history/<NBF id>.json    a club's strength and rank per week
 //   players/<id>.json             one player (with their birth year): per pool their rating, weekly history (with the
 //                                 number of ranked players each week) and match log, with only the
@@ -76,6 +78,14 @@ write("clubs.json", { generatedAt, clubs: ratings.clubs, clubStrength: ratings.c
 // Junior rankings (U19, from junior matches only: rate.mjs), ranked players only
 const junior = existsSync(`${DATA}/junior.json`) ? read("junior.json") : null;
 for (const [pool, players] of Object.entries(junior?.pools ?? {})) write(`junior/${pool}.json`, { generatedAt, pool, season: junior.season, bornFrom: junior.bornFrom, players });
+// Combined rankings (singles, doubles and mixed doubles together: rate.mjs), men and women, of
+// everyone and of the juniors
+const combined = existsSync(`${DATA}/combined.json`) ? read("combined.json") : null;
+for (const [gender, name] of [["M", "men"], ["K", "women"]]) {
+  if (!combined) break;
+  write(`rankings/combined-${name}.json`, { generatedAt, gender, players: combined.senior[gender] });
+  write(`junior/combined-${name}.json`, { generatedAt, gender, bornFrom: junior?.bornFrom ?? null, players: combined.junior[gender] });
+}
 for (const f of readdirSync(`${DATA}/club-history`)) write(`club-history/${f}`, read(`club-history/${f}`));
 
 // Players: each pool's rating with its history (and the number ranked each week) and match log

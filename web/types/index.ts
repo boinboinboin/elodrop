@@ -44,6 +44,23 @@ export type JuniorEntry = Pick<RatingEntry, "rank" | "previousRank" | "ratingCha
   birthYear: number;
 };
 
+/** A player in a combined ranking (rankings/combined-<men|women>.json, junior/combined-<...>.json) */
+export interface CombinedEntry {
+  rank: number;
+  previousRank: number | null;
+  id: number;
+  name: string;
+  club: string | null;
+  gender: Gender;
+  /** The average standard score in the three disciplines */
+  score: number;
+  /** Matches played in the disciplines ranked in, together */
+  matches: number;
+  lastPlayed: string;
+  /** Singles, doubles and mixed doubles: the rank and rating in each (null: not ranked in it) */
+  pools: Partial<Record<Pool, { rank: number; rating: number } | null>>;
+}
+
 export interface SeasonRow {
   season: number;
   rating: number;

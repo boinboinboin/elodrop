@@ -1,5 +1,5 @@
 // The rankings per pool
-import type { Gender, JuniorEntry, Pool, RatingEntry } from "@/types";
+import type { CombinedEntry, Gender, JuniorEntry, Pool, RatingEntry } from "@/types";
 import { load } from "./load";
 
 /**
@@ -26,4 +26,13 @@ export async function getJuniorRankings(pool: Pool, gender: Gender | null = null
   const data = await load<{ players: JuniorEntry[]; bornFrom: number }>(`junior/${pool}.json`);
   const players = data?.players ?? [];
   return { players: gender ? players.filter((p) => p.gender === gender) : players, bornFrom: data?.bornFrom ?? null };
+}
+
+/**
+ * A combined ranking, men's or women's: singles, doubles and mixed doubles together, best first, of
+ * everyone or (junior) of the juniors (U19, born in `bornFrom` or later)
+ */
+export async function getCombinedRankings(gender: Gender, junior = false): Promise<{ players: CombinedEntry[]; bornFrom: number | null }> {
+  const data = await load<{ players: CombinedEntry[]; bornFrom?: number | null }>(`${junior ? "junior" : "rankings"}/combined-${gender === "K" ? "women" : "men"}.json`);
+  return { players: data?.players ?? [], bornFrom: data?.bornFrom ?? null };
 }
