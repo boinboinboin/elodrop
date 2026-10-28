@@ -9,7 +9,7 @@ import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
 import EntryNames from "@/components/tournaments/EntryNames";
-import EventResult from "@/components/tournaments/EventResult";
+import EventResult, { EventFavourite } from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -243,6 +243,10 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
   const single = noLuck(event);
   const { placement, played } = event;
   const winner = played ? event.entries.find((e) => e.result?.win === 1) : null;
+  // Before it's played: the favourite by the draw (best chance of winning), and the highest rated, among those still in
+  const inDraw = played || tour.cancelled ? [] : event.entries.filter((e) => !e.withdrew);
+  const favourite = inDraw.length ? inDraw.reduce((best, e) => (e.actual.win > best.actual.win ? e : best)) : null;
+  const topRated = inDraw.length ? inDraw.reduce((best, e) => (e.rating > best.rating ? e : best)) : null;
   const { steps, short } = rounds(i18n, event);
   const max = event.maxRounds;
   const available = orders(i18n, event);
@@ -290,6 +294,7 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
       </p>
 
       {winner && <EventResult event={event} winner={winner} clubs={clubs} />}
+      {favourite && topRated && <EventFavourite event={event} favourite={favourite} topRated={topRated} clubs={clubs} />}
 
       <dl className="grid gap-2 md:grid-cols-[auto_1fr] md:gap-x-6 mb-6 max-w-4xl text-gray-700">
         {knockoutColumn && (

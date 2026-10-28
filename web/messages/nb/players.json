@@ -4,7 +4,7 @@
   },
   "loading": "Laster spiller…",
   "born": "Født {year}",
-  "compare": "Sammenlign innbyrdes med en annen spiller",
+  "compare": "Head to head mot en annen spiller",
   "disciplines": "Disipliner",
   "rival": {
     "title": "Største rival",
@@ -14,11 +14,11 @@
     "inOnePool": "{count} i {pool}",
     "record": "{wins} seiere, {losses} tap",
     "recordWithDraws": "{wins} seiere, {draws} uavgjort, {losses} tap",
-    "summary": "{matches} · {record} · snittmargin {margin} poeng · sist møttes {date} · <link>innbyrdes</link>",
+    "summary": "{matches} · {record} · snittmargin {margin} poeng · sist møttes {date} · <link>H2H</link>",
     "alsoClose": "Også jevne:",
     "score": "{wins}–{losses}",
     "scoreWithDraws": "{wins}–{losses}–{draws}",
-    "other": "{matches}, {score}, margin {margin} · <link>innbyrdes</link>"
+    "other": "{matches}, {score}, margin {margin} · <link>H2H</link>"
   },
   "history": {
     "title": "Historikk",
@@ -26,7 +26,7 @@
     "ranking": "Rangering",
     "rank": "Plassering",
     "ratingIntro": "Rating i hver disiplin ved slutten av hver uke. Doubleratinger er på samme type skala som single, men hver disiplin rates for seg, så sammenlign hvordan hver linje beveger seg i stedet for nivåene mellom disiplinene.",
-    "rankingIntro": "Landsplassering ved slutten av hver uke, blant spillere som hadde spilt de siste 12 månedene; herredisiplinene rangerer bare herrer og damedisiplinene bare damer, og mixed double rangerer herrer og damer hver for seg. Hull er perioder uten plassering. Skalaen er logaritmisk, så et hopp fra #100 til #50 ser like stort ut som fra #20 til #10.",
+    "rankingIntro": "Landsplassering ved slutten av hver uke, blant spillere som hadde spilt de siste 12 månedene; herredisiplinene rangerer bare herrer og damedisiplinene bare damer, og mixdouble rangerer herrer og damer hver for seg. Hull er perioder uten plassering. Skalaen er logaritmisk, så et hopp fra #100 til #50 ser like stort ut som fra #20 til #10.",
     "amongWomen": "{pool} (blant damer)",
     "amongMen": "{pool} (blant herrer)",
     "ratingBySeason": "Rating per sesong",

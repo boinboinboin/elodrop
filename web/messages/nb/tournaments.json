@@ -6,13 +6,13 @@
   "list": {
     "title": "Turneringstrekninger",
     "intro": "Hvem som fikk heldig eller uheldig trekning i kommende turneringer, ut fra spillernes ratinger.",
-    "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er spilt, viser siden hvordan spådommene gikk.",
+    "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er ferdigspilt, viser siden hvordan prediksjonene gikk.",
     "loading": "Laster turneringer…",
     "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen; hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet. «Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null): nær 1 ga en trekning som var en runde heldigere omtrent en runde mer.",
     "correlation": "Flaks forklarer bare en liten del av et resultat (korrelasjon {correlation}): mesteparten er hvordan kampene går.",
     "upcoming": "Kommende",
     "noUpcoming": "Ingen kommende turneringer med publisert trekning.",
-    "played": "Spilt",
+    "played": "Ferdigspilt",
     "notPlayed": "Ikke spilt",
     "events": {
       "one": "{count} klasse",
@@ -25,16 +25,16 @@
     "favouriteWon": "favoritten vant {won} av {winners} ({expected} forventet)"
   },
   "predictions": {
-    "title": "Hvordan spådommene gikk",
-    "eventsPlayed": "Klasser spilt",
+    "title": "Hvordan prediksjonene gikk",
+    "eventsPlayed": "Klasser ferdigspilt",
     "ofTotal": "av {total}",
     "favouritesWon": "Favoritter som vant",
     "expected": "{count} forventet",
-    "winnersChance": "Vinnernes spådde sjanse",
+    "winnersChance": "Vinnernes predikerte sjanse",
     "onAverage": "i snitt",
     "luckShowed": "Flaksen viste seg i resultatene",
     "luckShowedTitle": "Resultater minus forventning med rettferdig trekning mot flaks, regresjonshelning",
-    "overEntries": "over {count} deltakere (1 = som spådd)"
+    "overEntries": "over {count} deltakere (1 = som predikert)"
   },
   "page": {
     "loading": "Laster turnering…",
@@ -230,6 +230,11 @@
       "one": "{count} poeng",
       "other": "{count} poeng"
     },
-    "marginSets": "Vant finalen {sets}."
+    "marginSets": "Vant finalen {sets}.",
+    "favourite": "Favoritt",
+    "favourites": "Favoritter",
+    "favouriteChance": "{chance} sjanse til å vinne med denne trekningen",
+    "favouriteChanceFair": "{chance} sjanse til å vinne med denne trekningen ({fair} med en rettferdig trekning)",
+    "favouriteOverTop": "Favoritt foran {name}, som har høyere rating, på grunn av trekningen."
   }
 }

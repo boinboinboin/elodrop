@@ -8,7 +8,7 @@
     "women": "Damesingle",
     "mensDoubles": "Herredouble",
     "womensDoubles": "Damedouble",
-    "mixedDoubles": "Mixed double"
+    "mixedDoubles": "Mixdouble"
   },
   "poolCodes": {
     "men": "HS",
@@ -22,7 +22,7 @@
     "women": "damesingle",
     "mensDoubles": "herredouble",
     "womensDoubles": "damedouble",
-    "mixedDoubles": "mixed double"
+    "mixedDoubles": "mixdouble"
   },
   "carousel": {
     "slide": "{position} av {count}",

@@ -1,8 +1,8 @@
 {
   "metadata": {
-    "title": "Nytt"
+    "title": "Hva er nytt?"
   },
-  "title": "Nytt",
+  "title": "Hva er nytt?",
   "intro": "Alt som har endret seg på elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
   "latest": "Nå på {version}",
   "feature": "Ny",

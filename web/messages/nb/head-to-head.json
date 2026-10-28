@@ -1,6 +1,6 @@
 {
-  "title": "Innbyrdes",
-  "doublesTitle": "Innbyrdes i double",
+  "title": "Head to head",
+  "doublesTitle": "Head to head i double",
   "doublesCrumb": "Double",
   "intro": "To spilleres kamper mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
   "introDoubles": "To doublepars kamper mot hverandre, og sjansene deres hvis de møttes nå.",
@@ -34,7 +34,7 @@
     "kinds": {
       "men": "herrepar",
       "women": "damepar",
-      "mixed": "mixedpar"
+      "mixed": "mixpar"
     },
     "against": "{a} mot {b}"
   },
@@ -114,7 +114,7 @@
     "title": "Hvis de møttes nå",
     "tabs": "Disipliner",
     "intro": "Gjeldende ratinger i hver disiplin begge spiller, og {a}s sjanse til å slå {b}. Single og herre- eller damedouble sammenlignes bare mellom spillere av samme kjønn. I double gjelder sjansen med like høyt ratede makkere: et pars rating er snittet av spillernes.",
-    "introDoubles": "Gjeldende ratinger og par A sin sjanse til å slå par B. Et par spiller på snittet av spillernes ratinger, og parene sammenlignes i disiplinen kjønnene deres plasserer dem i: to herrepar i herredouble, to mixedpar i mixed double.",
+    "introDoubles": "Gjeldende ratinger og par A sin sjanse til å slå par B. Et par spiller på snittet av spillernes ratinger, og parene sammenlignes i disiplinen kjønnene deres plasserer dem i: to herrepar i herredouble, to mixpar i mixdouble.",
     "unrated": "{name} har ingen rating i {pool}",
     "unratedJoin": ", og ",
     "noChances": "{list}, så det er ingen sjanser å sammenligne.",

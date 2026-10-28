@@ -230,6 +230,11 @@
       "one": "{count} point",
       "other": "{count} points"
     },
-    "marginSets": "Won the final {sets}."
+    "marginSets": "Won the final {sets}.",
+    "favourite": "Favourite",
+    "favourites": "Favourites",
+    "favouriteChance": "{chance} chance of winning with this draw",
+    "favouriteChanceFair": "{chance} chance of winning with this draw ({fair} with a fair draw)",
+    "favouriteOverTop": "Favourite ahead of {name}, who is rated higher, because of the draw."
   }
 }

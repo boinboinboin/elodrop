@@ -3,15 +3,15 @@
   "loading": "Laster Eliteserien…",
   "heading": "Eliteserien {season}",
   "intro": "Hvor sterke de åtte lagene er, ut fra spillernes ratinger.",
-  "earlierSeasons": "Tidligere sesonger oppsummert, spådd mot faktiske resultater:",
+  "earlierSeasons": "Tidligere sesonger oppsummert, predikert mot faktiske resultater:",
   "howItWorks": {
-    "tie": "En lagkamp er 8 kamper: 2 herresingle, 2 damesingle, 1 herredouble, 1 damedouble og 2 mixed double, og en spiller spiller høyst 2 av dem. Hvert lag antas å stille med oppstillingen som gir flest forventede kampseiere mot en gjennomsnittlig Eliteserien-motstander. Slik reglene krever har første singlespiller flere offisielle rankingpoeng enn andre, og første mixedpar flere samlede mixed double-poeng enn andre{ranking}. Seierssjansene bruker samme formel som ratingene, kamp for kamp, og en lagkamp vinnes med 5 kamper og er uavgjort ved 4-4. Tabellpoeng per lagkamp er som i ligaen: 4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3 og 2-2 for 4-4.",
+    "tie": "En lagkamp er 8 kamper: 2 herresingle, 2 damesingle, 1 herredouble, 1 damedouble og 2 mixdouble, og en spiller spiller høyst 2 av dem. Hvert lag antas å stille med oppstillingen som gir flest forventede kampseiere mot en gjennomsnittlig Eliteserien-motstander. Slik reglene krever har første singlespiller flere offisielle rankingpoeng enn andre, og første mixpar flere samlede mixdoublepoeng enn andre{ranking}. Seierssjansene bruker samme formel som ratingene, kamp for kamp, og en lagkamp vinnes med 5 kamper og er uavgjort ved 4-4. Tabellpoeng per lagkamp er som i ligaen: 4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3 og 2-2 for 4-4.",
     "rankingPeriod": " (rankingen {period})",
-    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, inkludert spillere utlånt fra andre klubber. Spillere uten double- eller mixedrating regnes som at de starter i double fra singleratingen sin (merket ≈)."
+    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, inkludert spillere utlånt fra andre klubber. Spillere uten double- eller mixrating regnes som at de starter i double fra singleratingen sin (merket ≈)."
   },
   "noData": "Ingen lagstyrker ennå: kjør pipeline/eliteserien.mjs etter rate.mjs.",
   "table": {
-    "title": "Spådd tabell",
+    "title": "Predikert tabell",
     "intro": "Grunnserien, med én lagkamp mot hvert av de andre lagene, etter forventede tabellpoeng.",
     "team": "Lag",
     "tablePoints": "Tabellpoeng",
@@ -25,7 +25,7 @@
     "note": "Forventede verdier: tabellpoengene summeres over de sju lagkampene (28 som mest), de andre kolonnene er snitt per lagkamp."
   },
   "headToHead": {
-    "title": "Innbyrdes",
+    "title": "Head to head",
     "intro": "Sjansen for at laget til venstre vinner en lagkamp mot laget øverst. Hold over for forventet resultat.",
     "cellTitle": "{a} mot {b}: forventet {matches} i kamper, {points} i tabellpoeng; vinner {win}, uavgjort {draw}, taper {loss}"
   },
@@ -36,12 +36,12 @@
     "players": "Spillere",
     "singles": "Single",
     "doubles": "Double",
-    "mixed": "Mixed",
+    "mixed": "Mix",
     "points": "Poeng",
-    "pointsTitle": "Offisielle rankingpoeng: single / mixed double",
+    "pointsTitle": "Offisielle rankingpoeng: single / mixdouble",
     "loanFrom": "Utlån fra {club}",
     "noRatedMatches": "Ingen ratede kamper",
-    "note": "≈ anslått: ingen rating i den disiplinen ennå. Poeng: offisielle rankingpoeng i single / mixed double, som avgjør hvem som spiller første single og første mixed. Herrer først, så damer, etter singlerating."
+    "note": "≈ anslått: ingen rating i den disiplinen ennå. Poeng: offisielle rankingpoeng i single / mixdouble, som avgjør hvem som spiller første single og første mix. Herrer først, så damer, etter singlerating."
   },
   "review": {
     "title": "Eliteserien {season} oppsummert",
@@ -52,8 +52,8 @@
     "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, med spillere som spilte for et lag uten å stå på listen lagt til fra første kamp.",
     "preseason": {
       "title": "Før sesongen",
-      "intro": "Den spådde grunnserietabellen før første runde, som på siden for denne sesongen: forventede tabellpoeng fra én lagkamp mot hvert lag (4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3, 2-2 for 4-4), mot den faktiske tabellen og sluttresultatet etter sluttspillet.",
-      "predicted": "Spådd",
+      "intro": "Den predikerte grunnserietabellen før første runde, som på siden for denne sesongen: forventede tabellpoeng fra én lagkamp mot hvert lag (4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3, 2-2 for 4-4), mot den faktiske tabellen og sluttresultatet etter sluttspillet.",
+      "predicted": "Predikert",
       "team": "Lag",
       "expectedPoints": "Forventede poeng",
       "actualPoints": "Faktiske poeng",
@@ -129,7 +129,7 @@
       "addedEight": "{name} ville også kommet med i {team}s oppstilling med 8 kamper, så {team}s tall for 8 kamper her avviker fra Eliteserien-siden.",
       "addedNotEight": "{name} ville ikke kommet med i {team}s oppstilling med 8 kamper, så tallene for 8 kamper her er de samme som på <link>Eliteserien-siden</link>."
     },
-    "howItWorks": "En lagkamp på 10 er 3 herresingle, 2 damesingle, 2 herredouble, 1 damedouble og 2 mixed double. Alt annet er som i dag: en spiller spiller høyst 2 kamper og høyst én i hver disiplin, singlespillerne spiller i rekkefølge etter singlerankingpoengene sine, og første par i rekkefølge etter samlede rankingpoeng (herredoublepoeng for de to herredoublene){ranking}. Hvert lag stiller med oppstillingen med flest forventede kampseiere mot en gjennomsnittlig motstander i hver kamp (for 3. herresingle, snittet av de 17. til 24. beste herrene; for 2. herredouble, av de 17. til 32. beste doubleratingene). En lagkamp vinnes med 6 kamper og er uavgjort ved 5-5, og tabellpoeng gis med samme marginer som i dag: 4-0 for å vinne 7-3 eller bedre, 3-1 for 6-4 og 2-2 for 5-5.",
+    "howItWorks": "En lagkamp på 10 er 3 herresingle, 2 damesingle, 2 herredouble, 1 damedouble og 2 mixdouble. Alt annet er som i dag: en spiller spiller høyst 2 kamper og høyst én i hver disiplin, singlespillerne spiller i rekkefølge etter singlerankingpoengene sine, og første par i rekkefølge etter samlede rankingpoeng (herredoublepoeng for de to herredoublene){ranking}. Hvert lag stiller med oppstillingen med flest forventede kampseiere mot en gjennomsnittlig motstander i hver kamp (for 3. herresingle, snittet av de 17. til 24. beste herrene; for 2. herredouble, av de 17. til 32. beste doubleratingene). En lagkamp vinnes med 6 kamper og er uavgjort ved 5-5, og tabellpoeng gis med samme marginer som i dag: 4-0 for å vinne 7-3 eller bedre, 3-1 for 6-4 og 2-2 for 5-5.",
     "rankingPeriod": " (rankingen {period})",
     "findings": {
       "title": "Hva som endres",
@@ -137,11 +137,11 @@
       "gain": "Tjener mest: {team}, {change} tabellpoeng ({from} → {to}).",
       "loss": "Taper mest: {team}, {change} tabellpoeng ({from} → {to}).",
       "moves": "Endrede plasser: {moves}.",
-      "noMoves": "Ingen lag bytter plass i den spådde tabellen.",
+      "noMoves": "Ingen lag bytter plass i den predikerte tabellen.",
       "move": "{team} {from} → {to}"
     },
     "table": {
-      "title": "Spådd tabell, 8 og 10 kamper",
+      "title": "Predikert tabell, 8 og 10 kamper",
       "intro": "Grunnserien, én lagkamp mot hvert av de andre lagene, etter forventede tabellpoeng med 10 kamper per lagkamp, og det samme med 8 kamper under.",
       "placeTitle": "Plassering med 10 kamper, og med 8 under når den er forskjellig",
       "team": "Lag",
@@ -156,7 +156,7 @@
       "note": "Forventede verdier: tabellpoengene summeres over de sju lagkampene (28 som mest i begge formater), de andre kolonnene er snitt per lagkamp."
     },
     "headToHead": {
-      "title": "Innbyrdes med 10 kamper",
+      "title": "Head to head med 10 kamper",
       "intro": "Sjansen for at laget til venstre vinner en lagkamp på 10 mot laget øverst, med endringen fra 8 kamper under. Hold over for forventede resultater.",
       "cellTitle": "{a} mot {b} med 10 kamper: forventet {matches} i kamper, {points} i tabellpoeng; vinner {win}, uavgjort {draw}, taper {loss}. Med 8: vinner {win8}, forventet {matches8}"
     },

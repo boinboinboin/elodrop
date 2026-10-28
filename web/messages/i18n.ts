@@ -181,7 +181,14 @@ export function createI18n(lang: Language): I18n {
   return i18n;
 }
 
-/** A path without its language prefix ("/en/players/1" → "/players/1"), and its language */
+/**
+ * A path without its language prefix ("/en/players/1" → "/players/1"), and its language. Norwegian's
+ * internal prefix too: on a page rendered on request (head to head), usePathname() gives the address
+ * the rewrite served ("/nb/head-to-head"), not the one in the address bar.
+ */
 export function splitLanguage(path: string): { lang: Language; path: string } {
-  return path === "/en" || path.startsWith("/en/") ? { lang: "en", path: path.slice(3) || "/" } : { lang: "nb", path };
+  for (const lang of LANGUAGES) {
+    if (path === `/${lang}` || path.startsWith(`/${lang}/`)) return { lang, path: path.slice(lang.length + 1) || "/" };
+  }
+  return { lang: DEFAULT_LANGUAGE, path };
 }

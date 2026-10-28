@@ -10,7 +10,7 @@
   "noData": "Ingen data ennå.",
   "rankings": {
     "title": "Rangeringer",
-    "description": "Hver spillers rating i single, double og mixed double, oppdatert morgenen etter at de har spilt.",
+    "description": "Hver spillers rating i single, double og mixdouble, oppdatert morgenen etter at de har spilt.",
     "teaser": "Nummer én i hver disiplin",
     "link": "Alle rangeringer"
   },
@@ -22,8 +22,8 @@
   },
   "eliteserien": {
     "title": "Eliteserien",
-    "description": "Hvert lags styrke ut fra den sterkeste oppstillingen: den spådde tabellen og alle tidligere sesonger oppsummert.",
-    "teaser": "Spådd tabell, {season}",
+    "description": "Hvert lags styrke ut fra den sterkeste oppstillingen: den predikerte tabellen og alle tidligere sesonger oppsummert.",
+    "teaser": "Predikert tabell, {season}",
     "points": "{points} poeng",
     "link": "Lagstyrker"
   },
@@ -37,7 +37,7 @@
   },
   "tournaments": {
     "title": "Turneringstrekninger",
-    "description": "Hvor heldig hver spillers trekning er før en turnering starter, og hvordan spådommene gikk.",
+    "description": "Hvor heldig hver spillers trekning er før en turnering starter, og hvordan prediksjonene gikk.",
     "next": "Neste",
     "luckiest": "Heldigste trekning",
     "rounds": "{luck} runder",
@@ -46,7 +46,7 @@
     "link": "Alle turneringer"
   },
   "headToHead": {
-    "title": "Innbyrdes",
+    "title": "Head to head",
     "description": "To vilkårlige spillere eller par: møtene deres, seiersmarginer og hver sides sjanse i dag.",
     "teaser": "Herresingle: nummer én mot nummer to",
     "pair": "{a} mot {b}",
@@ -63,7 +63,7 @@
     "link": "Slik fungerer det"
   },
   "whatsNew": {
-    "title": "Nytt",
+    "title": "Hva er nytt?",
     "description": "Hver nye side, funksjon og rettelse på elodrop, nyeste først.",
     "teaser": "De siste oppdateringene",
     "link": "Alle oppdateringer"

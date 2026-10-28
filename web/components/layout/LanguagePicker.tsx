@@ -1,7 +1,8 @@
 "use client";
 
 // Norsk or English, in the menu (components/layout/MenuButton.tsx): the same page in the other
-// language. Each name is in its own language; Norwegian is at the site's root, English under /en.
+// language, with its query (the players on head to head). Each name is in its own language;
+// Norwegian is at the site's root, English under /en.
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/messages/client";
 import { type Language, LANGUAGES, splitLanguage } from "@/messages/i18n";
@@ -20,7 +21,12 @@ export default function LanguagePicker({ onPick }: { onPick: () => void }) {
             href={code === "en" ? (path === "/" ? "/en" : `/en${path}`) : path}
             hrefLang={code}
             lang={code}
-            onClick={onPick}
+            // The query is added on the click, read from the address bar (useSearchParams would make
+            // every page wait for the browser to render the menu)
+            onClick={(e) => {
+              e.currentTarget.search = window.location.search;
+              onPick();
+            }}
             aria-current={code === lang ? "true" : undefined}
             className={`block px-3 py-1 text-sm border transition-colors duration-200 ${code === lang ? "bg-gray-800 border-gray-800 text-white" : "border-gray-400 hover:border-black"}`}
           >
