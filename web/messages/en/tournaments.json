@@ -41,6 +41,10 @@
     "cup2000": "Draw and results on Cup2000",
     "portalen": "badmintonportalen tournament {id}",
     "cancelled": "<strong>Not played.</strong> {reason}. The draw and its luck are as they were published.",
+    "cancelledReasons": {
+      "cancelled": "Cancelled",
+      "kingMourning": "Cancelled at the last minute, in mourning for the King"
+    },
     "views": "Views",
     "events": "Events",
     "summary": "Summary"

@@ -337,6 +337,7 @@ export interface Tournament {
   cup2000Id: number;
   portalenId: number | null;
   name: string;
+  /** Why it wasn't played: a reason code (utils/tournament.ts cancelledReason), or English text in older exports; null when played */
   cancelled: string | null;
   startDate: string | null;
   endDate: string | null;

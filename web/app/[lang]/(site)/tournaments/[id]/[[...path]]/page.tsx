@@ -34,6 +34,7 @@ import { isSingles } from "@/utils/pools";
 import {
   type Order,
   allEntries,
+  cancelledReason,
   entryCount,
   eventHref,
   eventsByClass,
@@ -83,7 +84,8 @@ export default async function TournamentPage(props: PageProps<"/[lang]/tournamen
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[...path]]">, "params">) {
-  const { t, rich, dateRange, href } = await getI18n();
+  const i18n = await getI18n();
+  const { t, rich, dateRange, href } = i18n;
   const { id: param, path = [] } = await params;
   const id = parseId(param);
   if (id === null) notFound();
@@ -113,7 +115,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
           <a href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`} className={TEXT_LINK} rel="noopener">{t("tournaments.page.cup2000")}</a>
           {tour.portalenId && <span className="text-gray-600">{t("tournaments.page.portalen", { id: tour.portalenId })}</span>}
         </p>
-        {tour.cancelled && <p className="mt-4 inline-block px-3 py-2 border border-red-700 text-red-700">{rich("tournaments.page.cancelled", { strong }, { reason: tour.cancelled })}</p>}
+        {tour.cancelled && <p className="mt-4 inline-block px-3 py-2 border border-red-700 text-red-700">{rich("tournaments.page.cancelled", { strong }, { reason: cancelledReason(i18n, tour.cancelled) })}</p>}
         {/* Two views: the event tables (default) and the tournament's summary */}
         <LinkTabs
           label={t("tournaments.page.views")}

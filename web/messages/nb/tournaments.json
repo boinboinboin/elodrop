@@ -41,6 +41,10 @@
     "cup2000": "Trekning og resultater på Cup2000",
     "portalen": "badmintonportalen turnering {id}",
     "cancelled": "<strong>Ikke spilt.</strong> {reason}. Trekningen og flaksen er som de ble publisert.",
+    "cancelledReasons": {
+      "cancelled": "Avlyst",
+      "kingMourning": "Avlyst i siste liten på grunn av landesorg etter Kongens død"
+    },
     "views": "Visninger",
     "events": "Klasser",
     "summary": "Oppsummering"

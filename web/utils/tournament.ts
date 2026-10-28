@@ -194,3 +194,13 @@ export function allEntries(i18n: I18n, t: Tournament) {
     e.entries.map((entry) => ({ ...entry, eventIndex, eventLabel: eventTitle(i18n, e), placement: e.placement })),
   );
 }
+
+/**
+ * Why a tournament wasn't played, in the page's language: the data has a reason code (pipeline/upcoming.mjs
+ * CANCELLED: "cancelled", "kingMourning"), or, from exports before the codes, the English text. Anything
+ * else is shown as it is.
+ */
+export function cancelledReason({ t }: I18n, reason: string): string {
+  const key = ({ cancelled: "cancelled", Cancelled: "cancelled", kingMourning: "kingMourning", "Cancelled at the last minute, in mourning for the King": "kingMourning" } as Record<string, "cancelled" | "kingMourning">)[reason];
+  return key ? t(`tournaments.page.cancelledReasons.${key}`) : reason;
+}

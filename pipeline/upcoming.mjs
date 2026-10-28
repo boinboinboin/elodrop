@@ -57,10 +57,12 @@ const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * DAY_MS
 
 const HEADING = Object.fromEntries(Object.values(EVENTS).map((e) => [e.discipline, e.heading]));
 const SINGLES = new Set(["men", "women"]);
-// Tournaments that were drawn but not played, by badmintonportalen id, with why. A tournament
-// whose name says "AVLYST" (cancelled) counts too.
+// Tournaments that were drawn but not played, by badmintonportalen id, with why: a reason code
+// the site shows in its languages (web/messages/*/tournaments.json, page.cancelledReasons; a new
+// reason needs its text there). A tournament whose name says "AVLYST" (cancelled) counts too, as
+// "cancelled".
 const CANCELLED = {
-  7093: "Cancelled at the last minute, in mourning for the King",
+  7093: "kingMourning", // cancelled at the last minute, in mourning for the King
 };
 
 // ---- badmintonportalen: season plan, tournament info and entry list ----
@@ -670,7 +672,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     portalenId,
     name,
     // Not played: the draw stands, without results
-    cancelled: CANCELLED[portalenId] ?? (/avlyst/i.test(name) ? "Cancelled" : null),
+    cancelled: CANCELLED[portalenId] ?? (/avlyst/i.test(name) ? "cancelled" : null),
     startDate: info.startDate,
     endDate: info.endDate,
     // The registration deadline and the ranking list the seeds are from
