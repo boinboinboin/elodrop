@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     const query = (key: string, value?: string) => ({ type: "query" as const, key, ...(value ? { value } : {}) });
     const pool = query("pool", "(?<pool>men|women|mensDoubles|womensDoubles|mixedDoubles)");
-    return [
+    const redirects = [
       { source: "/", has: [query("pool", "mixedDoubles"), query("gender", "K"), query("inactive", "1")], destination: "/rankings/mixedDoubles-women/inactive", permanent: true },
       { source: "/", has: [query("pool", "mixedDoubles"), query("gender", "K")], destination: "/rankings/mixedDoubles-women", permanent: true },
       { source: "/", has: [pool, query("inactive", "1")], destination: "/rankings/:pool/inactive", permanent: true },
@@ -26,6 +26,22 @@ const nextConfig: NextConfig = {
       { source: "/upsets", has: [query("year", "(?<year>\\d{4})")], destination: "/upsets/:year", permanent: true },
       { source: "/tournaments/:id", has: [query("view", "summary")], destination: "/tournaments/:id/summary", permanent: true },
     ];
+    // The same in English ("/en/ranking" → "/en/rankings"), and Norwegian's own addresses are
+    // without a prefix: "/nb/..." (the pages' internal address, see rewrites) goes to "/..."
+    const english = redirects.map((r) => ({ ...r, source: `/en${r.source === "/" ? "" : r.source}`, destination: `/en${r.destination}` }));
+    return [...redirects, ...english, { source: "/nb", destination: "/", permanent: true }, { source: "/nb/:path*", destination: "/:path*", permanent: true }];
+  },
+  // The pages are under app/[lang]: "/en/..." is English, and every other address is Norwegian,
+  // served from "/nb/..." (after the files, the API, the Studio and Next.js's own are checked)
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        { source: "/", destination: "/nb" },
+        { source: "/:path((?!(?:en|nb|api|studio|_next)(?:/|$)).+)", destination: "/nb/:path" },
+      ],
+      fallback: [],
+    };
   },
   turbopack: {
     rules: {

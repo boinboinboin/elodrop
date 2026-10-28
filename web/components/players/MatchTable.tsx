@@ -9,12 +9,12 @@
 // "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`). With `more`,
 // `matches` are only the newest and "show all" loads the rest from `more.url` (the player page).
 // Each opponent and partner is shown with the club they played for at the time.
-import Link from "next/link";
 import { useState } from "react";
+import Link from "@/components/ui/Link";
 import { BUTTON, ROW } from "@/components/ui/styles";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
-import { chance, date, num, signed, toneClass } from "@/utils/format";
+import { toneClass } from "@/utils/format";
 import { playerHref, tournamentHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
 import { eventHref } from "@/utils/tournament";
@@ -47,6 +47,7 @@ function matchEventHref(m: Match, links: Record<string, number> | undefined, poo
 }
 
 export default function MatchTable({ matches: newest, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks, more }: Props) {
+  const { chance, date, num, signed, t } = useI18n();
   const [sort, setSort] = useState<(typeof SORTS)[number]>("date");
   const [expanded, setExpanded] = useState(false);
   const [loaded, setLoaded] = useState<Match[] | null>(null);

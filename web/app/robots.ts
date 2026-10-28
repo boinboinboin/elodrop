@@ -51,7 +51,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: AI_CRAWLERS, disallow: "/" },
-      { userAgent: "*", allow: "/", disallow: ["/head-to-head", "/api/", "/studio"] },
+      { userAgent: "*", allow: "/", disallow: ["/head-to-head", "/en/head-to-head", "/api/", "/studio"] },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

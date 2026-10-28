@@ -406,7 +406,7 @@ The head-to-head pages use it "just for fun", where the players or pairs don't m
 
 ### Search
 
-Every page has a search bar for players (as in the head-to-head search), clubs by short or full name, tournaments with a draw, and Eliteserien's team strengths and each season in review (e.g. "elite 2024"). Every word of the search must match; choosing a result opens its page. The browser searches by itself: `/api/search-index` (prerendered, refreshed with the data) has every player (`search-index.json`), club, tournament and Eliteserien page, and is loaded once, when a search field is first focused.
+Every page has a search bar for players (as in the head-to-head search), clubs by short or full name, tournaments with a draw, and Eliteserien's team strengths and each season in review (e.g. "elite 2024"). Every word of the search must match; choosing a result opens its page. The browser searches by itself: `/api/search-index/<language>` (`nb` or `en`, prerendered, refreshed with the data) has every player (`search-index.json`), club, tournament and Eliteserien page, and is loaded once, when a search field is first focused.
 
 ## Tournament draws: draw luck and how it turned out
 

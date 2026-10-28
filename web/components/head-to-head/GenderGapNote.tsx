@@ -1,14 +1,14 @@
 // How the "just for fun" comparisons put women on the men's scale (pipeline/gender-gap.mjs), with
 // examples from the fit itself.
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Format, GenderGap, Pool } from "@/types";
-import { num } from "@/utils/format";
 import { onMensScale } from "@/utils/rating";
 
 // The women's and the men's discipline of each format
 const DISCIPLINES: Record<Format, [Pool, Pool]> = { singles: ["women", "men"], doubles: ["womensDoubles", "mensDoubles"] };
 
-export default function GenderGapNote({ gap, format, extrapolated }: { gap: GenderGap; format: Format; extrapolated: boolean }) {
+export default async function GenderGapNote({ gap, format, extrapolated }: { gap: GenderGap; format: Format; extrapolated: boolean }) {
+  const { t, num } = await getI18n();
   const fit = gap[format];
   const [women, men] = DISCIPLINES[format];
   // Examples across the ratings the fit covers, rounded to 100s

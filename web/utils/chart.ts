@@ -1,5 +1,5 @@
 // Shared pieces of the charts (components/charts/LineChart.tsx).
-import { num, signed } from "./format";
+import type { I18n } from "@/messages/i18n";
 
 export const DAY = 86_400_000;
 export const WEEK = 7 * DAY;
@@ -25,7 +25,7 @@ export const OTHER_COLOR = "var(--color-chart-other)";
 export const MARGIN = { top: 12, right: 52, rightWithoutLabel: 16, bottom: 28, left: 48 };
 
 /** "2,569", "1.23", or with `withSign` "+1.23" / "−0.40" (zero without a sign either way) */
-export const formatNumber = (value: number, decimals = 0, withSign = false): string =>
+export const formatNumber = ({ num, signed }: I18n, value: number, decimals = 0, withSign = false): string =>
   withSign || value < 0 ? signed(value, decimals, "") : num(value, decimals);
 
 /** Smallest round step that gives at most `max` intervals */

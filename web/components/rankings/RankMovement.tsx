@@ -1,3 +1,5 @@
+"use client";
+
 // Since last week in the rankings (pipeline/rate.mjs). RankMovement: how far a player or club has
 // moved since last week (the end of the week before the current one): a green up caret and the
 // places gained, a red down caret and the places lost, "–" for no change, a blue dot and "new" for
@@ -5,11 +7,13 @@
 // another column (data-sorted on the table) they're hidden, since the movement is about the ranking
 // order; both stay when the table is sorted by the change since last week (data-sorted="change"),
 // where the places gained or lost go with the rating gained or lost.
+
 import { CaretDown, CaretUp } from "@/components/SVG";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import { toneClass } from "@/utils/format";
 
 export default function RankMovement({ rank, previous }: { rank: number | null; previous: number | null | undefined }) {
+  const { t } = useI18n();
   if (rank === null || previous === undefined) return null;
   if (previous === null)
     return (
@@ -37,6 +41,7 @@ export default function RankMovement({ rank, previous }: { rank: number | null; 
 
 /** The rating (club: strength) gained or lost since last week, in green or red; nothing when unchanged */
 export function WeekChange({ change, what = "rating" }: { change: number | null | undefined; what?: "rating" | "strength" }) {
+  const { t } = useI18n();
   if (!change) return null;
   const up = change > 0;
   return (

@@ -6,9 +6,9 @@
 // The strongest clubs likewise: "/clubs" combined, "/clubs/strongest/<pool>" per discipline.
 // (The old "/?pool=...&gender=...&inactive=1" and "/clubs?pool=..." links redirect here, and "/ranking"
 // and "/rankings/men" to "/rankings", see next.config.ts.)
-import { t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
 import type { Gender, Pool } from "@/types";
-import { isSingles, POOLS } from "./pools";
+import { isSingles } from "./pools";
 
 export interface RankingList {
   pool: Pool;
@@ -65,5 +65,5 @@ export function disciplineHref(discipline: Discipline, gender: Gender, { junior 
 export const strongestClubsHref = (pool: Pool | "combined") => (pool === "combined" ? "/clubs" : `/clubs/strongest/${pool}`);
 
 /** A list's name: "Men's singles", "Mixed doubles, women" (the pages' titles) */
-export const rankingListTitle = (list: RankingList | undefined) =>
-  !list ? t("rankings.metadata.title") : list.gender ? t("rankings.metadata.withGender", { pool: POOLS[list.pool], gender: t(list.gender === "K" ? "rankings.genders.women" : "rankings.genders.men") }) : POOLS[list.pool];
+export const rankingListTitle = ({ t, pools }: I18n, list: RankingList | undefined) =>
+  !list ? t("rankings.metadata.title") : list.gender ? t("rankings.metadata.withGender", { pool: pools[list.pool], gender: t(list.gender === "K" ? "rankings.genders.women" : "rankings.genders.men") }) : pools[list.pool];

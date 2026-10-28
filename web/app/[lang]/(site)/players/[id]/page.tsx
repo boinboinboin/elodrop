@@ -2,7 +2,6 @@
 // biggest rivals over all disciplines, and per discipline their rating, rank, peak, matches, rating
 // history, match list and highlights (biggest wins and losses, rating gains and drops).
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import { ArrowRight } from "@/components/SVG";
@@ -15,6 +14,7 @@ import { WeekChange } from "@/components/rankings/RankMovement";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
@@ -24,10 +24,11 @@ import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
 import { getClubMap } from "@/data/sanity";
-import { plural, rich, t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
 import { logoSrc } from "@/utils/clubs";
-import { date, EMPTY, num, pct, seasonLabel } from "@/utils/format";
+import { EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
@@ -41,14 +42,16 @@ export async function generateStaticParams() {
   return top.length ? top.map((p) => ({ id: String(p.id) })) : [{ id: "0" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/players/[id]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/players/[id]">): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const player = await getPlayer(Number((await params).id));
   if (!player) return { title: t("players.metadata.title") };
-  return pageMetadata({ title: player.name, description: playerDescription(player), path: playerHref(player.id), image: { url: `${playerHref(player.id)}/preview.png`, alt: t("seo.imageAlt.player") } });
+  return pageMetadata(i18n, { title: player.name, description: playerDescription(i18n, player), path: playerHref(player.id), image: { url: `${playerHref(player.id)}/preview.png`, alt: t("seo.imageAlt.player") } });
 }
 
 /** "Markus Barth (Bergen): men's singles rating 2341, #1 in Norway; …. Rating and rank history, every match since 2013, …" */
-function playerDescription(player: Player): string {
+function playerDescription({ t, num }: I18n, player: Player): string {
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
   const ranked = pools.filter(([, p]) => p.rank !== null);
   const shown = (ranked.length ? ranked : pools).slice(0, 3);
@@ -61,7 +64,8 @@ function playerDescription(player: Player): string {
   return t("seo.descriptions.player", { name: player.name, club, ratings, since });
 }
 
-export default function PlayerPage(props: PageProps<"/players/[id]">) {
+export default async function PlayerPage(props: PageProps<"/[lang]/players/[id]">) {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("players.loading")} section />}>
       <PlayerContent params={props.params} />
@@ -69,7 +73,9 @@ export default function PlayerPage(props: PageProps<"/players/[id]">) {
   );
 }
 
-async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "params">) {
+async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">, "params">) {
+  const i18n = await getI18n();
+  const { t, href } = i18n;
   const id = parseId((await params).id);
   if (id === null) notFound();
   const [player, clubs, meta] = await Promise.all([getPlayer(id), getClubMap(), getMeta()]);
@@ -85,13 +91,13 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
         <JsonLd
           data={{
             "@type": "ProfilePage",
-            url: absoluteUrl(playerHref(player.id)),
+            url: absoluteUrl(href(playerHref(player.id))),
             mainEntity: {
               "@type": "Person",
               name: player.name,
-              url: absoluteUrl(playerHref(player.id)),
-              description: playerDescription(player),
-              ...(player.club ? { memberOf: { "@type": "SportsOrganization", name: player.club, sport: "Badminton", ...(club ? { url: absoluteUrl(clubHref(club.slug)) } : {}) } } : {}),
+              url: absoluteUrl(href(playerHref(player.id))),
+              description: playerDescription(i18n, player),
+              ...(player.club ? { memberOf: { "@type": "SportsOrganization", name: player.club, sport: "Badminton", ...(club ? { url: absoluteUrl(href(clubHref(club.slug))) } : {}) } } : {}),
             },
           }}
         />
@@ -127,7 +133,8 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
 }
 
 /** The closest rivals over all disciplines: the biggest in full, then the others */
-function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
+async function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
+  const { t, plural, rich, pct, date } = await getI18n();
   const [rival, ...others] = rivals;
   // "4 matches: 1 in men's singles, 1 in men's doubles, 2 in mixed doubles"
   const where = (r: Rival) => {
@@ -195,7 +202,8 @@ function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
 }
 
 /** Rating and ranking of all disciplines together, with tables by season (precomputed by rate.mjs) */
-function AllDisciplines({ player }: { player: Player }) {
+async function AllDisciplines({ player }: { player: Player }) {
+  const { t, num, pools: poolNames } = await getI18n();
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
   // slot: a fixed colour per discipline, in the order of POOLS, as on the club pages
   const ratingSeries: (ChartSeries & { pool: Pool })[] = [];
@@ -204,9 +212,9 @@ function AllDisciplines({ player }: { player: Player }) {
   for (const [pool, p] of pools) {
     const h = p.history;
     const slot = POOL_KEYS.indexOf(pool);
-    if (h && h.ratings.length > 1) ratingSeries.push({ pool, label: p.label, from: h.from, values: h.ratings, slot });
+    if (h && h.ratings.length > 1) ratingSeries.push({ pool, label: poolNames[pool], from: h.from, values: h.ratings, slot });
     if (h?.ranks?.some((r) => r !== null)) {
-      const label = pool === "mixedDoubles" ? t(p.gender === "K" ? "players.history.amongWomen" : "players.history.amongMen", { pool: p.label }) : p.label;
+      const label = pool === "mixedDoubles" ? t(p.gender === "K" ? "players.history.amongWomen" : "players.history.amongMen", { pool: poolNames[pool] }) : poolNames[pool];
       rankSeries.push({ pool, label, from: h.from, values: h.ranks, counts: h.rankCounts ?? [], slot });
     }
     for (const row of h?.seasons ?? []) seasons.set(row.season, { ...seasons.get(row.season), [pool]: row });
@@ -286,7 +294,8 @@ function AllDisciplines({ player }: { player: Player }) {
 
 const HIGHLIGHTS = ["biggestWins", "biggestLosses", "biggestGains", "biggestDrops"] as const;
 
-function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number> }) {
+async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number> }) {
+  const { t, num, date, pools } = await getI18n();
   const mixed = pool === "mixedDoubles";
   const history = p.history;
   const log = p.matchLog;
@@ -295,7 +304,7 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
   const unranked = pool === "men" || pool === "mensDoubles" ? "players.discipline.menOnly" : mixed ? "players.discipline.genderUnknown" : "players.discipline.womenOnly";
   return (
     <div>
-      <h2 className="text-3xl mb-6">{p.label}</h2>
+      <h2 className="text-3xl mb-6">{pools[pool]}</h2>
       <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatCard label={t("players.discipline.rating")}>
           {Math.round(p.rating)} {p.rank !== null && <span className="text-base font-normal"><WeekChange change={p.ratingChange} /></span>}
@@ -324,7 +333,7 @@ function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; pla
 
       {history && history.ratings.length > 1 && (
         <Card title={t("players.discipline.ratingHistory")} subtitle={t("players.discipline.ratingHistoryRange", { from: date(p.firstPlayed, "monthYear"), to: date(p.lastPlayed, "monthYear") })}>
-          <LineChart series={[{ label: p.label, from: history.from, values: history.ratings, clubs: history.clubs ?? [] }]} label={t("players.discipline.rating")} className="relative h-72" />
+          <LineChart series={[{ label: pools[pool], from: history.from, values: history.ratings, clubs: history.clubs ?? [] }]} label={t("players.discipline.rating")} className="relative h-72" />
           {/* Table view of the chart: rating at the end of each season (July to June), precomputed by rate.mjs */}
           <Disclosure summary={t("players.discipline.ratingBySeason")} className="mt-4">
             <table className="mt-2 text-left">

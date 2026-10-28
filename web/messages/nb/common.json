@@ -1,0 +1,82 @@
+{
+  "loading": "Laster…",
+  "clear": "Tøm",
+  "backToRankOrder": "Tilbake til rangeringen",
+  "week": "Uke {week}, {year}",
+  "pools": {
+    "men": "Herresingle",
+    "women": "Damesingle",
+    "mensDoubles": "Herredouble",
+    "womensDoubles": "Damedouble",
+    "mixedDoubles": "Mixed double"
+  },
+  "poolCodes": {
+    "men": "HS",
+    "women": "DS",
+    "mensDoubles": "HD",
+    "womensDoubles": "DD",
+    "mixedDoubles": "MD"
+  },
+  "poolsInSentence": {
+    "men": "herresingle",
+    "women": "damesingle",
+    "mensDoubles": "herredouble",
+    "womensDoubles": "damedouble",
+    "mixedDoubles": "mixed double"
+  },
+  "carousel": {
+    "slide": "{position} av {count}",
+    "positions": "Posisjoner",
+    "position": "Posisjon {position} av {count}",
+    "previous": "Forrige",
+    "next": "Neste"
+  },
+  "movement": {
+    "new": "ny",
+    "newTitle": "Ikke rangert forrige uke",
+    "same": "Samme plassering som forrige uke",
+    "sameScreenReader": "ingen endring siden forrige uke",
+    "up": "Opp {places} siden forrige uke (var #{previous})",
+    "down": "Ned {places} siden forrige uke (var #{previous})",
+    "upScreenReader": "plasser opp siden forrige uke",
+    "downScreenReader": "plasser ned siden forrige uke",
+    "ratingGained": "Rating opp siden forrige uke",
+    "ratingLost": "Rating ned siden forrige uke",
+    "strengthGained": "Styrke opp siden forrige uke",
+    "strengthLost": "Styrke ned siden forrige uke",
+    "sinceLastWeek": "siden forrige uke"
+  },
+  "chart": {
+    "rating": "Rating",
+    "description": "Historikk for {label}, fra {from} til {to}.",
+    "descriptionSeries": "Historikk for {label} i {series}, fra {from} til {to}.",
+    "descriptionEnding": "Historikk for {label}, fra {from} til {to}, sluttet på {value}.",
+    "keys": "Bruk piltastene for å lese verdiene.",
+    "ofCount": "av {count} {what}",
+    "rankOfCount": "#{rank} av {count} {what}",
+    "series": "Serie",
+    "clubs": "Klubber",
+    "weekEnding": "Uken som sluttet {day}",
+    "touchHint": "Hold på grafen for å se verdiene; skyv for å bla gjennom ukene"
+  },
+  "table": {
+    "rank": "#",
+    "player": "Spiller",
+    "club": "Klubb",
+    "rating": "Rating",
+    "matches": "Kamper",
+    "season": "Sesong",
+    "sinceLastWeek": "Siden forrige uke",
+    "changeSinceLastWeek": "Endring siden forrige uke"
+  },
+  "notRanked": "Ikke rangert",
+  "rankValue": "#{rank}",
+  "matches": {
+    "one": "{count} kamp",
+    "other": "{count} kamper"
+  },
+  "changeSort": {
+    "gain": "Sorter etter største økning siden forrige uke",
+    "loss": "Sorter etter største nedgang siden forrige uke"
+  }
+}

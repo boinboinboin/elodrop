@@ -1,10 +1,10 @@
 // A team or club name with its logo, linking to the club page when the club has an entry.
 // `clubs`: club entries by short name (data/sanity.ts getClubMap); `size` is the logo size in Tailwind
 // units (default 6); `stacked` puts the logo above the name.
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import type { ClubEntry } from "@/types";
-import { clubHref } from "@/utils/hrefs";
 import { logoSrc } from "@/utils/clubs";
+import { clubHref } from "@/utils/hrefs";
 
 interface Props {
   name: string;

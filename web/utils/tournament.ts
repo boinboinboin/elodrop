@@ -1,6 +1,6 @@
 // The logic of the tournament page (app/(site)/tournaments/[id]/[[...path]]): how events are ordered and described,
 // their rounds, the orders of the event table and the numbering of final standings.
-import { plural, t } from "@/messages/i18n";
+import { createI18n, DEFAULT_LANGUAGE, type I18n } from "@/messages/i18n";
 import type { Entry, Pool, Tournament, TournamentEvent } from "@/types";
 import { isSingles } from "./pools";
 import { byRating } from "./sort";
@@ -49,24 +49,24 @@ export function pickView(t: Tournament, path: string[]): { view: "summary" } | {
   const [cls, pool, order = null, ...rest] = path;
   if (!pool || rest.length) return null;
   const event = t.events.findIndex((e) => classSlug(e.className) === cls && e.pool === pool);
-  if (event < 0 || (order && !(order in orders(t.events[event])))) return null;
+  // The orders' keys are the same in every language; only their names differ
+  if (event < 0 || (order && !(order in orders(createI18n(DEFAULT_LANGUAGE), t.events[event])))) return null;
   return { view: "events", event, order };
 }
 
 /** No draw luck: a single group (everyone plays everyone) or just two entries (one match) */
 export const noLuck = (e: TournamentEvent) => e.noLuck ?? e.singleGroup ?? false;
 
-// Group places in the description ("the best runner-up and third of all groups"), and numbers in words
-const PLACE_NAMES: Record<number, string> = {
-  1: t("tournaments.description.places.winner"),
-  2: t("tournaments.description.places.runnerUp"),
-  3: t("tournaments.description.places.third"),
-  4: t("tournaments.description.places.fourth"),
-};
-const NUMBERS: Record<number, string> = { 2: t("tournaments.description.numbers.two"), 3: t("tournaments.description.numbers.three"), 4: t("tournaments.description.numbers.four") };
-
 /** "in 18 groups; only the group winners go to the knockout" and the like, for the event's description */
-export function formatDescription(event: TournamentEvent): string {
+export function formatDescription({ t, plural }: I18n, event: TournamentEvent): string {
+  // Group places ("the best runner-up and third of all groups"), and numbers in words
+  const PLACE_NAMES: Record<number, string> = {
+    1: t("tournaments.description.places.winner"),
+    2: t("tournaments.description.places.runnerUp"),
+    3: t("tournaments.description.places.third"),
+    4: t("tournaments.description.places.fourth"),
+  };
+  const NUMBERS: Record<number, string> = { 2: t("tournaments.description.numbers.two"), 3: t("tournaments.description.numbers.three"), 4: t("tournaments.description.numbers.four") };
   const ranks = event.advance?.ranks ?? [1];
   const best = event.advance?.best ?? [];
   const sameAs = (list: number[], other: number[]) => list.length === other.length && list.every((v, i) => v === other[i]);
@@ -93,10 +93,10 @@ export function formatDescription(event: TournamentEvent): string {
 }
 
 /** An event's name in a sentence or heading: "SEN A men's singles" */
-export const eventTitle = (e: Pick<TournamentEvent, "className" | "pool">) => t("tournaments.event.title", { className: e.className, pool: t(`common.poolsInSentence.${e.pool}`) });
+export const eventTitle = ({ t }: I18n, e: Pick<TournamentEvent, "className" | "pool">) => t("tournaments.event.title", { className: e.className, pool: t(`common.poolsInSentence.${e.pool}`) });
 
 /** "12 players", "8 pairs" */
-export const entryCount = (e: Pick<TournamentEvent, "pool" | "entries">) => plural(isSingles(e.pool) ? "tournaments.event.players" : "tournaments.event.pairs", e.entries.length);
+export const entryCount = ({ plural }: I18n, e: Pick<TournamentEvent, "pool" | "entries">) => plural(isSingles(e.pool) ? "tournaments.event.players" : "tournaments.event.pairs", e.entries.length);
 
 /** "the chance of reaching the knockout, which here means winning it" applies when only the group winners go through */
 export const onlyWinners = (event: TournamentEvent) => (event.advance?.ranks ?? [1]).join() === "1" && !(event.advance?.best ?? []).length;
@@ -105,7 +105,7 @@ export const onlyWinners = (event: TournamentEvent) => (event.advance?.ranks ?? 
 const ROUND_KEYS = ["final", "semiFinals", "quarterFinals", "last16", "last32", "last64", "last128"] as const;
 
 /** The rounds of an event: out of the group, each knockout round reached, winning; with short names for the results */
-export function rounds(event: TournamentEvent): { steps: string[]; short: string[] } {
+export function rounds({ t }: I18n, event: TournamentEvent): { steps: string[]; short: string[] } {
   const steps: string[] = [];
   const short: string[] = [];
   const max = event.maxRounds;
@@ -133,7 +133,7 @@ export type Order = "default" | "group" | "rating" | "standings";
  * or by rating without groups, and the final standings once played. A single group has one order:
  * the most likely winner first (the same as by rating) before it's played, the standings after.
  */
-export function orders(event: TournamentEvent): Partial<Record<Order, string>> {
+export function orders({ t }: I18n, event: TournamentEvent): Partial<Record<Order, string>> {
   const played = event.played;
   const standings = t("tournaments.orders.finalStandings");
   if (noLuck(event)) return played ? { standings } : { default: t("tournaments.orders.mostLikelyWinner") };
@@ -149,7 +149,7 @@ export type Row = { header: string; detail: string } | { entry: Entry; place?: n
 const luckScore = (e: Entry) => e.luck?.score ?? e.luck?.progress ?? 0;
 
 /** The table's rows in the order chosen; with final standings, each row's place (shared by those out at the same stage) */
-export function tableRows(event: TournamentEvent, order: Order): Row[] {
+export function tableRows({ t }: I18n, event: TournamentEvent, order: Order): Row[] {
   if (order === "group") {
     // A header row per group (in number order), then its players by rating; players who start in the knockout last
     const rows: Row[] = [];
@@ -189,8 +189,8 @@ export function tableRows(event: TournamentEvent, order: Order): Row[] {
 }
 
 /** Every entry with its event, for the tournament-wide lists (luck, and the winners of played events) */
-export function allEntries(t: Tournament) {
+export function allEntries(i18n: I18n, t: Tournament) {
   return t.events.flatMap((e, eventIndex) =>
-    e.entries.map((entry) => ({ ...entry, eventIndex, eventLabel: eventTitle(e), placement: e.placement })),
+    e.entries.map((entry) => ({ ...entry, eventIndex, eventLabel: eventTitle(i18n, e), placement: e.placement })),
   );
 }

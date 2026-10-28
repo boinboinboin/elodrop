@@ -1,0 +1,178 @@
+{
+  "title": "Eliteserien",
+  "loading": "Laster Eliteserien…",
+  "heading": "Eliteserien {season}",
+  "intro": "Hvor sterke de åtte lagene er, ut fra spillernes ratinger.",
+  "earlierSeasons": "Tidligere sesonger oppsummert, spådd mot faktiske resultater:",
+  "howItWorks": {
+    "tie": "En lagkamp er 8 kamper: 2 herresingle, 2 damesingle, 1 herredouble, 1 damedouble og 2 mixed double, og en spiller spiller høyst 2 av dem. Hvert lag antas å stille med oppstillingen som gir flest forventede kampseiere mot en gjennomsnittlig Eliteserien-motstander. Slik reglene krever har første singlespiller flere offisielle rankingpoeng enn andre, og første mixedpar flere samlede mixed double-poeng enn andre{ranking}. Seierssjansene bruker samme formel som ratingene, kamp for kamp, og en lagkamp vinnes med 5 kamper og er uavgjort ved 4-4. Tabellpoeng per lagkamp er som i ligaen: 4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3 og 2-2 for 4-4.",
+    "rankingPeriod": " (rankingen {period})",
+    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, inkludert spillere utlånt fra andre klubber. Spillere uten double- eller mixedrating regnes som at de starter i double fra singleratingen sin (merket ≈)."
+  },
+  "noData": "Ingen lagstyrker ennå: kjør pipeline/eliteserien.mjs etter rate.mjs.",
+  "table": {
+    "title": "Spådd tabell",
+    "intro": "Grunnserien, med én lagkamp mot hvert av de andre lagene, etter forventede tabellpoeng.",
+    "team": "Lag",
+    "tablePoints": "Tabellpoeng",
+    "tablePointsTitle": "Forventede tabellpoeng fra én lagkamp mot hvert av de andre sju lagene",
+    "matchesPerTie": "Kamper vunnet per lagkamp",
+    "matchesPerTieTitle": "Snitt over lagkamper mot de andre sju lagene",
+    "winsTie": "Vinner lagkampen",
+    "draw": "Uavgjort",
+    "losesTie": "Taper lagkampen",
+    "ofEight": "av 8",
+    "note": "Forventede verdier: tabellpoengene summeres over de sju lagkampene (28 som mest), de andre kolonnene er snitt per lagkamp."
+  },
+  "headToHead": {
+    "title": "Innbyrdes",
+    "intro": "Sjansen for at laget til venstre vinner en lagkamp mot laget øverst. Hold over for forventet resultat.",
+    "cellTitle": "{a} mot {b}: forventet {matches} i kamper, {points} i tabellpoeng; vinner {win}, uavgjort {draw}, taper {loss}"
+  },
+  "team": {
+    "summary": "{points} forventede tabellpoeng · {matches} kamper vunnet per lagkamp · vinner {win} av lagkampene",
+    "lineup": "Sterkeste oppstilling",
+    "lineupSubtitle": "Med sjansen til å vinne hver kamp mot en gjennomsnittlig Eliteserien-motstander",
+    "players": "Spillere",
+    "singles": "Single",
+    "doubles": "Double",
+    "mixed": "Mixed",
+    "points": "Poeng",
+    "pointsTitle": "Offisielle rankingpoeng: single / mixed double",
+    "loanFrom": "Utlån fra {club}",
+    "noRatedMatches": "Ingen ratede kamper",
+    "note": "≈ anslått: ingen rating i den disiplinen ennå. Poeng: offisielle rankingpoeng i single / mixed double, som avgjør hvem som spiller første single og første mixed. Herrer først, så damer, etter singlerating."
+  },
+  "review": {
+    "title": "Eliteserien {season} oppsummert",
+    "loading": "Laster sesongen…",
+    "seasons": "Sesonger",
+    "intro": "Lagstyrkene før hver runde mot det som faktisk skjedde.",
+    "howItWorks": "Før hver runde regnes hvert lags beste oppstilling ut som for denne sesongen, med spillernes ratinger fra uken før og den offisielle rankingen fra dagen før. Det gir hver lagkamp et <strong>potensial</strong>: det forventede resultatet hvis begge lagene stiller med sin beste oppstilling. Det sammenlignes med resultatet <strong>forventet med oppstillingene som faktisk ble brukt</strong> (hver kamps seierssjanse fra rett før den) og med det <strong>faktiske resultatet</strong>. Walkover og kamper som ikke ble spilt er utelatt, unntatt i sluttspillet (se under).",
+    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, med spillere som spilte for et lag uten å stå på listen lagt til fra første kamp.",
+    "preseason": {
+      "title": "Før sesongen",
+      "intro": "Den spådde grunnserietabellen før første runde, som på siden for denne sesongen: forventede tabellpoeng fra én lagkamp mot hvert lag (4-0 for å vinne 6-2 eller bedre, 3-1 for 5-3, 2-2 for 4-4), mot den faktiske tabellen og sluttresultatet etter sluttspillet.",
+      "predicted": "Spådd",
+      "team": "Lag",
+      "expectedPoints": "Forventede poeng",
+      "actualPoints": "Faktiske poeng",
+      "matchesPerTie": "Kamper vunnet per lagkamp",
+      "regularSeason": "Grunnserien",
+      "final": "Slutt",
+      "lower": "({places} lavere)",
+      "higher": "({places} høyere)"
+    },
+    "potential": {
+      "title": "Hvem som slo potensialet sitt",
+      "intro": "Kamper vunnet over sesongen mot potensialet, delt i to: <strong>oppstillinger</strong> (det forventede resultatet med oppstillingene som faktisk ble brukt mot potensialet: spillere som manglet eller hvilte, og motstandere som heller ikke stilte fullt lag) og <strong>prestasjon</strong> (kamper vunnet mot det oppstillingene som ble brukt var ventet å vinne). Tabellpoeng gjelder grunnserien, mot poengene forventet fra potensialet i hver lagkamp.",
+      "team": "Lag",
+      "potential": "Potensial",
+      "potentialTitle": "Forventede kamper vunnet med begge lag på sitt beste",
+      "expected": "Forventet",
+      "expectedTitle": "Forventede kamper vunnet med oppstillingene som ble brukt",
+      "won": "Vunnet",
+      "wonMinusPotential": "Vunnet − potensial",
+      "lineups": "Oppstillinger",
+      "performance": "Prestasjon",
+      "tablePoints": "Tabellpoeng",
+      "tablePointsTitle": "Tabellpoeng i grunnserien: potensial (begge lag på sitt beste, runde for runde) og faktiske",
+      "teamSummary": "{ties}, {matches} · slutt {rank}.",
+      "ties": {
+        "one": "{count} lagkamp",
+        "other": "{count} lagkamper"
+      }
+    },
+    "ties": {
+      "title": "Lagkamper",
+      "intro": "Hver lagkamps forventede resultat og hjemmelagets sjanse til å vinne, med begge lagenes beste oppstillinger (<strong>potensial</strong>) og med <strong>oppstillingene som faktisk ble brukt</strong> (walkover regnet som seier, som i resultatet), mot det faktiske resultatet. En overraskelse er en lagkamp vunnet av et lag som hadde under 30 % sjanse med oppstillingene som ble brukt.",
+      "playoffs": "I sluttspillet er en lagkamp over så snart et lag har vunnet 5 kamper, så kampene som gjenstår regnes med sjansene til oppstillingene som var oppgitt før runden. En lagkamp som står 4–4 avgjøres av et gullsett: lagene bytter på å stryke disipliner, og ett sett spilles i den siste som er igjen. Det antas å være disiplinen der lagenes beste spillere eller par ligger nærmest hverandre i rating, så det blir ingen uavgjort.",
+      "tie": "Lagkamp",
+      "potential": "Potensial",
+      "potentialTitle": "Begge lagenes beste oppstillinger: forventet resultat, og hjemmelagets sjanse til å vinne",
+      "played": "Oppstillinger brukt",
+      "playedTitle": "Oppstillingene som faktisk ble brukt: forventet resultat, og hjemmelagets sjanse til å vinne",
+      "result": "Resultat",
+      "homeWin": "{chance} hjemmeseier",
+      "goldenOdds": "4–4 {draw}, gullsett {discipline} {chance}",
+      "goldenOddsTitle": "Sjanse for 4–4, og gullsettets disiplin og hjemmelagets seierssjanse",
+      "tablePoints": "Tabellpoeng",
+      "goldenSet": "Gullsett {discipline}: {side1} – {side2} {score}",
+      "upset": "Overraskelse"
+    },
+    "players": {
+      "title": "Spillere",
+      "intro": "Kamper vunnet mot forventede seiere fra spillernes ratinger rett før hver kamp, for spillere med minst 4 Eliteserien-kamper. Doublemakkere deler resultatene sine.",
+      "above": "Over forventning",
+      "below": "Under forventning",
+      "player": "Spiller",
+      "won": "Vunnet",
+      "expected": "Forventet",
+      "difference": "Forskjell",
+      "wonOf": "{won} av {games}"
+    },
+    "changes": {
+      "title": "Endringer i listen",
+      "intro": "Spillere som spilte for et lag uten å stå på listen, regnet for laget de spilte for:"
+    }
+  },
+  "tenMatchesLink": "Hva om en lagkamp hadde 10 kamper i stedet for 8? <link>Denne sesongen med en 3. herresingle og en 2. herredouble</link>.",
+  "tenMatches": {
+    "title": "Hva om en lagkamp hadde 10 kamper?",
+    "heading": "Hva om en lagkamp hadde 10 kamper i stedet for 8?",
+    "loading": "Laster 10-kampertesten…",
+    "intro": "Eliteserien {season} med en 3. herresingle og en 2. herredouble i hver lagkamp: de samme lagene, spillerne og reglene, mot dagens 8 kamper.",
+    "disclaimer": {
+      "title": "En test, ikke den ekte ligaen",
+      "text": "Ingenting her er en ekte oppstilling eller et ekte resultat: det er dagens Eliteserien-modell kjørt på et format som ikke finnes, for å se hva det ville endret.",
+      "added": "Én endring i lagene: {reason} (en spiller spiller høyst 2 kamper), så <player>{name}</player> ({club}) er lagt til {team} i denne testen, uten å stå på {team}s liste.",
+      "addedEight": "{name} ville også kommet med i {team}s oppstilling med 8 kamper, så {team}s tall for 8 kamper her avviker fra Eliteserien-siden.",
+      "addedNotEight": "{name} ville ikke kommet med i {team}s oppstilling med 8 kamper, så tallene for 8 kamper her er de samme som på <link>Eliteserien-siden</link>."
+    },
+    "howItWorks": "En lagkamp på 10 er 3 herresingle, 2 damesingle, 2 herredouble, 1 damedouble og 2 mixed double. Alt annet er som i dag: en spiller spiller høyst 2 kamper og høyst én i hver disiplin, singlespillerne spiller i rekkefølge etter singlerankingpoengene sine, og første par i rekkefølge etter samlede rankingpoeng (herredoublepoeng for de to herredoublene){ranking}. Hvert lag stiller med oppstillingen med flest forventede kampseiere mot en gjennomsnittlig motstander i hver kamp (for 3. herresingle, snittet av de 17. til 24. beste herrene; for 2. herredouble, av de 17. til 32. beste doubleratingene). En lagkamp vinnes med 6 kamper og er uavgjort ved 5-5, og tabellpoeng gis med samme marginer som i dag: 4-0 for å vinne 7-3 eller bedre, 3-1 for 6-4 og 2-2 for 5-5.",
+    "rankingPeriod": " (rankingen {period})",
+    "findings": {
+      "title": "Hva som endres",
+      "men": "Herrene spiller 7 av de 10 kampene (5 av 8 i dag), så hvert lag trenger minst 5 herrer, og 5. herre og andre herredoublepar teller.",
+      "gain": "Tjener mest: {team}, {change} tabellpoeng ({from} → {to}).",
+      "loss": "Taper mest: {team}, {change} tabellpoeng ({from} → {to}).",
+      "moves": "Endrede plasser: {moves}.",
+      "noMoves": "Ingen lag bytter plass i den spådde tabellen.",
+      "move": "{team} {from} → {to}"
+    },
+    "table": {
+      "title": "Spådd tabell, 8 og 10 kamper",
+      "intro": "Grunnserien, én lagkamp mot hvert av de andre lagene, etter forventede tabellpoeng med 10 kamper per lagkamp, og det samme med 8 kamper under.",
+      "placeTitle": "Plassering med 10 kamper, og med 8 under når den er forskjellig",
+      "team": "Lag",
+      "tablePoints": "Tabellpoeng",
+      "matches": "Kamper vunnet per lagkamp",
+      "winsTie": "Vinner lagkampen",
+      "draw": "Uavgjort",
+      "tablePointsTitle": "Forventede tabellpoeng fra én lagkamp mot hvert av de andre sju lagene, med endringen fra 8 kamper",
+      "matchesTitle": "Snitt over lagkamper mot de andre sju lagene",
+      "ofTen": "av 10",
+      "withEight": "{value} med 8",
+      "note": "Forventede verdier: tabellpoengene summeres over de sju lagkampene (28 som mest i begge formater), de andre kolonnene er snitt per lagkamp."
+    },
+    "headToHead": {
+      "title": "Innbyrdes med 10 kamper",
+      "intro": "Sjansen for at laget til venstre vinner en lagkamp på 10 mot laget øverst, med endringen fra 8 kamper under. Hold over for forventede resultater.",
+      "cellTitle": "{a} mot {b} med 10 kamper: forventet {matches} i kamper, {points} i tabellpoeng; vinner {win}, uavgjort {draw}, taper {loss}. Med 8: vinner {win8}, forventet {matches8}"
+    },
+    "team": {
+      "summary": "{points} forventede tabellpoeng ({change} fra 8 kamper) · {matches} av 10 kamper vunnet per lagkamp · vinner {win} av lagkampene",
+      "lineup": "Sterkeste oppstilling på 10",
+      "lineupSubtitle": "Med sjansen til å vinne hver kamp mot en gjennomsnittlig motstander; de to nye kampene er merket, og der oppstillingen med 8 kamper har andre spillere i en kamp, vises de under den",
+      "new": "Ny",
+      "was": "Med 8: {players}",
+      "changes": "Hvem som spiller hva",
+      "changesSubtitle": "Spillerne som får endrede kamper fra 8 til 10",
+      "player": "Spiller",
+      "eight": "Med 8",
+      "ten": "Med 10",
+      "none": "–",
+      "added": "Lagt til for testen"
+    }
+  }
+}

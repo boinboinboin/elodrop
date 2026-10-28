@@ -1,35 +1,38 @@
 // Eliteserien team strengths (pipeline/eliteserien.mjs): the predicted table, head-to-head chances
 // between the teams, and each team's strongest lineup and players.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getEliteserien } from "@/data/eliteserien";
 import { getMeta } from "@/data/meta";
 import { getClubMap } from "@/data/sanity";
-import { rich, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Loose } from "@/types";
 import { logoSrc } from "@/utils/clubs";
-import { chance, EMPTY, pct } from "@/utils/format";
+import { EMPTY } from "@/utils/format";
 import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const season = (await getMeta())?.eliteserien.current ?? "";
-  return pageMetadata({ title: t("eliteserien.title"), description: t("seo.descriptions.eliteserien", { season }), path: ELITESERIEN_HREF });
+  return pageMetadata(i18n, { title: t("eliteserien.title"), description: t("seo.descriptions.eliteserien", { season }), path: ELITESERIEN_HREF });
 }
 
 const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-")}`;
 /** A season in review's URL part as its name: "2024-25" → "2024/25" */
 const seasonName = (season: string) => season.replace("-", "/");
 
-export default function EliteserienPage() {
+export default async function EliteserienPage() {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("eliteserien.loading")} section />}>
       <Content />
@@ -38,6 +41,7 @@ export default function EliteserienPage() {
 }
 
 async function Content() {
+  const { t, rich, num, pct, chance } = await getI18n();
   const [data, clubs, meta] = await Promise.all([getEliteserien(), getClubMap(), getMeta()]);
   const teams: Loose[] = data?.teams ?? [];
   // Chance against the average Eliteserien opponent in a slot
@@ -116,9 +120,9 @@ async function Content() {
                           {team.team}
                         </a>
                       </td>
-                      <td className="py-3 px-4 text-right tabular-nums font-semibold">{team.strength.tablePoints.toFixed(1)}</td>
+                      <td className="py-3 px-4 text-right tabular-nums font-semibold">{num(team.strength.tablePoints, 1)}</td>
                       <td className="py-3 px-4 text-right tabular-nums hidden md:table-cell">
-                        {team.strength.expected.toFixed(2)} <span className="text-sm text-gray-500">{t("eliteserien.table.ofEight")}</span>
+                        {num(team.strength.expected, 2)} <span className="text-sm text-gray-500">{t("eliteserien.table.ofEight")}</span>
                       </td>
                       <td className="py-3 px-4 text-right tabular-nums">{pct(team.strength.win)}</td>
                       <td className="py-3 px-4 text-right tabular-nums hidden sm:table-cell">{pct(team.strength.draw)}</td>
@@ -160,8 +164,8 @@ async function Content() {
                             title={t("eliteserien.headToHead.cellTitle", {
                               a: a.team,
                               b: b.team,
-                              matches: `${h.expected.toFixed(1)}–${(8 - h.expected).toFixed(1)}`,
-                              points: `${h.points.toFixed(1)}–${(4 - h.points).toFixed(1)}`,
+                              matches: `${num(h.expected, 1)}–${num(8 - h.expected, 1)}`,
+                              points: `${num(h.points, 1)}–${num(4 - h.points, 1)}`,
                               win: pct(h.win),
                               draw: pct(h.draw),
                               loss: pct(h.loss),
@@ -186,7 +190,7 @@ async function Content() {
                   {team.rank}. <Team name={team.team} clubs={clubs} size={10} className="gap-3" />
                 </h2>
                 <p className="text-gray-700 mb-6">
-                  {t("eliteserien.team.summary", { points: team.strength.tablePoints.toFixed(1), matches: team.strength.expected.toFixed(2), win: pct(team.strength.win) })}
+                  {t("eliteserien.team.summary", { points: num(team.strength.tablePoints, 1), matches: num(team.strength.expected, 2), win: pct(team.strength.win) })}
                 </p>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <Card title={t("eliteserien.team.lineup")} subtitle={t("eliteserien.team.lineupSubtitle")}>

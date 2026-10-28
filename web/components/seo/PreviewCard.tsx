@@ -2,7 +2,7 @@
 // mark, what it is ("Player"), the title, a line under it, up to four numbers with their labels, and
 // the site's address. Used by app/opengraph-image.tsx and the preview.png routes (players, clubs, tournaments).
 import { ImageResponse } from "next/og";
-import { t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
 import { SITE_URL } from "@/utils/hrefs";
 import { ACCENT, MARK, markSvg } from "@/utils/logo";
 import { PREVIEW_SIZE } from "@/utils/metadata";
@@ -12,7 +12,7 @@ export interface PreviewStat {
   label: string;
 }
 
-export function previewCard({ kicker, title, subtitle, stats = [], image }: { kicker?: string; title: string; subtitle?: string; stats?: PreviewStat[]; image?: string | null }) {
+export function previewCard(i18n: I18n, { kicker, title, subtitle, stats = [], image }: { kicker?: string; title: string; subtitle?: string; stats?: PreviewStat[]; image?: string | null }) {
   const mark = `data:image/svg+xml;base64,${Buffer.from(markSvg(MARK)).toString("base64")}`;
   return new ImageResponse(
     (
@@ -20,7 +20,7 @@ export function previewCard({ kicker, title, subtitle, stats = [], image }: { ki
         <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 36 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={mark} width={64} height={64} alt="" />
-          <span style={{ fontWeight: 700 }}>{t("layout.siteName")}</span>
+          <span style={{ fontWeight: 700 }}>{i18n.t("layout.siteName")}</span>
           {kicker && <span style={{ color: "#6b7280" }}>{`· ${kicker}`}</span>}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 40 }}>

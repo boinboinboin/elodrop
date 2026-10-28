@@ -6,24 +6,25 @@
 // Rows come as compact arrays (sent once, instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
 // rating, matches, last played, rank last week, rating change since last week]. `clubs`: the clubs in the table with a
 // page, short name → [slug, logo].
-import Link from "next/link";
 import { useMemo, useState } from "react";
-import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import { Search } from "@/components/SVG";
+import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
 import ClearButton from "@/components/ui/ClearButton";
+import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
-import { t } from "@/messages/i18n";
-import { date, EMPTY, num } from "@/utils/format";
+import { useI18n } from "@/messages/client";
+import { logoSrc } from "@/utils/clubs";
+import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByChange, sortByDesc } from "@/utils/sort";
-import { logoSrc } from "@/utils/clubs";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, string, (number | null)?, (number | null)?];
 
 export default function RankingTable({ rows, clubs, summary }: { rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
+  const { date, num, t } = useI18n();
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
   const [byChange, setByChange] = useState<ChangeOrder>(null);

@@ -3,14 +3,15 @@
 // …") shows the lead as its title; changes for developers (the pipeline, commands) come last, smaller.
 import Badge from "@/components/ui/Badge";
 import { TEXT_LINK } from "@/components/ui/styles";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import { type ChangeItem, type Release as ReleaseData, isFeature, isTechnical, parseInline, splitLead } from "@/utils/changelog";
 import { repoHref } from "@/utils/hrefs";
 
 /** The anchor of a version on the page ("v1-14-0") */
 export const releaseId = (r: ReleaseData) => `v${r.version.replaceAll(".", "-")}`;
 
-export default function Release({ release, color }: { release: ReleaseData; color: string }) {
+export default async function Release({ release, color }: { release: ReleaseData; color: string }) {
+  const { t } = await getI18n();
   const launch = release.name === "launch";
   const feature = isFeature(release);
   const items = release.items.filter((i) => !isTechnical(i.text));
@@ -48,12 +49,14 @@ export default function Release({ release, color }: { release: ReleaseData; colo
 }
 
 /** "New" (filled) for a new feature, "Improved" (outlined) for improvements and fixes */
-export const KindBadge = ({ feature }: { feature: boolean }) =>
-  feature ? (
+export const KindBadge = async ({ feature }: { feature: boolean }) => {
+  const { t } = await getI18n();
+  return feature ? (
     <span className="inline-block text-xs px-1.5 py-0.5 border border-black rounded bg-black text-white">{t("whatsNew.feature")}</span>
   ) : (
     <Badge>{t("whatsNew.improvement")}</Badge>
   );
+};
 
 function Change({ item }: { item: ChangeItem }) {
   const { lead, rest } = splitLead(item.text);
@@ -78,14 +81,15 @@ function Change({ item }: { item: ChangeItem }) {
 const capitalizeFirst = (text: string, apply: boolean) => (apply && /^[a-zæøå]/.test(text) ? text[0].toUpperCase() + text.slice(1) : text);
 
 /** A changelog bullet's Markdown: `code`, **bold** and links (paths in the repo link to GitHub) */
-export function Markdown({ text }: { text: string }) {
+export async function Markdown({ text }: { text: string }) {
+  const { href: localize } = await getI18n();
   return (
     <>
       {parseInline(text).map((part, i) => {
         if (part.type === "code") return <code key={i} className="font-mono text-[0.9em] bg-gray-100 px-1 py-0.5 rounded break-words">{part.text}</code>;
         if (part.type === "strong") return <strong key={i}>{part.text}</strong>;
         if (part.type === "link") {
-          const href = /^(https?:|\/|#)/.test(part.href) ? part.href : repoHref(part.href);
+          const href = part.href.startsWith("/") ? localize(part.href) : /^(https?:|#)/.test(part.href) ? part.href : repoHref(part.href);
           return <a key={i} href={href} className={TEXT_LINK}>{part.text}</a>;
         }
         return part.text;

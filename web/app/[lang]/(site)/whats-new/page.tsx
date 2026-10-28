@@ -6,13 +6,15 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
 import Section from "@/components/ui/Section";
 import Release, { KindBadge, Markdown, releaseId } from "@/components/whats-new/Release";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import { type Release as ReleaseData, getReleases, isFeature } from "@/utils/changelog";
 import { PALETTE } from "@/utils/chart";
-import { date, dateRange } from "@/utils/format";
 import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = pageMetadata({ title: t("whatsNew.metadata.title"), description: t("seo.descriptions.whatsNew"), path: "/whats-new" });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("whatsNew.metadata.title"), description: i18n.t("seo.descriptions.whatsNew"), path: "/whats-new" });
+}
 
 /** Releases grouped by day, in the order given */
 function byDay(releases: ReleaseData[]) {
@@ -24,7 +26,8 @@ function byDay(releases: ReleaseData[]) {
   return days;
 }
 
-export default function WhatsNewPage() {
+export default async function WhatsNewPage() {
+  const { t, plural, date, dateRange } = await getI18n();
   const releases = getReleases();
   const launched = releases.filter((r) => r.major > 0);
   const before = releases.filter((r) => r.major === 0);

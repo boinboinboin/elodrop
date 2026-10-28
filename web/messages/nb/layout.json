@@ -1,0 +1,69 @@
+{
+  "siteName": "elodrop",
+  "titleTemplate": "%s · elodrop",
+  "description": "elodrop: Elo-ratinger i single og double for norsk badminton, fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
+  "manifestDescription": "Elo-ratinger for norsk badminton",
+  "nav": {
+    "label": "Hovedmeny",
+    "rankings": "Rangeringer",
+    "clubs": "Klubber",
+    "eliteserien": "Eliteserien",
+    "tournaments": "Turneringer",
+    "upsets": "Overraskelser",
+    "headToHead": "Innbyrdes",
+    "about": "Om elodrop",
+    "howItWorks": "Slik fungerer det",
+    "whatsNew": "Nytt"
+  },
+  "footer": {
+    "sources": "Resultater fra {portalen} og {cup2000}.",
+    "updated": "Oppdatert {time}",
+    "version": "v{version}"
+  },
+  "menu": {
+    "button": "Meny",
+    "theme": "Fargetema",
+    "language": "Språk"
+  },
+  "themes": {
+    "yinyang": {
+      "label": "Yinyang",
+      "description": "Svart og hvitt"
+    },
+    "totebag": {
+      "label": "Totebag",
+      "description": "Lys krem og mørk oliven"
+    },
+    "allengland": {
+      "label": "All England",
+      "description": "All Englands grå baner"
+    }
+  },
+  "breadcrumbs": {
+    "label": "Brødsmulesti",
+    "home": "Hjem"
+  },
+  "notFound": {
+    "title": "Ikke funnet",
+    "text": "Her finnes ingen slik spiller, klubb eller turnering, eller den har ingen ratinger ennå.",
+    "back": "Tilbake til rangeringene"
+  },
+  "search": {
+    "label": "Søk etter spillere, klubber, turneringer og Eliteserien",
+    "placeholder": "Spillere, klubber, turneringer…",
+    "results": "Søkeresultater",
+    "nothing": "Ingen treff",
+    "groups": {
+      "players": "Spillere",
+      "clubs": "Klubber",
+      "tournaments": "Turneringer",
+      "eliteserien": "Eliteserien"
+    },
+    "eliteserien": "Eliteserien {season}",
+    "teamStrengths": "Lagstyrker",
+    "seasonInReview": "Sesongen oppsummert",
+    "drawLuck": "Trekningsflaks",
+    "tenMatches": "Hva om en lagkamp hadde 10 kamper"
+  },
+  "logoLabel": "elodrop, hjem"
+}

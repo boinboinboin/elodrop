@@ -1,7 +1,7 @@
 // A row of links between related pages (disciplines, views, weeks), as outlined buttons, the
 // current one filled black (aria-current="page")
-import Link from "next/link";
 import type { ReactNode } from "react";
+import Link from "@/components/ui/Link";
 import { toggleClass } from "./styles";
 
 export interface LinkTab {

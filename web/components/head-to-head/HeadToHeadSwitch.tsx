@@ -1,8 +1,9 @@
 // Switch between the two head-to-head pages: two players, or two doubles pairs.
 import LinkTabs from "@/components/ui/LinkTabs";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 
-export default function HeadToHeadSwitch({ current }: { current: "players" | "pairs" }) {
+export default async function HeadToHeadSwitch({ current }: { current: "players" | "pairs" }) {
+  const { t } = await getI18n();
   return (
     <LinkTabs
       label={t("headToHead.switch.label")}

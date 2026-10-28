@@ -7,12 +7,11 @@
 import { useEffect, useRef, useState } from "react";
 import { NerdOnly } from "@/components/how-it-works/NerdMode";
 import { toggleClass } from "@/components/ui/styles";
-import { plural, t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import type { Pool } from "@/types";
 import { COLORS, niceStep } from "@/utils/chart";
 import { BIN, type Distribution, type Distributions, RANGE } from "@/utils/distribution";
-import { num, pct } from "@/utils/format";
-import { POOLS, POOL_KEYS } from "@/utils/pools";
+import { POOL_KEYS } from "@/utils/pools";
 import { P0 } from "@/utils/rating";
 
 // left: room for the counts (narrower on phones)
@@ -24,6 +23,7 @@ type Scope = "all" | "ranked";
 const normal = (d: Distribution, r: number) => (d.players * BIN * Math.exp(-(((r - d.mean) / d.sd) ** 2) / 2)) / (d.sd * Math.sqrt(2 * Math.PI));
 
 export default function RatingDistribution({ data, color }: { data: Distributions; color: string }) {
+  const { t, plural, num, pct, pools } = useI18n();
   const [pool, setPool] = useState<Pool>("men");
   const [scope, setScope] = useState<Scope>("ranked");
   const [active, setActive] = useState<number | null>(null);
@@ -78,7 +78,7 @@ export default function RatingDistribution({ data, color }: { data: Distribution
     e.preventDefault();
     setActive(Math.min(n - 1, Math.max(0, next)));
   };
-  const summary = t("howItWorks.spread.chartLabel", { pool: POOLS[pool], players: num(d.players), median: num(d.median), top10: num(d.top10) });
+  const summary = t("howItWorks.spread.chartLabel", { pool: pools[pool], players: num(d.players), median: num(d.median), top10: num(d.top10) });
 
   return (
     <div className="bg-white p-4 sm:p-5 md:p-6 text-base">
@@ -90,7 +90,7 @@ export default function RatingDistribution({ data, color }: { data: Distribution
           {POOL_KEYS.map((key) => (
             <button key={key} type="button" aria-pressed={pool === key} onClick={() => setPool(key)} className={`${toggleClass(pool === key, "sm")} cursor-pointer`}>
               {t(`common.poolCodes.${key}`)}
-              <span className="sr-only"> {POOLS[key]}</span>
+              <span className="sr-only"> {pools[key]}</span>
             </button>
           ))}
         </div>

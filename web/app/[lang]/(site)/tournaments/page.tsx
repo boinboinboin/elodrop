@@ -1,22 +1,25 @@
 // Tournaments with a published draw and draw luck (pipeline/upcoming.mjs): upcoming ones, played
 // ones by month, and how the predictions turned out over the season.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PredictionStats, { luckFit } from "@/components/tournaments/PredictionStats";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getTournamentsIndex } from "@/data/tournaments";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { TournamentSummary } from "@/types";
-import { date, dateRange } from "@/utils/format";
 import { tournamentHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = pageMetadata({ title: t("tournaments.metadata.title"), description: t("seo.descriptions.tournaments"), path: "/tournaments" });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("tournaments.metadata.title"), description: i18n.t("seo.descriptions.tournaments"), path: "/tournaments" });
+}
 
-export default function TournamentsPage() {
+export default async function TournamentsPage() {
+  const { t } = await getI18n();
   return (
     <>
       <Section>
@@ -32,13 +35,14 @@ export default function TournamentsPage() {
   );
 }
 
-function Row({ tournament: tour }: { tournament: TournamentSummary }) {
+async function Row({ tournament: tour }: { tournament: TournamentSummary }) {
+  const { t, plural, num, dateRange } = await getI18n();
   const ev = tour.evaluation;
   const facts = [
     tour.cancelled,
     plural("tournaments.list.events", tour.events),
     plural("tournaments.list.entries", tour.entries),
-    ev?.winners > 0 && t("tournaments.list.favouriteWon", { won: ev.favouritesWon, winners: ev.winners, expected: ev.favouritesExpected.toFixed(1) }),
+    ev?.winners > 0 && t("tournaments.list.favouriteWon", { won: ev.favouritesWon, winners: ev.winners, expected: num(ev.favouritesExpected, 1) }),
   ];
   return (
     <li className="bg-white p-4 md:p-5 flex flex-wrap items-baseline justify-between gap-3">
@@ -55,6 +59,7 @@ function Row({ tournament: tour }: { tournament: TournamentSummary }) {
 }
 
 async function Content() {
+  const { t, num, date } = await getI18n();
   const index = await getTournamentsIndex();
   const tournaments = index?.tournaments ?? [];
   // "Today" is the day of the data update, which the page is rendered with
@@ -77,7 +82,7 @@ async function Content() {
           <PredictionStats ev={season} />
           <p className="text-gray-700 max-w-3xl">
             {t("tournaments.list.predictionsExplained")}
-            {fit?.correlation != null && ` ${t("tournaments.list.correlation", { correlation: fit.correlation.toFixed(2) })}`}
+            {fit?.correlation != null && ` ${t("tournaments.list.correlation", { correlation: num(fit.correlation, 2) })}`}
           </p>
         </Section>
       )}

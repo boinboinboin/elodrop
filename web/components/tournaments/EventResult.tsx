@@ -4,12 +4,12 @@
 // walkover. Side by side from tablet width, stacked
 // on phones; without a final, the winner's tile keeps its half of the width.
 import EntryNames from "@/components/tournaments/EntryNames";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, Entry, TournamentEvent } from "@/types";
-import { pct } from "@/utils/format";
 import { isSingles } from "@/utils/pools";
 
-export default function EventResult({ event, winner, clubs }: { event: TournamentEvent; winner: Entry; clubs: Record<string, ClubEntry> }) {
+export default async function EventResult({ event, winner, clubs }: { event: TournamentEvent; winner: Entry; clubs: Record<string, ClubEntry> }) {
+  const { pct, plural, t } = await getI18n();
   const singles = isSingles(event.pool);
   const final = event.final && event.entries.length > 2 ? event.final : null;
   const runnerUp = final ? event.entries[final.runnerUp] : null;

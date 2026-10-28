@@ -2,19 +2,18 @@
 // (components/home). The rankings, the front page until this one, are at /rankings.
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight } from "@/components/SVG";
 import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
 import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
 import HomeCard from "@/components/home/HomeCard";
 import JsonLd from "@/components/seo/JsonLd";
+import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
 import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
-import { num } from "@/utils/format";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 
 // Each card's colour: the first five chart colours, which are apart in every pair, and head to head
@@ -33,19 +32,23 @@ const ABOUT_CARDS = [
   { key: "whatsNew", href: "/whats-new", Glimpse: WhatsNewGlimpse, colors: ["var(--color-accent)"] },
 ] as const;
 
-export const metadata: Metadata = pageMetadata({ title: t("seo.homeTitle"), description: t("layout.description"), path: "/", absolute: true });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("seo.homeTitle"), description: i18n.t("layout.description"), path: "/", absolute: true });
+}
 
-export default function Home() {
+export default async function Home() {
+  const { t, lang, href } = await getI18n();
   return (
     <>
       <JsonLd
         data={{
           "@type": "WebSite",
           name: t("layout.siteName"),
-          url: absoluteUrl("/"),
+          url: absoluteUrl(href("/")),
           description: t("layout.description"),
-          inLanguage: "en",
-          publisher: { "@type": "Organization", name: t("layout.siteName"), url: absoluteUrl("/"), logo: absoluteUrl("/apple-icon.png") },
+          inLanguage: lang,
+          publisher: { "@type": "Organization", name: t("layout.siteName"), url: absoluteUrl(href("/")), logo: absoluteUrl("/apple-icon.png") },
         }}
       />
       <Section>
@@ -84,6 +87,7 @@ export default function Home() {
 }
 
 async function PlayersRated() {
+  const { t, num } = await getI18n();
   const meta = await getMeta();
   return meta ? <span className="text-gray-700">{t("home.playersRated", { count: num(meta.players) })}</span> : null;
 }

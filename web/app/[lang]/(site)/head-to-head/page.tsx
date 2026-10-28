@@ -4,7 +4,6 @@
 // singles and doubles, with her rating moved onto the men's scale by the gender gap
 // (pipeline/gender-gap.mjs).
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { type ChartSeries } from "@/components/charts/LineChart";
 import Team from "@/components/clubs/Team";
@@ -21,6 +20,7 @@ import SideNumbers from "@/components/head-to-head/SideNumbers";
 import SideRating, { rankText } from "@/components/head-to-head/SideRating";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MatchTable from "@/components/players/MatchTable";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import Swatch from "@/components/ui/Swatch";
@@ -29,17 +29,19 @@ import { getGenderGap, getHeadToHead } from "@/data/head-to-head";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getClubMap } from "@/data/sanity";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, GenderGap, HeadToHead, HeadToHeadCrossover, HeadToHeadPool, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { headToHeadHref, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
-import { POOLS } from "@/utils/pools";
 
-export const metadata: Metadata = pageMetadata({ title: t("headToHead.title"), description: t("seo.descriptions.headToHead"), path: "/head-to-head" });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("headToHead.title"), description: i18n.t("seo.descriptions.headToHead"), path: "/head-to-head" });
+}
 
-export default function HeadToHeadPage(props: PageProps<"/head-to-head">) {
+export default async function HeadToHeadPage(props: PageProps<"/[lang]/head-to-head">) {
   return (
     <Suspense fallback={<Loading section />}>
       <Content searchParams={props.searchParams} />
@@ -47,7 +49,8 @@ export default function HeadToHeadPage(props: PageProps<"/head-to-head">) {
   );
 }
 
-async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searchParams">) {
+async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head">, "searchParams">) {
+  const { t, href } = await getI18n();
   const params = await searchParams;
   const idA = parseId(params.a);
   const idB = parseId(params.b);
@@ -68,7 +71,7 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searc
         <h1 className="h1 mt-4">{t("headToHead.title")}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("headToHead.intro")}</p>
         <HeadToHeadSwitch current="players" />
-        <form action="/head-to-head" method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end max-w-4xl">
+        <form action={href("/head-to-head")} method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end max-w-4xl">
           <PlayerPicker key={`a-${idA}`} name="a" label={t("headToHead.form.player")} initial={playerA ? { id: playerA.id, name: playerA.name } : null} />
           <PlayerPicker key={`b-${idB}`} name="b" label={t("headToHead.form.against")} initial={playerB ? { id: playerB.id, name: playerB.name } : null} />
           <div className="flex gap-2">
@@ -85,7 +88,8 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head">, "searc
   );
 }
 
-function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
+async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
+  const { t } = await getI18n();
   const { a, b, record } = h2h;
   const pools = Object.entries(h2h.pools) as [Pool, HeadToHeadPool][];
   return (
@@ -159,17 +163,19 @@ function historySeries(histories: ({ from: string; ratings: (number | null)[] } 
   return series;
 }
 
-function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToHeadPool; a: Player; b: Player; showMargins: boolean }) {
+async function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToHeadPool; a: Player; b: Player; showMargins: boolean }) {
+  const i18n = await getI18n();
+  const { t, plural, pools } = i18n;
   const series = historySeries([p.a.history, p.b.history], [a.name, b.name]);
   const poolInText = t(`common.poolsInSentence.${pool}`);
   return (
     <div className="bg-white p-4 md:p-6">
-      <h3 className="text-xl mb-4">{POOLS[pool]}</h3>
+      <h3 className="text-xl mb-4">{pools[pool]}</h3>
       <div className="grid grid-cols-2 gap-4">
         {[p.a, p.b].map((side, i) => (
           <SideNumbers key={i} right={i === 1} label={[a, b][i].name} value={Math.round(side.rating)}>
             <dd className="text-sm text-gray-600">
-              {rankText(side, pool, true)} · {t("headToHead.rank.peak", { rating: Math.round(side.peak) })}
+              {rankText(i18n, side, pool, true)} · {t("headToHead.rank.peak", { rating: Math.round(side.peak) })}
             </dd>
           </SideNumbers>
         ))}
@@ -177,7 +183,7 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
       {/* Win chance as a split bar: A's share from the left, B's from the right */}
       <div className="mt-6">
         <ChanceBar names={[a.name, b.name]} chance={p.chance} />
-        {p.record.matches > 0 && <p className="text-sm text-gray-600 mt-2">{recordSentence(plural("headToHead.record.metIn", p.record.matches, { pool: poolInText }), a.name, p.record)}</p>}
+        {p.record.matches > 0 && <p className="text-sm text-gray-600 mt-2">{recordSentence(i18n, plural("headToHead.record.metIn", p.record.matches, { pool: poolInText }), a.name, p.record)}</p>}
       </div>
       {showMargins && p.margins.matches > 0 && (
         <>
@@ -191,7 +197,9 @@ function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: HeadToH
 }
 
 /** A man against a woman, just for fun: both on the men's scale, the chance and both histories */
-function CrossoverComparison({ c, a, b }: { c: HeadToHeadCrossover; a: Player; b: Player }) {
+async function CrossoverComparison({ c, a, b }: { c: HeadToHeadCrossover; a: Player; b: Player }) {
+  const i18n = await getI18n();
+  const { t, plural } = i18n;
   // Every week of a history counts (the data leaves out histories of one week)
   const series = historySeries(c.history, [a.name, b.name], 1);
   return (
@@ -208,7 +216,7 @@ function CrossoverComparison({ c, a, b }: { c: HeadToHeadCrossover; a: Player; b
         <ChanceBar names={[a.name, b.name]} chance={c.chance} />
         {c.record.matches > 0 && (
           <p className="text-sm text-gray-600 mt-2">
-            {recordSentence(plural("headToHead.record.theyMetIn", c.record.matches, { pool: t(`common.poolsInSentence.${c.format === "singles" ? "men" : "mensDoubles"}`) }), a.name, c.record)}
+            {recordSentence(i18n, plural("headToHead.record.theyMetIn", c.record.matches, { pool: t(`common.poolsInSentence.${c.format === "singles" ? "men" : "mensDoubles"}`) }), a.name, c.record)}
           </p>
         )}
       </div>

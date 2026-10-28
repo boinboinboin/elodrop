@@ -3,11 +3,12 @@
 // left and the cork drops in at the dip (animations in globals.css; none with reduced motion). The
 // header stays mounted while navigating within the site, so it plays once per visit, not on every
 // page.
-import Link from "next/link";
-import { t } from "@/messages/i18n";
+import Link from "@/components/ui/Link";
+import { getI18n } from "@/messages/server";
 import { MARK } from "@/utils/logo";
 
-export default function Logo() {
+export default async function Logo() {
+  const { t } = await getI18n();
   return (
     <Link href="/" className="flex items-center gap-1 text-xl font-semibold tracking-tight" aria-label={t("layout.logoLabel")}>
       {/* The mark from x 0 (not overshooting the edge as in the icon) and the part of the height it uses */}

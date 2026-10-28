@@ -3,26 +3,26 @@
 // (utils/rankings.ts). With inactive players, only the best INACTIVE_SHOWN of them are listed (the full lists run to over
 // 10,000 players), with a link to the page with all of them. The junior rankings (JuniorRankings) and the combined
 // rankings (CombinedRankings, men or women) have ranked players only.
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Check, Female, Male } from "@/components/SVG";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CombinedTable, { type CombinedRow } from "@/components/rankings/CombinedTable";
 import RankingTable, { type RankingRow } from "@/components/rankings/RankingTable";
+import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getCombinedRankings, getJuniorRankings, getRankings } from "@/data/rankings";
 import { getClubMap } from "@/data/sanity";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Gender, Pool } from "@/types";
-import { num } from "@/utils/format";
 import { combinedRankingHref, DISCIPLINES, disciplineHref, juniorRankingHref, listTabs, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
 
 const GENDERS: Gender[] = ["M", "K"];
 const INACTIVE_SHOWN = 500;
 
 export default async function Rankings({ list, showInactive, allInactive = false }: { list: RankingList; showInactive: boolean; allInactive?: boolean }) {
+  const { num, t } = await getI18n();
   const { pool, gender } = list;
   const [everyone, clubs] = await Promise.all([getRankings(pool, showInactive, gender), getClubMap()]);
   // In rating order: every ranked player, and the best inactive ones unless all are asked for
@@ -84,6 +84,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
 
 /** A junior ranking (U19): from junior matches only, ranked players only (no inactive switch) */
 export async function JuniorRankings({ list }: { list: RankingList }) {
+  const { num, t } = await getI18n();
   const { pool, gender } = list;
   const [{ players, bornFrom }, clubs] = await Promise.all([getJuniorRankings(pool, gender), getClubMap()]);
 
@@ -118,6 +119,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
  * everyone or of the juniors (U19)
  */
 export async function CombinedRankings({ gender, junior }: { gender: Gender; junior: boolean }) {
+  const { num, t } = await getI18n();
   const [{ players, bornFrom }, clubs] = await Promise.all([getCombinedRankings(gender, junior), getClubMap()]);
   const pools = Object.keys(players[0]?.pools ?? {}) as Pool[];
   const crumbs = junior
@@ -155,7 +157,8 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
 }
 
 /** All players or juniors (U19), in the same list */
-function AgeTabs({ junior, all, juniors }: { junior: boolean; all: string; juniors: string }) {
+async function AgeTabs({ junior, all, juniors }: { junior: boolean; all: string; juniors: string }) {
+  const { t } = await getI18n();
   return (
     <LinkTabs
       label={t("rankings.junior.ages")}
@@ -173,7 +176,8 @@ function AgeTabs({ junior, all, juniors }: { junior: boolean; all: string; junio
 type Tabs = ReturnType<typeof listTabs>;
 
 /** Men or women (♂ and ♀), first: the same discipline for the other gender */
-function GenderTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
+async function GenderTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
+  const { t } = await getI18n();
   return (
     <LinkTabs
       label={t("rankings.genders.label")}
@@ -188,7 +192,8 @@ function GenderTabs({ current, junior = false, showInactive = false }: { current
 }
 
 /** Singles, doubles, mixed doubles and the combined list, for the list's gender */
-function DisciplineTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
+async function DisciplineTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
+  const { t } = await getI18n();
   return (
     <LinkTabs
       label={t("rankings.disciplines")}

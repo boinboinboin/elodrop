@@ -4,7 +4,7 @@
 // with a swatch of its colours. The theme lives on <html data-theme> (set before the page paints)
 // and in localStorage; this reads it from the page.
 import { useSyncExternalStore } from "react";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import { DEFAULT_THEME, THEMES, THEME_KEY, type Theme } from "@/utils/theme";
 
 const subscribe = (onChange: () => void) => {
@@ -41,6 +41,7 @@ const Swatch = ({ colors }: { colors: readonly string[] }) => {
 
 /** `onPick`: called after a theme is chosen (the menu closes) */
 export default function ThemePicker({ onPick }: { onPick?: () => void }) {
+  const { t } = useI18n();
   // The server renders the default; the page's actual theme takes over on hydration
   const theme = useSyncExternalStore(subscribe, current, () => DEFAULT_THEME);
   return (

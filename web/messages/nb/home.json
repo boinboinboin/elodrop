@@ -1,0 +1,71 @@
+{
+  "title": "elodrop",
+  "intro": "Single- og doubleratinger for norsk badminton, regnet ut fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
+  "toRankings": "Se rangeringene",
+  "playersRated": "{count} spillere med rating",
+  "howItWorksLink": "Hvordan fungerer det?",
+  "pages": "Hva finnes på elodrop",
+  "about": "Om elodrop",
+  "loading": "Laster…",
+  "noData": "Ingen data ennå.",
+  "rankings": {
+    "title": "Rangeringer",
+    "description": "Hver spillers rating i single, double og mixed double, oppdatert morgenen etter at de har spilt.",
+    "teaser": "Nummer én i hver disiplin",
+    "link": "Alle rangeringer"
+  },
+  "clubs": {
+    "title": "Klubber",
+    "description": "De sterkeste klubbene, etter de beste spillerne i alle fem disipliner, og hver klubbs spillere og historikk.",
+    "teaser": "Sterkeste klubber",
+    "link": "Alle klubber"
+  },
+  "eliteserien": {
+    "title": "Eliteserien",
+    "description": "Hvert lags styrke ut fra den sterkeste oppstillingen: den spådde tabellen og alle tidligere sesonger oppsummert.",
+    "teaser": "Spådd tabell, {season}",
+    "points": "{points} poeng",
+    "link": "Lagstyrker"
+  },
+  "upsets": {
+    "title": "Overraskelser",
+    "description": "Ukens største overraskelser: seirene ratingene ga minst sjanse.",
+    "teaser": "Største overraskelse, uke {week}",
+    "chance": "sjanse til å vinne",
+    "beat": "slo",
+    "link": "Ukens overraskelser"
+  },
+  "tournaments": {
+    "title": "Turneringstrekninger",
+    "description": "Hvor heldig hver spillers trekning er før en turnering starter, og hvordan spådommene gikk.",
+    "next": "Neste",
+    "luckiest": "Heldigste trekning",
+    "rounds": "{luck} runder",
+    "places": "{luck} plasser",
+    "season": "Denne sesongen har favoritten vunnet {won} av {winners} klasser ({expected} forventet).",
+    "link": "Alle turneringer"
+  },
+  "headToHead": {
+    "title": "Innbyrdes",
+    "description": "To vilkårlige spillere eller par: møtene deres, seiersmarginer og hver sides sjanse i dag.",
+    "teaser": "Herresingle: nummer én mot nummer to",
+    "pair": "{a} mot {b}",
+    "link": "Sammenlign to spillere"
+  },
+  "howItWorks": {
+    "title": "Hvordan fungerer elodrop?",
+    "description": "Hvordan en rating regnes ut, på vanlig norsk, og alle formlene bak for de store nerdene.",
+    "teaser": "En spiller med {favourite} mot en med {underdog}",
+    "favourite": "Favoritten vinner",
+    "underdog": "Underdogen vinner",
+    "chance": "{chance} sjanse",
+    "point": "En overraskelse er verdt langt mer enn en forventet seier.",
+    "link": "Slik fungerer det"
+  },
+  "whatsNew": {
+    "title": "Nytt",
+    "description": "Hver nye side, funksjon og rettelse på elodrop, nyeste først.",
+    "teaser": "De siste oppdateringene",
+    "link": "Alle oppdateringer"
+  }
+}

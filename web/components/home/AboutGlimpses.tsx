@@ -1,11 +1,10 @@
 // The front page cards' glimpses of the pages about the site (components/home/HomeCard.tsx): how it
 // works as what one match is worth either way, and what's new as the newest versions.
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ROW } from "@/components/ui/styles";
 import { KindBadge, Markdown, releaseId } from "@/components/whats-new/Release";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import { getReleases, isFeature, splitLead } from "@/utils/changelog";
-import { date, num, pct } from "@/utils/format";
 import { KAPPA, expectedScore, ratingMultiplier } from "@/utils/rating";
 import { Teaser } from "./HomeCard";
 
@@ -15,7 +14,8 @@ const FAVOURITE = 1700;
 const UNDERDOG = 1450;
 
 /** How it works: what the favourite and the underdog gain if each of them wins */
-export function HowItWorksGlimpse() {
+export async function HowItWorksGlimpse() {
+  const { t, num, pct } = await getI18n();
   const chance = expectedScore(FAVOURITE, UNDERDOG);
   const rows = [
     { key: "favourite", chance, gain: KAPPA * ratingMultiplier(FAVOURITE) * (1 - chance), rating: FAVOURITE },
@@ -41,7 +41,8 @@ export function HowItWorksGlimpse() {
 }
 
 /** What's new: the three newest versions, each with its first change */
-export function WhatsNewGlimpse() {
+export async function WhatsNewGlimpse() {
+  const { t, date } = await getI18n();
   const releases = getReleases().slice(0, 3);
   return (
     <>

@@ -2,7 +2,7 @@
 // for nerds under it (shown with the switch on), and a formula.
 import type { ReactNode } from "react";
 import { NerdOnly } from "@/components/how-it-works/NerdMode";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 
 /** A part of the page: its number in its colour, its heading and the plain text, then anything else */
 export function Part({ id, number, color, title, children }: { id: string; number: number; color: string; title: string; children: ReactNode }) {
@@ -18,7 +18,8 @@ export function Part({ id, number, color, title, children }: { id: string; numbe
 }
 
 /** The details for nerds: a box with the part's colour along its side, opened by the switch */
-export function Nerdy({ color, children }: { color: string; children: ReactNode }) {
+export async function Nerdy({ color, children }: { color: string; children: ReactNode }) {
+  const { t } = await getI18n();
   return (
     <NerdOnly>
       <div className="bg-white border-l-4 p-4 sm:p-5 md:p-6 text-base grid gap-3 mt-1" style={{ borderColor: color }}>

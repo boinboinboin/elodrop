@@ -1,32 +1,33 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import Link from "next/link";
 import { Suspense } from "react";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
 import SearchBar from "@/components/layout/SearchBar";
 import UpdatedAt from "@/components/layout/UpdatedAt";
-import { rich, t } from "@/messages/i18n";
+import Link from "@/components/ui/Link";
+import { getI18n } from "@/messages/server";
 import { getReleases } from "@/utils/changelog";
 
-const NAV = [
-  { href: "/rankings", label: t("layout.nav.rankings") },
-  { href: "/clubs", label: t("layout.nav.clubs") },
-  { href: "/eliteserien", label: t("layout.nav.eliteserien") },
-  { href: "/tournaments", label: t("layout.nav.tournaments") },
-  { href: "/upsets", label: t("layout.nav.upsets") },
-  { href: "/head-to-head", label: t("layout.nav.headToHead") },
-];
 const FOOTER_LINK = "underline hover:text-black";
 const VERSION = getReleases()[0]?.version;
-// About the site, in the menu at every width (and the footer), the current version beside What's new
-const ABOUT = [
-  { href: "/how-it-works", label: t("layout.nav.howItWorks") },
-  { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
-];
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const { t, rich } = await getI18n();
+  const NAV = [
+    { href: "/rankings", label: t("layout.nav.rankings") },
+    { href: "/clubs", label: t("layout.nav.clubs") },
+    { href: "/eliteserien", label: t("layout.nav.eliteserien") },
+    { href: "/tournaments", label: t("layout.nav.tournaments") },
+    { href: "/upsets", label: t("layout.nav.upsets") },
+    { href: "/head-to-head", label: t("layout.nav.headToHead") },
+  ];
+  // About the site, in the menu at every width (and the footer), the current version beside What's new
+  const ABOUT = [
+    { href: "/how-it-works", label: t("layout.nav.howItWorks") },
+    { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
+  ];
   return (
     <>
       {/* A bar along the top while a page loads (it reads the URL, so it waits for the client) */}

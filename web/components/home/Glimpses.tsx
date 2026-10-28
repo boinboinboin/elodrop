@@ -2,11 +2,11 @@
 // same data as its page, and each shown its own way: the number ones as a list, the strongest clubs
 // with their logos, the predicted Eliteserien table as bars, the week's biggest upset as one big
 // chance, the next tournament's luckiest draw, and the top two men head to head as a split bar.
-import Link from "next/link";
+import { ArrowRight } from "@/components/SVG";
 import Team from "@/components/clubs/Team";
 import ChanceBar from "@/components/head-to-head/ChanceBar";
 import RankMovement from "@/components/rankings/RankMovement";
-import { ArrowRight } from "@/components/SVG";
+import Link from "@/components/ui/Link";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubsFile } from "@/data/clubs";
 import { getEliteserien } from "@/data/eliteserien";
@@ -14,20 +14,21 @@ import { getRankings } from "@/data/rankings";
 import { getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
 import { getUpsetsIndex } from "@/data/upsets";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Entry, Loose, TournamentEvent } from "@/types";
-import { date, dateRange, num, pct, signed, toneClass } from "@/utils/format";
+import { toneClass } from "@/utils/format";
 import { headToHeadHref, playerHref, tournamentHref } from "@/utils/hrefs";
-import { POOLS } from "@/utils/pools";
-import { expectedScore } from "@/utils/rating";
 import { RANKING_LISTS, rankingHref, rankingListTitle } from "@/utils/rankings";
+import { expectedScore } from "@/utils/rating";
 import { eventTitle, noLuck } from "@/utils/tournament";
 import { Teaser } from "./HomeCard";
 
-const NoData = () => <p className="text-gray-600">{t("home.noData")}</p>;
+const NoData = async () => <p className="text-gray-600">{(await getI18n()).t("home.noData")}</p>;
 
 /** Rankings: the number one of every list */
 export async function RankingsGlimpse() {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const lists = Object.values(RANKING_LISTS);
   const leaders = await Promise.all(lists.map(async (list) => ({ list, player: (await getRankings(list.pool, false, list.gender))[0] })));
   if (!leaders.some((l) => l.player)) return <NoData />;
@@ -40,7 +41,7 @@ export async function RankingsGlimpse() {
             <li key={rankingHref(list.pool, list.gender)} className={`${ROW} py-1.5 flex items-baseline justify-between gap-3`}>
               <span className="min-w-0">
                 <Link href={playerHref(player.id)} className="font-semibold hover:text-blue-600">{player.name}</Link>
-                <Link href={rankingHref(list.pool, list.gender)} className="block text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(list)}</Link>
+                <Link href={rankingHref(list.pool, list.gender)} className="block text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
               </span>
               <span className="text-xl font-semibold tabular-nums">{Math.round(player.rating)}</span>
             </li>
@@ -53,6 +54,7 @@ export async function RankingsGlimpse() {
 
 /** Clubs: the five strongest over all disciplines, with their logos and their move since last week */
 export async function ClubsGlimpse() {
+  const { t, signed } = await getI18n();
   const [file, clubs] = await Promise.all([getClubsFile(), getClubMap()]);
   const top = file?.clubs.combined.slice(0, 5) ?? [];
   if (!top.length) return <NoData />;
@@ -75,6 +77,7 @@ export async function ClubsGlimpse() {
 
 /** Eliteserien: the predicted table, each team's expected table points as a bar */
 export async function EliteserienGlimpse() {
+  const { t, num } = await getI18n();
   const [data, clubs] = await Promise.all([getEliteserien(), getClubMap()]);
   const teams: Loose[] = data?.teams ?? [];
   if (!teams.length) return <NoData />;
@@ -99,6 +102,7 @@ export async function EliteserienGlimpse() {
 
 /** Upsets: the latest week's biggest, its winners' chance in large type */
 export async function UpsetsGlimpse() {
+  const { t, date, pct, pools } = await getI18n();
   const latest = (await getUpsetsIndex())?.latest;
   const upset = latest?.matches.reduce((a, b) => (b.winChance < a.winChance ? b : a), latest.matches[0]);
   if (!latest || !upset) return <NoData />;
@@ -120,7 +124,7 @@ export async function UpsetsGlimpse() {
         <strong className="font-semibold">{names(upset.winners)}</strong> <span className="text-gray-600">{t("home.upsets.beat")}</span> {names(upset.losers)}
       </p>
       <p className="mt-1 text-sm text-gray-600 tabular-nums">
-        {upset.score} · {POOLS[upset.pool]} · {upset.event}
+        {upset.score} · {pools[upset.pool]} · {upset.event}
       </p>
     </>
   );
@@ -128,6 +132,8 @@ export async function UpsetsGlimpse() {
 
 /** Tournament draws: the next tournament (or the newest one played) and its luckiest draw, and how the favourites have done this season */
 export async function TournamentsGlimpse() {
+  const i18n = await getI18n();
+  const { t, dateRange, num, signed } = i18n;
   const index = await getTournamentsIndex();
   const all = index?.tournaments ?? [];
   // "Today" is the day of the data update, which the page is rendered with
@@ -156,7 +162,7 @@ export async function TournamentsGlimpse() {
               {t(luckiest.e.placement ? "home.tournaments.places" : "home.tournaments.rounds", { luck: signed(luckiest.luck) })}
             </span>
           </p>
-          <p className="text-sm text-gray-600">{eventTitle(luckiest.e)}</p>
+          <p className="text-sm text-gray-600">{eventTitle(i18n, luckiest.e)}</p>
         </div>
       )}
       {ev?.winners > 0 && (
@@ -168,6 +174,7 @@ export async function TournamentsGlimpse() {
 
 /** Head to head: the top two in men's singles and each one's chance against the other */
 export async function HeadToHeadGlimpse() {
+  const { t } = await getI18n();
   const [a, b] = await getRankings("men");
   if (!a || !b) return <NoData />;
   return (

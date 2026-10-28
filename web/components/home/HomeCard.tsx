@@ -1,10 +1,10 @@
 // A card on the front page about one of the site's pages: its name (a link), what it's for, a live
 // glimpse of it (loaded on its own, so the cards show as their data arrives) and a link to it. Each
 // card's top edge has its own colour from the theme's chart palette, or two (head to head: its sides').
-import Link from "next/link";
 import { type ReactNode, Suspense } from "react";
 import { ArrowRight } from "@/components/SVG";
-import { t } from "@/messages/i18n";
+import Link from "@/components/ui/Link";
+import { getI18n } from "@/messages/server";
 
 interface Props {
   href: string;
@@ -17,7 +17,8 @@ interface Props {
   children: ReactNode;
 }
 
-export default function HomeCard({ href, title, description, link, colors, children }: Props) {
+export default async function HomeCard({ href, title, description, link, colors, children }: Props) {
+  const { t } = await getI18n();
   return (
     <article className="bg-white px-5 pb-5 md:px-6 md:pb-6 flex flex-col h-full">
       <div aria-hidden="true" className="flex h-1 -mx-5 md:-mx-6 mb-5 md:mb-6">

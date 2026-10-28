@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "title": "Spiller"
+  },
+  "loading": "Laster spiller…",
+  "born": "Født {year}",
+  "compare": "Sammenlign innbyrdes med en annen spiller",
+  "disciplines": "Disipliner",
+  "rival": {
+    "title": "Største rival",
+    "subtitle": "Motstanderen med jevnest kamper, i alle disipliner samlet, fra minst 3 møter",
+    "inPool": "{matches} i {pool}",
+    "inPools": "{matches}: {list}",
+    "inOnePool": "{count} i {pool}",
+    "record": "{wins} seiere, {losses} tap",
+    "recordWithDraws": "{wins} seiere, {draws} uavgjort, {losses} tap",
+    "summary": "{matches} · {record} · snittmargin {margin} poeng · sist møttes {date} · <link>innbyrdes</link>",
+    "alsoClose": "Også jevne:",
+    "score": "{wins}–{losses}",
+    "scoreWithDraws": "{wins}–{losses}–{draws}",
+    "other": "{matches}, {score}, margin {margin} · <link>innbyrdes</link>"
+  },
+  "history": {
+    "title": "Historikk",
+    "rating": "Rating",
+    "ranking": "Rangering",
+    "rank": "Plassering",
+    "ratingIntro": "Rating i hver disiplin ved slutten av hver uke. Doubleratinger er på samme type skala som single, men hver disiplin rates for seg, så sammenlign hvordan hver linje beveger seg i stedet for nivåene mellom disiplinene.",
+    "rankingIntro": "Landsplassering ved slutten av hver uke, blant spillere som hadde spilt de siste 12 månedene; herredisiplinene rangerer bare herrer og damedisiplinene bare damer, og mixed double rangerer herrer og damer hver for seg. Hull er perioder uten plassering. Skalaen er logaritmisk, så et hopp fra #100 til #50 ser like stort ut som fra #20 til #10.",
+    "amongWomen": "{pool} (blant damer)",
+    "amongMen": "{pool} (blant herrer)",
+    "ratingBySeason": "Rating per sesong",
+    "ratingBySeasonNote": "Rating ved slutten av hver sesong (eller siste uke for inneværende sesong).",
+    "rankBySeason": "Plassering per sesong",
+    "rankBySeasonNote": "Plassering ved slutten av hver sesong (eller siste uke for inneværende sesong).",
+    "ofRanked": " av {count}"
+  },
+  "discipline": {
+    "rating": "Rating",
+    "rank": "Plassering",
+    "amongWomen": "blant damer",
+    "amongMen": "blant herrer",
+    "menOnly": "Herredisiplinene rangerer bare herrer",
+    "womenOnly": "Damedisiplinene rangerer bare damer",
+    "genderUnknown": "Kjønn ukjent",
+    "inactive": "Ingen kamper de siste 12 månedene",
+    "peak": "Toppnotering",
+    "matches": "Kamper",
+    "record": "{wins} seiere · {losses} tap",
+    "recordWithDraws": "{wins} seiere · {draws} uavgjort · {losses} tap",
+    "ratingHistory": "Ratinghistorikk",
+    "ratingHistoryRange": "Rating ved slutten av hver uke, {from} til {to}",
+    "ratingBySeason": "Rating per sesong",
+    "ratingAtEnd": "Rating ved slutten",
+    "highlights": "Høydepunkter"
+  },
+  "highlights": {
+    "biggestWins": {
+      "label": "Største seire",
+      "subtitle": "Seirene med lavest sjanse til å vinne før kampen"
+    },
+    "biggestLosses": {
+      "label": "Største tap",
+      "subtitle": "Tapene med høyest sjanse til å vinne før kampen"
+    },
+    "biggestGains": {
+      "label": "Største ratingøkninger",
+      "subtitle": "Kampene som økte ratingen mest"
+    },
+    "biggestDrops": {
+      "label": "Største ratingtap",
+      "subtitle": "Kampene som senket ratingen mest"
+    }
+  },
+  "matches": {
+    "title": "Kamper",
+    "sorts": {
+      "label": "Sorter kamper",
+      "date": "Nyeste",
+      "gain": "Største økning",
+      "loss": "Største nedgang"
+    },
+    "date": "Dato",
+    "opponent": "Motstander",
+    "opponents": "Motstandere",
+    "result": "Resultat",
+    "resultChanceSuffix": ", %",
+    "winChance": "Seierssjanse",
+    "winChanceTitle": "Sjanse til å vinne før kampen",
+    "chanceScreenReader": " sjanse til å vinne",
+    "rating": "Rating",
+    "ratingTitle": "Rating etter kampen",
+    "with": "med",
+    "matchKey": "Kampnøkkel, for rettelser",
+    "won": "Seier",
+    "lost": "Tap",
+    "draw": "Uavgjort",
+    "pointMargin": "Poengmargin",
+    "pull": "{pull} mot single",
+    "pullTitle": "Etter hver doublekamp, til og med den 200., flytter ratingen seg 3 % mot nivået spillerens singlerating tilsier",
+    "loadingMore": "Laster kamper…",
+    "loadFailed": "Kunne ikke laste kampene: prøv igjen",
+    "showFewer": "Vis færre",
+    "showAll": "Vis alle {count} kamper"
+  }
+}

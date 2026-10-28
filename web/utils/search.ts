@@ -1,6 +1,7 @@
 // The site search, run in the browser: the search bar and the player pickers load the index
-// (/api/search-index) once per visit and search it as you type. Every word of the query must be
+// (/api/search-index/<language>) once per visit and search it as you type. Every word of the query must be
 // in the text, case and accents ignored and æ/ø/å read as ae/o/a.
+import type { Language } from "@/messages/i18n";
 import { normalize, words as splitWords } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
 
@@ -27,11 +28,13 @@ interface Loaded {
   pages: Record<"clubs" | "tournaments" | "eliteserien", (SearchPage & { text: string })[]>;
 }
 
-let loading: Promise<Loaded> | null = null;
+const loading = new Map<Language, Promise<Loaded>>();
 
-/** The index, fetched the first time it's asked for (call it early, e.g. on focus, to have it ready) */
-export function loadSearchIndex(): Promise<Loaded> {
-  loading ??= fetch("/api/search-index")
+/** The index in a language, fetched the first time it's asked for (call it early, e.g. on focus, to have it ready) */
+export function loadSearchIndex(lang: Language): Promise<Loaded> {
+  const cached = loading.get(lang);
+  if (cached) return cached;
+  const promise = fetch(`/api/search-index/${lang}`)
     .then((res) => {
       if (!res.ok) throw new Error(`search index: ${res.status}`);
       return res.json() as Promise<SearchIndex>;
@@ -44,10 +47,11 @@ export function loadSearchIndex(): Promise<Loaded> {
       };
     })
     .catch((error) => {
-      loading = null; // try again next time
+      loading.delete(lang); // try again next time
       throw error;
     });
-  return loading;
+  loading.set(lang, promise);
+  return promise;
 }
 
 const matcher = (query: string) => {

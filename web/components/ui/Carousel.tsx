@@ -7,9 +7,10 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useSyncExternalStore, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "@/components/SVG";
 import { ICON_BUTTON } from "@/components/ui/styles";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 
 export default function Carousel({ slides, label }: { slides: ReactNode[]; label: string }) {
+  const { t } = useI18n();
   // trimSnaps: no empty space after the last slide
   const [viewport, api] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps" });
   // The current position and the number of positions (which changes with the slides shown at a time)

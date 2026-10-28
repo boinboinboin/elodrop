@@ -15,13 +15,16 @@ import StatCard from "@/components/ui/StatCard";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getDistributions } from "@/data/distribution";
 import type { en } from "@/messages/en";
-import { type MessageKey, rich, t } from "@/messages/i18n";
+import type { MessageKey } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import { PALETTE } from "@/utils/chart";
-import { num } from "@/utils/format";
 import { repoHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = pageMetadata({ title: t("howItWorks.metadata.title"), description: t("howItWorks.metadata.description"), path: "/how-it-works" });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("howItWorks.metadata.title"), description: i18n.t("howItWorks.metadata.description"), path: "/how-it-works" });
+}
 
 const PARTS = ["idea", "start", "counts", "doubles", "rankings", "spread", "site", "tested", "data"] as const;
 type PartKey = (typeof PARTS)[number];
@@ -61,13 +64,16 @@ const FAQ: Record<FaqPart, MessageKey[]> = {
   tested: ["howItWorks.tested.p1", "howItWorks.tested.p2"],
   data: ["howItWorks.data.p1", "howItWorks.data.p2"],
 };
-const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "");
-
 const strong = (text: React.ReactNode) => <strong>{text}</strong>;
-const P = ({ k }: { k: MessageKey }) => <p>{rich(k, { strong })}</p>;
+async function P({ k }: { k: MessageKey }) {
+  const { rich } = await getI18n();
+  return <p>{rich(k, { strong })}</p>;
+}
 const Sub = ({ children }: { children: React.ReactNode }) => <sub>{children}</sub>;
 
-export default function HowItWorksPage() {
+export default async function HowItWorksPage() {
+  const { t, rich, num } = await getI18n();
+  const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "");
   return (
     <>
       <JsonLd

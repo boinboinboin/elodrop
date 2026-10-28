@@ -6,7 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search } from "@/components/SVG";
 import ClearButton from "@/components/ui/ClearButton";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import { loadSearchIndex, searchPlayers } from "@/utils/search";
 
 interface Found {
@@ -16,6 +16,7 @@ interface Found {
 }
 
 export default function PlayerPicker({ name, label, initial }: { name: string; label: string; initial: { id: number; name: string } | null }) {
+  const { lang, t } = useI18n();
   const [query, setQuery] = useState(initial?.name ?? "");
   const [id, setId] = useState<number | null>(initial?.id ?? null);
   const [results, setResults] = useState<Found[] | null>(null);
@@ -28,7 +29,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
     if (id !== null || q.length < 2) return;
     const req = ++request.current;
     // Instant once the index is loaded; the first search waits for it
-    loadSearchIndex()
+    loadSearchIndex(lang)
       .then((index) => {
         if (req !== request.current) return;
         const found: Found[] = searchPlayers(index, q);
@@ -36,7 +37,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
         setActive(found.length ? 0 : -1);
       })
       .catch(() => {});
-  }, [query, id]);
+  }, [query, id, lang]);
 
   const choose = (i: number) => {
     const p = results?.[i];
@@ -81,7 +82,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
             if (e.target.value.trim().length < 2) setResults(null);
           }}
           onKeyDown={onKey}
-          onFocus={() => loadSearchIndex().catch(() => {})}
+          onFocus={() => loadSearchIndex(lang).catch(() => {})}
           onBlur={() => setResults(null)}
           className={`w-full pl-10 ${query ? "pr-10" : "pr-3"} py-2 border border-black bg-white`}
         />

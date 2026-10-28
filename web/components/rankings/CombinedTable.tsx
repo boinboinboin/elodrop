@@ -4,25 +4,26 @@
 // order or (a click on the Matches header, and again to go back) by matches played, as the rankings table. Rows come as
 // compact arrays: [id, name, club, rank, score, matches in the three disciplines, [rank, rating] in each of `pools` (rank
 // null: an inactive rating; null: none counted), rank last week]. `clubs`: the clubs in the table with a page, short name → [slug, logo].
-import Link from "next/link";
 import { useMemo, useState } from "react";
+import { Search } from "@/components/SVG";
 import PoolName from "@/components/format/PoolName";
 import RankMovement from "@/components/rankings/RankMovement";
-import { Search } from "@/components/SVG";
 import ClearButton from "@/components/ui/ClearButton";
+import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import type { Pool } from "@/types";
-import { EMPTY, num, signed } from "@/utils/format";
+import { logoSrc } from "@/utils/clubs";
+import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
-import { logoSrc } from "@/utils/clubs";
 
 export type CombinedRow = [number, string, string | null, number, number, number, ([number | null, number] | null)[], number | null];
 
 export default function CombinedTable({ pools, rows, clubs, summary }: { pools: Pool[]; rows: CombinedRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
+  const { num, signed, t } = useI18n();
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
   const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);

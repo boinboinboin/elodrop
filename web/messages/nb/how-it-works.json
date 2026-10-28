@@ -1,0 +1,160 @@
+{
+  "metadata": {
+    "title": "Hvordan fungerer elodrop?",
+    "description": "Hvordan elodrops badmintonratinger regnes ut: på vanlig norsk, eller med alle formler og parametere."
+  },
+  "title": "Hvordan fungerer elodrop?",
+  "intro": "Hver spiller får en rating ut fra resultatene sine, og ratingene regnes ut på nytt hver natt. Slik gjør vi det, på vanlig norsk.",
+  "contents": "På denne siden",
+  "nerd": {
+    "label": "Jeg er en stor nerd",
+    "off": "Vis formler og tall",
+    "on": "Formler og tall på",
+    "badge": "For nerder"
+  },
+  "idea": {
+    "title": "Ett tall per spiller",
+    "p1": "Hver spiller har en <strong>rating</strong>: et tall for hvor sterk de er. Jo høyere, jo bedre. Før en kamp gir de to spillernes ratinger hver av dem en sjanse til å vinne. Etter den tar vinneren poeng fra taperen.",
+    "p2": "Hvor mange poeng avhenger av hvor overraskende resultatet var. Slår du noen som er mye bedre enn deg, får du mye. Slår du noen som er mye svakere, får du nesten ingenting, fordi alle ventet det. Taper du mot dem, mister du mye.",
+    "p3": "Dette er <strong>Elo-systemet</strong>, laget for sjakk og brukt i mange idretter. Bare resultatene teller: ikke hvor mange turneringer du spiller eller hvor langt du reiser, bare hvem du slår og hvem som slår deg.",
+    "nerd1": "Forventet score for A mot B er sjansen ratingene gir A til å vinne. Med 300 poengs forskjell forventes den sterkeste spilleren å vinne omtrent 91 % av gangene (sjakk bruker 400; 300 sprer ratingene litt mindre). Etter kampen flytter A sin rating seg med K ganger forskjellen mellom resultatet S (1 for seier, ½ for uavgjort, 0 for tap) og forventet score.",
+    "nerd2": "Uavgjort forekommer i noen junior- og lavere seniorserier som spiller høyst to sett: 1-1 i sett. Ingen rating går under 400 (550 i double), verken ved start eller etter en kamp."
+  },
+  "try": {
+    "title": "Prøv selv",
+    "subtitle": "Dra i ratingene for å se hver spillers sjanse, og hva en seier er verdt.",
+    "playerA": "Spiller A",
+    "playerB": "Spiller B",
+    "chances": "Spiller A vinner {a} av gangene, spiller B {b}",
+    "ifWins": "Hvis {name} vinner",
+    "change": "{winner} +{gain}, {loser} −{loss}",
+    "note": "For en singlekamp i SEN A med en typisk margin, som 21-15, 21-13. De to spillerne kan flytte seg ulikt: spillere under 1150 flytter seg mer."
+  },
+  "start": {
+    "title": "Hvor du starter",
+    "p1": "En ny spillers første rating kommer fra klassen i første kamp: en nykommer i SEN A starter på 1150, en i en nybegynnerserie på 700. Derfra er det bare resultatene som flytter den.",
+    "p2": "Juniorer starter etter samme tabell, så den som starter i U15 A starter som en i SEN D. Spillere fra utenlandske klubber starter litt høyere, siden klassen de melder seg på i sier mindre om dem.",
+    "nerd1": "Startratingene går ned 75 poeng per nivå i single og dobbelt så langt i double, ikke under minimum. Utenlandske spillere starter 100 poeng høyere (160 i double), høyst på 1150. I double starter spillere som har spilt single fra singleratingen sin i stedet (se double under).",
+    "nerd2": "Å starte alle seniorer på 1150 uansett klasse ble testet og spådde resultatene klart dårligere: voksne nybegynnere startet hundrevis av poeng for høyt, og de ekstra poengene endte hos spillerne som slo dem.",
+    "table": {
+      "classes": "Klasser og ligaer",
+      "weight": "Teller",
+      "start": "Startrating",
+      "singles": "Single",
+      "doubles": "Double"
+    },
+    "tiers": {
+      "t0": "SEN X, E og A; Eliteserien; 1. div første single og double",
+      "t1": "U19 A/X; Junior-NM for lag (U19)",
+      "t2": "SEN B, O35–O45; resten av 1. div",
+      "t3": "U17 A/X; U17-serier og Landsfinale",
+      "t4": "SEN C, O50–O55; 2. div",
+      "t5": "U15 A/X; U15-serier og Landsfinalen",
+      "t6": "SEN D, O60+; 3. div",
+      "t7": "U13 A/X, U19 B, U17 B; U13-serier",
+      "t8": "U11 A, U15 B, U13 B",
+      "t9": "4. div; andre seniorserier",
+      "t10": "Andre juniorklasser; nybegynnerserier for junior",
+      "t11": "Andre (Åpen HC og lignende); klubbarrangementer"
+    }
+  },
+  "counts": {
+    "title": "Ikke alle kamper teller likt",
+    "intro": "Hvor mye et resultat flytter ratingene avhenger av kampen:",
+    "level": "<strong>Nivået.</strong> En kamp i SEN A flytter ratingene mer enn en i en klubbserie, som sier mindre om hvor en spiller står nasjonalt.",
+    "junior": "<strong>Juniorer</strong> teller litt ekstra, fordi de utvikler seg raskt og ratingene deres må holde følge. Ingen juniorklasse teller mer enn U19 A, som teller som SEN B.",
+    "margin": "<strong>Marginen.</strong> En klar seier sier mer enn en jevn en: 21-5, 21-3 teller omtrent sju ganger så mye som 22-20, 21-19.",
+    "region": "<strong>Kamper mellom regioner</strong> teller halvannen gang så mye, slik at regioner der spillerne stort sett møter hverandre ikke driver bort fra resten av landet.",
+    "rating": "<strong>Din egen rating.</strong> Spillere under toppnivået flytter seg raskere, så spillere i utvikling tar igjen; på toppen stabiliserer ratingene seg.",
+    "nerd1": "K er grunn-K-faktoren (59 i single, 94,4 i double) ganger vektene for kampen og spilleren:",
+    "symbols": {
+      "kappa": "grunn-K-faktor",
+      "wc": "klassenivå: 100 % på toppnivå, så 91, 74, 58, 44, 25 og 17 % (med juniorer på toppen: se tabellen over)",
+      "wj": "juniorvekt: ×1,5, høyst vekten til U19 A",
+      "wm": "seiersmargin, fra poengforskjellen d over totalt antall poeng",
+      "wr": "×1,5 mellom klubber i ulike regioner",
+      "m": "spillerens egen rating: 3 langt under 1150, 2 på 1150, mot 1 langt over",
+      "ct": "×50 % fra mars 2020 til februar 2021 (covid-19)"
+    },
+    "nerd2": "En typisk margin (d = 0,2, som 21-15, 21-13) gir w_m = 1, en jevn kamp omtrent ⅓ og en blåsning opptil 3. Å legge til marginen forbedret spådommene mer enn noen annen testet endring.",
+    "nerd3": "m(r) avhenger av hver spillers egen rating, så de to spillerne i en kamp kan vinne og tape ulikt."
+  },
+  "doubles": {
+    "title": "Double og mixed",
+    "p1": "Hver spiller har sin egen rating i hver doubledisiplin; par har ikke ratinger. Et par spiller på <strong>snittet</strong> av de to spillernes ratinger, så du kan bytte makker og beholde ratingen din.",
+    "p2": "Etter en kamp deler makkerne poengene. To erfarne makkere tar halvparten hver. En nykommer med en erfaren makker tar det meste, siden resultatet sier mer om nykommeren, hvis nivå ennå er ukjent.",
+    "p3": "Singlen din hjelper doublen din også: du starter double fra singlenivået ditt, og for dine første 200 doublekamper nærmer doubleratingen seg gradvis det singlen din sier.",
+    "nerd1": "En side spiller på snittet av spillernes ratinger, på en skala på 240 i stedet for 300, så et par der begge spillerne er 240 poeng bedre vinner omtrent 91 % av gangene. Sidens endring deles etter makkernes ratingusikkerhet RD (hvor sikre ratingene er for hver spiller):",
+    "nerd2": "En spiller som har spilt single starter double fra den (en singlespiller på 2050 starter double på 2158), og flytter seg etter hver doublekamp, til og med den 200., 3 % av veien mot det tallet. Dette var den største gevinsten i siste testrunde. Mixed double bruker singledisiplinen spilleren har spilt mest."
+  },
+  "rankings": {
+    "title": "Fra ratinger til rangeringer",
+    "p1": "Rangeringene lister alle som har spilt de siste 12 månedene. Tar du en pause, faller du ut av listen, men beholder ratingen; spiller du igjen, er du tilbake i listen. De fleste ratinger krymper ikke mens du er borte, siden spillere som kommer tilbake etter en pause viste seg å være omtrent like gode som før, eller bedre. Bare den delen av en rating som ligger over 1850 gjør det, etter et år borte, og halveres hvert 2. år: toppspillere kommer litt svakere tilbake.",
+    "p2": "Herresingle og herredouble rangerer herrer, og dame rangerer damer. Damer som spiller herresingle beholder en rating der, bare ikke en plassering. Mixed double har én liste for herrer og én for damer. Juniorrangeringene (U19) rater juniorer på nytt bare fra juniorkampene deres, så resultater mot seniorer teller ikke der. De samlede rangeringene setter single, double og mixed double sammen, for herrer og for damer: hvor langt hver av en spillers ratinger ligger over eller under de andres i den disiplinen, i snitt. En disiplin de ikke lenger spiller teller med ratingen fra sist de spilte den, og en de aldri har spilt som voksne med den svakeste av de andre.",
+    "p3": "Resultater kommer inn hver natt, så en helgs kamper er med i ratingene morgenen etter at de er spilt.",
+    "nerd1": "Mixed double rates som én pulje, men nesten hvert par er én herre og én dame. Så resultatene viser hvordan herrer står mot andre herrer og damer mot andre damer, men ikke herrer mot damer: å legge det samme til alle herrers rating og trekke det fra alle damers ville spådd hvert resultat like godt.",
+    "nerd2": "Under covid-19 telte tid uten spilling saktere mot å bli inaktiv, så spillerne ble stående i rangeringene gjennom nedstengningene. Hver rating har også en usikkerhet (en Glicko rating deviation): den vises ikke, men den avgjør hvordan doublemakkere deler poengene sine."
+  },
+  "spread": {
+    "title": "Hvordan ratingene fordeler seg",
+    "p1": "De fleste spillere er juniorer, nybegynnere og klubbspillere, så de fleste ratinger ligger under 1150, der en ny SEN A-spiller starter, og de tynnes ut mot toppen. Hold over eller trykk på en søyle for å se hvor mange spillere som har rating der.",
+    "p2": "Hvis ratingene fulgte en klokkekurve (en <strong>normalfordeling</strong>), ville søylene fylt den stiplede linjen. Det gjør de ikke helt: det er flere spillere nederst, og en lengre hale av sterke spillere øverst, enn en klokkekurve ville hatt. Det er greit, siden Elo ikke trenger en: bare forskjellene mellom spillernes ratinger betyr noe.",
+    "nerd1": "Den stiplede linjen er normalfordelingen med samme gjennomsnitt og standardavvik som ratingene, skalert til antall spillere. Skjevhet måler skjevheten: 0 for en normalfordeling, og rundt 1 her i alle disipliner, en tydelig hale mot høyre.",
+    "nerd2": "To ting drar formen bort fra en klokkekurve. Ingen rating går under minimum (400 i single, 550 i double), så de svakeste spillerne hoper seg opp der i stedet for å spre seg nedover. Og «alle» inkluderer spillere som sluttet for mange år siden, mange av dem juniorer som sluttet tidlig, og hvis ratinger ble stående der de sluttet: derfor ligger de rangerte spillerne alene høyere.",
+    "chartTitle": "Spillere etter rating",
+    "subtitleAll": "Alle som noen gang har fått rating, i trinn på 50 poeng",
+    "subtitleRanked": "De rangerte spillerne (spilt de siste 12 månedene), i trinn på 50 poeng",
+    "chartLabel": "Spillere etter rating i {pool}: {players} spillere, halvparten av dem med rating under {median}, de øverste 10 % på {top10} eller over.",
+    "discipline": "Disiplin",
+    "who": "Spillere",
+    "all": "Alle",
+    "ranked": "Rangert nå",
+    "players": "Spillere",
+    "normal": "Normalfordeling",
+    "start": "Ny SEN A-spiller: {rating}",
+    "range": "Rating {from}–{to}",
+    "playersCount": {
+      "one": "{count} spiller",
+      "other": "{count} spillere"
+    },
+    "top": "Øverste {share} herfra og opp",
+    "touchHint": "Trykk på en søyle for å se spillerne",
+    "half": "Halvparten er under",
+    "top10": "Øverste 10 % fra",
+    "top1": "Øverste 1 % fra",
+    "rated": "Spillere",
+    "mean": "Gjennomsnitt",
+    "sd": "Standardavvik",
+    "skew": "Skjevhet",
+    "onMinimum": "På minimum"
+  },
+  "site": {
+    "title": "Alt annet",
+    "intro": "Resten av nettsiden er bygget på de samme ratingene:",
+    "clubs": "<strong>Sterkeste klubber:</strong> en klubbs beste spillere, der de beste teller mest, i hver disiplin.",
+    "upsets": "<strong>Overraskelser:</strong> hver ukes seire som ratingene ga minst sjanse, mellom etablerte spillere.",
+    "tournaments": "<strong>Trekningsflaks:</strong> hver turneringstrekning spilles ut 20 000 ganger, med den faktiske trekningen og med rettferdige trekninger, for å se hvem som var heldige.",
+    "eliteserien": "<strong>Eliteserien:</strong> hvert lags beste oppstilling etter reglene, spilt kamp for kamp mot de andre.",
+    "headToHead": "<strong>Innbyrdes:</strong> to vilkårlige spilleres eller pars sjanse mot hverandre i dag, og, bare for moro skyld, herrer mot damer.",
+    "nerd1": "Klubbstyrke er et vektet gjennomsnitt av de beste rangerte spillerne: 40, 30, 20 og 10 % av de fire beste i single, 50, 33 og 17 % av de tre beste parene i double, og i mixed den beste herren med den beste damen og så videre (40, 30, 20, 10 %). Tomme plasser teller med laveste rating i listen. Den samlede listen tar snittet av hver disiplins standardscore, så hver disiplin teller likt.",
+    "nerd2": "Overraskelser teller bare spillere med minst 10 kamper og en ganske sikker rating (RD høyst 125, 144 i double), ellers fylles listen av juniorer i rask utvikling. Trekningsflaks er rundene forventet med den faktiske trekningen minus med en rettferdig trekning, som seeder etter NBFs regler fra den offisielle rankingen.",
+    "nerd3": "Eliteserielag sammenlignes oppstilling mot oppstilling, hver kamp uavhengig, noe som gir hvert resultat fra 8-0 til 0-8 og tabellpoengene (4-0 for 6-2 eller bedre, 3-1 for 5-3, 2-2 for 4-4). Herrer mot damer: en dame med rating w i damesingle spiller som en herre med rating w + a + b·(w − 1150), med a ≈ −186 og b ≈ −0,42, tilpasset damers kamper i herresingle."
+  },
+  "tested": {
+    "title": "Virker det?",
+    "p1": "Hver regel er der fordi den spår resultater bedre. For å sjekke lar vi ratingene velge vinneren av kamper de ikke ble justert på, og teller hvor ofte de har rett.",
+    "p2": "Mot den offisielle rankingen, som belønner poeng samlet de siste 12 månedene, gjorde ratingene det klart bedre: i 41 285 kamper mellom to spillere på den offisielle listen siden 2015 vant spilleren med høyest rating langt oftere enn den med flest rankingpoeng.",
+    "elo": "Høyest rating vant",
+    "official": "Flest rankingpoeng vant",
+    "nerd1": "Endringer vurderes etter log loss på kamper innstillingene ikke ble justert på (lavere er bedre): den belønner sikre riktige spådommer og straffer sikre gale. De nåværende reglene ble justert på sesongene 2025/26 og 2026/27, med 2023–25 holdt utenfor, og sjekket på hver sesong siden 2017/18.",
+    "nerd2": "Testet og ikke brukt, fordi de spådde dårligere: at gjentatte kamper mot samme motstander teller mindre, en høyere K-faktor for nykommere, å nedvekte resultater mot ustabile motstandere (som Glicko gjør), hjemmefordel i lagkamper, å rate en hel turnering samtidig, og ratinger som synker mens en spiller er borte.",
+    "nerd3": "Hver regel, parameter og test er skrevet ned i <spec>spesifikasjonen</spec> og <benchmark>benchmarken</benchmark>."
+  },
+  "data": {
+    "title": "Hvor resultatene kommer fra",
+    "p1": "Alle turnerings- og seriekamper på <portalen>badmintonportalen.no</portalen>: seriekamper siden 2013, turneringer siden 2014. Mens en turnering spilles kommer kampene fra trekningen på <cup2000>Cup2000</cup2000>, og de endelige resultatene erstatter dem når de er inne.",
+    "p2": "Walkover teller ikke, og resultater som ikke kan stemme rettes for hånd.",
+    "nerd1": "Et resultat på 21-0, 21-0 (15-0, 15-0 fra 2026/27, da settene gikk til 15) regnes som walkover. Resultater som er umulige for sesongens settformat listes hver natt med det mest sannsynlige tiltenkte resultatet, og rettes i en rettelsesfil som overlever ny henting av dataene. De to første sesongene er en oppvarming: de fleste spillere får sin første ratede kamp i 2014/15.",
+    "nerd2": "Nattkjøringen henter bare det som kan ha endret seg og bygger bare på nytt det som trengs; hele nettsiden oppdateres etter hver helg."
+  }
+}

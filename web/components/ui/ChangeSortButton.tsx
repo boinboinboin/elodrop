@@ -1,8 +1,10 @@
+"use client";
+
 // The "change since last week" column's header in the ranking tables: a click sorts by the biggest gain since last week,
 // the next by the biggest loss, and the next goes back to rank order. It shows which: "+" sorted by gain, "−" by loss,
 // "±" in rank order.
 import { CaretDown, CaretUp } from "@/components/SVG";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 
 export type ChangeOrder = "gain" | "loss" | null;
 
@@ -10,6 +12,7 @@ export type ChangeOrder = "gain" | "loss" | null;
 export const nextChangeOrder = (order: ChangeOrder): ChangeOrder => (order === null ? "gain" : order === "gain" ? "loss" : null);
 
 export default function ChangeSortButton({ order, onClick }: { order: ChangeOrder; onClick: () => void }) {
+  const { t } = useI18n();
   const Caret = order === "loss" ? CaretUp : CaretDown;
   return (
     <button

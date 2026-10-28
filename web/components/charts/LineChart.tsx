@@ -15,8 +15,7 @@
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Swatch from "@/components/ui/Swatch";
-import { t } from "@/messages/i18n";
-import { dayAt, weekAt } from "@/utils/format";
+import { useI18n } from "@/messages/client";
 import { COLORS, MARGIN, OTHER_COLOR, PALETTE, WEEK, DAY, formatNumber, logDomain, yDomain, yearTicks } from "@/utils/chart";
 
 export interface ChartSeries {
@@ -43,7 +42,10 @@ interface Props {
 // The detail box's gliding: short, so it keeps up with the pointer
 const GLIDE = { duration: 0.18, ease: "easeOut" } as const;
 
-export default function LineChart({ series: input, label = t("common.chart.rating"), rank = false, rankOf = "", decimals = 0, signed = false, className = "relative h-80" }: Props) {
+export default function LineChart({ series: input, label: labelProp, rank = false, rankOf = "", decimals = 0, signed = false, className = "relative h-80" }: Props) {
+  const i18n = useI18n();
+  const { t, dayAt, weekAt } = i18n;
+  const label = labelProp ?? t("common.chart.rating");
   const box = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [active, setActive] = useState<number | null>(null);
@@ -95,7 +97,7 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
     for (const [w, l] of s.notes ?? []) if (w <= i) lines = l;
     return lines;
   };
-  const fmt = (v: number) => (rank ? `#${formatNumber(v)}` : formatNumber(v, decimals, signed));
+  const fmt = (v: number) => (rank ? `#${formatNumber(i18n, v)}` : formatNumber(i18n, v, decimals, signed));
 
   const all = series.flatMap((s) => s.values).filter((v): v is number => v !== null);
   const { width, height } = size;
@@ -238,7 +240,7 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
       const r = s.ranks?.[active - s.offset];
       const c = s.counts?.[active - s.offset];
       const club = series.length === 1 ? clubAt(s, active) : null;
-      const detail = rank ? (c ? t("common.chart.ofCount", { count: formatNumber(c), what: rankOf }).trim() : "") : r ? t("common.chart.rankOfCount", { rank: r, count: formatNumber(c ?? 0), what: rankOf }).trim() : "";
+      const detail = rank ? (c ? t("common.chart.ofCount", { count: formatNumber(i18n, c), what: rankOf }).trim() : "") : r ? t("common.chart.rankOfCount", { rank: r, count: formatNumber(i18n, c ?? 0), what: rankOf }).trim() : "";
       const name = series.length > 1 ? s.label : (club ?? "");
       return [{ key: i, color: s.colors?.[active - s.offset] ?? s.color, v, y: y(v), text: [name, detail].filter(Boolean).join(" · ") }];
     });
@@ -287,7 +289,7 @@ export default function LineChart({ series: input, label = t("common.chart.ratin
               <g key={v}>
                 <line x1={plot.left} x2={plot.right} y1={y(v)} y2={y(v)} style={{ stroke: COLORS.grid }} />
                 <text x={plot.left - 8} y={y(v)} textAnchor="end" dominantBaseline="middle" fontSize={12} style={{ fill: COLORS.axis, fontVariantNumeric: "tabular-nums" }}>
-                  {rank ? `#${formatNumber(v)}` : formatNumber(v, domain.decimals, signed)}
+                  {rank ? `#${formatNumber(i18n, v)}` : formatNumber(i18n, v, domain.decimals, signed)}
                 </text>
               </g>
             ))}

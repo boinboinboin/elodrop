@@ -1,35 +1,40 @@
 // What if an Eliteserien tie were 10 matches (pipeline/eliteserien-ten-matches.mjs): this season's
 // teams with a 3rd men's singles and a 2nd men's doubles, against today's 8 matches.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getEliteserienTenMatches } from "@/data/eliteserien";
 import { getClubMap } from "@/data/sanity";
-import { rich, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Loose } from "@/types";
 import { logoSrc } from "@/utils/clubs";
-import { chance, EMPTY, pct, signed, toneClass } from "@/utils/format";
+import { EMPTY, toneClass } from "@/utils/format";
 import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
-export const metadata: Metadata = pageMetadata({ title: t("eliteserien.tenMatches.title"), description: t("seo.descriptions.tenMatches"), path: ELITESERIEN_TEN_MATCHES_HREF });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("eliteserien.tenMatches.title"), description: i18n.t("seo.descriptions.tenMatches"), path: ELITESERIEN_TEN_MATCHES_HREF });
+}
 
 const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-")}`;
 /** The reference opponent of a slot: MS3 → references.MS[2], WD → references.WD[0] */
 const refOf = (refs: Loose, slot: string) => refs[slot.replace(/\d$/, "")]?.[(Number(slot.at(-1)) || 1) - 1] ?? 0;
 /** "−1.3" table points, coloured */
-const Change = ({ value, decimals = 1 }: { value: number; decimals?: number }) => (
-  <span className={value === 0 ? "text-gray-500" : toneClass(value)}>{signed(value, decimals)}</span>
-);
+async function Change({ value, decimals = 1 }: { value: number; decimals?: number }) {
+  const { signed } = await getI18n();
+  return <span className={value === 0 ? "text-gray-500" : toneClass(value)}>{signed(value, decimals)}</span>;
+}
 
-export default function TenMatchesPage() {
+export default async function TenMatchesPage() {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("eliteserien.tenMatches.loading")} section />}>
       <Content />
@@ -38,6 +43,7 @@ export default function TenMatchesPage() {
 }
 
 async function Content() {
+  const { t, rich, num, pct, chance, signed } = await getI18n();
   const [data, clubs] = await Promise.all([getEliteserienTenMatches(), getClubMap()]);
   const teams: Loose[] = data?.teams ?? [];
   const pointsChange = (team: Loose) => team.strength.ten.tablePoints - team.strength.eight.tablePoints;
@@ -110,8 +116,8 @@ async function Content() {
                   {t(kind === "gain" ? "eliteserien.tenMatches.findings.gain" : "eliteserien.tenMatches.findings.loss", {
                     team: team.team,
                     change: signed(pointsChange(team), 1),
-                    from: team.strength.eight.tablePoints.toFixed(1),
-                    to: team.strength.ten.tablePoints.toFixed(1),
+                    from: num(team.strength.eight.tablePoints, 1),
+                    to: num(team.strength.ten.tablePoints, 1),
                   })}
                 </li>
               ))}
@@ -157,12 +163,12 @@ async function Content() {
                           </a>
                         </td>
                         <td className="py-3 px-4 text-right tabular-nums whitespace-nowrap">
-                          <span className="font-semibold">{b.tablePoints.toFixed(1)}</span> <span className="text-sm"><Change value={pointsChange(team)} /></span>
-                          {withEight(a.tablePoints.toFixed(1))}
+                          <span className="font-semibold">{num(b.tablePoints, 1)}</span> <span className="text-sm"><Change value={pointsChange(team)} /></span>
+                          {withEight(num(a.tablePoints, 1))}
                         </td>
                         <td className="py-3 px-4 text-right tabular-nums hidden md:table-cell">
-                          {b.expected.toFixed(2)} <span className="text-sm text-gray-500">{t("eliteserien.tenMatches.table.ofTen")}</span>
-                          <span className="block text-sm text-gray-500">{a.expected.toFixed(2)} {t("eliteserien.table.ofEight")}</span>
+                          {num(b.expected, 2)} <span className="text-sm text-gray-500">{t("eliteserien.tenMatches.table.ofTen")}</span>
+                          <span className="block text-sm text-gray-500">{num(a.expected, 2)} {t("eliteserien.table.ofEight")}</span>
                         </td>
                         <td className="py-3 px-4 text-right tabular-nums">
                           {pct(b.win)}
@@ -211,13 +217,13 @@ async function Content() {
                             title={t("eliteserien.tenMatches.headToHead.cellTitle", {
                               a: a.team,
                               b: b.team,
-                              matches: `${h.expected.toFixed(1)}–${(10 - h.expected).toFixed(1)}`,
-                              points: `${h.points.toFixed(1)}–${(4 - h.points).toFixed(1)}`,
+                              matches: `${num(h.expected, 1)}–${num(10 - h.expected, 1)}`,
+                              points: `${num(h.points, 1)}–${num(4 - h.points, 1)}`,
                               win: pct(h.win),
                               draw: pct(h.draw),
                               loss: pct(h.loss),
                               win8: pct(h8.win),
-                              matches8: `${h8.expected.toFixed(1)}–${(8 - h8.expected).toFixed(1)}`,
+                              matches8: `${num(h8.expected, 1)}–${num(8 - h8.expected, 1)}`,
                             })}
                           >
                             {chance(h.win)}
@@ -243,9 +249,9 @@ async function Content() {
                 </h2>
                 <p className="text-gray-700 mb-6">
                   {t("eliteserien.tenMatches.team.summary", {
-                    points: team.strength.ten.tablePoints.toFixed(1),
+                    points: num(team.strength.ten.tablePoints, 1),
                     change: signed(pointsChange(team), 1),
-                    matches: team.strength.ten.expected.toFixed(2),
+                    matches: num(team.strength.ten.expected, 2),
                     win: pct(team.strength.ten.win),
                   })}
                 </p>

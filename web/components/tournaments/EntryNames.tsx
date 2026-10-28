@@ -2,14 +2,14 @@
 // without one in this discipline. With `ratingBelow`, phones show each rating on its own line under
 // the name and club (narrow boxes), wider screens beside the name. `changes`: each player's rating
 // gained or lost (in the tournament's week), shown after their rating.
-import Link from "next/link";
-import { t } from "@/messages/i18n";
+import Link from "@/components/ui/Link";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, Entry } from "@/types";
-import { signed, toneClass } from "@/utils/format";
-import { playerHref } from "@/utils/hrefs";
 import { logoSrc } from "@/utils/clubs";
+import { toneClass } from "@/utils/format";
+import { playerHref } from "@/utils/hrefs";
 
-export default function EntryNames({
+export default async function EntryNames({
   e,
   clubs,
   ratingBelow = false,
@@ -20,6 +20,7 @@ export default function EntryNames({
   ratingBelow?: boolean;
   changes?: (number | null)[] | null;
 }) {
+  const { signed, t } = await getI18n();
   return (
     <>
       {e.players.map((p, i) => {

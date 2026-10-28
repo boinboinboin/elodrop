@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.0 (2026-10-28)
+
+- elodrop is in Norwegian: every page, at the same addresses as before (elodrop.no/rankings, elodrop.no/players/…), with numbers and dates written the Norwegian way ("2 646", "31. okt. 2026"). The English site is under /en (elodrop.no/en/rankings), and the menu switches between Norsk and English on the same page.
+- Search engines get both languages: each page names its Norwegian and English version, and the sitemap lists both.
+- The "What's new" page and a few Eliteserien notes from the data are still in English.
+
 ## v1.18.0 (2026-10-28)
 
 - Links to elodrop show a preview when shared (Facebook, Messenger, Slack, X and others): a player's card has their club and rating and rank in each discipline, a club's its logo and rank in each discipline, a tournament's its dates and number of events and entries, and every other page the site's card.

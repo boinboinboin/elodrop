@@ -5,7 +5,7 @@
 // is kept in the URL (?nerd=1), so a link can open the page with the details, and read from it as
 // ThemePicker reads the theme: the server renders the plain page, the browser then switches.
 import { type ReactNode, useSyncExternalStore } from "react";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 
 const PARAM = "nerd";
 const EVENT = "elodrop:nerd";
@@ -34,6 +34,7 @@ export const useNerd = () => useSyncExternalStore(subscribe, current, () => fals
 
 /** The switch: a track whose knob slides over, filled black when on */
 export function NerdSwitch() {
+  const { t } = useI18n();
   const nerd = useNerd();
   return (
     <button type="button" role="switch" aria-checked={nerd} onClick={() => setNerd(!nerd)} className="group flex items-center gap-3 text-left cursor-pointer">

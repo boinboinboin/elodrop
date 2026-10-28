@@ -1,7 +1,6 @@
 // A club (CMS entry) with its strength over time and, per discipline, its strength history and
 // ranked players.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
@@ -12,20 +11,21 @@ import { WeekChange } from "@/components/rankings/RankMovement";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import Tabs from "@/components/ui/Tabs";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubHistory, getClubPlayers, getClubsFile } from "@/data/clubs";
 import { getClubBySlug, getClubEntries } from "@/data/sanity";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
 import { logoSrc } from "@/utils/clubs";
-import { EMPTY, num, seasonLabel, signed } from "@/utils/format";
+import { EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
-import { POOLS, POOL_KEYS } from "@/utils/pools";
+import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 
 // A few clubs are prerendered at build; the rest are rendered on their first visit and then served
@@ -35,14 +35,17 @@ export async function generateStaticParams() {
   return clubs.length ? clubs.map((c) => ({ slug: c.slug })) : [{ slug: "_" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/clubs/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/clubs/[slug]">): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const club = await getClubBySlug(decodeURIComponent((await params).slug));
   if (!club) return { title: t("clubs.metadata.club") };
   const details = [club.fullName !== club.title ? club.fullName : null, club.region].filter(Boolean).join(", ");
-  return pageMetadata({ title: club.title, description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
+  return pageMetadata(i18n, { title: club.title, description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
 }
 
-export default function ClubPage(props: PageProps<"/clubs/[slug]">) {
+export default async function ClubPage(props: PageProps<"/[lang]/clubs/[slug]">) {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("clubs.loading")} section />}>
       <Content params={props.params} />
@@ -50,7 +53,8 @@ export default function ClubPage(props: PageProps<"/clubs/[slug]">) {
   );
 }
 
-async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
+async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "params">) {
+  const { t } = await getI18n();
   const entry = await getClubBySlug(decodeURIComponent((await params).slug));
   if (!entry) notFound();
   const [{ pools: history, players: names }, file] = await Promise.all([entry.nbfClubId ? getClubHistory(entry.nbfClubId) : Promise.resolve<ClubHistory>({ players: {}, pools: {} }), getClubsFile()]);
@@ -118,11 +122,12 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
 }
 
 /** All disciplines together and the combined score, over time, with a table by season */
-function OverTime({ history }: { history: Partial<Record<Pool | "combined", ClubHistoryPool>> }) {
+async function OverTime({ history }: { history: Partial<Record<Pool | "combined", ClubHistoryPool>> }) {
+  const { t, signed, pools } = await getI18n();
   const series: (ChartSeries & { pool: Pool })[] = [];
   for (const pool of POOL_KEYS) {
     const h = history[pool];
-    if (h && h.strength.length > 1) series.push({ pool, label: POOLS[pool], from: h.from, values: h.strength, ranks: h.rank, counts: h.clubs, slot: POOL_KEYS.indexOf(pool) });
+    if (h && h.strength.length > 1) series.push({ pool, label: pools[pool], from: h.from, values: h.strength, ranks: h.rank, counts: h.clubs, slot: POOL_KEYS.indexOf(pool) });
   }
   const combined = history.combined ?? null;
   if (series.length < 2 && !combined) return null;
@@ -175,8 +180,10 @@ function OverTime({ history }: { history: Partial<Record<Pool | "combined", Club
   );
 }
 
-function Discipline({ pool, entry, history, names, file, players }: { pool: Pool; entry: ClubEntry; history: ClubHistoryPool | null; names: Record<string, string>; file: ClubsFile | null; players: Awaited<ReturnType<typeof getClubPlayers>> }) {
-  const label = POOLS[pool];
+async function Discipline({ pool, entry, history, names, file, players }: { pool: Pool; entry: ClubEntry; history: ClubHistoryPool | null; names: Record<string, string>; file: ClubsFile | null; players: Awaited<ReturnType<typeof getClubPlayers>> }) {
+  const i18n = await getI18n();
+  const { t, plural, num, pools } = i18n;
+  const label = pools[pool];
   const standing = file?.clubs[pool].find((c) => c.club === entry.title);
   const rule = file?.clubStrength[pool];
   // The players or pairs counted each week, for the graph's detail box (pairs as "A + B"; a pair
@@ -190,7 +197,7 @@ function Discipline({ pool, entry, history, names, file, players }: { pool: Pool
     <div>
       <h2 className="text-3xl mb-2">{label}</h2>
       {history && history.strength.length > 1 && rule && (
-        <Card title={t("clubs.club.strengthHistory")} subtitle={t("clubs.club.strengthHistoryText", { rule: clubRule(rule) })} className="my-6">
+        <Card title={t("clubs.club.strengthHistory")} subtitle={t("clubs.club.strengthHistoryText", { rule: clubRule(i18n, rule) })} className="my-6">
           <LineChart series={[{ label: t("clubs.club.clubStrength"), from: history.from, values: history.strength, ranks: history.rank, counts: history.clubs, notes }]} label={t("clubs.club.clubStrength")} rankOf={t("clubs.club.clubs")} className="relative h-72" />
           {/* Table view of the chart: strength and rank at the end of each season, precomputed by rate.mjs */}
           <Disclosure summary={t("clubs.club.strengthBySeason")} className="mt-4">

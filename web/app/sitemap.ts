@@ -1,4 +1,4 @@
-// sitemap.xml: every page search engines should find, from the same data as the pages, so it's
+// sitemap.xml: every page search engines should find, in both languages, from the same data as the pages, so it's
 // rebuilt with them (the elo-data and sanity tags). Head to head is left out (a page for every pair,
 // and kept out in robots.ts), as are the lists with inactive players (the same players as the
 // ranked list, and more) and a tournament's single events.
@@ -36,6 +36,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
   // Everything changes with the nightly data, so the last update is every page's
   const lastModified = meta?.updatedAt ? new Date(meta.updatedAt) : undefined;
-  // Escaped, as the sitemap format asks (club slugs like "bodø")
-  return [...new Set(paths)].map((path) => ({ url: `${SITE_URL}${path === "/" ? "" : encodeURI(path)}`, lastModified }));
+  // Each page in both languages, Norwegian at the root and English under /en, each listing the
+  // other (hreflang); escaped, as the sitemap format asks (club slugs like "bodø")
+  const url = (path: string) => `${SITE_URL}${path === "/" ? "" : encodeURI(path)}`;
+  return [...new Set(paths)].flatMap((path) => {
+    const languages = { nb: url(path), en: url(path === "/" ? "/en" : `/en${path}`) };
+    return [languages.nb, languages.en].map((address) => ({ url: address, lastModified, alternates: { languages } }));
+  });
 }

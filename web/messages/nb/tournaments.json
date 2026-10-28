@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "title": "Turneringstrekninger",
+    "tournament": "Turnering"
+  },
+  "list": {
+    "title": "Turneringstrekninger",
+    "intro": "Hvem som fikk heldig eller uheldig trekning i kommende turneringer, ut fra spillernes ratinger.",
+    "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er spilt, viser siden hvordan spådommene gikk.",
+    "loading": "Laster turneringer…",
+    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen; hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet. «Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null): nær 1 ga en trekning som var en runde heldigere omtrent en runde mer.",
+    "correlation": "Flaks forklarer bare en liten del av et resultat (korrelasjon {correlation}): mesteparten er hvordan kampene går.",
+    "upcoming": "Kommende",
+    "noUpcoming": "Ingen kommende turneringer med publisert trekning.",
+    "played": "Spilt",
+    "notPlayed": "Ikke spilt",
+    "events": {
+      "one": "{count} klasse",
+      "other": "{count} klasser"
+    },
+    "entries": {
+      "one": "{count} påmelding",
+      "other": "{count} påmeldinger"
+    },
+    "favouriteWon": "favoritten vant {won} av {winners} ({expected} forventet)"
+  },
+  "predictions": {
+    "title": "Hvordan spådommene gikk",
+    "eventsPlayed": "Klasser spilt",
+    "ofTotal": "av {total}",
+    "favouritesWon": "Favoritter som vant",
+    "expected": "{count} forventet",
+    "winnersChance": "Vinnernes spådde sjanse",
+    "onAverage": "i snitt",
+    "luckShowed": "Flaksen viste seg i resultatene",
+    "luckShowedTitle": "Resultater minus forventning med rettferdig trekning mot flaks, regresjonshelning",
+    "overEntries": "over {count} deltakere (1 = som spådd)"
+  },
+  "page": {
+    "loading": "Laster turnering…",
+    "cup2000": "Trekning og resultater på Cup2000",
+    "portalen": "badmintonportalen turnering {id}",
+    "cancelled": "<strong>Ikke spilt.</strong> {reason}. Trekningen og flaksen er som de ble publisert.",
+    "views": "Visninger",
+    "events": "Klasser",
+    "summary": "Oppsummering"
+  },
+  "summary": {
+    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen. «Flaksen viste seg i resultatene»: hver deltakers runder minus forventningen med rettferdig trekning, mot flaksen (en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere omtrent en runde mer; nær 0 viste ikke flaksen seg.",
+    "lists": "Lister",
+    "surprises": "Mest overraskende vinnere",
+    "luckiest": "Heldigste trekninger",
+    "unluckiest": "Uheldigste trekninger",
+    "inGroup": "pulje {group}",
+    "chanceBefore": "sjanse før",
+    "places": "plasser",
+    "rounds": "runder"
+  },
+  "howItWorks": {
+    "title": "Slik fungerer det",
+    "simulation": "Hvor heldig hver spillers trekning er, ut fra ratingene ved slutten av uken før turneringen. Hver klasse spilles ut {runs} ganger, med hver kamp avgjort av spillernes seierssjanser, én gang med den faktiske trekningen og én gang med en rettferdig trekning: de samme spillerne trukket på nytt etter reglene, seedene plassert der reglene plasserer dem og alle andre tilfeldig.",
+    "seeds": "<strong>Seeding</strong> er etter den offisielle rankingen{version}, listen som gjaldt onsdagen etter at påmeldingen stengte (et par har summen av spillernes poeng; uten poeng, ingen seeding): 2, 4 fra 16 deltakere, 8 fra 32 og 16 fra 64, og i puljespill høyst én per pulje. Seed 1 går øverst i trekningen, seed 2 nederst, seed 3–4 trekkes inn i andre og tredje kvart, 5–8 i åttedelene uten seed. En seed arrangøren plasserte annerledes, eller utelot, regnes som flaks. Klasser uten rankingliste (som U11) seedes etter rating.",
+    "seedsVersion": " fra {date}",
+    "rounds": "<strong>Runder</strong> er hvor langt en spiller forventes å komme: én runde for å komme videre fra puljen og én for hver utslagsrunde etter det (en frirunde teller også), og én til for å vinne. <strong>Flaks</strong> er rundene forventet med den faktiske trekningen minus med en rettferdig.",
+    "placement": "I X-klassene får alle en sluttplassering, så flaksen der regnes i plasser: åtte spillere eller par i to puljer på fire, de to beste til kryssende semifinaler, treerne spiller om 5. plass og firerne om 7.",
+    "noLuck": "Klasser med én pulje (alle spiller mot alle) eller bare to spillere eller par har ingen flaks: de viser bare hver spillers sjanse til å vinne."
+  },
+  "event": {
+    "nav": "Klasser",
+    "title": "{className} {pool}",
+    "players": {
+      "one": "{count} spiller",
+      "other": "{count} spillere"
+    },
+    "pairs": {
+      "one": "{count} par",
+      "other": "{count} par"
+    },
+    "noLuck": "{reason}, så det er ingen trekningsflaks.",
+    "justOneMatch": "Bare én kamp",
+    "everyoneVsEveryone": "Alle spiller mot alle",
+    "strongestGroups": "Sterkeste puljer etter snittrating: {groups}.",
+    "strongestGroup": "pulje {number} ({rating})",
+    "order": "Rekkefølge"
+  },
+  "legend": {
+    "outOfGroup": "Videre fra puljen",
+    "outOfGroupText": "Sjansen til å bli høyt nok plassert i puljen til å nå utslagsrunden.",
+    "outOfGroupOnlyWinners": "Sjansen til å bli høyt nok plassert i puljen til å nå utslagsrunden, som her betyr å vinne den.",
+    "winsEvent": "Vinner klassen",
+    "winsEventKnockout": "Sjansen til å vinne hele klassen (finalen).",
+    "winsEventGroup": "Sjansen til å vinne hele klassen (puljen).",
+    "wins": "Seiere",
+    "winsText": "Kampene spilleren forventes å vinne i puljen, av {max}.",
+    "placement": "Plassering",
+    "placementText": "Forventet sluttplassering, 1 til {count}: finalen avgjør 1. og 2. plass, de tapende semifinalistene deler 3.–4. plass (3,5 hver), treerne i puljene spiller om 5. og 6. plass og firerne om 7. og 8. plass.",
+    "rounds": "Runder",
+    "roundsText": "Hvor mange runder spilleren forventes å komme gjennom, av {max}: {steps}. En frirunde teller som en runde gjennom, så en spiller med frirunde starter en runde foran.",
+    "luck": "Flaks",
+    "luckPlacement": "Plasseringen med en rettferdig trekning minus med den faktiske trekningen (i parentes i hver kolonne): over null hjelper trekningen, under skader den.",
+    "luckRounds": "Runder med den faktiske trekningen minus med en rettferdig trekning (i parentes i hver kolonne): over null hjelper trekningen, under skader den.",
+    "luckWithdrawals": "Spillere som trakk seg (tapte på walkover) teller også: tallene er med dem ute fra da av, mot en rettferdig trekning med de samme uttrekkene. En * markerer flaks som uttrekk har endret (hold over for fordelingen).",
+    "seeds": "Seeding",
+    "seedsByRating": "Ingen rankingliste for seedingen her, så den rettferdige trekningen seeder de {count} sterkeste etter rating",
+    "seedsByRanking": "{count} etter den offisielle rankingen{version}, plassert etter reglene i den rettferdige trekningen",
+    "seedsRankingVersion": " fra {date}",
+    "seedsNone": "Ingen: ingen her har rankingpoeng{version}, så den rettferdige trekningen er helt tilfeldig",
+    "seedsNoneVersion": " ({date})",
+    "seedsMarked": " (merket med seednummer)",
+    "result": "Resultat",
+    "resultSingle": "Kamper vunnet, og hvem som vant puljen, og mot forventningen med den faktiske trekningen (etter at eventuelle spillere som trakk seg var ute).",
+    "resultPlacement": "Sluttplasseringen, og mot forventningen med den faktiske trekningen (etter at eventuelle spillere som trakk seg var ute).",
+    "resultRounds": "Hvor langt spilleren kom, og mot forventningen med den faktiske trekningen (etter at eventuelle spillere som trakk seg var ute)."
+  },
+  "table": {
+    "place": "#",
+    "pair": "Par",
+    "group": "Pulje",
+    "groupHeader": "Pulje {number}",
+    "groupDetail": "snittrating {rating}",
+    "straightToKnockout": "Rett til utslagsrunden",
+    "ratingTitle": "Snittet av spillernes ratinger i double",
+    "outOfGroupTitle": "Sjanse til å nå utslagsrunden fra puljen: faktisk trekning (rettferdig trekning)",
+    "winsEventTitle": "Sjanse til å vinne klassen",
+    "winsEventTitleFair": "Sjanse til å vinne klassen: faktisk trekning (rettferdig trekning)",
+    "winsTitle": "Forventede kampseiere",
+    "placementTitle": "Forventet sluttplassering: faktisk trekning (rettferdig trekning)",
+    "roundsTitle": "Forventede runder: faktisk trekning (rettferdig trekning)",
+    "ofMax": "av {max}"
+  },
+  "entry": {
+    "estimated": "Ingen rating i denne disiplinen: anslått",
+    "seed": "Seed {seed}",
+    "rankingPoints": "{points} rankingpoeng",
+    "seededByRating": "Seedet etter rating",
+    "withdrew": "Trakk seg",
+    "groupRank": {
+      "1": "Vant puljen",
+      "2": "2. i puljen",
+      "3": "3. i puljen",
+      "4": "4. i puljen",
+      "other": "{rank}. i puljen"
+    },
+    "luckSplit": "Trekning {draw}, uttrekk {withdrawals}",
+    "won": "Vant",
+    "wins": {
+      "one": "{count} seier",
+      "other": "{count} seiere"
+    },
+    "winsDiff": "{diff} seiere",
+    "placesDiff": "{diff} plasser",
+    "roundsDiff": "{diff} runder",
+    "group": "pulje",
+    "firstMatch": "første kamp"
+  },
+  "orders": {
+    "finalStandings": "Sluttresultat",
+    "mostLikelyWinner": "Mest sannsynlige vinner først",
+    "luckiest": "Heldigste først",
+    "byGroup": "Etter pulje",
+    "byRating": "Etter rating"
+  },
+  "description": {
+    "groups": {
+      "one": "i {count} pulje",
+      "other": "i {count} puljer"
+    },
+    "advance": "{who} går til utslagsrunden",
+    "onlyWinners": "bare puljevinnerne",
+    "winners": "puljevinnerne",
+    "top": "de {count} beste i hver pulje",
+    "andBest": "{who} og de {places} beste fra alle puljene",
+    "and": " og ",
+    "places": {
+      "winner": "vinner",
+      "runnerUp": "toer",
+      "third": "treer",
+      "fourth": "firer",
+      "other": "{rank}. plass"
+    },
+    "numbers": {
+      "two": "to",
+      "three": "tre",
+      "four": "fire"
+    },
+    "rest": {
+      "one": "resten til et B-sluttspill",
+      "other": "resten til {count} videre sluttspill"
+    },
+    "knockout": "utslagsrunde"
+  },
+  "rounds": {
+    "outOfGroup": "å komme videre fra puljen",
+    "reaching": "å nå {round}",
+    "winning": "å vinne finalen",
+    "knockout": "utslagsrunde",
+    "won": "vunnet",
+    "names": {
+      "final": "finalen",
+      "semiFinals": "semifinalen",
+      "quarterFinals": "kvartfinalen",
+      "last16": "16-delsfinalen",
+      "last32": "32-delsfinalen",
+      "last64": "64-delsfinalen",
+      "last128": "128-delsfinalen"
+    },
+    "short": {
+      "final": "finale",
+      "semiFinals": "semifinale",
+      "quarterFinals": "kvartfinale",
+      "last16": "siste 16",
+      "last32": "siste 32",
+      "last64": "siste 64",
+      "last128": "siste 128"
+    },
+    "round": "runde {number}"
+  },
+  "result": {
+    "winner": "Vinner",
+    "winners": "Vinnere",
+    "runnerUp": "Finalist",
+    "runnersUp": "Finalister",
+    "final": "Finale",
+    "walkover": "Vant på walkover",
+    "chanceBefore": "{chance} sjanse til å vinne før turneringen",
+    "ratingChangeTitle": "Rating vunnet eller tapt i turneringsuken",
+    "margin": "Vant finalen {sets}, med {points}.",
+    "marginWalkover": "Vant finalen på walkover.",
+    "points": {
+      "one": "{count} poeng",
+      "other": "{count} poeng"
+    },
+    "marginSets": "Vant finalen {sets}."
+  }
+}

@@ -7,15 +7,15 @@
 // expected score and K of each side too.
 import { useId, useState } from "react";
 import { NerdOnly } from "@/components/how-it-works/NerdMode";
-import { t } from "@/messages/i18n";
+import { useI18n } from "@/messages/client";
 import { SIDE_COLORS } from "@/utils/chart";
-import { num, pct } from "@/utils/format";
 import { KAPPA, expectedScore, ratingMultiplier } from "@/utils/rating";
 
 const MIN = 400;
 const MAX = 2700;
 
 export default function WinChance() {
+  const { t, num, pct } = useI18n();
   const [ratings, setRatings] = useState<[number, number]>([1700, 1450]);
   const [a, b] = ratings;
   const ea = expectedScore(a, b);
@@ -76,10 +76,10 @@ export default function WinChance() {
 
       <NerdOnly>
         <dl className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-sm">
-          <Value label="E_A" value={ea.toFixed(3)} />
-          <Value label="E_B" value={(1 - ea).toFixed(3)} />
-          <Value label="K_A = κ·m(R_A)" value={k[0].toFixed(1)} />
-          <Value label="K_B = κ·m(R_B)" value={k[1].toFixed(1)} />
+          <Value label="E_A" value={num(ea, 3)} />
+          <Value label="E_B" value={num(1 - ea, 3)} />
+          <Value label="K_A = κ·m(R_A)" value={num(k[0], 1)} />
+          <Value label="K_B = κ·m(R_B)" value={num(k[1], 1)} />
         </dl>
       </NerdOnly>
     </div>
@@ -87,6 +87,7 @@ export default function WinChance() {
 }
 
 function RatingSlider({ label, value, color, onChange }: { label: string; value: number; color: string; onChange: (v: number) => void }) {
+  const { num } = useI18n();
   const id = useId();
   return (
     <div>

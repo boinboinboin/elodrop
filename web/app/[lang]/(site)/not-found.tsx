@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { ArrowRight } from "@/components/SVG";
+import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
 import { TEXT_LINK } from "@/components/ui/styles";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const { t } = await getI18n();
   return (
     <Section>
       <h1 className="h1">{t("layout.notFound.title")}</h1>

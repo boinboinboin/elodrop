@@ -1,24 +1,22 @@
 // An Eliteserien season in review (/eliteserien/2025-26; pipeline/eliteserien-review.mjs): the
 // team strengths before each round against what actually happened.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getEliteserienReview } from "@/data/eliteserien";
 import { getMeta } from "@/data/meta";
 import { getClubMap } from "@/data/sanity";
-import { plural, rich, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Loose, Pool } from "@/types";
-import { dateRange, pct, signed } from "@/utils/format";
 import { eliteserienHref, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
-import { POOL_CODES } from "@/utils/pools";
 
 // Every season in review is prerendered (and refreshed with the data)
 export async function generateStaticParams() {
@@ -26,23 +24,23 @@ export async function generateStaticParams() {
   return seasons.length ? seasons.map((season) => ({ season })) : [{ season: "0" }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/eliteserien/[season]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/eliteserien/[season]">): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const { season } = await params;
   const data = await getEliteserienReview(season);
   if (!data) return { title: t("eliteserien.title") };
-  return pageMetadata({ title: t("eliteserien.review.title", { season: data.season }), description: t("seo.descriptions.eliteserienSeason", { season: data.season }), path: eliteserienHref(season) });
+  return pageMetadata(i18n, { title: t("eliteserien.review.title", { season: data.season }), description: t("seo.descriptions.eliteserienSeason", { season: data.season }), path: eliteserienHref(season) });
 }
 
-/** The golden set's discipline (as in the data, "MixedDoubles") as its short code ("XD") */
+/** The golden set's discipline (as in the data, "MixedDoubles") as a pool */
 const DISCIPLINE_POOLS: Record<string, Pool> = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
-const disciplineCode = (discipline: string) => (DISCIPLINE_POOLS[discipline] ? POOL_CODES[DISCIPLINE_POOLS[discipline]] : discipline);
-/** "+1.2", "−0.4", "0.0" */
-const diff = (x: number) => signed(x, 1, "");
 /** A season in review's URL part as its name: "2024-25" → "2024/25" */
 const seasonName = (season: string) => season.replace("-", "/");
 const strong = (text: ReactNode) => <strong className="font-semibold">{text}</strong>;
 
-export default function ReviewPage(props: PageProps<"/eliteserien/[season]">) {
+export default async function ReviewPage(props: PageProps<"/[lang]/eliteserien/[season]">) {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("eliteserien.review.loading")} section />}>
       <Content params={props.params} />
@@ -50,7 +48,11 @@ export default function ReviewPage(props: PageProps<"/eliteserien/[season]">) {
   );
 }
 
-async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "params">) {
+async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]">, "params">) {
+  const { t, plural, rich, num, pct, signed, dateRange, poolCodes } = await getI18n();
+  const disciplineCode = (discipline: string) => (DISCIPLINE_POOLS[discipline] ? poolCodes[DISCIPLINE_POOLS[discipline]] : discipline);
+  /** "+1.2", "−0.4", "0.0" */
+  const diff = (x: number) => signed(x, 1, "");
   const { season } = await params;
   const [data, clubs, meta] = await Promise.all([getEliteserienReview(season), getClubMap(), getMeta()]);
   if (!data) notFound();
@@ -110,10 +112,10 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
                   <tr key={team.team} className={ROW}>
                     <td className="py-3 px-4 text-right tabular-nums">{team.rank}</td>
                     <td className="py-3 px-4"><Team name={team.team} clubs={clubs} /></td>
-                    <td className="py-3 px-4 text-right tabular-nums">{team.tablePoints.toFixed(1)}</td>
+                    <td className="py-3 px-4 text-right tabular-nums">{num(team.tablePoints, 1)}</td>
                     <td className="py-3 px-4 text-right tabular-nums font-semibold">{team.points}</td>
                     <td className="py-3 px-4 text-right tabular-nums hidden md:table-cell">
-                      {team.expected.toFixed(2)} <span className="text-sm text-gray-500">{t("eliteserien.table.ofEight")}</span>
+                      {num(team.expected, 2)} <span className="text-sm text-gray-500">{t("eliteserien.table.ofEight")}</span>
                     </td>
                     <td className="py-3 px-4 text-right tabular-nums">{team.regularRank}</td>
                     <td className="py-3 px-4 text-right tabular-nums">
@@ -158,8 +160,8 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
                       })}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-right tabular-nums">{team.potential.toFixed(1)}</td>
-                  <td className="py-3 px-4 text-right tabular-nums hidden sm:table-cell">{team.expected.toFixed(1)}</td>
+                  <td className="py-3 px-4 text-right tabular-nums">{num(team.potential, 1)}</td>
+                  <td className="py-3 px-4 text-right tabular-nums hidden sm:table-cell">{num(team.expected, 1)}</td>
                   <td className="py-3 px-4 text-right tabular-nums">{team.won}</td>
                   <td className="py-3 px-4 text-right tabular-nums font-semibold">{diff(team.won - team.potential)}</td>
                   <td className="py-3 px-4 text-right tabular-nums text-gray-700 hidden md:table-cell">{diff(team.expected - team.potential)}</td>
@@ -211,7 +213,7 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
                             const total = j === 0 || tie.playoff ? 8 : tie.score[0] + tie.score[1];
                             return (
                               <td key={j} className={`py-2 px-4 text-right tabular-nums whitespace-nowrap ${j === 0 ? "text-gray-600" : ""}`}>
-                                {odds.expected.toFixed(1)}–{(total - odds.expected).toFixed(1)}
+                                {num(odds.expected, 1)}–{num(total - odds.expected, 1)}
                                 <span className="block text-sm text-gray-500">{t("eliteserien.review.ties.homeWin", { chance: pct(odds.win) })}</span>
                                 {odds.golden && (
                                   <span className="block text-xs text-gray-500" title={t("eliteserien.review.ties.goldenOddsTitle")}>
@@ -276,7 +278,7 @@ async function Content({ params }: Pick<PageProps<"/eliteserien/[season]">, "par
                         <span className="block text-sm text-gray-600"><Team name={p.team} clubs={clubs} size={4} /></span>
                       </td>
                       <td className="py-2 pr-4 text-right tabular-nums">{t("eliteserien.review.players.wonOf", { won: p.won, games: p.games })}</td>
-                      <td className="py-2 pr-4 text-right tabular-nums">{p.expected.toFixed(1)}</td>
+                      <td className="py-2 pr-4 text-right tabular-nums">{num(p.expected, 1)}</td>
                       <td className="py-2 text-right tabular-nums font-semibold">{diff(p.diff)}</td>
                     </tr>
                   ))}

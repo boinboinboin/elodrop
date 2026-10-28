@@ -22,7 +22,8 @@
   },
   "menu": {
     "button": "Menu",
-    "theme": "Colour theme"
+    "theme": "Colour theme",
+    "language": "Language"
   },
   "themes": {
     "yinyang": {

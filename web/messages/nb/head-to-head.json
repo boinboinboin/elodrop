@@ -1,0 +1,153 @@
+{
+  "title": "Innbyrdes",
+  "doublesTitle": "Innbyrdes i double",
+  "doublesCrumb": "Double",
+  "intro": "To spilleres kamper mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
+  "introDoubles": "To doublepars kamper mot hverandre, og sjansene deres hvis de møttes nå.",
+  "switch": {
+    "label": "Sammenlign",
+    "players": "Spillere",
+    "pairs": "Par"
+  },
+  "form": {
+    "player": "Spiller",
+    "against": "Mot",
+    "partner": "Makker",
+    "compare": "Sammenlign",
+    "swap": "Bytt",
+    "swapPlayers": "Bytt spillerne",
+    "swapPairs": "Bytt parene",
+    "vs": "mot",
+    "twoDifferent": "Velg to forskjellige spillere.",
+    "fourDifferent": "Velg fire forskjellige spillere.",
+    "notFound": "En av spillerne ble ikke funnet."
+  },
+  "picker": {
+    "placeholder": "Søk etter navn",
+    "none": "Ingen spillere funnet"
+  },
+  "pairs": {
+    "a": "Par A",
+    "b": "Par B",
+    "names": "{a} og {b}",
+    "rating": "rating",
+    "kinds": {
+      "men": "herrepar",
+      "women": "damepar",
+      "mixed": "mixedpar"
+    },
+    "against": "{a} mot {b}"
+  },
+  "genders": {
+    "M": "herrer",
+    "K": "damer"
+  },
+  "record": {
+    "against": {
+      "one": "{count} kamp mot hverandre",
+      "other": "{count} kamper mot hverandre"
+    },
+    "drawn": ", {count} uavgjort",
+    "pairAFirst": ", par A først",
+    "neverMet": "Aldri møttes",
+    "together": "Sammen: {wins} seiere, {losses} tap",
+    "neverTogether": "Har aldri spilt sammen",
+    "met": {
+      "one": "Møttes {count} gang",
+      "other": "Møttes {count} ganger"
+    },
+    "metIn": {
+      "one": "Møttes {count} gang i {pool}",
+      "other": "Møttes {count} ganger i {pool}"
+    },
+    "theyMetIn": {
+      "one": "De har møttes {count} gang i {pool}",
+      "other": "De har møttes {count} ganger i {pool}"
+    },
+    "result": "{name} vant {wins}, tapte {losses}",
+    "drew": ", {draws} uavgjort",
+    "summary": "{met}: {result}."
+  },
+  "rank": {
+    "among": "#{rank} blant {gender}",
+    "notRankedLower": "ikke rangert",
+    "peak": "toppnotering {rating}",
+    "onMensScale": "{rating} på herreskalaen ({own} i {pool}, {rank})"
+  },
+  "margins": {
+    "title": "Seiersmarginer",
+    "intro": {
+      "one": "Over deres {count} kamp mot hverandre med resultat (ikke walkover), alle disipliner.",
+      "other": "Over deres {count} kamper mot hverandre med resultat (ikke walkover), alle disipliner."
+    },
+    "introDoubles": {
+      "one": "Over deres {count} kamp mot hverandre med resultat (ikke walkover), alle doubledisipliner.",
+      "other": "Over deres {count} kamper mot hverandre med resultat (ikke walkover), alle doubledisipliner."
+    },
+    "inPool": "Seiersmarginer i {pool}",
+    "measure": "Mål",
+    "matchesWon": "Kamper vunnet",
+    "setsWon": "Sett vunnet",
+    "pointsWon": "Poeng vunnet",
+    "averageMargin": "Gjennomsnittlig seiersmargin",
+    "biggestWin": "Største seier",
+    "points": {
+      "one": "{count} poeng",
+      "other": "{count} poeng"
+    },
+    "plusPoints": {
+      "one": "+{count} poeng",
+      "other": "+{count} poeng"
+    },
+    "deciding": {
+      "one": "{deciding} av {count} kamp gikk til avgjørende sett.",
+      "other": "{deciding} av {count} kamper gikk til avgjørende sett."
+    },
+    "closest": "Jevnest: {name} vant {score} ({margin}) den {date}.",
+    "levelOnPoints": "likt på poeng",
+    "by": {
+      "one": "med {count} poeng",
+      "other": "med {count} poeng"
+    }
+  },
+  "now": {
+    "title": "Hvis de møttes nå",
+    "tabs": "Disipliner",
+    "intro": "Gjeldende ratinger i hver disiplin begge spiller, og {a}s sjanse til å slå {b}. Single og herre- eller damedouble sammenlignes bare mellom spillere av samme kjønn. I double gjelder sjansen med like høyt ratede makkere: et pars rating er snittet av spillernes.",
+    "introDoubles": "Gjeldende ratinger og par A sin sjanse til å slå par B. Et par spiller på snittet av spillernes ratinger, og parene sammenlignes i disiplinen kjønnene deres plasserer dem i: to herrepar i herredouble, to mixedpar i mixed double.",
+    "unrated": "{name} har ingen rating i {pool}",
+    "unratedJoin": ", og ",
+    "noChances": "{list}, så det er ingen sjanser å sammenligne.",
+    "differentDisciplines": "Parene spiller ikke i samme doubledisiplin, så ratingene kan ikke sammenlignes."
+  },
+  "fun": {
+    "title": "Bare for moro skyld",
+    "intro": "Herrer og damer rates i hver sine disipliner, så ratingene kan ikke sammenlignes direkte. Her er {a}s og {b}s sjanser hvis de kunne det, med damens rating flyttet over på herreskalaen. I double gjelder sjansen med like høyt ratede makkere.",
+    "introDoubles": "Par A er et {kindA} og par B et {kindB}, så de spiller ikke i samme disiplin. Her spiller alle på herredoubleskalaen: herrer med herredoublratingen sin, damer med damedoublratingen sin flyttet over på herreskalaen, og et par på snittet.",
+    "formats": {
+      "singles": "Single",
+      "doubles": "Double"
+    },
+    "onMensScale": "{label}, på herreskalaen",
+    "onMensDoublesScale": "på herredoubleskalaen"
+  },
+  "history": {
+    "title": "Ratinghistorikk",
+    "intro": "Rating ved slutten av hver uke",
+    "introMensScale": "Rating ved slutten av hver uke, på herreskalaen",
+    "pairTitle": "Parets ratinghistorikk",
+    "pairIntro": "Snittet av makkernes ratinger ved slutten av hver uke begge hadde rating",
+    "pairIntroMensScale": "Snittet av makkernes ratinger ved slutten av hver uke begge hadde rating, på herredoubleskalaen",
+    "pairLabel": "Parrating"
+  },
+  "matches": {
+    "against": "Kamper mot hverandre",
+    "together": "Sammen som makkere",
+    "fromSide": "Fra {name}s side, nyeste først",
+    "fromPairA": "Fra par A sin side ({pair}), nyeste først"
+  },
+  "genderGap": {
+    "note": "Damenes ratinger flyttes over på herreskalaen ut fra de {matches} kampene damer har spilt mot herrer i {men}, satt opp mot damenes rating i {women} på den tiden. En dame med {w1} spiller som en herre med omtrent {m1}, en med {w2} som en med omtrent {m2}, og en med {w3} som en med omtrent {m3}: gapet vokser med nivået.",
+    "extrapolated": " Ratinger merket med * ligger utenfor det kampene dekker (omtrent {from} til {to}), så for dem er gapet ekstrapolert."
+  }
+}

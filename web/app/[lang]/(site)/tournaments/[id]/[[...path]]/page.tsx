@@ -3,7 +3,6 @@
 // /<class>/<pool>/<order> in another table order) and the summary (/tournaments/<id>/summary). Each
 // is a static page, rendered on its first visit and cached until the next data update.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
@@ -14,6 +13,7 @@ import EventResult from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Loading from "@/components/ui/Loading";
 import ScrollRow from "@/components/ui/ScrollRow";
@@ -23,9 +23,10 @@ import Tabs from "@/components/ui/Tabs";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
-import { plural, rich, t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, Entry, Tournament, TournamentEvent } from "@/types";
-import { date, dateRange, EMPTY, num, pct, place, signed, toneClass } from "@/utils/format";
+import { EMPTY, place, toneClass } from "@/utils/format";
 import { tournamentHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
@@ -54,7 +55,9 @@ export async function generateStaticParams() {
   return tournaments.length ? tournaments.map((tour) => ({ id: String(tour.cup2000Id), path: [] })) : [{ id: "0", path: [] }];
 }
 
-export async function generateMetadata({ params }: PageProps<"/tournaments/[id]/[[...path]]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/[lang]/tournaments/[id]/[[...path]]">): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t, dateRange } = i18n;
   const { id: rawId, path } = await params;
   const id = parseId(rawId);
   const tour = id !== null ? await getTournament(id) : null;
@@ -62,7 +65,7 @@ export async function generateMetadata({ params }: PageProps<"/tournaments/[id]/
   const dates = tour.startDate ? `, ${dateRange(tour.startDate, tour.endDate)}` : "";
   // Each view and event is its own page; an event in another table order (a third part) is the same event
   const canonical = [tournamentHref(tour.cup2000Id), ...(path ?? []).slice(0, 2).map((part) => decodeURIComponent(part))].join("/");
-  return pageMetadata({
+  return pageMetadata(i18n, {
     title: tour.name,
     description: t("seo.descriptions.tournament", { name: tour.name, dates }),
     path: canonical,
@@ -70,7 +73,8 @@ export async function generateMetadata({ params }: PageProps<"/tournaments/[id]/
   });
 }
 
-export default function TournamentPage(props: PageProps<"/tournaments/[id]/[[...path]]">) {
+export default async function TournamentPage(props: PageProps<"/[lang]/tournaments/[id]/[[...path]]">) {
+  const { t } = await getI18n();
   return (
     <Suspense fallback={<Loading label={t("tournaments.page.loading")} section />}>
       <Content params={props.params} />
@@ -78,7 +82,8 @@ export default function TournamentPage(props: PageProps<"/tournaments/[id]/[[...
   );
 }
 
-async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]">, "params">) {
+async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[...path]]">, "params">) {
+  const { t, rich, dateRange, href } = await getI18n();
   const { id: param, path = [] } = await params;
   const id = parseId(param);
   if (id === null) notFound();
@@ -97,7 +102,7 @@ async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]
             "@type": "SportsEvent",
             name: tour.name,
             sport: "Badminton",
-            url: absoluteUrl(tournamentHref(tour.cup2000Id)),
+            url: absoluteUrl(href(tournamentHref(tour.cup2000Id))),
             ...(tour.startDate ? { startDate: tour.startDate, endDate: tour.endDate ?? tour.startDate } : {}),
             eventStatus: tour.cancelled ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
           }}
@@ -127,8 +132,10 @@ async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]
 
 // ---- Summary ----
 
-function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string, ClubEntry> }) {
-  const all = allEntries(tour);
+async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string, ClubEntry> }) {
+  const i18n = await getI18n();
+  const { t, rich, num, pct, signed, date } = i18n;
+  const all = allEntries(i18n, tour);
   // Luck in each event's own measure: places in events that place everyone (the X classes), else rounds
   const byLuck = all.filter((e) => e.luck).sort((a, b) => b.luck!.score - a.luck!.score);
   const champions = all.filter((e) => e.result?.win === 1).sort((a, b) => a.actual.win - b.actual.win);
@@ -218,7 +225,7 @@ function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string, Club
 // ---- Events ----
 
 /** The Seeds line of an event's explanation: by the ranking (how many, which list), by rating, or none */
-function seedsText(event: TournamentEvent, version: string | null | undefined): string {
+function seedsText({ t, date }: I18n, event: TournamentEvent, version: string | null | undefined): string {
   const count = event.seeds.length;
   const text =
     event.seededBy !== "ranking"
@@ -229,14 +236,16 @@ function seedsText(event: TournamentEvent, version: string | null | undefined): 
   return `${text}${count > 0 ? t("tournaments.legend.seedsMarked") : ""}.`;
 }
 
-function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament; clubs: Record<string, ClubEntry>; eventIndex: number; requestedOrder: string | null }) {
+async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament; clubs: Record<string, ClubEntry>; eventIndex: number; requestedOrder: string | null }) {
+  const i18n = await getI18n();
+  const { t } = i18n;
   const event = tour.events[eventIndex];
   const single = noLuck(event);
   const { placement, played } = event;
   const winner = played ? event.entries.find((e) => e.result?.win === 1) : null;
-  const { steps, short } = rounds(event);
+  const { steps, short } = rounds(i18n, event);
   const max = event.maxRounds;
-  const available = orders(event);
+  const available = orders(i18n, event);
   const keys = Object.keys(available) as Order[];
   const order: Order = requestedOrder && requestedOrder in available ? (requestedOrder as Order) : keys[0];
   const grouped = event.groups.length > 1;
@@ -273,10 +282,10 @@ function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament;
         ))}
       </nav>
 
-      <h2 className="text-3xl mb-1">{eventTitle(event)}</h2>
+      <h2 className="text-3xl mb-1">{eventTitle(i18n, event)}</h2>
       <p className="text-gray-700 mb-4">
-        {entryCount(event)}
-        {formatDescription(event)}.{" "}
+        {entryCount(i18n, event)}
+        {formatDescription(i18n, event)}.{" "}
         {single && `${t("tournaments.event.noLuck", { reason: t(event.entries.length <= 2 ? "tournaments.event.justOneMatch" : "tournaments.event.everyoneVsEveryone") })} `}
       </p>
 
@@ -319,7 +328,7 @@ function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament;
         {!single && (
           <>
             <dt className="font-semibold">{t("tournaments.legend.seeds")}</dt>
-            <dd>{seedsText(event, tour.rankingVersion)}</dd>
+            <dd>{seedsText(i18n, event, tour.rankingVersion)}</dd>
           </>
         )}
         {played && (
@@ -369,7 +378,7 @@ function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament;
             </tr>
           </thead>
           <tbody>
-            {tableRows(event, order).map((row, i) =>
+            {tableRows(i18n, event, order).map((row, i) =>
               "header" in row ? (
                 <tr key={`h${i}`} className="bg-gray-50 border-b border-gray-200">
                   <th scope="colgroup" colSpan={columns} className="py-2 px-2 sm:px-4 text-left font-semibold">
@@ -388,12 +397,12 @@ function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tournament;
 }
 
 /** A group place worth a badge in the group view ("Won the group", "2nd in the group") */
-function groupRankLabel(rank: number): string {
+function groupRankLabel(t: I18n["t"], rank: number): string {
   if (rank === 1 || rank === 2 || rank === 3 || rank === 4) return t(`tournaments.entry.groupRank.${rank}`);
   return t("tournaments.entry.groupRank.other", { rank });
 }
 
-function EntryRow({
+async function EntryRow({
   entry: e,
   place: standing,
   event,
@@ -412,6 +421,7 @@ function EntryRow({
   maxLuck: number;
   short: string[];
 }) {
+  const { t, plural, num, pct, signed } = await getI18n();
   const single = noLuck(event);
   const { placement, played } = event;
   // Played events with withdrawals: the chances once the withdrawn players were out
@@ -427,10 +437,10 @@ function EntryRow({
   const seed = single ? 0 : event.seeds.indexOf(event.entries.indexOf(e)) + 1;
 
   const expected = single
-    ? { label: t("tournaments.legend.wins"), ex: ex.wins.toFixed(2), fair: null }
+    ? { label: t("tournaments.legend.wins"), ex: num(ex.wins, 2), fair: null }
     : placement
       ? { label: t("tournaments.legend.placement"), ex: ex.place!.toFixed(2), fair: fx.place!.toFixed(2) }
-      : { label: t("tournaments.legend.rounds"), ex: ex.progress.toFixed(2), fair: fx.progress.toFixed(2) };
+      : { label: t("tournaments.legend.rounds"), ex: num(ex.progress, 2), fair: num(fx.progress, 2) };
   const luckValue = (
     <>
       <span className={`tabular-nums font-semibold ${toneClass(luck)}`} title={withdrawalLuck ? t("tournaments.entry.luckSplit", { draw: signed(e.luck!.draw!), withdrawals: signed(e.luck!.withdrawals!) }) : undefined}>
@@ -492,7 +502,7 @@ function EntryRow({
         )}
         {order === "group" && played && rank && marked.includes(rank) && (
           <Badge tone={rank === 1 ? "green" : "gray"} className="mt-1 mr-1">
-            {groupRankLabel(rank)}
+            {groupRankLabel(t, rank)}
           </Badge>
         )}
         {/* Phones: the numbers under the names, labelled */}

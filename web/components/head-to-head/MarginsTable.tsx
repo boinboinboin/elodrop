@@ -1,15 +1,16 @@
 // Winning margins of two sides' meetings (data/head-to-head.ts margins()), for the head-to-head pages.
 import Swatch from "@/components/ui/Swatch";
-import { plural, t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Margins, Match } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
-import { date, EMPTY, num, pct } from "@/utils/format";
+import { EMPTY } from "@/utils/format";
 
 /** A score from the winner's side: "18-21, 15-21" → "21-18, 21-15" */
 const winnerScore = (m: Match, flip: boolean) => (flip ? m.score.split(", ").map((set) => set.split("-").reverse().join("-")).join(", ") : m.score);
 
 /** Winning margins: per side (a player or a pair) the matches, sets and points won, the average margin of their wins and their biggest win; then deciding sets and the closest match */
-export default function MarginsTable({ mg, names, showPool }: { mg: Margins; names: [string, string]; showPool: boolean }) {
+export default async function MarginsTable({ mg, names, showPool }: { mg: Margins; names: [string, string]; showPool: boolean }) {
+  const { date, num, pct, plural, t } = await getI18n();
   const sides = [
     { name: names[0], s: mg.a, i: 0 },
     { name: names[1], s: mg.b, i: 1 },
@@ -52,7 +53,7 @@ export default function MarginsTable({ mg, names, showPool }: { mg: Margins; nam
             </tr>
             <tr className="border-b border-gray-100">
               <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">{t("headToHead.margins.averageMargin")}</th>
-              {sides.map((side) => <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">{side.s.average !== null ? plural("headToHead.margins.points", side.s.average, { count: side.s.average.toFixed(1) }, { decimals: 1 }) : EMPTY}</td>)}
+              {sides.map((side) => <td key={side.i} className="py-2 pr-2 sm:pr-4 text-right">{side.s.average !== null ? plural("headToHead.margins.points", side.s.average, { count: num(side.s.average, 1) }, { decimals: 1 }) : EMPTY}</td>)}
             </tr>
             <tr>
               <th scope="row" className="py-2 pr-2 sm:pr-4 font-normal text-gray-700">{t("headToHead.margins.biggestWin")}</th>

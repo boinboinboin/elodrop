@@ -1,14 +1,15 @@
 // One upset: who beat whom with what win chance, each player's rating before the match, the
 // rating gained or lost and their club; the score, discipline, event and day.
-import Link from "next/link";
 import Team from "@/components/clubs/Team";
+import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, Upset } from "@/types";
-import { date, pct, signed, toneClass } from "@/utils/format";
+import { toneClass } from "@/utils/format";
 import { doublesHeadToHeadHref, headToHeadHref, playerHref } from "@/utils/hrefs";
 
-export default function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?: number; clubs: Record<string, ClubEntry> }) {
+export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?: number; clubs: Record<string, ClubEntry> }) {
+  const { date, pct, signed, t } = await getI18n();
   const ids = (side: Upset["winners"]) => side.map((p) => p.id);
   return (
     <article className="bg-white p-4 md:p-5 h-full flex flex-col">

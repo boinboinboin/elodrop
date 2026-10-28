@@ -3,10 +3,10 @@
 import type { ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
 import SeasonLabel from "@/components/format/SeasonLabel";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { Pool, SeasonRow } from "@/types";
 
-export default function SeasonTable({
+export default async function SeasonTable({
   pools,
   rows,
   cell,
@@ -16,6 +16,7 @@ export default function SeasonTable({
   rows: [number, Partial<Record<Pool, SeasonRow>>][];
   cell: (row: SeasonRow | undefined) => ReactNode;
 }) {
+  const { t } = await getI18n();
   return (
     <div className="overflow-x-auto">
       <table className="mt-2 text-left">

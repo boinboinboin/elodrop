@@ -1,0 +1,66 @@
+{
+  "loading": "Laster klubb…",
+  "loadingClubs": "Laster klubber…",
+  "clubs": "Klubber",
+  "metadata": {
+    "club": "Klubb",
+    "strongest": "Sterkeste klubber",
+    "strongestPool": "Sterkeste klubber: {pool}"
+  },
+  "rule": {
+    "weights": "{weights}, best først",
+    "mixed": "et vektet gjennomsnitt av klubbens {slots} beste par: beste herre med beste dame, nest beste herre med nest beste dame og så videre ({weights})",
+    "doubles": "et vektet gjennomsnitt av klubbens {slots} beste par: de to beste spillerne, de neste to og så videre ({weights})",
+    "singles": "et vektet gjennomsnitt av klubbens {slots} beste spillere ({weights})"
+  },
+  "strongest": {
+    "title": "Sterkeste klubber",
+    "combinedIntro": "Klubber rangert etter snittplasseringen i alle fem disipliner, der hver teller likt. I hver disiplin sammenlignes klubbens styrke med de andre klubbene i listen: 0 er gjennomsnittet, +1 er ett standardavvik over. Klubbene må være med i alle disipliner.",
+    "poolIntro": "Klubber rangert etter {rule}. Et par teller med snittet av de to spillerne. Plasser en klubb ikke kan fylle, teller med laveste rating blant rangerte spillere, så mindre klubber er med i listen, men havner lenger ned.",
+    "disciplines": "Disiplin",
+    "combined": "Samlet",
+    "noClubs": "Ingen klubber ennå: kjør pipelinen.",
+    "score": "Poengsum",
+    "strength": "Styrke",
+    "bestPairs": "Beste par",
+    "bestPlayers": "Beste spillere",
+    "rankedPlayers": "Rangerte spillere",
+    "sortByRankedPlayers": "Sorter etter rangerte spillere, flest først"
+  },
+  "club": {
+    "combinedRank": "#{rank} av de sterkeste klubbene samlet",
+    "disciplines": "Disipliner",
+    "overTime": "Over tid",
+    "allDisciplines": "Alle disipliner",
+    "allDisciplinesText": "Klubbens styrke i hver disiplin ved slutten av hver uke. Doubleratinger er på samme type skala som single, men hver disiplin rates for seg, så sammenlign hvordan hver linje beveger seg i stedet for nivåene mellom disiplinene.",
+    "strength": "Styrke",
+    "combined": "Samlet",
+    "combinedText": "Gjennomsnittlig standardscore over alle fem disipliner, blant klubbene som har en styrke i alle fem den uken: 0 er en gjennomsnittlig klubb, +1 er ett standardavvik over. Hull er uker der klubben ikke var sterk nok til å være med i alle disipliner.",
+    "combinedScore": "Samlet poengsum",
+    "clubs": "klubber",
+    "strengthBySeason": "Styrke per sesong",
+    "seasonValues": "Verdier ved slutten av hver sesong (eller siste uke for inneværende sesong).",
+    "strengthHistory": "Styrkehistorikk",
+    "strengthHistoryText": "Klubbens styrke ved slutten av hver uke: {rule}, med spillere som spilte for klubben på den tiden. Plasser den ikke kunne fylle, teller med laveste rating blant rangerte spillere. Hull er uker uten rangerte spillere.",
+    "clubStrength": "Klubbstyrke",
+    "strengthAtEnd": "Styrke ved slutten",
+    "rank": "Plassering",
+    "rankOf": "#{rank} av {count}",
+    "noPlayers": "Ingen rangerte spillere: ingen fra {club} har spilt {pool} de siste 12 månedene.",
+    "noPartner": "ingen makker",
+    "unfilled": {
+      "one": "{count} plass ikke fylt",
+      "other": "{count} plasser ikke fylt"
+    },
+    "rankedPlayers": {
+      "one": "{count} rangert spiller",
+      "other": "{count} rangerte spillere"
+    },
+    "strongestRank": "#{rank} av de sterkeste klubbene",
+    "strengthValue": "(styrke {strength})",
+    "woman": "dame",
+    "man": "herre",
+    "rankNote": "# er landsplasseringen i {pool}.",
+    "rankNoteMixed": "# er landsplasseringen i {pool}, blant herrer eller blant damer."
+  }
+}

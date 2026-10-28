@@ -1,9 +1,10 @@
 // Each side's chance of winning as a split bar: A's share from the left, B's from the right, in the
 // sides' colours
+import { getI18n } from "@/messages/server";
 import { SIDE_COLORS } from "@/utils/chart";
-import { pct } from "@/utils/format";
 
-export default function ChanceBar({ names, chance }: { names: [string, string]; chance: number }) {
+export default async function ChanceBar({ names, chance }: { names: [string, string]; chance: number }) {
+  const { pct } = await getI18n();
   return (
     <>
       <div className="flex justify-between gap-4 text-sm mb-1 tabular-nums">

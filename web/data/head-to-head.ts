@@ -2,6 +2,7 @@
 // winning margins, each side's chance now, and (just for fun) men against women, with women's
 // ratings moved onto the men's scale by the gender gap (pipeline/gender-gap.mjs).
 import { differenceInCalendarDays, parseISO } from "date-fns";
+import { getI18n } from "@/messages/server";
 import type {
   DoublesHeadToHead,
   DoublesHeadToHeadPool,
@@ -21,10 +22,9 @@ import type {
   Record3,
   Side,
 } from "@/types";
-import { comparableIn, pairKind, pairPlaysIn, playerGender } from "@/utils/gender";
-import { t } from "@/messages/i18n";
 import { capitalize } from "@/utils/format";
-import { DOUBLES_POOLS, POOLS } from "@/utils/pools";
+import { comparableIn, pairKind, pairPlaysIn, playerGender } from "@/utils/gender";
+import { DOUBLES_POOLS } from "@/utils/pools";
 import { DOUBLES_SCALE, equalPartnersChance, expectedScore, onMensScale, pairRating } from "@/utils/rating";
 import { load } from "./load";
 import { getPlayer, getPlayerMatches } from "./players";
@@ -80,12 +80,14 @@ function margins(meetings: Match[]): Margins {
 export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | null> {
   const [playerA, playerB] = await Promise.all([getPlayer(a), getPlayer(b)]);
   if (!playerA || !playerB || a === b) return null;
+  // The disciplines' names in the page's language (the data's labels are English)
+  const { pools: names } = await getI18n();
   const allMatches = await getPlayerMatches(playerA);
   const meetings: Match[] = [];
   const together: Match[] = [];
-  for (const [pool, p] of Object.entries(playerA.pools) as [Pool, PlayerPool][]) {
+  for (const pool of Object.keys(playerA.pools) as Pool[]) {
     for (const match of allMatches[pool] ?? []) {
-      const m = { ...match, pool, poolLabel: p.label, ...points(match.score ?? "") };
+      const m = { ...match, pool, poolLabel: names[pool], ...points(match.score ?? "") };
       if (m.opponents.some((o) => o.id === b)) meetings.push(m);
       else if (m.partner?.id === b) together.push(m);
     }
@@ -100,7 +102,7 @@ export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | 
     if (!q || !comparableIn(pool, genders)) continue;
     const inPool = meetings.filter((m) => m.pool === pool);
     const chance = DOUBLES_POOLS.includes(pool) ? equalPartnersChance(p.rating, q.rating) : expectedScore(p.rating, q.rating);
-    pools[pool] = { label: p.label, a: p, b: q, chance, record: record(inPool), margins: margins(inPool) };
+    pools[pool] = { label: names[pool], a: p, b: q, chance, record: record(inPool), margins: margins(inPool) };
   }
   return { a: playerA, b: playerB, meetings, together, record: record(meetings), margins: margins(meetings), togetherRecord: record(together), pools, crossovers: await crossovers(playerA, playerB, meetings) };
 }
@@ -161,7 +163,7 @@ function onOneScale(players: Player[], format: Format, gap: GenderGap): { sides:
 
 /** A man against a woman in singles and in doubles, for the players' head to head */
 async function crossovers(a: Player, b: Player, meetings: Match[]): Promise<HeadToHeadCrossover[]> {
-  const gap = await getGenderGap();
+  const [gap, { t }] = await Promise.all([getGenderGap(), getI18n()]);
   const genders = [playerGender(a), playerGender(b)];
   if (!gap || !genders[0] || !genders[1] || genders[0] === genders[1]) return [];
   const list: HeadToHeadCrossover[] = [];
@@ -193,17 +195,16 @@ export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b
   const players = await Promise.all([a1, a2, b1, b2].map(getPlayer));
   if (players.some((p) => !p)) return null;
   const [pa1, pa2, pb1, pb2] = players as Player[];
-  const [matchesA, matchesB] = await Promise.all([getPlayerMatches(pa1), getPlayerMatches(pb1)]);
+  const [matchesA, matchesB, { t, pools: names }] = await Promise.all([getPlayerMatches(pa1), getPlayerMatches(pb1), getI18n()]);
   const meetings: Match[] = [];
   const togetherA: Match[] = [];
   const togetherB: Match[] = [];
   for (const pool of DOUBLES_POOLS) {
-    const p = pa1.pools[pool];
     for (const match of matchesA[pool] ?? []) {
       if (match.partner?.id !== a2) continue;
       togetherA.push(match);
       const opponents = match.opponents.map((o) => o.id);
-      if (opponents.includes(b1) && opponents.includes(b2)) meetings.push({ ...match, pool, poolLabel: p!.label, ...points(match.score ?? "") });
+      if (opponents.includes(b1) && opponents.includes(b2)) meetings.push({ ...match, pool, poolLabel: names[pool], ...points(match.score ?? "") });
     }
     for (const match of matchesB[pool] ?? []) if (match.partner?.id === b2) togetherB.push(match);
   }
@@ -231,7 +232,7 @@ export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b
     const entries = [pa1, pa2, pb1, pb2].map((player) => player.pools[pool]);
     if (entries.some((e) => !e)) continue;
     const sides = entries.map((entry) => ({ entry: entry!, pool, rating: entry!.rating }));
-    pools[pool] = compare(POOLS[pool], sides, sides.map((side) => scaled(side, null)), meetings.filter((m) => m.pool === pool), false);
+    pools[pool] = compare(names[pool], sides, sides.map((side) => scaled(side, null)), meetings.filter((m) => m.pool === pool), false);
   }
   const kinds: [PairKind | null, PairKind | null] = [pairKind(pairA), pairKind(pairB)];
   let crossover: DoublesHeadToHeadPool | null = null;

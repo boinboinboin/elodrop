@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "title": "Største overraskelser",
+    "year": "Største overraskelser {year}",
+    "week": "Største overraskelser, uke {week}"
+  },
+  "breadcrumb": "Overraskelser",
+  "title": "Største overraskelser",
+  "intro": "Kampene som ble vunnet med lavest sjanse, uke for uke.",
+  "explanation": "Seierssjansen er regnet ut fra ratingene rett før kampen. Bare kamper mellom etablerte spillere teller: begge har spilt minst 10 kamper og har en rating som er sikker innenfor ±250 i single eller ±180 i double, så en junior i rask utvikling som slår en favoritt telles ikke som en overraskelse. Walkover og uavgjort er utelatt.",
+  "loading": "Laster overraskelser…",
+  "none": "Ingen overraskelser regnet ut ennå: kjør pipelinen.",
+  "weekOf": "Uke {week}",
+  "weeks": "Uker",
+  "earlier": "Tidligere",
+  "later": "Senere",
+  "carousel": "De største overraskelsene, uke {week}",
+  "eachWeek": "Ukens største overraskelse",
+  "year": "År",
+  "table": {
+    "week": "Uke",
+    "upset": "Overraskelse",
+    "chance": "Sjanse",
+    "chanceTitle": "Vinnerens sjanse til å vinne før kampen",
+    "beat": "slo",
+    "chanceOnPhones": "<strong>{chance}</strong> sjanse"
+  },
+  "card": {
+    "chanceOfWinning": "sjanse til å vinne",
+    "beat": "slo",
+    "ratingBefore": "Rating før kampen",
+    "headToHead": "innbyrdes"
+  },
+  "ratingGained": "Rating opp",
+  "ratingLost": "Rating ned"
+}

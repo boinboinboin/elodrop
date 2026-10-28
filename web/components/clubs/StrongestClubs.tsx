@@ -2,28 +2,29 @@
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
 // /clubs/strongest/<pool>. The table can be sorted by ranked players and, per discipline, by the strength
 // gained or lost since last week (components/ui/SortableTable.tsx).
-import Link from "next/link";
 import { ClubLogo } from "@/components/clubs/Team";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
+import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
 import SortableTable from "@/components/ui/SortableTable";
 import { ROW } from "@/components/ui/styles";
 import { getClubsFile } from "@/data/clubs";
 import { getClubMap } from "@/data/sanity";
-import { t } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { CombinedClubStanding, ClubStanding, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
-import { signed } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
-import { POOLS, POOL_KEYS } from "@/utils/pools";
+import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 
 const TABS: (Pool | "combined")[] = ["combined", ...POOL_KEYS];
 
 export default async function StrongestClubs({ pool }: { pool: Pool | "combined" }) {
+  const i18n = await getI18n();
+  const { pools, signed, t } = i18n;
   const combined = pool === "combined";
   const [file, entries] = await Promise.all([getClubsFile(), getClubMap()]);
   const clubs = (file?.clubs[pool] ?? []) as (ClubStanding | CombinedClubStanding)[];
@@ -32,9 +33,9 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
   return (
     <>
       <Section>
-        <Breadcrumbs trail={combined ? [{ label: t("clubs.clubs") }] : [{ label: t("clubs.clubs"), href: "/clubs" }, { label: POOLS[pool] }]} />
+        <Breadcrumbs trail={combined ? [{ label: t("clubs.clubs") }] : [{ label: t("clubs.clubs"), href: "/clubs" }, { label: pools[pool] }]} />
         <h1 className="h1 mt-4">{t("clubs.strongest.title")}</h1>
-        <p className="text-2xl max-w-3xl mt-2">{combined ? t("clubs.strongest.combinedIntro") : rule && t("clubs.strongest.poolIntro", { rule: clubRule(rule) })}</p>
+        <p className="text-2xl max-w-3xl mt-2">{combined ? t("clubs.strongest.combinedIntro") : rule && t("clubs.strongest.poolIntro", { rule: clubRule(i18n, rule) })}</p>
       </Section>
 
       <Section>
@@ -61,7 +62,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                     <>
                       <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.changeSinceLastWeek")}</span></th>
                       {POOL_KEYS.map((key) => (
-                        <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{POOLS[key]}</th>
+                        <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{pools[key]}</th>
                       ))}
                     </>
                   )}

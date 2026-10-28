@@ -6,12 +6,12 @@
 // Enter without moving opens the first result. Escape closes the list.
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 import { Search } from "@/components/SVG";
+import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 import ClearButton from "@/components/ui/ClearButton";
-import { t } from "@/messages/i18n";
-import { loadSearchIndex, searchSite } from "@/utils/search";
+import { useI18n } from "@/messages/client";
 import { logoSrc } from "@/utils/clubs";
+import { loadSearchIndex, searchSite } from "@/utils/search";
 
 interface Result {
   name: string;
@@ -20,11 +20,13 @@ interface Result {
   url: string;
   logo?: string | null;
 }
-const GROUPS = { players: t("layout.search.groups.players"), clubs: t("layout.search.groups.clubs"), tournaments: t("layout.search.groups.tournaments"), eliteserien: t("layout.search.groups.eliteserien") } as const;
-type Found = Partial<Record<keyof typeof GROUPS, Result[]>>;
+type Group = "players" | "clubs" | "tournaments" | "eliteserien";
+type Found = Partial<Record<Group, Result[]>>;
 
 export default function SearchBar() {
   const router = useRouter();
+  const { t, lang, href } = useI18n();
+  const GROUPS: Record<Group, string> = { players: t("layout.search.groups.players"), clubs: t("layout.search.groups.clubs"), tournaments: t("layout.search.groups.tournaments"), eliteserien: t("layout.search.groups.eliteserien") };
   const [query, setQuery] = useState("");
   const [found, setFound] = useState<Found | null>(null);
   const [active, setActive] = useState(-1);
@@ -35,7 +37,7 @@ export default function SearchBar() {
     if (q.length < 2) return;
     const id = ++request.current;
     // Instant once the index is loaded; the first search waits for it
-    loadSearchIndex()
+    loadSearchIndex(lang)
       .then((index) => {
         if (id !== request.current) return;
         const data: Found = searchSite(index, q);
@@ -43,10 +45,10 @@ export default function SearchBar() {
         setActive(Object.values(data).some((g) => g?.length) ? 0 : -1);
       })
       .catch(() => {});
-  }, [query]);
+  }, [query, lang]);
 
   const open = query.trim().length >= 2 && found !== null;
-  const groups = (Object.keys(GROUPS) as (keyof typeof GROUPS)[]).map((key) => ({ key, label: GROUPS[key], items: found?.[key] ?? [] })).filter((g) => g.items.length);
+  const groups = (Object.keys(GROUPS) as Group[]).map((key) => ({ key, label: GROUPS[key], items: found?.[key] ?? [] })).filter((g) => g.items.length);
   const results = groups.flatMap((g) => g.items);
   const go = (i: number) => {
     const r = results[i];
@@ -54,7 +56,7 @@ export default function SearchBar() {
     setFound(null);
     setQuery("");
     startNavigationProgress();
-    router.push(r.url);
+    router.push(href(r.url));
   };
   const onKey = (event: React.KeyboardEvent) => {
     if (event.key === "Escape") return setFound(null);
@@ -92,7 +94,7 @@ export default function SearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={onKey}
-          onFocus={() => loadSearchIndex().catch(() => {})}
+          onFocus={() => loadSearchIndex(lang).catch(() => {})}
           onBlur={() => setFound(null)}
           // Room on the right only for the clear button, so the placeholder has the whole width
           className={`w-full pl-10 ${query ? "pr-10" : "pr-3"} py-2 border border-black bg-white`}

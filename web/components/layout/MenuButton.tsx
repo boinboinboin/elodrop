@@ -1,14 +1,16 @@
 "use client";
 
 // The header's menu: a button whose three lines turn into a cross, opening the site's links (on
-// screens too narrow for them in the header, below xl), the pages about the site and the colour theme. On phones the menu is
+// screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language. On phones the menu is
 // a panel under the whole header; from md a dropdown under the button. It closes on a link (the next
 // page), a theme picked or Escape (focus back on the button), or a press outside it.
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import LanguagePicker from "@/components/layout/LanguagePicker";
 import ThemePicker from "@/components/layout/ThemePicker";
-import { t } from "@/messages/i18n";
+import Link from "@/components/ui/Link";
+import { useI18n } from "@/messages/client";
+import { splitLanguage } from "@/messages/i18n";
 
 interface MenuLink {
   href: string;
@@ -20,7 +22,10 @@ interface MenuLink {
 export default function MenuButton({ links, about }: { links: MenuLink[]; about: MenuLink[] }) {
   const [open, setOpen] = useState(false);
   const [openedAt, setOpenedAt] = useState<string | null>(null);
+  const { t } = useI18n();
   const pathname = usePathname();
+  // The links are without a language; compared with the page's address without it ("/en/rankings" → "/rankings")
+  const current = splitLanguage(pathname).path;
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
@@ -76,8 +81,8 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className={`block py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${pathname === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
-                    aria-current={pathname === l.href ? "page" : undefined}
+                    className={`block py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+                    aria-current={current === l.href ? "page" : undefined}
                   >
                     {l.label}
                   </Link>
@@ -93,8 +98,8 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className={`flex items-baseline gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${pathname === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
-                    aria-current={pathname === l.href ? "page" : undefined}
+                    className={`flex items-baseline gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+                    aria-current={current === l.href ? "page" : undefined}
                   >
                     {l.label}
                     {l.detail && <span className="font-mono text-xs font-normal text-gray-500">{l.detail}</span>}
@@ -112,6 +117,10 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
                 button.current?.focus();
               }}
             />
+          </section>
+          <section className="pt-2 pb-2">
+            <h2 className="text-sm text-gray-600 mb-2">{t("layout.menu.language")}</h2>
+            <LanguagePicker onPick={() => setOpen(false)} />
           </section>
         </div>
       </div>

@@ -1,27 +1,28 @@
 // Each week's biggest upsets (pipeline/rate.mjs): the newest week's top 10, and the biggest upset of
 // every week of its year. /upsets/<Monday> shows another week and /upsets/<year> that year's newest
 // (app/(site)/upsets/[period]); each is a static page.
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { ArrowLeft, ArrowRight } from "@/components/SVG";
 import { ClubLogo } from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
-import { ArrowLeft, ArrowRight } from "@/components/SVG";
 import Carousel from "@/components/ui/Carousel";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, toggleClass } from "@/components/ui/styles";
 import UpsetCard from "@/components/upsets/UpsetCard";
 import { getClubMap } from "@/data/sanity";
 import { getUpsetYear, getUpsetsIndex } from "@/data/upsets";
-import { rich, t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, UpsetPlayer, UpsetWeek } from "@/types";
-import { addDays, date, dateRange, pct, signed, toneClass } from "@/utils/format";
+import { addDays, toneClass } from "@/utils/format";
 import { playerHref, upsetsHref } from "@/utils/hrefs";
-import { POOLS } from "@/utils/pools";
 
 /** The page for a period: null for the newest week, a year ("2019") for its newest week, or a week's Monday */
-export default function Upsets({ period }: { period: Promise<string | null> }) {
+export default async function Upsets({ period }: { period: Promise<string | null> }) {
+  const { t } = await getI18n();
   return (
     <>
       <Section>
@@ -37,9 +38,10 @@ export default function Upsets({ period }: { period: Promise<string | null> }) {
   );
 }
 
-const withLabels = (w: UpsetWeek): UpsetWeek => ({ ...w, matches: w.matches.map((m) => ({ ...m, poolLabel: POOLS[m.pool] })) });
+const withLabels = (w: UpsetWeek, pools: I18n["pools"]): UpsetWeek => ({ ...w, matches: w.matches.map((m) => ({ ...m, poolLabel: pools[m.pool] })) });
 
 async function Content({ period: periodPromise }: { period: Promise<string | null> }) {
+  const { date, dateRange, pct, pools, rich, t } = await getI18n();
   const [period, index, clubs] = await Promise.all([periodPromise, getUpsetsIndex(), getClubMap()]);
   if (!index?.latest) return <p className="base-container px-4 text-gray-600">{t("upsets.none")}</p>;
   const years = index.years;
@@ -49,7 +51,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
   // Newest first: a year shows its newest week
   const found = !period ? index.latest : period.length === 4 ? weeks[0] : weeks.find((w) => w.week === period);
   if (!found) notFound();
-  const current = withLabels(found);
+  const current = withLabels(found, pools);
 
   // Newest first: the earlier week is the next item, crossing into the year before if needed
   const at = weeks.findIndex((w) => w.week === current.week);
@@ -109,7 +111,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                       {u.winners.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} bold />)}
                       <span className="block text-sm text-gray-600">{t("upsets.table.beat")}</span>
                       {u.losers.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} />)}
-                      <span className="block mt-1 text-sm text-gray-600">{u.score} · {POOLS[u.pool]} · {u.event}</span>
+                      <span className="block mt-1 text-sm text-gray-600">{u.score} · {pools[u.pool]} · {u.event}</span>
                       <span className="sm:hidden block text-sm text-gray-600 tabular-nums">{rich("upsets.table.chanceOnPhones", { strong: (text) => <strong className="text-gray-900">{text}</strong> }, { chance: chanceText })}</span>
                     </td>
                     <td className="hidden sm:table-cell py-2 px-4 text-right tabular-nums">{chanceText}</td>
@@ -128,7 +130,8 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
  * A player on a line of their own: their club's logo (if any) and name, then the club and the
  * rating gained or lost, which wrap together onto the next line when they don't fit
  */
-function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
+async function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
+  const { signed, t } = await getI18n();
   return (
     <span className="flex flex-wrap items-baseline gap-x-1.5" title={p.club ?? undefined}>
       <span className="inline-flex items-center gap-1 self-center">

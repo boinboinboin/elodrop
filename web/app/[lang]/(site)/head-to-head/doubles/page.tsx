@@ -7,7 +7,6 @@
 // women's ratings moved onto it by the gender gap (pipeline/gender-gap.mjs). Pair A is blue and
 // pair B orange throughout.
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { type ChartSeries } from "@/components/charts/LineChart";
 import Team from "@/components/clubs/Team";
@@ -24,6 +23,7 @@ import SideNumbers from "@/components/head-to-head/SideNumbers";
 import SideRating from "@/components/head-to-head/SideRating";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MatchTable from "@/components/players/MatchTable";
+import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import Swatch from "@/components/ui/Swatch";
@@ -32,7 +32,8 @@ import { getDoublesHeadToHead, getGenderGap } from "@/data/head-to-head";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getClubMap } from "@/data/sanity";
-import { plural, t } from "@/messages/i18n";
+import type { I18n } from "@/messages/i18n";
+import { getI18n } from "@/messages/server";
 import type { ClubEntry, DoublesHeadToHead, DoublesHeadToHeadPool, GenderGap, PairKind, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { capitalize } from "@/utils/format";
@@ -41,23 +42,25 @@ import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
 
-export const metadata: Metadata = pageMetadata({ title: t("headToHead.doublesTitle"), description: t("seo.descriptions.doublesHeadToHead"), path: "/head-to-head/doubles" });
+export async function generateMetadata(): Promise<Metadata> {
+  const i18n = await getI18n();
+  return pageMetadata(i18n, { title: i18n.t("headToHead.doublesTitle"), description: i18n.t("seo.descriptions.doublesHeadToHead"), path: "/head-to-head/doubles" });
+}
 
-const PAIRS = [t("headToHead.pairs.a"), t("headToHead.pairs.b")] as const;
-const kindName = (kind: PairKind) => t(`headToHead.pairs.kinds.${kind}`);
 const FIELDS = ["a1", "a2", "b1", "b2"] as const;
 
 /** A pair's label with its colour: the key that ties every box to its pair */
-function PairLabel({ i, className = "" }: { i: number; className?: string }) {
+async function PairLabel({ i, className = "" }: { i: number; className?: string }) {
+  const { t } = await getI18n();
   return (
     <span className={`inline-flex items-center gap-1.5 ${className}`}>
       <Swatch color={SIDE_COLORS[i]} className="w-3 h-3" />
-      {PAIRS[i]}
+      {t(i === 0 ? "headToHead.pairs.a" : "headToHead.pairs.b")}
     </span>
   );
 }
 
-export default function DoublesHeadToHeadPage(props: PageProps<"/head-to-head/doubles">) {
+export default async function DoublesHeadToHeadPage(props: PageProps<"/[lang]/head-to-head/doubles">) {
   return (
     <Suspense fallback={<Loading section />}>
       <Content searchParams={props.searchParams} />
@@ -65,9 +68,8 @@ export default function DoublesHeadToHeadPage(props: PageProps<"/head-to-head/do
   );
 }
 
-const pairName = (pair: Player[]) => t("headToHead.pairs.names", { a: pair[0].name, b: pair[1].name });
-
-async function Content({ searchParams }: Pick<PageProps<"/head-to-head/doubles">, "searchParams">) {
+async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head/doubles">, "searchParams">) {
+  const { t, href } = await getI18n();
   const params = await searchParams;
   const ids = FIELDS.map((field) => parseId(params[field]));
   const complete = ids.every((id) => id !== null);
@@ -91,7 +93,7 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head/doubles">
         <h1 className="h1 mt-4">{t("headToHead.title")}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("headToHead.introDoubles")}</p>
         <HeadToHeadSwitch current="pairs" />
-        <form action="/head-to-head/doubles" method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_auto_1fr] items-center max-w-4xl">
+        <form action={href("/head-to-head/doubles")} method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_auto_1fr] items-center max-w-4xl">
           {[0, 1].map((i) => (
             <fieldset key={i} className={`bg-white p-4 border-t-4 grid gap-2 ${i === 0 ? "md:order-1" : "md:order-3"}`} style={{ borderTopColor: SIDE_COLORS[i] }}>
               <legend className="float-left w-full text-lg mb-1"><PairLabel i={i} /></legend>
@@ -120,10 +122,13 @@ async function Content({ searchParams }: Pick<PageProps<"/head-to-head/doubles">
   );
 }
 
-function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
+async function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
+  const { t } = await getI18n();
+  const kindName = (kind: PairKind) => t(`headToHead.pairs.kinds.${kind}`);
+  const pairName = (pair: Player[]) => t("headToHead.pairs.names", { a: pair[0].name, b: pair[1].name });
   const { record } = h2h;
   const pools = Object.entries(h2h.pools) as [Pool, DoublesHeadToHeadPool][];
-  const names: [string, string] = [PAIRS[0], PAIRS[1]];
+  const names: [string, string] = [t("headToHead.pairs.a"), t("headToHead.pairs.b")];
   return (
     <>
       <Section>
@@ -166,7 +171,7 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs:
         </Section>
       ) : (
         <Section title={t("headToHead.now.title")} titleClassName="text-3xl mb-2">
-          <p className="text-gray-700 max-w-3xl">{noComparison(h2h)}</p>
+          <p className="text-gray-700 max-w-3xl">{noComparison(t, h2h)}</p>
         </Section>
       )}
 
@@ -180,7 +185,9 @@ function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs:
 }
 
 /** `pool`: the discipline compared, null for the crossover (everyone on the men's doubles scale) */
-function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool | null; p: DoublesHeadToHeadPool; h2h: DoublesHeadToHead; names: [string, string]; showMargins: boolean }) {
+async function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool | null; p: DoublesHeadToHeadPool; h2h: DoublesHeadToHead; names: [string, string]; showMargins: boolean }) {
+  const i18n = await getI18n();
+  const { t, plural } = i18n;
   const { crossover } = p;
   const series: ChartSeries[] = [];
   p.history.forEach((history, i) => {
@@ -217,7 +224,7 @@ function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool | nul
         <ChanceBar names={names} chance={p.chance} />
         {p.record.matches > 0 && (
           <p className="text-sm text-gray-600 mt-2">
-            {recordSentence(crossover || !poolInText ? plural("headToHead.record.met", p.record.matches) : plural("headToHead.record.metIn", p.record.matches, { pool: poolInText }), names[0], p.record)}
+            {recordSentence(i18n, crossover || !poolInText ? plural("headToHead.record.met", p.record.matches) : plural("headToHead.record.metIn", p.record.matches, { pool: poolInText }), names[0], p.record)}
           </p>
         )}
       </div>
@@ -240,7 +247,7 @@ function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool | nul
 }
 
 /** Why there are no chances: a player has no rating in the discipline (their pair's own, for pairs of different kinds) */
-function noComparison(h2h: DoublesHeadToHead): string {
+function noComparison(t: I18n["t"], h2h: DoublesHeadToHead): string {
   const [ka, kb] = h2h.kinds;
   const shared = h2h.disciplines[0];
   const poolOf = (i: number) => shared ?? (i < 2 ? ka && KIND_POOLS[ka] : kb && KIND_POOLS[kb]);

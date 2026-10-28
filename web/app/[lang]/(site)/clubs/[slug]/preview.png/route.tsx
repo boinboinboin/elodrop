@@ -2,17 +2,21 @@
 import { previewCard } from "@/components/seo/PreviewCard";
 import { getClubsFile } from "@/data/clubs";
 import { getClubBySlug } from "@/data/sanity";
-import { t } from "@/messages/i18n";
-import { POOL_CODES, POOL_KEYS } from "@/utils/pools";
+import { createI18n, isLanguage } from "@/messages/i18n";
+import { POOL_KEYS } from "@/utils/pools";
 
-export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const [club, file] = await Promise.all([getClubBySlug(decodeURIComponent((await params).slug)), getClubsFile()]);
+export async function GET(_request: Request, { params }: { params: Promise<{ lang: string; slug: string }> }) {
+  const { lang, slug } = await params;
+  if (!isLanguage(lang)) return new Response(null, { status: 404 });
+  const i18n = createI18n(lang);
+  const { t, poolCodes } = i18n;
+  const [club, file] = await Promise.all([getClubBySlug(decodeURIComponent(slug)), getClubsFile()]);
   if (!club) return new Response(null, { status: 404 });
   const stats = POOL_KEYS.flatMap((pool) => {
     const standing = file?.clubs[pool]?.find((c) => c.club === club.title);
-    return standing ? [{ value: `#${standing.rank}`, label: POOL_CODES[pool] }] : [];
+    return standing ? [{ value: `#${standing.rank}`, label: poolCodes[pool] }] : [];
   });
-  return previewCard({
+  return previewCard(i18n, {
     kicker: t("seo.preview.club"),
     title: club.title,
     subtitle: [club.fullName !== club.title ? club.fullName : null, club.region].filter(Boolean).join(", ") || undefined,
