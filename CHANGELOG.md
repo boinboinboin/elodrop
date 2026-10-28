@@ -11,6 +11,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.19.1 (2026-10-28)
 
 - A tournament's events that aren't played yet show their favourite where a finished event shows its winner: the player or pair with the best chance of winning with the draw as it is (and with a fair draw), which isn't always the highest rated. When it isn't, it says who is rated higher.
+- A tournament summary's lists (surprising winners, luckiest and unluckiest draws) are numbered, so their order is clear in two columns.
 - Switching language on head to head no longer leads to a missing page, and keeps the players you compared: elodrop.no/head-to-head/doubles?a1=…&b2=… opens elodrop.no/en/head-to-head/doubles?a1=…&b2=…, and back.
 - Head to head is called "head to head" in Norwegian too, instead of "innbyrdes", and "H2H" in the short links next to a rival and an upset.
 - The Norwegian text says "prediksjon" (predikert tabell, hvordan prediksjonene gikk) instead of "spådom".

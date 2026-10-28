@@ -174,8 +174,10 @@ async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string
                 content: (
                   <ol className="grid gap-x-8 gap-y-4 md:grid-cols-2">
                     {list.entries.map((e, i) => (
-                      <li key={i} className="flex justify-between gap-4">
-                        <div>
+                      <li key={i} className="flex gap-3">
+                        {/* Numbered: in two columns the order (along each row) isn't obvious */}
+                        <span aria-hidden="true" className="w-5 shrink-0 text-right text-gray-500 tabular-nums">{i + 1}</span>
+                        <div className="flex-1 min-w-0">
                           <EntryNames e={e} clubs={clubs} />
                           <Link href={eventHref(tour.cup2000Id, tour.events[e.eventIndex])} className="block text-sm text-gray-600 hover:text-blue-600">
                             {e.eventLabel}{list.kind === "luck" && e.group ? ` · ${t("tournaments.summary.inGroup", { group: e.group })}` : ""}
