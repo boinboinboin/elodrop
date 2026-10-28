@@ -1,5 +1,8 @@
 // The site's URLs, built in one place (the ranking lists' and the strongest clubs' are in
 // utils/rankings.ts, a tournament event's in utils/tournament.ts)
+/** The production address (sitemap.xml, robots.txt): Vercel's production domain, or elodrop.no outside Vercel */
+export const SITE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "elodrop.no"}`;
+
 export const playerHref = (id: number) => `/players/${id}`;
 export const clubHref = (slug: string) => `/clubs/${slug}`;
 export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournaments/${cup2000Id}${view ? `/${view}` : ""}`;

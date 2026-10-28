@@ -12,6 +12,7 @@ import { Search } from "@/components/SVG";
 import ClearButton from "@/components/ui/ClearButton";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
+import { useGrowingList } from "@/components/ui/useGrowingList";
 import { t } from "@/messages/i18n";
 import type { Pool } from "@/types";
 import { EMPTY, num, signed } from "@/utils/format";
@@ -29,6 +30,8 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
   const found = terms.length ? rows.filter((_, i) => terms.every((t) => search[i].includes(t))) : rows;
   // Most matches first; equal ones keep their rank order (the rows' order)
   const shown = byMatches ? sortByDesc(found, (row) => row[5]) : found;
+  // The first rows, and more as the end comes near
+  const { limit, sentinel } = useGrowingList(shown.length, `${query}|${byMatches}`);
 
   return (
     <>
@@ -63,7 +66,7 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
             </tr>
           </thead>
           <tbody>
-            {shown.map(([id, name, club, rank, score, matches, ratings, previous]) => {
+            {shown.slice(0, limit).map(([id, name, club, rank, score, matches, ratings, previous]) => {
               const entry = club ? clubs[club] : undefined;
               return (
                 <tr key={id} className={`${ROW} hover:bg-gray-50 align-top`}>
@@ -111,6 +114,7 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
             })}
           </tbody>
         </table>
+        {limit < shown.length && <div ref={sentinel} aria-hidden="true" />}
       </div>
       {terms.length > 0 && shown.length === 0 && <p className="text-gray-600 mt-4">{t("rankings.table.noneFound")}</p>}
     </>

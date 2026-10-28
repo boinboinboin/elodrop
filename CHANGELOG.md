@@ -16,6 +16,9 @@ Every change merged into `main` gets an entry here, newest first.
 - Vercel Speed Insights on the site's pages: how fast pages load for real visitors (Core Web Vitals), page by page.
 - The rankings choose men (♂) or women (♀) first, then the discipline: Singles, Doubles, Mixed doubles or Combined. Women's mixed doubles and combined lists are one click away, like the men's, instead of behind a separate switch on the men's lists. Switching between men and women keeps the discipline (and the inactive players or juniors).
 - A player's page sits under the rankings in the breadcrumbs: Home / Rankings / the player.
+- The ranking lists show their first 100 players at once and the rest as you scroll, instead of building all of them (up to 2,000 rows) before the page can be used: the rankings page is about a tenth of the size. The search above the table still finds every player.
+- robots.txt keeps out more AI crawlers: AI search and assistants fetching pages for their users (ChatGPT, Claude, Perplexity, Mistral and more), Meta's, DuckDuckGo's and You.com's, and more dataset crawlers.
+- A sitemap (/sitemap.xml, linked from robots.txt) lists every page search engines should find: the rankings, clubs, tournaments, Eliteserien, upsets and every player, rebuilt with each data update.
 
 ## v1.17.3 (2026-10-27)
 

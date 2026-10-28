@@ -2,8 +2,8 @@
 
 // The rankings table, with a search for player or club, in rank order, by matches played (a click on the Matches
 // header, and again to go back) or by the rating change since last week (a click on its header: the biggest gain first,
-// again: the biggest loss first, again: back). Rows come as compact arrays (sent once,
-// instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
+// again: the biggest loss first, again: back). A long list renders its first rows and more on scrolling (useGrowingList).
+// Rows come as compact arrays (sent once, instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
 // rating, matches, last played, rank last week, rating change since last week]. `clubs`: the clubs in the table with a
 // page, short name → [slug, logo].
 import Link from "next/link";
@@ -14,6 +14,7 @@ import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/component
 import ClearButton from "@/components/ui/ClearButton";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
+import { useGrowingList } from "@/components/ui/useGrowingList";
 import { t } from "@/messages/i18n";
 import { date, EMPTY, num } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
@@ -31,6 +32,8 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
   const found = terms.length ? rows.filter((_, i) => terms.every((t) => search[i].includes(t))) : rows;
   // Most matches first; equal ones keep their rank order (the rows' order)
   const shown = byMatches ? sortByDesc(found, (row) => row[5]) : byChange ? sortByChange(found, (row) => (row[3] === null ? null : row[8]), byChange) : found;
+  // The first rows, and more as the end comes near
+  const { limit, sentinel } = useGrowingList(shown.length, `${query}|${byMatches}|${byChange}`);
 
   return (
     <>
@@ -65,7 +68,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
             </tr>
           </thead>
           <tbody>
-            {shown.map(([id, name, club, rank, rating, matches, lastPlayed, previous, change]) => {
+            {shown.slice(0, limit).map(([id, name, club, rank, rating, matches, lastPlayed, previous, change]) => {
               const entry = club ? clubs[club] : undefined;
               return (
                 <tr key={id} className={`${ROW} hover:bg-gray-50 ${rank ? "" : "text-gray-500"}`}>
@@ -97,6 +100,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
             })}
           </tbody>
         </table>
+        {limit < shown.length && <div ref={sentinel} aria-hidden="true" />}
       </div>
       {terms.length > 0 && shown.length === 0 && <p className="text-gray-600 mt-4">{t("rankings.table.noneFound")}</p>}
     </>
