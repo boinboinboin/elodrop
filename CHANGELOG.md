@@ -13,6 +13,7 @@ Every change merged into `main` gets an entry here, newest first.
 - The search bar and the head-to-head player search answer as you type: everything they search is loaded once, when you first click a search field, and searched in your browser instead of asking the server on every keystroke.
 - Club logos load at the size they're shown (and as WebP or AVIF) instead of the full upload: the 150 logos on the rankings page went from about 13 MB to about 0.1 MB. Logos in the long ranking and draw lists load only when scrolled to.
 - The search fields (the search bar, the head-to-head player search and the rankings' search) share the site's magnifying glass, and clear with a cross drawn like the site's other icons instead of the browser's own.
+- Vercel Speed Insights on the site's pages: how fast pages load for real visitors (Core Web Vitals), page by page.
 
 ## v1.17.3 (2026-10-27)
 
