@@ -8,7 +8,7 @@
 // and "/rankings/men" to "/rankings", see next.config.ts.)
 import { t } from "@/messages/i18n";
 import type { Gender, Pool } from "@/types";
-import { POOLS } from "./pools";
+import { isSingles, POOLS } from "./pools";
 
 export interface RankingList {
   pool: Pool;
@@ -41,6 +41,26 @@ export function juniorRankingHref(pool: Pool, gender: Gender | null = null): str
 
 /** A combined ranking: "/rankings/combined" (men) and "/rankings/combined/women", under "/rankings/junior" for juniors */
 export const combinedRankingHref = (gender: Gender, junior = false) => `/rankings${junior ? "/junior" : ""}/combined${gender === "K" ? "/women" : ""}`;
+
+/** The rankings' tabs: men or women first, then the discipline (each pair of a gender and a discipline is one list) */
+export type Discipline = "singles" | "doubles" | "mixed" | "combined";
+export const DISCIPLINES: Discipline[] = ["singles", "doubles", "mixed", "combined"];
+
+/** A list's gender and discipline (mixed doubles' gender is the list's, men unless it says women) */
+export function listTabs(pool: Pool | "combined", gender: Gender | null): { gender: Gender; discipline: Discipline } {
+  if (pool === "combined") return { gender: gender ?? "M", discipline: "combined" };
+  if (pool === "mixedDoubles") return { gender: gender ?? "M", discipline: "mixed" };
+  return { gender: pool === "women" || pool === "womensDoubles" ? "K" : "M", discipline: isSingles(pool) ? "singles" : "doubles" };
+}
+
+/** The list of a gender and a discipline, of everyone (with or without inactive players) or of the juniors */
+export function disciplineHref(discipline: Discipline, gender: Gender, { junior = false, inactive = false } = {}): string {
+  if (discipline === "combined") return combinedRankingHref(gender, junior);
+  const women = gender === "K";
+  const pool: Pool = discipline === "mixed" ? "mixedDoubles" : discipline === "singles" ? (women ? "women" : "men") : women ? "womensDoubles" : "mensDoubles";
+  const listGender = discipline === "mixed" ? gender : null;
+  return junior ? juniorRankingHref(pool, listGender) : rankingHref(pool, listGender, inactive);
+}
 
 export const strongestClubsHref = (pool: Pool | "combined") => (pool === "combined" ? "/clubs" : `/clubs/strongest/${pool}`);
 

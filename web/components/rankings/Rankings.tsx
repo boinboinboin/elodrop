@@ -1,15 +1,14 @@
-// A ranking list: the section's heading, all players or juniors (U19), the discipline tabs (and the combined list), the
-// "show inactive players" switch, in mixed doubles men or women, and the table. Each list is its own static page
+// A ranking list: the section's heading, all players or juniors (U19), men or women, the discipline (singles, doubles,
+// mixed doubles or the combined list), the "show inactive players" switch, and the table. Each list is its own static page
 // (utils/rankings.ts). With inactive players, only the best INACTIVE_SHOWN of them are listed (the full lists run to over
 // 10,000 players), with a link to the page with all of them. The junior rankings (JuniorRankings) and the combined
 // rankings (CombinedRankings, men or women) have ranked players only.
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CombinedTable, { type CombinedRow } from "@/components/rankings/CombinedTable";
 import RankingTable, { type RankingRow } from "@/components/rankings/RankingTable";
-import { ArrowRight, Check } from "@/components/SVG";
+import { ArrowRight, Check, Female, Male } from "@/components/SVG";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -18,8 +17,7 @@ import { getClubMap } from "@/data/sanity";
 import { t } from "@/messages/i18n";
 import type { Gender, Pool } from "@/types";
 import { num } from "@/utils/format";
-import { POOL_KEYS } from "@/utils/pools";
-import { combinedRankingHref, juniorRankingHref, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
+import { combinedRankingHref, DISCIPLINES, disciplineHref, juniorRankingHref, listTabs, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
 
 const GENDERS: Gender[] = ["M", "K"];
 const INACTIVE_SHOWN = 500;
@@ -39,8 +37,9 @@ export default async function Rankings({ list, showInactive, allInactive = false
       <h1 className="h1 mt-4">{t("rankings.heading")}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.intro")}</p>
       <AgeTabs junior={false} all={rankingHref(pool, gender)} juniors={juniorRankingHref(pool, gender)} />
+      <GenderTabs current={listTabs(pool, gender)} showInactive={showInactive} />
       <div className="flex flex-wrap items-end justify-between gap-6 mb-6">
-        <DisciplineTabs current={pool} junior={false} showInactive={showInactive} />
+        <DisciplineTabs current={listTabs(pool, gender)} showInactive={showInactive} />
         <Link
           href={rankingHref(pool, gender, !showInactive)}
           className="flex items-center gap-2 select-none"
@@ -54,7 +53,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
         </Link>
       </div>
 
-      {gender && <GenderTabs current={gender} href={(code) => rankingHref(pool, code, showInactive)} explanation={t("rankings.genders.explanation")} />}
+      {gender && <Explanation text={t("rankings.genders.explanation")} />}
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -94,11 +93,12 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
       <h1 className="h1 mt-4">{t("rankings.junior.heading")}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.junior.intro")}</p>
       <AgeTabs junior all={rankingHref(pool, gender)} juniors={juniorRankingHref(pool, gender)} />
+      <GenderTabs current={listTabs(pool, gender)} junior />
       <div className="mb-6">
-        <DisciplineTabs current={pool} junior />
+        <DisciplineTabs current={listTabs(pool, gender)} junior />
       </div>
 
-      {gender && <GenderTabs current={gender} href={(code) => juniorRankingHref(pool, code)} explanation={t("rankings.genders.explanation")} />}
+      {gender && <Explanation text={t("rankings.genders.explanation")} />}
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -130,10 +130,11 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
       <h1 className="h1 mt-4">{t(junior ? "rankings.junior.heading" : "rankings.heading")}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t(junior ? "rankings.junior.intro" : "rankings.intro")}</p>
       <AgeTabs junior={junior} all={combinedRankingHref(gender)} juniors={combinedRankingHref(gender, true)} />
+      <GenderTabs current={listTabs("combined", gender)} junior={junior} />
       <div className="mb-6">
-        <DisciplineTabs current="combined" junior={junior} />
+        <DisciplineTabs current={listTabs("combined", gender)} junior={junior} />
       </div>
-      <GenderTabs current={gender} href={(code) => combinedRankingHref(code, junior)} explanation={t("rankings.combined.explanation")} />
+      <Explanation text={t("rankings.combined.explanation")} />
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -169,39 +170,37 @@ function AgeTabs({ junior, all, juniors }: { junior: boolean; all: string; junio
   );
 }
 
-/** The five disciplines and the combined list */
-function DisciplineTabs({ current, junior, showInactive = false }: { current: Pool | "combined"; junior: boolean; showInactive?: boolean }) {
+type Tabs = ReturnType<typeof listTabs>;
+
+/** Men or women (♂ and ♀), first: the same discipline for the other gender */
+function GenderTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
   return (
     <LinkTabs
-      label={t("rankings.disciplines")}
-      current={current}
-      tabs={[
-        ...POOL_KEYS.map((key) => ({ key, href: junior ? juniorRankingHref(key) : rankingHref(key, null, showInactive), label: <PoolName pool={key} /> })),
-        { key: "combined", href: combinedRankingHref("M", junior), label: t("rankings.combined.tab") },
-      ]}
+      label={t("rankings.genders.label")}
+      current={current.gender}
+      className="flex flex-wrap gap-2 mb-4"
+      tabs={GENDERS.map((code) => {
+        const Icon = code === "K" ? Female : Male;
+        return { key: code, href: disciplineHref(current.discipline, code, { junior, inactive: showInactive }), label: <><Icon className="mr-1.5" />{t(`rankings.genders.${code}`)}</> };
+      })}
     />
   );
 }
 
-/** Men or women (mixed doubles, combined), with why they are ranked separately */
-function GenderTabs({ current, href, explanation }: { current: Gender; href: (gender: Gender) => string; explanation: string }) {
+/** Singles, doubles, mixed doubles and the combined list, for the list's gender */
+function DisciplineTabs({ current, junior = false, showInactive = false }: { current: Tabs; junior?: boolean; showInactive?: boolean }) {
   return (
-    <div className="mb-6">
-      <nav className="flex flex-wrap gap-2" aria-label={t("rankings.genders.label")}>
-        {GENDERS.map((code) => (
-          <Link
-            key={code}
-            href={href(code)}
-            className={`px-3 py-1 text-sm border transition-colors duration-200 ${code === current ? "bg-gray-800 border-gray-800 text-white" : "border-gray-400 hover:border-black"}`}
-            aria-current={code === current ? "page" : undefined}
-          >
-            {t(`rankings.genders.${code}`)}
-          </Link>
-        ))}
-      </nav>
-      <p className="text-gray-600 mt-2 max-w-3xl">{explanation}</p>
-    </div>
+    <LinkTabs
+      label={t("rankings.disciplines")}
+      current={current.discipline}
+      tabs={DISCIPLINES.map((key) => ({ key, href: disciplineHref(key, current.gender, { junior, inactive: showInactive }), label: t(`rankings.disciplineTabs.${key}`) }))}
+    />
   );
+}
+
+/** Why mixed doubles and the combined lists rank men and women separately (and how the combined one is made) */
+function Explanation({ text }: { text: string }) {
+  return <p className="text-gray-600 mb-6 max-w-3xl">{text}</p>;
 }
 
 /** The list a /rankings/<list> page shows, from its params (404 for an unknown list) */

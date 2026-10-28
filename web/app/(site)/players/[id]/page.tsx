@@ -64,7 +64,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
   return (
     <>
       <Section>
-        <Breadcrumbs trail={[{ label: player.name }]} />
+        <Breadcrumbs trail={[{ label: t("rankings.heading"), href: rankingHref("men") }, { label: player.name }]} />
         <h1 className="h1 mt-4">{player.name}</h1>
         {player.club && (
           <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">

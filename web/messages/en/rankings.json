@@ -7,9 +7,15 @@
   },
   "loading": "Loading rankings…",
   "disciplines": "Discipline",
+  "disciplineTabs": {
+    "singles": "Singles",
+    "doubles": "Doubles",
+    "mixed": "Mixed doubles",
+    "combined": "Combined"
+  },
   "showInactive": "Show inactive players",
   "genders": {
-    "label": "Mixed doubles ranking",
+    "label": "Men or women",
     "M": "Men",
     "K": "Women",
     "men": "men",

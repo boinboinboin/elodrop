@@ -14,6 +14,8 @@ Every change merged into `main` gets an entry here, newest first.
 - Club logos load at the size they're shown (and as WebP or AVIF) instead of the full upload: the 150 logos on the rankings page went from about 13 MB to about 0.1 MB. Logos in the long ranking and draw lists load only when scrolled to.
 - The search fields (the search bar, the head-to-head player search and the rankings' search) share the site's magnifying glass, and clear with a cross drawn like the site's other icons instead of the browser's own.
 - Vercel Speed Insights on the site's pages: how fast pages load for real visitors (Core Web Vitals), page by page.
+- The rankings choose men (♂) or women (♀) first, then the discipline: Singles, Doubles, Mixed doubles or Combined. Women's mixed doubles and combined lists are one click away, like the men's, instead of behind a separate switch on the men's lists. Switching between men and women keeps the discipline (and the inactive players or juniors).
+- A player's page sits under the rankings in the breadcrumbs: Home / Rankings / the player.
 
 ## v1.17.3 (2026-10-27)
 
