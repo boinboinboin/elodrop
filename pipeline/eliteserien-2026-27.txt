@@ -33,7 +33,7 @@ K 38641  Vilma Aasheim-Engen
 K 18748  Randi Selle | loan Stavanger
 K 22416  Henny Lyfjell
 K 20093  Marthe Skaug
-K -      Hege Rikheim
+K 18722  Hege Rikheim
 
 [Haugerud]
 M 20589  Carl Christian Mork
@@ -90,8 +90,8 @@ M 51528  Jonathan Larsen
 M 24052  Carlo Augustin
 M 40720  Aldrin Nelson
 M 47397  Den Singh Jassal
-M -      Leonard Alchaz
-M -      Filip Isdal Larsen
+M 47460  Leonard Alchaz
+M 45429  Filip Isdal Larsen
 M 43502  Vinit Sharma
 M 26662  Christer Andersen
 M 43925  Shreyas Danve
