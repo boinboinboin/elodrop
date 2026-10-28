@@ -1,10 +1,13 @@
 "use client";
 
-// A player name field with suggestions (an ARIA combobox): typing searches /api/players/search
-// and choosing a suggestion puts its id in the hidden field `name`. Typing again clears the id
+// A player name field with suggestions (an ARIA combobox): typing searches the players in the
+// site's search index in the browser (utils/search.ts; loaded on first focus), and choosing a suggestion puts its id in the hidden field `name`. Typing again clears the id
 // until a player is chosen. Arrow keys move through the suggestions, Enter chooses, Escape closes.
 import { useEffect, useRef, useState } from "react";
+import { Search } from "@/components/SVG";
+import ClearButton from "@/components/ui/ClearButton";
 import { t } from "@/messages/i18n";
+import { loadSearchIndex, searchPlayers } from "@/utils/search";
 
 interface Found {
   id: number;
@@ -24,14 +27,15 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
     const q = query.trim();
     if (id !== null || q.length < 2) return;
     const req = ++request.current;
-    const timer = setTimeout(async () => {
-      const res = await fetch(`/api/players/search?q=${encodeURIComponent(q)}`);
-      if (!res.ok || req !== request.current) return;
-      const found = (await res.json()) as Found[];
-      setResults(found);
-      setActive(found.length ? 0 : -1);
-    }, 150);
-    return () => clearTimeout(timer);
+    // Instant once the index is loaded; the first search waits for it
+    loadSearchIndex()
+      .then((index) => {
+        if (req !== request.current) return;
+        const found: Found[] = searchPlayers(index, q);
+        setResults(found);
+        setActive(found.length ? 0 : -1);
+      })
+      .catch(() => {});
   }, [query, id]);
 
   const choose = (i: number) => {
@@ -57,27 +61,40 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
   return (
     <div className="relative">
       <label htmlFor={`player-${name}`} className="block text-sm text-gray-600 mb-1">{label}</label>
-      <input
-        id={`player-${name}`}
-        type="text"
-        autoComplete="off"
-        required
-        placeholder={t("headToHead.picker.placeholder")}
-        role="combobox"
-        aria-autocomplete="list"
-        aria-expanded={!!results}
-        aria-controls={listId}
-        aria-activedescendant={results && active >= 0 ? `${listId}-${active}` : undefined}
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setId(null);
-          if (e.target.value.trim().length < 2) setResults(null);
-        }}
-        onKeyDown={onKey}
-        onBlur={() => setResults(null)}
-        className="w-full px-3 py-2 border border-black bg-white"
-      />
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-xl text-gray-400 pointer-events-none" />
+        <input
+          id={`player-${name}`}
+          type="text"
+          autoComplete="off"
+          required
+          placeholder={t("headToHead.picker.placeholder")}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={!!results}
+          aria-controls={listId}
+          aria-activedescendant={results && active >= 0 ? `${listId}-${active}` : undefined}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setId(null);
+            if (e.target.value.trim().length < 2) setResults(null);
+          }}
+          onKeyDown={onKey}
+          onFocus={() => loadSearchIndex().catch(() => {})}
+          onBlur={() => setResults(null)}
+          className={`w-full pl-10 ${query ? "pr-10" : "pr-3"} py-2 border border-black bg-white`}
+        />
+        <ClearButton
+          show={query !== ""}
+          onClear={() => {
+            setQuery("");
+            setId(null);
+            setResults(null);
+          }}
+          className="absolute right-2 top-1/2 -translate-y-1/2"
+        />
+      </div>
       <input type="hidden" name={name} value={id ?? ""} />
       <ul id={listId} role="listbox" hidden={!results} className="absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-300 shadow-sm max-h-80 overflow-y-auto">
         {results?.map((p, i) => (

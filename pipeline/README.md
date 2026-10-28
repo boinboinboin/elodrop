@@ -381,7 +381,7 @@ What the site shows for a club besides the ratings (short name, full name, regio
 
 ### Head to head
 
-`/head-to-head?a=<player id>&b=<player id>` compares two players, chosen with name search (`/api/players/search?q=<name>`; every word must be in the name, accents ignored and æ/ø/å read as ae/o/a; ranked players first). It shows their record against each other (all disciplines, from player A's side) and together as partners, both from the complete match logs. For each discipline both are rated in, it shows the current ratings and A's chance of beating B now from the expected score; in doubles the chance is with equally rated partners, so two players 200 apart make pairs 100 apart. Both players' rating histories in that discipline are drawn on one chart. Winning margins, overall and per discipline, come from the scores of their meetings (walkovers left out): matches, sets and points won by each, each player's average point margin in the matches they won and their biggest win, how many went to a deciding set, and the closest match (smallest point difference). Each meeting in the list shows its point margin. Player pages link to it, also from each rival.
+`/head-to-head?a=<player id>&b=<player id>` compares two players, chosen with name search (every word must be in the name, accents ignored and æ/ø/å read as ae/o/a; names starting with the search first, then ranked players; searched in the browser, see the search bar). It shows their record against each other (all disciplines, from player A's side) and together as partners, both from the complete match logs. For each discipline both are rated in, it shows the current ratings and A's chance of beating B now from the expected score; in doubles the chance is with equally rated partners, so two players 200 apart make pairs 100 apart. Both players' rating histories in that discipline are drawn on one chart. Winning margins, overall and per discipline, come from the scores of their meetings (walkovers left out): matches, sets and points won by each, each player's average point margin in the matches they won and their biggest win, how many went to a deciding set, and the closest match (smallest point difference). Each meeting in the list shows its point margin. Player pages link to it, also from each rival.
 
 ### Doubles head to head
 
@@ -406,7 +406,7 @@ The head-to-head pages use it "just for fun", where the players or pairs don't m
 
 ### Search
 
-Every page has a search bar (`/api/search?q=<text>`) for players (as in the head-to-head search), clubs by short or full name, tournaments with a draw, and Eliteserien's team strengths and each season in review (e.g. "elite 2024"). Every word of the search must match; choosing a result opens its page.
+Every page has a search bar for players (as in the head-to-head search), clubs by short or full name, tournaments with a draw, and Eliteserien's team strengths and each season in review (e.g. "elite 2024"). Every word of the search must match; choosing a result opens its page. The browser searches by itself: `/api/search-index` (prerendered, refreshed with the data) has every player (`search-index.json`), club, tournament and Eliteserien page, and is loaded once, when a search field is first focused.
 
 ## Tournament draws: draw luck and how it turned out
 

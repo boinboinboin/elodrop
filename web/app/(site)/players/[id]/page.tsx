@@ -30,6 +30,7 @@ import { clubHref, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { parseId } from "@/utils/parse";
 import { POOL_KEYS } from "@/utils/pools";
 import { rankingHref } from "@/utils/rankings";
+import { logoSrc } from "@/utils/clubs";
 
 // The best ten men are prerendered at build; every other player page is rendered on its first visit
 // and then served from the cache until the next data update (ISR), instead of on every request.
@@ -68,7 +69,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
         {player.club && (
           <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {club?.logo && <img src={club.logo} alt="" className="w-10 h-10 object-contain shrink-0" />}
+            {club?.logo && <img src={logoSrc(club.logo, 10)} alt="" className="w-10 h-10 object-contain shrink-0" />}
             {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
           </p>
         )}

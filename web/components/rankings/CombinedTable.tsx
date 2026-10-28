@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import PoolName from "@/components/format/PoolName";
 import RankMovement from "@/components/rankings/RankMovement";
 import { Search } from "@/components/SVG";
+import ClearButton from "@/components/ui/ClearButton";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { t } from "@/messages/i18n";
@@ -16,6 +17,7 @@ import type { Pool } from "@/types";
 import { EMPTY, num, signed } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
+import { logoSrc } from "@/utils/clubs";
 
 export type CombinedRow = [number, string, string | null, number, number, number, ([number | null, number] | null)[], number | null];
 
@@ -37,7 +39,8 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
         <label className="flex items-center gap-2 border-b border-gray-300 focus-within:border-black transition-colors w-full sm:w-80">
           <span className="sr-only">{t("rankings.table.search")}</span>
           <Search className="text-xl text-gray-400" />
-          <input type="search" placeholder={t("rankings.table.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 py-2 bg-transparent outline-none" />
+          <input type="search" placeholder={t("rankings.table.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 min-w-0 py-2 bg-transparent outline-none" />
+          <ClearButton show={!!query} onClear={() => setQuery("")} />
         </label>
       </div>
 
@@ -75,7 +78,7 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                       (entry ? (
                         <Link href={clubHref(entry[0])} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          {entry[1] && <img src={entry[1]} alt="" className="w-5 h-5 object-contain shrink-0" />}
+                          {entry[1] && <img src={logoSrc(entry[1], 5)} alt="" loading="lazy" className="w-5 h-5 object-contain shrink-0" />}
                           <span>{club}</span>
                         </Link>
                       ) : (

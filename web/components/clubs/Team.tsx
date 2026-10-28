@@ -4,6 +4,7 @@
 import Link from "next/link";
 import type { ClubEntry } from "@/types";
 import { clubHref } from "@/utils/hrefs";
+import { logoSrc } from "@/utils/clubs";
 
 interface Props {
   name: string;
@@ -19,7 +20,7 @@ export default function Team({ name, clubs, size = 6, stacked = false, className
     <>
       {entry?.logo && (
         // eslint-disable-next-line @next/next/no-img-element -- small logos from the CMS or public/
-        <img src={entry.logo} alt="" className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />
+        <img src={logoSrc(entry.logo, size)} alt="" className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />
       )}
       <span>{name}</span>
     </>
@@ -39,5 +40,5 @@ export function ClubLogo({ name, clubs, size = 4 }: { name: string | null; clubs
   const logo = name ? clubs[name]?.logo : null;
   if (!logo) return null;
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={logo} alt={name ?? ""} title={name ?? ""} className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />;
+  return <img src={logoSrc(logo, size)} alt={name ?? ""} title={name ?? ""} className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />;
 }

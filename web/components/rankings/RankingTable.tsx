@@ -11,12 +11,14 @@ import { useMemo, useState } from "react";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import { Search } from "@/components/SVG";
 import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
+import ClearButton from "@/components/ui/ClearButton";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { t } from "@/messages/i18n";
 import { date, EMPTY, num } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByChange, sortByDesc } from "@/utils/sort";
+import { logoSrc } from "@/utils/clubs";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, string, (number | null)?, (number | null)?];
 
@@ -39,7 +41,8 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
         <label className="flex items-center gap-2 border-b border-gray-300 focus-within:border-black transition-colors w-full sm:w-80">
           <span className="sr-only">{t("rankings.table.search")}</span>
           <Search className="text-xl text-gray-400" />
-          <input type="search" placeholder={t("rankings.table.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 py-2 bg-transparent outline-none" />
+          <input type="search" placeholder={t("rankings.table.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 min-w-0 py-2 bg-transparent outline-none" />
+          <ClearButton show={!!query} onClear={() => setQuery("")} />
         </label>
       </div>
 
@@ -78,7 +81,7 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
                       (entry ? (
                         <Link href={clubHref(entry[0])} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          {entry[1] && <img src={entry[1]} alt="" className="w-5 h-5 object-contain shrink-0" />}
+                          {entry[1] && <img src={logoSrc(entry[1], 5)} alt="" loading="lazy" className="w-5 h-5 object-contain shrink-0" />}
                           <span>{club}</span>
                         </Link>
                       ) : (

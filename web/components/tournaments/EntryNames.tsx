@@ -7,6 +7,7 @@ import { t } from "@/messages/i18n";
 import type { ClubEntry, Entry } from "@/types";
 import { signed, toneClass } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
+import { logoSrc } from "@/utils/clubs";
 
 export default function EntryNames({
   e,
@@ -38,7 +39,7 @@ export default function EntryNames({
               {logo && (
                 <span className="h-[1lh] flex items-center shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logo} alt="" className="w-4 h-4 object-contain" />
+                  <img src={logoSrc(logo, 4)} alt="" loading="lazy" className="w-4 h-4 object-contain" />
                 </span>
               )}
               <span className="min-w-0">

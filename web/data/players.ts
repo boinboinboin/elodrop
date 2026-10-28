@@ -1,6 +1,5 @@
 // Players: one file each, their full match lists, and the search index
 import type { Match, Player, Pool } from "@/types";
-import { normalize, words as splitWords } from "@/utils/format";
 import { load } from "./load";
 
 export async function getPlayer(id: number): Promise<Player | null> {
@@ -17,18 +16,6 @@ export async function getPlayerMatches(player: Player): Promise<Partial<Record<P
   return Object.fromEntries(Object.entries(player.pools).map(([pool, p]) => [pool, p?.matchLog?.all ?? []]));
 }
 
-type SearchRow = [number, string, string | null, 0 | 1, number];
-const searchIndex = async () => (await load<{ players: SearchRow[] }>("search-index.json"))?.players ?? [];
-
-/** Players whose name contains every word of the query: name starting with it first, then ranked, then most matches */
-export async function searchPlayers(query: string, limit = 10): Promise<{ id: number; name: string; club: string | null }[]> {
-  const words = splitWords(query);
-  if (!words.length) return [];
-  const found: { id: number; name: string; club: string | null; ranked: number; matches: number; prefix: boolean }[] = [];
-  for (const [id, name, club, ranked, matches] of await searchIndex()) {
-    const n = normalize(name);
-    if (words.every((w) => n.includes(w))) found.push({ id, name, club, ranked, matches, prefix: n.startsWith(words[0]) });
-  }
-  found.sort((a, b) => +b.prefix - +a.prefix || b.ranked - a.ranked || b.matches - a.matches);
-  return found.slice(0, limit).map(({ id, name, club }) => ({ id, name, club }));
-}
+/** The search index (search-index.json): [id, name, club, ranked, matches] per player; app/api/search-index serves it to the browser */
+export type SearchRow = [number, string, string | null, 0 | 1, number];
+export const getSearchIndex = async () => (await load<{ players: SearchRow[] }>("search-index.json"))?.players ?? [];

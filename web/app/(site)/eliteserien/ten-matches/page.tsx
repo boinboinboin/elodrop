@@ -16,6 +16,7 @@ import type { Loose } from "@/types";
 import { chance, EMPTY, pct, signed, toneClass } from "@/utils/format";
 import { ELITESERIEN_HREF, playerHref } from "@/utils/hrefs";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
+import { logoSrc } from "@/utils/clubs";
 
 export const metadata: Metadata = { title: t("eliteserien.tenMatches.title") };
 
@@ -150,7 +151,7 @@ async function Content() {
                         <td className="py-3 px-4">
                           <a href={`#${teamId(team.team)}`} className="flex items-center gap-2 hover:text-blue-600">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            {clubs[team.team]?.logo && <img src={clubs[team.team].logo!} alt="" className="w-6 h-6 object-contain" />}
+                            {clubs[team.team]?.logo && <img src={logoSrc(clubs[team.team].logo!, 6)} alt="" className="w-6 h-6 object-contain" />}
                             {team.team}
                           </a>
                         </td>

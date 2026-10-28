@@ -1,5 +1,6 @@
 {
   "loading": "Loading…",
+  "clear": "Clear",
   "backToRankOrder": "Back to rank order",
   "week": "Week {week}, {year}",
   "pools": {

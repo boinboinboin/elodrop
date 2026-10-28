@@ -24,6 +24,7 @@ import { EMPTY, num, seasonLabel, signed } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
 import { POOLS, POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
+import { logoSrc } from "@/utils/clubs";
 
 // A few clubs are prerendered at build; the rest are rendered on their first visit and then served
 // from the cache until the data or the club content changes (ISR).
@@ -58,7 +59,7 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
         <Breadcrumbs trail={[{ label: t("clubs.clubs"), href: "/clubs" }, { label: entry.title }]} />
         <div className="flex items-center gap-6 mt-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {entry.logo && <img src={entry.logo} alt="" className="w-20 h-20 object-contain shrink-0" />}
+          {entry.logo && <img src={logoSrc(entry.logo, 20)} alt="" className="w-20 h-20 object-contain shrink-0" />}
           <div>
             <h1 className="h1">{entry.title}</h1>
             {entry.fullName && entry.fullName !== entry.title && <p className="text-2xl text-gray-700">{entry.fullName}</p>}
