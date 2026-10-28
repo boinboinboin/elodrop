@@ -33,10 +33,11 @@ import { plural, t } from "@/messages/i18n";
 import type { ClubEntry, GenderGap, HeadToHead, HeadToHeadCrossover, HeadToHeadPool, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { headToHeadHref, playerHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { POOLS } from "@/utils/pools";
 
-export const metadata: Metadata = { title: t("headToHead.title") };
+export const metadata: Metadata = pageMetadata({ title: t("headToHead.title"), description: t("seo.descriptions.headToHead"), path: "/head-to-head" });
 
 export default function HeadToHeadPage(props: PageProps<"/head-to-head">) {
   return (

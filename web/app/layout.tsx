@@ -2,15 +2,21 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { t } from "@/messages/i18n";
+import { SITE_URL } from "@/utils/hrefs";
 import { THEME_SCRIPT } from "@/utils/theme";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+// The defaults; every page sets its own title, description, canonical address and preview
+// (utils/metadata.ts). metadataBase makes their addresses absolute.
 export const metadata: Metadata = {
-  title: { default: t("layout.siteName"), template: t("layout.titleTemplate") },
+  metadataBase: new URL(SITE_URL),
+  title: { default: t("seo.homeTitle"), template: t("layout.titleTemplate") },
   description: t("layout.description"),
+  openGraph: { type: "website", siteName: t("layout.siteName"), locale: "en_GB" },
+  twitter: { card: "summary_large_image" },
 };
 
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) is full-screen

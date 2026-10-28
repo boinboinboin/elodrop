@@ -5,8 +5,14 @@ import { Suspense } from "react";
 import { CombinedRankings } from "@/components/rankings/Rankings";
 import Loading from "@/components/ui/Loading";
 import { t } from "@/messages/i18n";
+import { pageMetadata } from "@/utils/metadata";
+import { combinedRankingHref } from "@/utils/rankings";
 
-export const metadata: Metadata = { title: t("rankings.combined.title", { gender: t("rankings.genders.men") }) };
+export const metadata: Metadata = pageMetadata({
+  title: t("rankings.combined.title", { gender: t("rankings.genders.men") }),
+  description: t("seo.descriptions.combined", { gender: t("rankings.genders.men") }),
+  path: combinedRankingHref("M"),
+});
 
 export default function CombinedMenPage() {
   return (

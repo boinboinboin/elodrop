@@ -12,8 +12,9 @@ import { plural, t } from "@/messages/i18n";
 import type { TournamentSummary } from "@/types";
 import { date, dateRange } from "@/utils/format";
 import { tournamentHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = { title: t("tournaments.metadata.title") };
+export const metadata: Metadata = pageMetadata({ title: t("tournaments.metadata.title"), description: t("seo.descriptions.tournaments"), path: "/tournaments" });
 
 export default function TournamentsPage() {
   return (

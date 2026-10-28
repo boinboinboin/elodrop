@@ -1,7 +1,10 @@
 // Where a page sits on the site, above its title: Home / Clubs / Bergen. Every step but the last
-// (the page itself) links to its page; the trail wraps on narrow screens.
+// (the page itself) links to its page; the trail wraps on narrow screens. Search engines get it as
+// structured data too (BreadcrumbList), for the trail under a search result.
 import Link from "next/link";
+import JsonLd from "@/components/seo/JsonLd";
 import { t } from "@/messages/i18n";
+import { absoluteUrl } from "@/utils/metadata";
 
 export interface Crumb {
   label: string;
@@ -28,6 +31,12 @@ export default function Breadcrumbs({ trail }: { trail: Crumb[] }) {
           </li>
         ))}
       </ol>
+      <JsonLd
+        data={{
+          "@type": "BreadcrumbList",
+          itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.label, ...(c.href ? { item: absoluteUrl(c.href) } : {}) })),
+        }}
+      />
     </nav>
   );
 }

@@ -17,6 +17,7 @@ import { plural, rich, t } from "@/messages/i18n";
 import type { Loose, Pool } from "@/types";
 import { dateRange, pct, signed } from "@/utils/format";
 import { eliteserienHref, playerHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 import { POOL_CODES } from "@/utils/pools";
 
 // Every season in review is prerendered (and refreshed with the data)
@@ -26,8 +27,10 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps<"/eliteserien/[season]">): Promise<Metadata> {
-  const data = await getEliteserienReview((await params).season);
-  return { title: data ? t("eliteserien.review.title", { season: data.season }) : t("eliteserien.title") };
+  const { season } = await params;
+  const data = await getEliteserienReview(season);
+  if (!data) return { title: t("eliteserien.title") };
+  return pageMetadata({ title: t("eliteserien.review.title", { season: data.season }), description: t("seo.descriptions.eliteserienSeason", { season: data.season }), path: eliteserienHref(season) });
 }
 
 /** The golden set's discipline (as in the data, "MixedDoubles") as its short code ("XD") */

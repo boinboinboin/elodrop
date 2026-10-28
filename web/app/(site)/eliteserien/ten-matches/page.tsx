@@ -13,12 +13,13 @@ import { getEliteserienTenMatches } from "@/data/eliteserien";
 import { getClubMap } from "@/data/sanity";
 import { rich, t } from "@/messages/i18n";
 import type { Loose } from "@/types";
-import { chance, EMPTY, pct, signed, toneClass } from "@/utils/format";
-import { ELITESERIEN_HREF, playerHref } from "@/utils/hrefs";
-import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 import { logoSrc } from "@/utils/clubs";
+import { chance, EMPTY, pct, signed, toneClass } from "@/utils/format";
+import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, playerHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
+import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
-export const metadata: Metadata = { title: t("eliteserien.tenMatches.title") };
+export const metadata: Metadata = pageMetadata({ title: t("eliteserien.tenMatches.title"), description: t("seo.descriptions.tenMatches"), path: ELITESERIEN_TEN_MATCHES_HREF });
 
 const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-")}`;
 /** The reference opponent of a slot: MS3 → references.MS[2], WD → references.WD[0] */

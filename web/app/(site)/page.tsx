@@ -1,18 +1,21 @@
 // The front page: what elodrop is, and a card for each of the site's pages with a live glimpse of it
 // (components/home). The rankings, the front page until this one, are at /rankings.
 // Fully static: rendered once per data update.
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
-import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
-import HomeCard from "@/components/home/HomeCard";
 import { ArrowRight } from "@/components/SVG";
+import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
+import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
+import HomeCard from "@/components/home/HomeCard";
+import JsonLd from "@/components/seo/JsonLd";
 import Section from "@/components/ui/Section";
 import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { t } from "@/messages/i18n";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
 import { num } from "@/utils/format";
+import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 
 // Each card's colour: the first five chart colours, which are apart in every pair, and head to head
 // its two sides' (the first two), so no card shares a colour with one next to it, in two columns or three
@@ -30,9 +33,21 @@ const ABOUT_CARDS = [
   { key: "whatsNew", href: "/whats-new", Glimpse: WhatsNewGlimpse, colors: ["var(--color-accent)"] },
 ] as const;
 
+export const metadata: Metadata = pageMetadata({ title: t("seo.homeTitle"), description: t("layout.description"), path: "/", absolute: true });
+
 export default function Home() {
   return (
     <>
+      <JsonLd
+        data={{
+          "@type": "WebSite",
+          name: t("layout.siteName"),
+          url: absoluteUrl("/"),
+          description: t("layout.description"),
+          inLanguage: "en",
+          publisher: { "@type": "Organization", name: t("layout.siteName"), url: absoluteUrl("/"), logo: absoluteUrl("/apple-icon.png") },
+        }}
+      />
       <Section>
         <h1 className="h1">{t("home.title")}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("home.intro")}</p>

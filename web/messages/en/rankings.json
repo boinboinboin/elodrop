@@ -38,9 +38,10 @@
     "noneFound": "No players match your search."
   },
   "heading": "Rankings",
+  "pageHeading": "Norwegian badminton rankings",
   "intro": "Every player's rating in each discipline. Ranked players have played in the last 12 months; the arrows show the change since last week.",
   "junior": {
-    "heading": "Junior rankings (U19)",
+    "heading": "Norwegian junior badminton rankings (U19)",
     "crumb": "Juniors (U19)",
     "intro": "Every junior's rating in each discipline, from matches in junior classes and junior leagues only: results against seniors don't count here. The arrows show the change since last week.",
     "ages": "Age",

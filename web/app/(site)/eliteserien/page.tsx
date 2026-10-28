@@ -14,12 +14,16 @@ import { getMeta } from "@/data/meta";
 import { getClubMap } from "@/data/sanity";
 import { rich, t } from "@/messages/i18n";
 import type { Loose } from "@/types";
-import { chance, EMPTY, pct } from "@/utils/format";
-import { ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref } from "@/utils/hrefs";
-import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 import { logoSrc } from "@/utils/clubs";
+import { chance, EMPTY, pct } from "@/utils/format";
+import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
+import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
-export const metadata: Metadata = { title: t("eliteserien.title") };
+export async function generateMetadata(): Promise<Metadata> {
+  const season = (await getMeta())?.eliteserien.current ?? "";
+  return pageMetadata({ title: t("eliteserien.title"), description: t("seo.descriptions.eliteserien", { season }), path: ELITESERIEN_HREF });
+}
 
 const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-z0-9æøå]+/g, "-")}`;
 /** A season in review's URL part as its name: "2024-25" → "2024/25" */

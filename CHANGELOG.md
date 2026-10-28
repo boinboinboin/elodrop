@@ -8,8 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
-## v1.17.4 (2026-10-28)
+## v1.18.0 (2026-10-28)
 
+- Links to elodrop show a preview when shared (Facebook, Messenger, Slack, X and others): a player's card has their club and rating and rank in each discipline, a club's its logo and rank in each discipline, a tournament's its dates and number of events and entries, and every other page the site's card.
+- Every page has its own description for search results, written from its data: a player's ratings and ranks, a club's full name and region, a tournament's dates. Search engines and AI answer engines also get each page's canonical address and what it's about as structured data: players, clubs, tournaments, the breadcrumbs, and the questions "How does elodrop work?" answers.
+- Clearer titles for search results: "Men's singles badminton rankings, Norway" instead of "Men's singles", and the front page's "elodrop · Elo ratings and rankings for Norwegian badminton". The rankings pages' heading is "Norwegian badminton rankings".
 - The search bar and the head-to-head player search answer as you type: everything they search is loaded once, when you first click a search field, and searched in your browser instead of asking the server on every keystroke.
 - Club logos load at the size they're shown (and as WebP or AVIF) instead of the full upload: the 150 logos on the rankings page went from about 13 MB to about 0.1 MB. Logos in the long ranking and draw lists load only when scrolled to.
 - The search fields (the search bar, the head-to-head player search and the rankings' search) share the site's magnifying glass, and clear with a cross drawn like the site's other icons instead of the browser's own.

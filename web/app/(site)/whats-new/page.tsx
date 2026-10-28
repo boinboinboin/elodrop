@@ -10,8 +10,9 @@ import { plural, t } from "@/messages/i18n";
 import { type Release as ReleaseData, getReleases, isFeature } from "@/utils/changelog";
 import { PALETTE } from "@/utils/chart";
 import { date, dateRange } from "@/utils/format";
+import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = { title: t("whatsNew.metadata.title") };
+export const metadata: Metadata = pageMetadata({ title: t("whatsNew.metadata.title"), description: t("seo.descriptions.whatsNew"), path: "/whats-new" });
 
 /** Releases grouped by day, in the order given */
 function byDay(releases: ReleaseData[]) {

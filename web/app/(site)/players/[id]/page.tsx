@@ -5,32 +5,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
+import { ArrowRight } from "@/components/SVG";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MatchTable from "@/components/players/MatchTable";
 import SeasonTable from "@/components/players/SeasonTable";
 import { WeekChange } from "@/components/rankings/RankMovement";
-import { ArrowRight } from "@/components/SVG";
+import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
-import { TEXT_LINK } from "@/components/ui/styles";
 import Tabs from "@/components/ui/Tabs";
+import { TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
 import { getClubMap } from "@/data/sanity";
 import { plural, rich, t } from "@/messages/i18n";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
+import { logoSrc } from "@/utils/clubs";
 import { date, EMPTY, num, pct, seasonLabel } from "@/utils/format";
 import { clubHref, headToHeadHref, playerHref } from "@/utils/hrefs";
+import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { POOL_KEYS } from "@/utils/pools";
 import { rankingHref } from "@/utils/rankings";
-import { logoSrc } from "@/utils/clubs";
 
 // The best ten men are prerendered at build; every other player page is rendered on its first visit
 // and then served from the cache until the next data update (ISR), instead of on every request.
@@ -41,7 +43,22 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/players/[id]">): Promise<Metadata> {
   const player = await getPlayer(Number((await params).id));
-  return { title: player?.name ?? t("players.metadata.title") };
+  if (!player) return { title: t("players.metadata.title") };
+  return pageMetadata({ title: player.name, description: playerDescription(player), path: playerHref(player.id), image: { url: `${playerHref(player.id)}/preview.png`, alt: t("seo.imageAlt.player") } });
+}
+
+/** "Markus Barth (Bergen): men's singles rating 2341, #1 in Norway; …. Rating and rank history, every match since 2013, …" */
+function playerDescription(player: Player): string {
+  const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
+  const ranked = pools.filter(([, p]) => p.rank !== null);
+  const shown = (ranked.length ? ranked : pools).slice(0, 3);
+  const club = player.club ? ` (${player.club})` : "";
+  if (!shown.length) return t("seo.descriptions.playerNoRatings", { name: player.name, club });
+  const ratings = shown
+    .map(([pool, p]) => t(p.rank !== null ? "seo.descriptions.playerRating" : "seo.descriptions.playerUnranked", { pool: t(`common.poolsInSentence.${pool}`), rating: num(Math.round(p.rating)), rank: p.rank ?? "" }))
+    .join("; ");
+  const since = Math.min(...pools.map(([, p]) => +p.firstPlayed.slice(0, 4)));
+  return t("seo.descriptions.player", { name: player.name, club, ratings, since });
 }
 
 export default function PlayerPage(props: PageProps<"/players/[id]">) {
@@ -65,6 +82,19 @@ async function PlayerContent({ params }: Pick<PageProps<"/players/[id]">, "param
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("rankings.heading"), href: rankingHref("men") }, { label: player.name }]} />
+        <JsonLd
+          data={{
+            "@type": "ProfilePage",
+            url: absoluteUrl(playerHref(player.id)),
+            mainEntity: {
+              "@type": "Person",
+              name: player.name,
+              url: absoluteUrl(playerHref(player.id)),
+              description: playerDescription(player),
+              ...(player.club ? { memberOf: { "@type": "SportsOrganization", name: player.club, sport: "Badminton", ...(club ? { url: absoluteUrl(clubHref(club.slug)) } : {}) } } : {}),
+            },
+          }}
+        />
         <h1 className="h1 mt-4">{player.name}</h1>
         {player.club && (
           <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">

@@ -1,0 +1,56 @@
+{
+  "homeTitle": "elodrop · Elo ratings and rankings for Norwegian badminton",
+  "listTitle": "{list} badminton rankings, Norway",
+  "juniorListTitle": "{list} junior badminton rankings (U19), Norway",
+  "descriptions": {
+    "rankings": "{list}: every active Norwegian badminton player ranked by Elo rating, from every tournament and league match on badmintonportalen.no, updated every night.",
+    "rankingsInactive": "{list}: every Norwegian badminton player's Elo rating, including those who haven't played in the last 12 months.",
+    "junior": "{list}: every Norwegian junior (U19) ranked by Elo rating from junior matches only, updated every night.",
+    "combined": "The combined ranking of Norwegian badminton, {gender}: singles, doubles and mixed doubles together, for everyone ranked in at least two of them.",
+    "juniorCombined": "The combined junior (U19) ranking of Norwegian badminton, {gender}: singles, doubles and mixed doubles together.",
+    "player": "{name}{club}: {ratings}. Rating and rank history, every match since {since}, rivals and head to head.",
+    "playerRating": "{pool} rating {rating}, #{rank} in Norway",
+    "playerUnranked": "{pool} rating {rating}",
+    "playerNoRatings": "{name}{club}: Elo ratings, rank history and every match in Norwegian badminton.",
+    "club": "{name}{details}: the club's players and their Elo ratings, its strength in each discipline and how it has changed.",
+    "clubs": "The strongest badminton clubs in Norway, from their best players' Elo ratings: singles, doubles and mixed doubles together.",
+    "clubsPool": "The strongest badminton clubs in Norway in {pool}, from their best players' Elo ratings.",
+    "tournaments": "Upcoming and recent Norwegian badminton tournaments: who got a lucky or unlucky draw, from the players' Elo ratings.",
+    "tournament": "{name}{dates}: every event's draw, each player's chances and how lucky their draw was, from their Elo ratings.",
+    "eliteserien": "Eliteserien {season}, Norway's top badminton league: how strong the eight teams are, the predicted table and every team's best lineup, from the players' Elo ratings.",
+    "eliteserienSeason": "Eliteserien {season} in review: the team strengths before each round against what actually happened, the ties, and who beat their potential.",
+    "tenMatches": "What if an Eliteserien badminton tie were 10 matches instead of 8? The predicted table, head to head and lineups in both formats.",
+    "upsets": "The biggest upsets in Norwegian badminton: the matches won with the lowest chance of winning, week by week.",
+    "upsetsYear": "The biggest upsets in Norwegian badminton in {year}: the matches won with the lowest chance of winning.",
+    "upsetsWeek": "The biggest upsets in Norwegian badminton in the week {week}: the matches won with the lowest chance of winning.",
+    "headToHead": "Any two Norwegian badminton players head to head: their matches against each other and together, and their chances if they met now.",
+    "doublesHeadToHead": "Any two Norwegian badminton pairs head to head: their chances against each other now, from the players' Elo ratings.",
+    "whatsNew": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes."
+  },
+  "imageAlt": {
+    "site": "elodrop: Elo ratings for Norwegian badminton",
+    "player": "The player's name, club, and rating and rank in each discipline, on elodrop",
+    "club": "The club's name and its rank among Norwegian clubs in each discipline, on elodrop",
+    "tournament": "The tournament's name, dates and number of events and entries, on elodrop"
+  },
+  "faq": {
+    "idea": "How are elodrop's badminton ratings calculated?",
+    "start": "What rating does a new player start at?",
+    "counts": "Does every match count the same?",
+    "doubles": "How do doubles and mixed doubles ratings work?",
+    "rankings": "Who is in the rankings?",
+    "tested": "How accurate are the ratings?",
+    "data": "Where do the results come from?"
+  },
+  "preview": {
+    "siteSubtitle": "Rankings, clubs, Eliteserien and tournament draws, from every result since 2013",
+    "player": "Player",
+    "club": "Club",
+    "tournament": "Tournament draw",
+    "rank": "#{rank} {pool}",
+    "rating": "{pool}",
+    "events": "Events",
+    "entries": "Entries",
+    "players": "Players"
+  }
+}

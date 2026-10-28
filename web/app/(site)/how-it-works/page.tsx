@@ -4,21 +4,24 @@
 // Static: rendered once per data update (the ratings' spread is the only part that reads the data).
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { NerdSwitch } from "@/components/how-it-works/NerdMode";
 import { Formula, Nerdy, Part } from "@/components/how-it-works/Part";
 import RatingDistribution from "@/components/how-it-works/RatingDistribution";
 import WinChance from "@/components/how-it-works/WinChance";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getDistributions } from "@/data/distribution";
+import type { en } from "@/messages/en";
 import { type MessageKey, rich, t } from "@/messages/i18n";
 import { PALETTE } from "@/utils/chart";
 import { num } from "@/utils/format";
 import { repoHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = { title: t("howItWorks.metadata.title"), description: t("howItWorks.metadata.description") };
+export const metadata: Metadata = pageMetadata({ title: t("howItWorks.metadata.title"), description: t("howItWorks.metadata.description"), path: "/how-it-works" });
 
 const PARTS = ["idea", "start", "counts", "doubles", "rankings", "spread", "site", "tested", "data"] as const;
 type PartKey = (typeof PARTS)[number];
@@ -46,6 +49,20 @@ const TIERS = [
 // The comparison with the official ranking (pipeline/README.md, "Comparison with the official ranking")
 const COMPARISON = { elo: 76.7, official: 64.3 };
 
+// The plain-words parts as questions and answers, for search and answer engines (FAQPage): each
+// question (seo.faq) is answered with its part's paragraphs, without their markup
+type FaqPart = keyof typeof en.seo.faq;
+const FAQ: Record<FaqPart, MessageKey[]> = {
+  idea: ["howItWorks.idea.p1", "howItWorks.idea.p2", "howItWorks.idea.p3"],
+  start: ["howItWorks.start.p1", "howItWorks.start.p2"],
+  counts: ["howItWorks.counts.intro", "howItWorks.counts.level", "howItWorks.counts.junior", "howItWorks.counts.margin", "howItWorks.counts.region", "howItWorks.counts.rating"],
+  doubles: ["howItWorks.doubles.p1", "howItWorks.doubles.p2", "howItWorks.doubles.p3"],
+  rankings: ["howItWorks.rankings.p1", "howItWorks.rankings.p2", "howItWorks.rankings.p3"],
+  tested: ["howItWorks.tested.p1", "howItWorks.tested.p2"],
+  data: ["howItWorks.data.p1", "howItWorks.data.p2"],
+};
+const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "");
+
 const strong = (text: React.ReactNode) => <strong>{text}</strong>;
 const P = ({ k }: { k: MessageKey }) => <p>{rich(k, { strong })}</p>;
 const Sub = ({ children }: { children: React.ReactNode }) => <sub>{children}</sub>;
@@ -53,6 +70,16 @@ const Sub = ({ children }: { children: React.ReactNode }) => <sub>{children}</su
 export default function HowItWorksPage() {
   return (
     <>
+      <JsonLd
+        data={{
+          "@type": "FAQPage",
+          mainEntity: (Object.entries(FAQ) as [FaqPart, MessageKey[]][]).map(([part, keys]) => ({
+            "@type": "Question",
+            name: t(`seo.faq.${part}`),
+            acceptedAnswer: { "@type": "Answer", text: keys.map(plain).join(" ") },
+          })),
+        }}
+      />
       <Section>
         <Breadcrumbs trail={[{ label: t("howItWorks.title") }]} />
         <h1 className="h1 mt-4">{t("howItWorks.title")}</h1>

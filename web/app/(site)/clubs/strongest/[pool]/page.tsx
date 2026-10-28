@@ -5,13 +5,17 @@ import { Suspense } from "react";
 import StrongestClubs from "@/components/clubs/StrongestClubs";
 import Loading from "@/components/ui/Loading";
 import { t } from "@/messages/i18n";
+import { pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS, isPool } from "@/utils/pools";
+import { strongestClubsHref } from "@/utils/rankings";
 
 export const generateStaticParams = async () => POOL_KEYS.map((pool) => ({ pool }));
 
 export async function generateMetadata({ params }: PageProps<"/clubs/strongest/[pool]">): Promise<Metadata> {
   const { pool } = await params;
-  return { title: isPool(pool) ? t("clubs.metadata.strongestPool", { pool: t(`common.poolsInSentence.${pool}`) }) : t("clubs.metadata.strongest") };
+  if (!isPool(pool)) return { title: t("clubs.metadata.strongest") };
+  const name = t(`common.poolsInSentence.${pool}`);
+  return pageMetadata({ title: t("clubs.metadata.strongestPool", { pool: name }), description: t("seo.descriptions.clubsPool", { pool: name }), path: strongestClubsHref(pool) });
 }
 
 export default function StrongestClubsPage(props: PageProps<"/clubs/strongest/[pool]">) {

@@ -5,9 +5,14 @@ import { Suspense } from "react";
 import { JuniorRankings } from "@/components/rankings/Rankings";
 import Loading from "@/components/ui/Loading";
 import { t } from "@/messages/i18n";
-import { RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
+import { pageMetadata } from "@/utils/metadata";
+import { juniorRankingHref, RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
 
-export const metadata: Metadata = { title: t("rankings.junior.title", { list: rankingListTitle(RANKING_LISTS.men) }) };
+export const metadata: Metadata = pageMetadata({
+  title: t("seo.juniorListTitle", { list: rankingListTitle(RANKING_LISTS.men) }),
+  description: t("seo.descriptions.junior", { list: rankingListTitle(RANKING_LISTS.men) }),
+  path: juniorRankingHref("men"),
+});
 
 export default function JuniorRankingsPage() {
   return (

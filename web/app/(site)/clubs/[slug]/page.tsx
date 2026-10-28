@@ -9,22 +9,24 @@ import PoolName from "@/components/format/PoolName";
 import SeasonLabel from "@/components/format/SeasonLabel";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { WeekChange } from "@/components/rankings/RankMovement";
+import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import Tabs from "@/components/ui/Tabs";
+import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubHistory, getClubPlayers, getClubsFile } from "@/data/clubs";
 import { getClubBySlug, getClubEntries } from "@/data/sanity";
 import { plural, t } from "@/messages/i18n";
 import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
+import { logoSrc } from "@/utils/clubs";
 import { EMPTY, num, seasonLabel, signed } from "@/utils/format";
-import { playerHref } from "@/utils/hrefs";
+import { clubHref, playerHref } from "@/utils/hrefs";
+import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { POOLS, POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
-import { logoSrc } from "@/utils/clubs";
 
 // A few clubs are prerendered at build; the rest are rendered on their first visit and then served
 // from the cache until the data or the club content changes (ISR).
@@ -35,7 +37,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/clubs/[slug]">): Promise<Metadata> {
   const club = await getClubBySlug(decodeURIComponent((await params).slug));
-  return { title: club?.title ?? t("clubs.metadata.club") };
+  if (!club) return { title: t("clubs.metadata.club") };
+  const details = [club.fullName !== club.title ? club.fullName : null, club.region].filter(Boolean).join(", ");
+  return pageMetadata({ title: club.title, description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
 }
 
 export default function ClubPage(props: PageProps<"/clubs/[slug]">) {
@@ -57,6 +61,18 @@ async function Content({ params }: Pick<PageProps<"/clubs/[slug]">, "params">) {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("clubs.clubs"), href: "/clubs" }, { label: entry.title }]} />
+        <JsonLd
+          data={{
+            "@type": "SportsOrganization",
+            name: entry.title,
+            ...(entry.fullName && entry.fullName !== entry.title ? { alternateName: entry.fullName } : {}),
+            sport: "Badminton",
+            url: absoluteUrl(clubHref(entry.slug)),
+            ...(entry.logo ? { logo: entry.logo.startsWith("/") ? absoluteUrl(entry.logo) : entry.logo } : {}),
+            ...(entry.website ? { sameAs: [entry.website] } : {}),
+            address: { "@type": "PostalAddress", addressCountry: "NO", ...(entry.region ? { addressRegion: entry.region } : {}) },
+          }}
+        />
         <div className="flex items-center gap-6 mt-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {entry.logo && <img src={logoSrc(entry.logo, 20)} alt="" className="w-20 h-20 object-contain shrink-0" />}

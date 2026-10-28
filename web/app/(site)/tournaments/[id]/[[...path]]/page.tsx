@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import JsonLd from "@/components/seo/JsonLd";
 import EntryNames from "@/components/tournaments/EntryNames";
 import EventResult from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
@@ -18,14 +19,15 @@ import Loading from "@/components/ui/Loading";
 import ScrollRow from "@/components/ui/ScrollRow";
 import Section from "@/components/ui/Section";
 import { Stat } from "@/components/ui/StatCard";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import Tabs from "@/components/ui/Tabs";
+import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
 import { plural, rich, t } from "@/messages/i18n";
 import type { ClubEntry, Entry, Tournament, TournamentEvent } from "@/types";
 import { date, dateRange, EMPTY, num, pct, place, signed, toneClass } from "@/utils/format";
 import { tournamentHref } from "@/utils/hrefs";
+import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { isSingles } from "@/utils/pools";
 import {
@@ -53,9 +55,19 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps<"/tournaments/[id]/[[...path]]">): Promise<Metadata> {
-  const id = parseId((await params).id);
+  const { id: rawId, path } = await params;
+  const id = parseId(rawId);
   const tour = id !== null ? await getTournament(id) : null;
-  return { title: tour?.name ?? t("tournaments.metadata.tournament") };
+  if (!tour) return { title: t("tournaments.metadata.tournament") };
+  const dates = tour.startDate ? `, ${dateRange(tour.startDate, tour.endDate)}` : "";
+  // Each view and event is its own page; an event in another table order (a third part) is the same event
+  const canonical = [tournamentHref(tour.cup2000Id), ...(path ?? []).slice(0, 2).map((part) => decodeURIComponent(part))].join("/");
+  return pageMetadata({
+    title: tour.name,
+    description: t("seo.descriptions.tournament", { name: tour.name, dates }),
+    path: canonical,
+    image: { url: `${tournamentHref(tour.cup2000Id)}/preview.png`, alt: t("seo.imageAlt.tournament") },
+  });
 }
 
 export default function TournamentPage(props: PageProps<"/tournaments/[id]/[[...path]]">) {
@@ -80,6 +92,16 @@ async function Content({ params }: Pick<PageProps<"/tournaments/[id]/[[...path]]
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("layout.nav.tournaments"), href: "/tournaments" }, { label: tour.name }]} />
+        <JsonLd
+          data={{
+            "@type": "SportsEvent",
+            name: tour.name,
+            sport: "Badminton",
+            url: absoluteUrl(tournamentHref(tour.cup2000Id)),
+            ...(tour.startDate ? { startDate: tour.startDate, endDate: tour.endDate ?? tour.startDate } : {}),
+            eventStatus: tour.cancelled ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
+          }}
+        />
         <h1 className="h1 mt-4">{tour.name}</h1>
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
         <p className="mt-2 flex flex-wrap gap-x-6 gap-y-1">

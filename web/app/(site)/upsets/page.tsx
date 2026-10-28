@@ -2,8 +2,9 @@
 import type { Metadata } from "next";
 import Upsets from "@/components/upsets/Upsets";
 import { t } from "@/messages/i18n";
+import { pageMetadata } from "@/utils/metadata";
 
-export const metadata: Metadata = { title: t("upsets.metadata.title") };
+export const metadata: Metadata = pageMetadata({ title: t("upsets.metadata.title"), description: t("seo.descriptions.upsets"), path: "/upsets" });
 
 export default function UpsetsPage() {
   return <Upsets period={Promise.resolve(null)} />;

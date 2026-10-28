@@ -37,10 +37,11 @@ import type { ClubEntry, DoublesHeadToHead, DoublesHeadToHeadPool, GenderGap, Pa
 import { SIDE_COLORS } from "@/utils/chart";
 import { capitalize } from "@/utils/format";
 import { doublesHeadToHeadHref, playerHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
 
-export const metadata: Metadata = { title: t("headToHead.doublesTitle") };
+export const metadata: Metadata = pageMetadata({ title: t("headToHead.doublesTitle"), description: t("seo.descriptions.doublesHeadToHead"), path: "/head-to-head/doubles" });
 
 const PAIRS = [t("headToHead.pairs.a"), t("headToHead.pairs.b")] as const;
 const kindName = (kind: PairKind) => t(`headToHead.pairs.kinds.${kind}`);

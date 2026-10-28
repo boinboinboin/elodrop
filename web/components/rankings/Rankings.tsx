@@ -5,10 +5,10 @@
 // rankings (CombinedRankings, men or women) have ranked players only.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowRight, Check, Female, Male } from "@/components/SVG";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CombinedTable, { type CombinedRow } from "@/components/rankings/CombinedTable";
 import RankingTable, { type RankingRow } from "@/components/rankings/RankingTable";
-import { ArrowRight, Check, Female, Male } from "@/components/SVG";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -34,7 +34,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
   return (
     <Section>
       <Breadcrumbs trail={[{ label: t("rankings.heading") }]} />
-      <h1 className="h1 mt-4">{t("rankings.heading")}</h1>
+      <h1 className="h1 mt-4">{t("rankings.pageHeading")}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.intro")}</p>
       <AgeTabs junior={false} all={rankingHref(pool, gender)} juniors={juniorRankingHref(pool, gender)} />
       <GenderTabs current={listTabs(pool, gender)} showInactive={showInactive} />
@@ -127,7 +127,7 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
   return (
     <Section>
       <Breadcrumbs trail={crumbs} />
-      <h1 className="h1 mt-4">{t(junior ? "rankings.junior.heading" : "rankings.heading")}</h1>
+      <h1 className="h1 mt-4">{t(junior ? "rankings.junior.heading" : "rankings.pageHeading")}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t(junior ? "rankings.junior.intro" : "rankings.intro")}</p>
       <AgeTabs junior={junior} all={combinedRankingHref(gender)} juniors={combinedRankingHref(gender, true)} />
       <GenderTabs current={listTabs("combined", gender)} junior={junior} />
