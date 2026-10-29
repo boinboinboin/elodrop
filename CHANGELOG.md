@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.3 (2026-10-29)
+
+- Clicking the logo (or any link to the front page) in Norwegian showed the "Out!" page instead of the front page. It goes to the front page again.
+
 ## v1.19.2 (2026-10-29)
 
 - A few things are hidden around the site. Happy hunting.

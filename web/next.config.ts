@@ -38,6 +38,13 @@ const nextConfig: NextConfig = {
       beforeFiles: [],
       afterFiles: [
         { source: "/", destination: "/nb" },
+        // The front page's prefetches (what a click on a link to "/" loads): Next.js asks for them as
+        // "/index...", which the rule below would send to "/nb/index...", the 404 page's catch-all
+        // (app/[lang]/(site)/[...missing]); the Norwegian front page's are "/nb...". "/index" for
+        // when the suffix is set aside while the rewrites are matched (and put back after).
+        { source: "/index.segments/:path*", destination: "/nb.segments/:path*" },
+        { source: "/index.prefetch.rsc", destination: "/nb.prefetch.rsc" },
+        { source: "/index", destination: "/nb" },
         { source: "/:path((?!(?:en|nb|api|studio|_next)(?:/|$)).+)", destination: "/nb/:path" },
       ],
       fallback: [],
