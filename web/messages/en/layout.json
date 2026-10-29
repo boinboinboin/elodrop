@@ -44,8 +44,9 @@
     "home": "Home"
   },
   "notFound": {
-    "title": "Not found",
-    "text": "There is no such player, club or tournament here, or it has no ratings yet.",
+    "title": "Out!",
+    "call": "This page landed outside the lines.",
+    "text": "There is no such page, player, club or tournament here, or it has no ratings yet.",
     "back": "Back to the rankings"
   },
   "search": {
@@ -65,5 +66,8 @@
     "drawLuck": "Draw luck",
     "tenMatches": "What if a tie were 10 matches"
   },
-  "logoLabel": "elodrop, home"
+  "logoLabel": "elodrop, home",
+  "easterEggs": {
+    "smashSpeed": "565 km/h"
+  }
 }

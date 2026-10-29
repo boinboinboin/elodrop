@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.2 (2026-10-29)
+
+- A few things are hidden around the site. Happy hunting.
+- An address that doesn't exist (a mistyped link) shows the site's own page, with the menu and search, instead of a plain "404".
+- Head to head no longer has a "Swap" button, which only flipped the two sides.
+
 ## v1.19.1 (2026-10-28)
 
 - A tournament's events that aren't played yet show their favourite where a finished event shows its winner: the player or pair with the best chance of winning with the draw as it is (and with a fair draw), which isn't always the highest rated. When it isn't, it says who is rated higher.

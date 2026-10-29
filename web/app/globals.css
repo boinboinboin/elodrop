@@ -27,6 +27,10 @@ input[type="search"]::-webkit-search-decoration {
 @theme static {
   /* The logo's cork */
   --color-accent: #f97316;
+  /* The court on the 404 page (app/[lang]/(site)/not-found.tsx): Yonex's green mat, the floor
+     around it the same */
+  --color-court: #00834d;
+  --color-court-floor: #00834d;
   /* Charts: the series in fixed order, then the chart's own colours. Validated (dataviz skill's
      validate_palette.js, Machado 2009 simulation): the first five, a discipline each, are apart in
      every pair, as any of them can share a chart (worst protan/deutan ΔE 8.1, normal vision 17.6),
@@ -126,6 +130,9 @@ input[type="search"]::-webkit-search-decoration {
     --color-red-600: #a2301f;
     --color-red-700: #962c1c;
     --color-accent: #00834d;
+    /* The All England's own court: the grey mat, on the arena's near-black floor */
+    --color-court: #5c5c5c;
+    --color-court-floor: #1f2228;
     --color-chart-1: #026430;
     --color-chart-2: #2f6fd9;
     --color-chart-3: #d96571;
@@ -172,6 +179,63 @@ body {
     from {
       opacity: 0;
       transform: translateY(-5px);
+    }
+  }
+}
+
+/* The hidden things (components/easter-eggs): a number falling off the logo, shuttles falling,
+   one smashed across the screen, one landing out on the 404 page. With reduced motion they use
+   egg-fade (in and out where they are) or nothing. */
+@theme {
+  --animate-egg-drop: egg-drop 1.2s cubic-bezier(0.5, 0, 1, 1) both;
+  --animate-egg-fall: egg-fall 2.5s cubic-bezier(0.45, 0, 0.9, 0.6) both;
+  --animate-egg-smash: egg-smash 0.45s cubic-bezier(0.2, 0, 0.7, 1) both;
+  --animate-egg-land: egg-land 0.8s 0.2s cubic-bezier(0.25, 0.7, 0.5, 1) both;
+  --animate-egg-fade: egg-fade 1.6s ease-in-out both;
+  @keyframes egg-drop {
+    0% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    10% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(90px) rotate(30deg);
+    }
+  }
+  @keyframes egg-fall {
+    from {
+      transform: translateY(-15vh) rotate(var(--egg-tilt, 0deg));
+    }
+    to {
+      transform: translateY(110vh) rotate(calc(var(--egg-tilt, 0deg) * -1));
+    }
+  }
+  @keyframes egg-smash {
+    from {
+      transform: translate(-10vw, -10vh);
+    }
+    to {
+      transform: translate(110vw, 60vh);
+    }
+  }
+  /* From beyond the 404 court's top edge along its flight line (the shuttle is turned to it, so its
+     own y is the line), quick then slowing like a shuttle */
+  @keyframes egg-land {
+    from {
+      transform: translateY(-100px);
+    }
+  }
+  @keyframes egg-fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    20%,
+    80% {
+      opacity: 1;
     }
   }
 }

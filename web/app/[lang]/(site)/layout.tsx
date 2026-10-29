@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
+import KeyEggs from "@/components/easter-eggs/KeyEggs";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
@@ -76,6 +77,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </footer>
       {/* Vercel Web Analytics (page views) and Speed Insights (real visitors' load times, Core Web
           Vitals), on the site's pages only (not the Studio) */}
+      {/* What typing on a page can set off (in the browser only) */}
+      <KeyEggs />
       <Analytics />
       <SpeedInsights />
     </>

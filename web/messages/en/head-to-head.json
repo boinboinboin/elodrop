@@ -14,12 +14,8 @@
     "against": "Against",
     "partner": "Partner",
     "compare": "Compare",
-    "swap": "Swap",
-    "swapPlayers": "Swap the players",
-    "swapPairs": "Swap the pairs",
     "vs": "vs",
     "twoDifferent": "Choose two different players.",
-    "fourDifferent": "Choose four different players.",
     "notFound": "One of the players was not found."
   },
   "picker": {
@@ -149,5 +145,15 @@
   "genderGap": {
     "note": "Women's ratings are moved onto the men's scale using the {matches} matches women have played against men in {men}, set against their rating in {women} at the time. A woman rated {w1} plays like a man rated about {m1}, one rated {w2} like one rated about {m2}, and one rated {w3} like one rated about {m3}: the gap grows with the level.",
     "extrapolated": " Ratings marked * are beyond those the matches cover (about {from} to {to}), so for them the gap is extrapolated."
+  },
+  "self": {
+    "joke": "The toughest opponent is yourself.",
+    "never": "Never met on court, but perhaps in the mirror.",
+    "pairJoke": "The toughest opponents are yourselves.",
+    "doppelganger": {
+      "one": "There is a doppelganger among us.",
+      "other": "There are doppelgangers among us."
+    },
+    "onePlayer": "Who serves? You. Who receives? Also you. Who calls \"mine!\"? Everyone."
   }
 }

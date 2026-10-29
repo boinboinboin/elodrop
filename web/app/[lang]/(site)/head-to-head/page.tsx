@@ -2,7 +2,7 @@
 // winning margins, and per discipline both play their ratings, A's chance of beating B now and
 // both rating histories; then the matches. A man and a woman also get a comparison just for fun in
 // singles and doubles, with her rating moved onto the men's scale by the gender gap
-// (pipeline/gender-gap.mjs).
+// (pipeline/gender-gap.mjs). A player against themselves gets a card of their own instead of an error.
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { type ChartSeries } from "@/components/charts/LineChart";
@@ -32,7 +32,7 @@ import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, GenderGap, HeadToHead, HeadToHeadCrossover, HeadToHeadPool, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
-import { headToHeadHref, playerHref } from "@/utils/hrefs";
+import { playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 
@@ -74,16 +74,14 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head">,
         <form action={href("/head-to-head")} method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end max-w-4xl">
           <PlayerPicker key={`a-${idA}`} name="a" label={t("headToHead.form.player")} initial={playerA ? { id: playerA.id, name: playerA.name } : null} />
           <PlayerPicker key={`b-${idB}`} name="b" label={t("headToHead.form.against")} initial={playerB ? { id: playerB.id, name: playerB.name } : null} />
-          <div className="flex gap-2">
+          <div>
             <button type="submit" className="px-4 py-2 border border-black bg-black text-white hover:bg-white hover:text-black transition-colors duration-200 cursor-pointer">{t("headToHead.form.compare")}</button>
-            {h2h && idA && idB && (
-              <Link href={headToHeadHref(idB, idA)} className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200" title={t("headToHead.form.swapPlayers")}>{t("headToHead.form.swap")}</Link>
-            )}
           </div>
         </form>
-        {idA && idB && !h2h && <p className="mt-4 text-red-700">{t(idA === idB ? "headToHead.form.twoDifferent" : "headToHead.form.notFound")}</p>}
+        {idA && idB && !h2h && !(idA === idB && playerA) && <p className="mt-4 text-red-700">{t(idA === idB ? "headToHead.form.twoDifferent" : "headToHead.form.notFound")}</p>}
       </Section>
       {h2h && <Comparison h2h={h2h} clubs={clubs} links={meta?.tournamentLinks ?? {}} gap={gap} />}
+      {!h2h && idA === idB && playerA && <AgainstThemselves player={playerA} clubs={clubs} />}
     </>
   );
 }
@@ -151,6 +149,29 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: 
         </section>
       )}
     </>
+  );
+}
+
+/** A player against themselves: the same player on both sides, even chances, never met */
+async function AgainstThemselves({ player, clubs }: { player: Player; clubs: Record<string, ClubEntry> }) {
+  const { t } = await getI18n();
+  return (
+    <Section>
+      <div className="bg-white p-4 md:p-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4 items-center text-center [overflow-wrap:anywhere]">
+        {[0, 1].map((i) => (
+          <div key={i} className={i === 0 ? "order-1" : "order-3"}>
+            <Swatch color={SIDE_COLORS[i]} className="w-8 h-1 mb-2" />
+            <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="hover:text-blue-600">{player.name}</Link></p>
+            {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
+          </div>
+        ))}
+        <p className="order-2 px-1 sm:px-2 max-w-28 sm:max-w-40 text-gray-600">{t("headToHead.self.never")}</p>
+      </div>
+      <div className="bg-white p-4 md:p-6 mt-4">
+        <p className="text-xl mb-4">{t("headToHead.self.joke")}</p>
+        <ChanceBar names={[player.name, player.name]} chance={0.5} />
+      </div>
+    </Section>
   );
 }
 

@@ -14,12 +14,8 @@
     "against": "Mot",
     "partner": "Makker",
     "compare": "Sammenlign",
-    "swap": "Bytt",
-    "swapPlayers": "Bytt spillerne",
-    "swapPairs": "Bytt parene",
     "vs": "mot",
     "twoDifferent": "Velg to forskjellige spillere.",
-    "fourDifferent": "Velg fire forskjellige spillere.",
     "notFound": "En av spillerne ble ikke funnet."
   },
   "picker": {
@@ -149,5 +145,15 @@
   "genderGap": {
     "note": "Damenes ratinger flyttes over på herreskalaen ut fra de {matches} kampene damer har spilt mot herrer i {men}, satt opp mot damenes rating i {women} på den tiden. En dame med {w1} spiller som en herre med omtrent {m1}, en med {w2} som en med omtrent {m2}, og en med {w3} som en med omtrent {m3}: gapet vokser med nivået.",
     "extrapolated": " Ratinger merket med * ligger utenfor det kampene dekker (omtrent {from} til {to}), så for dem er gapet ekstrapolert."
+  },
+  "self": {
+    "joke": "Den tøffeste motstanderen er deg selv.",
+    "never": "Aldri møttes på banen, men kanskje i speilet.",
+    "pairJoke": "De tøffeste motstanderne er dere selv.",
+    "doppelganger": {
+      "one": "Det er en dobbeltgjenger blant oss.",
+      "other": "Det er dobbeltgjengere blant oss."
+    },
+    "onePlayer": "Hvem server? Du. Hvem tar imot? Også du. Hvem roper «min!»? Alle."
   }
 }

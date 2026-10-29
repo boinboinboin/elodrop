@@ -44,8 +44,9 @@
     "home": "Hjem"
   },
   "notFound": {
-    "title": "Ikke funnet",
-    "text": "Her finnes ingen slik spiller, klubb eller turnering, eller den har ingen ratinger ennå.",
+    "title": "Ute!",
+    "call": "Denne siden landet utenfor banen.",
+    "text": "Her finnes ingen slik side, spiller, klubb eller turnering, eller den har ingen ratinger ennå.",
     "back": "Tilbake til rangeringene"
   },
   "search": {
@@ -65,5 +66,8 @@
     "drawLuck": "Trekningsflaks",
     "tenMatches": "Hva om en lagkamp hadde 10 kamper"
   },
-  "logoLabel": "elodrop, hjem"
+  "logoLabel": "elodrop, hjem",
+  "easterEggs": {
+    "smashSpeed": "565 km/t"
+  }
 }

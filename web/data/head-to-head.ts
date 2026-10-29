@@ -190,8 +190,8 @@ async function crossovers(a: Player, b: Player, meetings: Match[]): Promise<Head
  * ratings are compared in the doubles disciplines both pairs play in by their genders: two men's
  * pairs in men's doubles, two mixed pairs in mixed doubles, and so on.
  */
+/** A player may be chosen more than once (the page's hidden jokes): they never met nor partnered themselves */
 export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b2: number): Promise<DoublesHeadToHead | null> {
-  if (new Set([a1, a2, b1, b2]).size < 4) return null;
   const players = await Promise.all([a1, a2, b1, b2].map(getPlayer));
   if (players.some((p) => !p)) return null;
   const [pa1, pa2, pb1, pb2] = players as Player[];

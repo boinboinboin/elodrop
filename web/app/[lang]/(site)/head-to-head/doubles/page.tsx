@@ -5,7 +5,8 @@
 // rating histories; then the matches. Pairs that don't play in the same discipline (a men's pair
 // against a women's or mixed pair) get a comparison just for fun on the men's doubles scale, with
 // women's ratings moved onto it by the gender gap (pipeline/gender-gap.mjs). Pair A is blue and
-// pair B orange throughout.
+// pair B orange throughout. A player chosen more than once gets a comparison all the same, with a
+// joke: the same pair on both sides, doppelgangers among the four, or one player in all four places.
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { type ChartSeries } from "@/components/charts/LineChart";
@@ -37,7 +38,7 @@ import { getI18n } from "@/messages/server";
 import type { ClubEntry, DoublesHeadToHead, DoublesHeadToHeadPool, GenderGap, PairKind, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { capitalize } from "@/utils/format";
-import { doublesHeadToHeadHref, playerHref } from "@/utils/hrefs";
+import { playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
@@ -48,6 +49,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const FIELDS = ["a1", "a2", "b1", "b2"] as const;
+
+/** Players chosen more than once: the same pair on both sides (AB v AB), one player in all four places,
+ *  or doppelgangers (the extra copies: AA v BC has one, AA v AB and AA v BB two) */
+type Twins = { kind: "samePair" } | { kind: "onePlayer" } | { kind: "doppelgangers"; count: number };
+
+function twinsOf([a1, a2, b1, b2]: number[]): Twins | null {
+  const distinct = new Set([a1, a2, b1, b2]).size;
+  if (distinct === 4) return null;
+  if (distinct === 1) return { kind: "onePlayer" };
+  if (a1 !== a2 && ((a1 === b1 && a2 === b2) || (a1 === b2 && a2 === b1))) return { kind: "samePair" };
+  return { kind: "doppelgangers", count: 4 - distinct };
+}
 
 /** A pair's label with its colour: the key that ties every box to its pair */
 async function PairLabel({ i, className = "" }: { i: number; className?: string }) {
@@ -102,28 +115,21 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head/do
             </fieldset>
           ))}
           <p className="text-center text-gray-600 md:order-2" aria-hidden="true">{t("headToHead.form.vs")}</p>
-          <div className="flex gap-2 md:order-4 md:col-span-3">
+          <div className="md:order-4 md:col-span-3">
             <button type="submit" className="px-4 py-2 border border-black bg-black text-white hover:bg-white hover:text-black transition-colors duration-200 cursor-pointer">{t("headToHead.form.compare")}</button>
-            {h2h && (
-              <Link
-                href={doublesHeadToHeadHref([ids[2]!, ids[3]!], [ids[0]!, ids[1]!])}
-                className="px-4 py-2 border border-black hover:bg-black hover:text-white transition-colors duration-200"
-                title={t("headToHead.form.swapPairs")}
-              >
-                {t("headToHead.form.swap")}
-              </Link>
-            )}
           </div>
         </form>
-        {complete && !h2h && <p className="mt-4 text-red-700">{t(new Set(ids).size < 4 ? "headToHead.form.fourDifferent" : "headToHead.form.notFound")}</p>}
+        {complete && !h2h && <p className="mt-4 text-red-700">{t("headToHead.form.notFound")}</p>}
       </Section>
-      {h2h && <Comparison h2h={h2h} clubs={clubs} links={meta?.tournamentLinks ?? {}} gap={gap} />}
+      {h2h && <Comparison h2h={h2h} twins={twinsOf(ids as number[])} clubs={clubs} links={meta?.tournamentLinks ?? {}} gap={gap} />}
     </>
   );
 }
 
-async function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
-  const { t } = await getI18n();
+async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadToHead; twins: Twins | null; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
+  const { t, plural } = await getI18n();
+  // Facing themselves: never met, as with one player against themselves (../page.tsx)
+  const mirror = twins?.kind === "samePair" || twins?.kind === "onePlayer";
   const kindName = (kind: PairKind) => t(`headToHead.pairs.kinds.${kind}`);
   const pairName = (pair: Player[]) => t("headToHead.pairs.names", { a: pair[0].name, b: pair[1].name });
   const { record } = h2h;
@@ -140,8 +146,8 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; 
                 <PairLabel i={i} />
                 {h2h.kinds[i] && <span className="block text-sm text-gray-600">{capitalize(kindName(h2h.kinds[i]!))}</span>}
               </p>
-              {pair.map((player) => (
-                <div key={player.id} className="mb-2">
+              {pair.map((player, j) => (
+                <div key={j} className="mb-2">
                   <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="hover:text-blue-600">{player.name}</Link></p>
                   {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
                 </div>
@@ -152,9 +158,16 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: DoublesHeadToHead; 
             </div>
           ))}
           <div className="order-2 bg-white px-2 md:px-6 py-4 flex flex-col justify-center max-w-28 sm:max-w-none">
-            <RecordScore record={record} pairs />
+            {mirror ? <p className="text-gray-600">{t("headToHead.self.never")}</p> : <RecordScore record={record} pairs />}
           </div>
         </div>
+        {twins && (
+          <div className="bg-white p-4 md:p-6 mt-4">
+            <p className="text-xl">
+              {twins.kind === "samePair" ? t("headToHead.self.pairJoke") : twins.kind === "onePlayer" ? t("headToHead.self.onePlayer") : plural("headToHead.self.doppelganger", twins.count)}
+            </p>
+          </div>
+        )}
         {h2h.margins.matches > 0 && <MarginsCard margins={h2h.margins} names={names} showPool={pools.length > 1} doubles />}
       </Section>
 
