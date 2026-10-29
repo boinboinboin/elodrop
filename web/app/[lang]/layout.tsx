@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { LanguageProvider } from "@/messages/client";
@@ -9,7 +10,16 @@ import { SITE_URL } from "@/utils/hrefs";
 import { THEME_SCRIPT } from "@/utils/theme";
 import "../globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+// Redaction (SIL Open Font License, app/fonts/redaction/OFL.txt) is self-hosted: it is newer than
+// next/font/google's font list. The files are Google Fonts' latin subset, which has æ, ø and å
+const redaction = localFont({
+  variable: "--font-redaction",
+  src: [
+    { path: "../fonts/redaction/Redaction-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/redaction/Redaction-Italic.woff2", weight: "400", style: "italic" },
+    { path: "../fonts/redaction/Redaction-Bold.woff2", weight: "700", style: "normal" },
+  ],
+});
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 // Both languages are built: Norwegian ("nb", served at the site's root by the rewrites in
@@ -35,7 +45,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
   if (!isLanguage(lang)) notFound();
   return (
     // The theme attribute is set by THEME_SCRIPT before React hydrates, so it may differ from the server's
-    <html lang={lang} className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${redaction.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head>
         {/* The saved colour theme, before the page paints (utils/theme.ts) */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />

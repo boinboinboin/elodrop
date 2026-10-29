@@ -8,7 +8,7 @@ input[type="search"]::-webkit-search-decoration {
 }
 
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-redaction), ui-serif, Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --text-heading-1-desktop: calc(72 / 16 * 1rem);
   --text-heading-1-desktop--line-height: 110%;

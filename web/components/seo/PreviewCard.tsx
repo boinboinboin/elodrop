@@ -1,6 +1,8 @@
 // The picture a shared link shows (Open Graph / X card, 1200×630), drawn by next/og: the elodrop
 // mark, what it is ("Player"), the title, a line under it, up to four numbers with their labels, and
 // the site's address. Used by app/opengraph-image.tsx and the preview.png routes (players, clubs, tournaments).
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import type { I18n } from "@/messages/i18n";
 import { SITE_URL } from "@/utils/hrefs";
@@ -12,11 +14,22 @@ export interface PreviewStat {
   label: string;
 }
 
-export function previewCard(i18n: I18n, { kicker, title, subtitle, stats = [], image }: { kicker?: string; title: string; subtitle?: string; stats?: PreviewStat[]; image?: string | null }) {
+// The site's typeface, Redaction (app/fonts/redaction), as TTF: next/og can't read the site's woff2 files.
+// Read once per server instance
+const fonts = Promise.all(
+  ([["Regular", 400], ["Bold", 700]] as const).map(async ([file, weight]) => ({
+    name: "Redaction",
+    data: await readFile(join(process.cwd(), `app/fonts/redaction/Redaction-${file}.ttf`)),
+    weight,
+    style: "normal" as const,
+  })),
+);
+
+export async function previewCard(i18n: I18n, { kicker, title, subtitle, stats = [], image }: { kicker?: string; title: string; subtitle?: string; stats?: PreviewStat[]; image?: string | null }) {
   const mark = `data:image/svg+xml;base64,${Buffer.from(markSvg(MARK)).toString("base64")}`;
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 72, background: "#ffffff", color: "#111827", borderTop: `16px solid ${ACCENT}` }}>
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 72, fontFamily: "Redaction", background: "#ffffff", color: "#111827", borderTop: `16px solid ${ACCENT}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 36 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={mark} width={64} height={64} alt="" />
@@ -46,6 +59,6 @@ export function previewCard(i18n: I18n, { kicker, title, subtitle, stats = [], i
     ),
     // Drawn on request (one per player, club or tournament), then kept by the CDN for a day, like
     // the pages (the data changes once a night)
-    { ...PREVIEW_SIZE, headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" } },
+    { ...PREVIEW_SIZE, fonts: await fonts, headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800" } },
   );
 }
