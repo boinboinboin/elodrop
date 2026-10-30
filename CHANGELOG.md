@@ -8,9 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
-## v1.19.4 (2026-10-29)
+## v1.19.5 (2026-10-30)
 
 - The site's text is set in Redaction, a serif typeface, instead of Geist. So are the preview pictures shown when a link to the site is shared.
+
+## v1.19.4 (2026-10-30)
+
+- A player's rating graphs no longer stop at their last match in a discipline: the line carries on at the rating they ended on until they go inactive there (12 months without playing), like the ranking graph.
 
 ## v1.19.3 (2026-10-29)
 

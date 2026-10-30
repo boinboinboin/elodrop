@@ -329,7 +329,7 @@ Birth years come from each player's profile on badmintonportalen ("Født 2006"):
 
 At the top of a player's page, one chart shows their national rank at the end of every week since they started, with a line per discipline, and a table of their rank at the end of each season. The weekly rank uses the same rules as the ranking lists: players are ranked by their rating at the end of the week, among players active then (Covid-adjusted), and in mixed doubles among men or among women. The current week is the ranking itself. The chart has a logarithmic scale with #1 at the top, so a climb from #100 to #50 looks as big as one from #20 to #10.
 
-The ranks are in `data/history/<id>.json` (`ranks`, alongside `ratings`; they run on past the last rating week while the player is still active) and the number of ranked players per week in `data/rank-counts.json`. Each history also has `seasons`, the rating, club, rank and number of ranked players at the end of each season, precomputed by `rate.mjs` for the tables on the player page.
+The ranks are in `data/history/<id>.json` (`ranks`, alongside `ratings`). Both run on past the last week played while the player is still active, with the rating it ended on, so a discipline's graph ends when the player goes inactive in it (a rating above 1850 runs on to the current week, as it keeps [decaying](#not-playing-penalty)) and the number of ranked players per week in `data/rank-counts.json`. Each history also has `seasons`, the rating, club, rank and number of ranked players at the end of each season, precomputed by `rate.mjs` for the tables on the player page.
 
 ### Club history
 
