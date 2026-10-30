@@ -238,7 +238,7 @@ async function Content() {
                               <td className="py-2 pr-4">
                                 {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
                                 {p.loanFrom && (
-                                  <span className="ml-1 text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.team.loanFrom", { club: p.loanFrom })}</span>
+                                  <span className="ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.team.loanFrom", { club: p.loanFrom })}</span>
                                 )}
                                 {!p.rated && <span className="block text-sm text-gray-500">{t("eliteserien.team.noRatedMatches")}</span>}
                               </td>

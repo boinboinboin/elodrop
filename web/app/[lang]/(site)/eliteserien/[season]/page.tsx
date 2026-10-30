@@ -241,7 +241,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                                 })}
                               </span>
                             )}
-                            {upset && <span className="ml-1 text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700">{t("eliteserien.review.ties.upset")}</span>}
+                            {upset && <span className="ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700">{t("eliteserien.review.ties.upset")}</span>}
                           </td>
                         </tr>
                       );

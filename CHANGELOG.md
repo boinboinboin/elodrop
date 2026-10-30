@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.6 (2026-10-30)
+
+- Labels such as "New", "Improved", seeds and "Withdrew" are set in the monospace font, like version numbers.
+- Fixed: the colour theme you picked could switch back to black and white when you went to another page.
+- Fixed: labels beside a name (such as "Not played" on the tournament list, or a loan in Eliteserien) sat a little below the middle of the line.
+
 ## v1.19.5 (2026-10-30)
 
 - The site's text is set in Redaction, a serif typeface, instead of Geist. So are the preview pictures shown when a link to the site is shared.

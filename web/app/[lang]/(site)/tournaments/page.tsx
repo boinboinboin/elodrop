@@ -52,7 +52,7 @@ async function Row({ tournament: tour }: { tournament: TournamentSummary }) {
       <div>
         <Link href={tournamentHref(tour.cup2000Id)} className="text-xl hover:text-blue-600">{tour.name}</Link>
         {tour.cancelled && (
-          <span className="ml-2 align-middle text-xs px-1.5 py-0.5 border border-red-700 text-red-700 rounded" title={reason ?? undefined}>{t("tournaments.list.notPlayed")}</span>
+          <span className="ml-2 align-[0.18em] font-mono text-xs px-1.5 py-0.5 border border-red-700 text-red-700 rounded" title={reason ?? undefined}>{t("tournaments.list.notPlayed")}</span>
         )}
         <span className="block text-sm text-gray-600">{facts.filter(Boolean).join(" · ")}</span>
       </div>

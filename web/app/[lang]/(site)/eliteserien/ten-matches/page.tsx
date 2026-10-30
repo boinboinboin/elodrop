@@ -268,7 +268,7 @@ async function Content() {
                               <td className="py-2 pr-4 text-sm text-gray-600 whitespace-nowrap">
                                 <SlotName slot={s.key} />
                                 {/* Under the short name on phones, beside the full name from sm up */}
-                                {s.added && <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700">{t("eliteserien.tenMatches.team.new")}</span>}
+                                {s.added && <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700">{t("eliteserien.tenMatches.team.new")}</span>}
                               </td>
                               <td className="py-2 pr-4">
                                 {l.players.map((key: number | string, i: number) => {
@@ -307,7 +307,7 @@ async function Content() {
                               <td className="py-2 pr-4">
                                 {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
                                 {/* Under the name on phones, beside it from sm up */}
-                                {p.added && <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.tenMatches.team.added")}</span>}
+                                {p.added && <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 sm:align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.tenMatches.team.added")}</span>}
                               </td>
                               <td className="py-2 pr-4 text-sm text-gray-600">{slotNames(p.eight)}</td>
                               <td className="py-2 text-sm">{slotNames(p.ten)}</td>

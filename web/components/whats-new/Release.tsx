@@ -52,7 +52,7 @@ export default async function Release({ release, color }: { release: ReleaseData
 export const KindBadge = async ({ feature }: { feature: boolean }) => {
   const { t } = await getI18n();
   return feature ? (
-    <span className="inline-block text-xs px-1.5 py-0.5 border border-black rounded bg-black text-white">{t("whatsNew.feature")}</span>
+    <span className="inline-block font-mono text-xs px-1.5 py-0.5 border border-black rounded bg-black text-white">{t("whatsNew.feature")}</span>
   ) : (
     <Badge>{t("whatsNew.improvement")}</Badge>
   );
