@@ -28,7 +28,7 @@ import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
 import { logoSrc } from "@/utils/clubs";
-import { EMPTY, seasonLabel } from "@/utils/format";
+import { addDays, EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
@@ -331,8 +331,10 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
         </StatCard>
       </dl>
 
+      {/* The weekly ratings run on past the last match while the player is active (with the rating it
+          ended on), so the range ends where the graph does */}
       {history && history.ratings.length > 1 && (
-        <Card title={t("players.discipline.ratingHistory")} subtitle={t("players.discipline.ratingHistoryRange", { from: date(p.firstPlayed, "monthYear"), to: date(p.lastPlayed, "monthYear") })}>
+        <Card title={t("players.discipline.ratingHistory")} subtitle={t("players.discipline.ratingHistoryRange", { from: date(p.firstPlayed, "monthYear"), to: date(addDays(history.from, 7 * history.ratings.length - 1), "monthYear") })}>
           <LineChart series={[{ label: pools[pool], from: history.from, values: history.ratings, clubs: history.clubs ?? [] }]} label={t("players.discipline.rating")} className="relative h-72" />
           {/* Table view of the chart: rating at the end of each season (July to June), precomputed by rate.mjs */}
           <Disclosure summary={t("players.discipline.ratingBySeason")} className="mt-4">
