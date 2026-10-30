@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.4 (2026-10-30)
+
+- A player's rating graphs no longer stop at their last match in a discipline: the line carries on at the rating they ended on until they go inactive there (12 months without playing), like the ranking graph.
+
 ## v1.19.3 (2026-10-29)
 
 - Clicking the logo (or any link to the front page) in Norwegian showed the "Out!" page instead of the front page. It goes to the front page again.

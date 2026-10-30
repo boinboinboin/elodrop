@@ -670,13 +670,22 @@ export function computeRatings(
   flush();
 
   const today = new Date().toISOString().slice(0, 10);
+  const thisWeek = weekStart(today);
+  // The last week a player who last played on `day` is still active at its end (as for the weekly
+  // ranks: counted from the end of the week played, Covid-adjusted), at most the current week
+  const lastActiveWeek = (day) => {
+    const played = addDays(weekStart(day), 7);
+    let week = weekStart(day);
+    while (week < thisWeek && R.inactiveDays(played, addDays(week, 14)) <= R.RANKING_ACTIVE_DAYS) week = addDays(week, 7);
+    return week;
+  };
   for (const [pool, map] of Object.entries(players)) {
     for (const p of map.values()) {
-      // Weekly series run to the last played week; after that the rating stays the same.
+      // Weekly series run on while the player is active, with the rating staying the same.
       // Ratings above the floor keep decaying while inactive, so those run to the current week.
       const floor = typeof inactivity.floor === "function" ? inactivity.floor(pool) : inactivity.floor;
       const decays = inactivity.halfLifeDays && p.rating > floor;
-      closeWeeks(p, addDays(weekStart(decays ? today : p.lastPlayed), 7));
+      closeWeeks(p, addDays(decays ? thisWeek : lastActiveWeek(p.lastPlayed), 7));
       applyInactivity(p, today);
       p.rd = R.rdAfterTime(p.rd, (toTime(today) - toTime(p.rdDay)) / DAY_MS, rdMax(pool));
     }
