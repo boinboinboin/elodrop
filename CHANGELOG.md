@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.19.7 (2026-10-30)
+
+- Fixed: security warnings from `pnpm audit` in the Sanity command-line tools, by moving js-yaml, smol-toml, uuid and undici to patched versions. `pnpm audit` now reports no known vulnerabilities.
+
 ## v1.19.6 (2026-10-30)
 
 - Labels such as "New", "Improved", seeds and "Withdrew" are set in the monospace font, like version numbers.
