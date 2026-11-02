@@ -116,6 +116,27 @@
     "noChances": "{list}, so there are no chances to compare.",
     "differentDisciplines": "The pairs don't play in the same doubles discipline, so their ratings can't be compared."
   },
+  "calculator": {
+    "title": "What would a match do?",
+    "intro": "Type in a score, up to three sets, to see how much both ratings would change.",
+    "set": "Set {n}",
+    "points": "{name}'s points in set {n}",
+    "empty": "Type in a score to see the rating changes.",
+    "undecided": "Not decided yet: a match is won by the first to two sets, and a set can't end level.",
+    "walkover": "15-0, 15-0 counts as a walkover entered as a score, and walkovers are not rated.",
+    "wins": "{name} wins",
+    "upset": "Upset",
+    "close": "Close match",
+    "typical": "Typical margin",
+    "big": "Big win",
+    "newRating": "{from} → {to}",
+    "note": "Rated as a top-level match (SEN A, E or X) between clubs in the same region. Lower classes move fewer points, matches between regions 1.5 times as many.",
+    "noteDoubles": "Rated as a top-level match (SEN A, E or X) between clubs in the same region. Each pair plays at the average of its players' ratings, and shares its change between them by how certain their ratings are: a less established player takes more of it. Lower classes move fewer points, matches between regions 1.5 times as many.",
+    "expected": "As expected",
+    "weight": "counts ×{weight}",
+    "weightTitle": "The margin of victory weight: a close match moves fewer points, a big win more",
+    "sets": "Sets"
+  },
   "fun": {
     "title": "Just for fun",
     "intro": "Men and women are rated in separate disciplines, so their ratings can't be compared as they are. Here are {a}'s and {b}'s chances if they did, with the woman's rating moved onto the men's scale. In doubles, the chance is with equally rated partners.",

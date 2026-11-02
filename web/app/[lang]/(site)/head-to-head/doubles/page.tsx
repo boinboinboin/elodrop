@@ -1,8 +1,9 @@
 // Two doubles pairs head to head (?a1=<id>&a2=<id>&b1=<id>&b2=<id>): their record against each
 // other and each pair's record together, winning margins, and in the doubles discipline the pairs'
 // genders put them in (two men's pairs: men's doubles, two mixed pairs: mixed doubles, ...) the
-// pairs' ratings (the average of the partners'), pair A's chance of beating pair B now and both pairs'
-// rating histories; then the matches. Pairs that don't play in the same discipline (a men's pair
+// pairs' ratings (the average of the partners'), pair A's chance of beating pair B now, both pairs'
+// rating histories and (four different players) a calculator of what a match with a given score would
+// do to the four ratings; then the matches. Pairs that don't play in the same discipline (a men's pair
 // against a women's or mixed pair) get a comparison just for fun on the men's doubles scale, with
 // women's ratings moved onto it by the gender gap (pipeline/gender-gap.mjs). Pair A is blue and
 // pair B orange throughout. A player chosen more than once gets a comparison all the same, with a
@@ -20,6 +21,7 @@ import MarginsTable from "@/components/head-to-head/MarginsTable";
 import PlayerPicker from "@/components/head-to-head/PlayerPicker";
 import RatingHistory from "@/components/head-to-head/RatingHistory";
 import RecordScore, { recordSentence } from "@/components/head-to-head/RecordScore";
+import ScoreCalculator, { type CalculatorSide } from "@/components/head-to-head/ScoreCalculator";
 import SideNumbers from "@/components/head-to-head/SideNumbers";
 import SideRating from "@/components/head-to-head/SideRating";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -174,7 +176,7 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
       {pools.length > 0 ? (
         <Section title={t("headToHead.now.title")} titleClassName="text-3xl mb-2">
           <p className="text-gray-700 mb-6 max-w-3xl">{t("headToHead.now.introDoubles")}</p>
-          <Tabs label={t("headToHead.now.tabs")} param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison pool={pool} p={p} h2h={h2h} names={names} showMargins={pools.length > 1} /> }))} />
+          <Tabs label={t("headToHead.now.tabs")} param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison pool={pool} p={p} h2h={h2h} names={names} showMargins={pools.length > 1} calculator={!twins} /> }))} />
         </Section>
       ) : h2h.crossover ? (
         <Section title={t("headToHead.fun.title")} titleClassName="text-3xl mb-2">
@@ -197,8 +199,12 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
   );
 }
 
-/** `pool`: the discipline compared, null for the crossover (everyone on the men's doubles scale) */
-async function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool | null; p: DoublesHeadToHeadPool; h2h: DoublesHeadToHead; names: [string, string]; showMargins: boolean }) {
+/**
+ * `pool`: the discipline compared, null for the crossover (everyone on the men's doubles scale);
+ * `calculator`: what a match would do to the four ratings (four different players, in a discipline
+ * they're rated in)
+ */
+async function PoolComparison({ pool, p, h2h, names, showMargins, calculator = false }: { pool: Pool | null; p: DoublesHeadToHeadPool; h2h: DoublesHeadToHead; names: [string, string]; showMargins: boolean; calculator?: boolean }) {
   const i18n = await getI18n();
   const { t, plural } = i18n;
   const { crossover } = p;
@@ -241,6 +247,11 @@ async function PoolComparison({ pool, p, h2h, names, showMargins }: { pool: Pool
           </p>
         )}
       </div>
+      {calculator && !crossover && (
+        <ScoreCalculator
+          sides={[p.a, p.b].map((pair, i) => ({ name: names[i], players: pair.map((side, j) => ({ name: players[i][j].name, rating: side.rating, rd: side.entry.rd })) })) as [CalculatorSide, CalculatorSide]}
+        />
+      )}
       {showMargins && p.margins.matches > 0 && poolInText && (
         <>
           <h4 className="text-lg mt-8 mb-2">{t("headToHead.margins.inPool", { pool: poolInText })}</h4>

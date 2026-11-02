@@ -116,6 +116,27 @@
     "noChances": "{list}, så det er ingen sjanser å sammenligne.",
     "differentDisciplines": "Parene spiller ikke i samme doubledisiplin, så ratingene kan ikke sammenlignes."
   },
+  "calculator": {
+    "title": "Hva ville en kamp gjort?",
+    "intro": "Skriv inn et resultat, opptil tre sett, for å se hvor mye begge ratingene ville endret seg.",
+    "set": "Sett {n}",
+    "points": "{name}s poeng i sett {n}",
+    "empty": "Skriv inn et resultat for å se ratingendringene.",
+    "undecided": "Ikke avgjort ennå: kampen vinnes av den som først vinner to sett, og et sett kan ikke ende likt.",
+    "walkover": "15-0, 15-0 regnes som en walkover ført som resultat, og walkovers rates ikke.",
+    "wins": "{name} vinner",
+    "upset": "Overraskelse",
+    "close": "Jevn kamp",
+    "typical": "Typisk margin",
+    "big": "Stor seier",
+    "newRating": "{from} → {to}",
+    "note": "Ratet som en kamp på toppnivå (SEN A, E eller X) mellom klubber i samme krets. Lavere klasser flytter færre poeng, kamper mellom kretser 1,5 ganger så mange.",
+    "noteDoubles": "Ratet som en kamp på toppnivå (SEN A, E eller X) mellom klubber i samme krets. Hvert par spiller på snittet av spillernes ratinger, og deler endringen mellom dem etter hvor sikre ratingene er: en mindre etablert spiller tar mer av den. Lavere klasser flytter færre poeng, kamper mellom kretser 1,5 ganger så mange.",
+    "expected": "Som ventet",
+    "weight": "teller ×{weight}",
+    "weightTitle": "Vekten for seiersmarginen: en jevn kamp flytter færre poeng, en stor seier flere",
+    "sets": "Sett"
+  },
   "fun": {
     "title": "Bare for moro skyld",
     "intro": "Herrer og damer rates i hver sine disipliner, så ratingene kan ikke sammenlignes direkte. Her er {a}s og {b}s sjanser hvis de kunne det, med damens rating flyttet over på herreskalaen. I double gjelder sjansen med like høyt ratede makkere.",

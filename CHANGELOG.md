@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.20.0 (2026-11-02)
+
+- Head to head: a calculator of what a match would do to the ratings, under "What would a match do?" in each discipline. Type in a score, up to three sets, to see the winner, each player's points gained or lost and their new rating. Close matches move fewer points and big wins more, as in the real ratings. It's in the singles tabs of the players' head to head, and in the pairs' head to head when all four players are different, where each pair's change is shared between the partners as in the real ratings. Rated as a top-level match between clubs in the same region.
+
 ## v1.19.7 (2026-10-30)
 
 - Fixed: security warnings from `pnpm audit` in the Sanity command-line tools, by moving js-yaml, smol-toml, uuid and undici to patched versions. `pnpm audit` now reports no known vulnerabilities.

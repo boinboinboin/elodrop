@@ -1,6 +1,7 @@
 // Two players head to head (?a=<id>&b=<id>): their record against each other and together,
 // winning margins, and per discipline both play their ratings, A's chance of beating B now and
-// both rating histories; then the matches. A man and a woman also get a comparison just for fun in
+// both rating histories, and in singles a calculator of what a match with a given score would do to
+// both ratings; then the matches. A man and a woman also get a comparison just for fun in
 // singles and doubles, with her rating moved onto the men's scale by the gender gap
 // (pipeline/gender-gap.mjs). A player against themselves gets a card of their own instead of an error.
 import type { Metadata } from "next";
@@ -16,6 +17,7 @@ import MarginsTable from "@/components/head-to-head/MarginsTable";
 import PlayerPicker from "@/components/head-to-head/PlayerPicker";
 import RatingHistory from "@/components/head-to-head/RatingHistory";
 import RecordScore, { recordSentence } from "@/components/head-to-head/RecordScore";
+import ScoreCalculator, { type CalculatorSide } from "@/components/head-to-head/ScoreCalculator";
 import SideNumbers from "@/components/head-to-head/SideNumbers";
 import SideRating, { rankText } from "@/components/head-to-head/SideRating";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -33,6 +35,7 @@ import { getI18n } from "@/messages/server";
 import type { ClubEntry, GenderGap, HeadToHead, HeadToHeadCrossover, HeadToHeadPool, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { playerHref } from "@/utils/hrefs";
+import { DOUBLES_POOLS } from "@/utils/pools";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 
@@ -206,6 +209,10 @@ async function PoolComparison({ pool, p, a, b, showMargins }: { pool: Pool; p: H
         <ChanceBar names={[a.name, b.name]} chance={p.chance} />
         {p.record.matches > 0 && <p className="text-sm text-gray-600 mt-2">{recordSentence(i18n, plural("headToHead.record.metIn", p.record.matches, { pool: poolInText }), a.name, p.record)}</p>}
       </div>
+      {/* Singles only: in doubles the change depends on the partners (the pairs' page has it) */}
+      {!DOUBLES_POOLS.includes(pool) && (
+        <ScoreCalculator sides={[a, b].map((player, i) => ({ name: player.name, players: [{ name: player.name, rating: [p.a, p.b][i].rating, rd: [p.a, p.b][i].rd }] })) as [CalculatorSide, CalculatorSide]} />
+      )}
       {showMargins && p.margins.matches > 0 && (
         <>
           <h4 className="text-lg mt-8 mb-2">{t("headToHead.margins.inPool", { pool: poolInText })}</h4>
