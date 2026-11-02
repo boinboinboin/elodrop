@@ -22,20 +22,19 @@
   "matches": "Matches",
   "match": {
     "loading": "Loading the team match…",
-    "chances": "Chances before, with the lineups played",
-    "chancesTitle": "From each match's win chance, from the players' ratings right before it",
-    "wins": "{team} wins",
+    "chances": "Chances before",
+    "chancesTitle": "With the lineups played: from each match's win chance, from the players' ratings right before it",
     "draw": "Draw",
     "notRated": "None of its matches were rated, so there's no chance to show.",
     "noMatches": "The matches of this team match aren't available.",
-    "match": "Match",
-    "score": "Score",
-    "chance": "Chance",
-    "chanceTitle": "The home side's chance of winning the match, from the ratings right before it",
+    "chanceTitle": "Each side's chance of winning the match, from the ratings right before it",
     "walkover": "Walkover",
     "notPlayed": "Not played",
     "headToHead": "head to head",
     "upsetTitle": "Won with less than an even chance, between settled players",
-    "explanation": "Each player is shown with their rating before the match and the rating it gained or cost them. The chance is the home side's chance of winning the match. Walkovers count as won by the side given them; matches not rated count for neither side."
+    "explanation": "Each player is shown with their rating before the match and the rating it gained or cost them. The bar under the score is each side's chance of winning the match, from the ratings right before it. Walkovers count as won by the side given them; matches not rated count for neither side.",
+    "won": "{team} won",
+    "expected": "Expected score with the lineups played: {home}–{away}",
+    "goldenSet": "Golden set"
   }
 }

@@ -6,18 +6,19 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
+import ChanceBar from "@/components/head-to-head/ChanceBar";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PlayerLine from "@/components/players/PlayerLine";
 import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
-import StatCard from "@/components/ui/StatCard";
-import { ROW, STICKY_HEAD } from "@/components/ui/styles";
+import Swatch from "@/components/ui/Swatch";
 import { getClubMap } from "@/data/sanity";
 import { getTeamMatch } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
-import type { ClubEntry, TeamMatchGame, TeamMatchPlayer } from "@/types";
+import type { ClubEntry, TeamMatchGame } from "@/types";
+import { SIDE_COLORS } from "@/utils/chart";
 import { doublesHeadToHeadHref, headToHeadHref, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
@@ -47,19 +48,19 @@ export default async function TeamMatchPage(props: PageProps<"/[lang]/team-match
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[id]">, "params">) {
-  const { t, date, pct, pools, poolCodes } = await getI18n();
+  const { t, date, num } = await getI18n();
   const id = parseId((await params).id);
   const [tie, clubs] = await Promise.all([id === null ? null : getTeamMatch(id), getClubMap()]);
   if (!tie) notFound();
   // The start time, when known ("12:00"; some only have the day)
   const time = tie.time.length > 10 ? tie.time.slice(11, 16) : null;
-  // A draw can't happen with an odd number of matches or a golden set
-  const canDraw = !!tie.winChance && tie.winChance.draw > 0;
   const week = getISOWeek(parseISO(tie.week));
-  const homeWon = tie.winner === 1;
-  const awayWon = tie.winner === 2;
-  /** "1. HS" as "MS1" (phones) and "Men's singles 1" */
-  const number = (game: string) => game.match(/^(\d+)\./)?.[1] ?? "";
+  const names: [string, string] = [tie.home, tie.away];
+  // The expected score with the lineups played: the rated matches' chances plus the walkovers
+  const rated = tie.games.filter((g) => g.winChance != null);
+  const walkovers = [1, 2].map((side) => tie.games.filter((g) => g.walkover && g.winner === side).length);
+  const expectedHome = rated.reduce((sum, g) => sum + (g.winChance ?? 0), 0) + walkovers[0];
+  const expectedAway = rated.length - (expectedHome - walkovers[0]) + walkovers[1];
   const golden = tie.goldenSet;
 
   return (
@@ -72,101 +73,58 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
             { label: `${tie.home} – ${tie.away}` },
           ]}
         />
-        <p className="mt-4 text-gray-600">
-          {tie.division} · {tie.group}
-        </p>
-        <h1 className="h1 mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <Team name={tie.home} club={tie.homeClub} clubs={clubs} size={10} className={homeWon ? "" : "font-normal"} />
-          <span className="text-gray-500">–</span>
-          <Team name={tie.away} club={tie.awayClub} clubs={clubs} size={10} className={awayWon ? "" : "font-normal"} />
-        </h1>
-        <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span className="text-4xl sm:text-5xl font-semibold tabular-nums">
-            {tie.score[0]}–{tie.score[1]}
-          </span>
-          {tie.upset && <span title={t("teamMatches.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span>}
-        </p>
+        <h1 className="h1 mt-4">{tie.home} – {tie.away}</h1>
         <p className="mt-2 text-gray-600">
-          <time dateTime={tie.time}>{date(tie.day, "long")}{time && time !== "00:00" && `, ${time}`}</time>
+          {tie.division} · {tie.group} · <time dateTime={tie.time}>{date(tie.day, "long")}{time && time !== "00:00" && `, ${time}`}</time>
         </p>
-        {golden && (
-          <p className="mt-1 text-gray-600">
-            {t("eliteserien.review.ties.goldenSet", {
-              discipline: golden.pool ? poolCodes[golden.pool] : "",
-              side1: golden.side1.map((p) => p.name).join(" / "),
-              side2: golden.side2.map((p) => p.name).join(" / "),
-              score: golden.score.replaceAll("/", "–"),
-            })}
-          </p>
-        )}
+
+        {/* The scoreboard: the teams in their colours either side of the score, then the chances before */}
+        <div className="bg-white p-4 md:p-6 mt-6">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-6 items-center text-center [overflow-wrap:anywhere]">
+            {[0, 1].map((i) => (
+              <div key={i} className={i === 0 ? "order-1" : "order-3"}>
+                <Swatch color={SIDE_COLORS[i]} className="w-8 h-1 mb-3" />
+                <p className={`text-lg sm:text-2xl ${tie.winner === i + 1 ? "font-semibold" : ""}`}>
+                  <Team name={names[i]} club={i === 0 ? tie.homeClub : tie.awayClub} clubs={clubs} size={12} stacked />
+                </p>
+              </div>
+            ))}
+            <div className="order-2 px-1 sm:px-4">
+              <p className="text-5xl sm:text-6xl font-semibold tabular-nums whitespace-nowrap">
+                {tie.score[0]}<span className="text-gray-400 mx-1 sm:mx-2">–</span>{tie.score[1]}
+              </p>
+              <p className="text-sm text-gray-600 mt-1">{tie.winner ? t("teamMatches.match.won", { team: names[tie.winner - 1] }) : t("teamMatches.match.draw")}</p>
+              {tie.upset && <p className="mt-2" title={t("teamMatches.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></p>}
+            </div>
+          </div>
+          {tie.games.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-lg mb-3" title={t("teamMatches.match.chancesTitle")}>{t("teamMatches.match.chances")}</h2>
+              {tie.winChance ? (
+                <>
+                  <ChanceBar names={names} chance={tie.winChance.win} draw={tie.winChance.draw} />
+                  <p className="text-sm text-gray-600 mt-2 tabular-nums">{t("teamMatches.match.expected", { home: num(expectedHome, 1), away: num(expectedAway, 1) })}</p>
+                </>
+              ) : (
+                <p className="text-gray-600">{t("teamMatches.match.notRated")}</p>
+              )}
+            </div>
+          )}
+        </div>
       </Section>
 
-      {tie.games.length > 0 && (
-        <Section title={t("teamMatches.match.chances")} titleClassName="text-2xl mb-4">
-          {tie.winChance ? (
-            <dl className={`grid gap-3 ${canDraw ? "sm:grid-cols-3" : "sm:grid-cols-2"}`} title={t("teamMatches.match.chancesTitle")}>
-              <StatCard label={t("teamMatches.match.wins", { team: tie.home })}>{pct(tie.winChance.win)}</StatCard>
-              {canDraw && <StatCard label={t("teamMatches.match.draw")}>{pct(tie.winChance.draw)}</StatCard>}
-              <StatCard label={t("teamMatches.match.wins", { team: tie.away })}>{pct(tie.winChance.loss)}</StatCard>
-            </dl>
-          ) : (
-            <p className="text-gray-600">{t("teamMatches.match.notRated")}</p>
-          )}
-        </Section>
-      )}
-
-      <Section title={t("teamMatches.matches")} titleClassName="text-2xl mb-2" intro={tie.games.length > 0 ? t("teamMatches.match.explanation") : undefined}>
+      <Section title={t("teamMatches.matches")} titleClassName="text-3xl mb-2" intro={tie.games.length > 0 ? t("teamMatches.match.explanation") : undefined}>
         {tie.games.length ? (
-          <div className="bg-white overflow-x-clip">
-            <table className="w-full text-left">
-              <thead className={STICKY_HEAD}>
-                <tr>
-                  <th scope="col" className="py-2 pl-2 pr-1 sm:px-4 font-normal">{t("teamMatches.match.match")}</th>
-                  <th scope="col" className="py-2 px-2 sm:px-4 font-normal">
-                    {tie.home}
-                    <span className="sm:hidden"> – {tie.away}</span>
-                  </th>
-                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal">{tie.away}</th>
-                  <th scope="col" className="py-2 px-2 sm:px-4 font-normal text-right">{t("teamMatches.match.score")}</th>
-                  <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal text-right" title={t("teamMatches.match.chanceTitle")}>{t("teamMatches.match.chance")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tie.games.map((g, i) => (
-                  <tr key={i} className={`${ROW} align-top`}>
-                    <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap">
-                      {g.pool ? (
-                        <>
-                          <abbr className="sm:hidden no-underline" title={`${pools[g.pool]} ${number(g.game)}`}>{poolCodes[g.pool]}{number(g.game)}</abbr>
-                          <span className="hidden sm:inline">{pools[g.pool]} {number(g.game)}</span>
-                        </>
-                      ) : (
-                        g.game
-                      )}
-                      <HeadToHead g={g} />
-                    </td>
-                    {/* On phones both sides in one cell, home above away */}
-                    <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                      <Side players={g.side1} won={g.winner === 1} clubs={clubs} />
-                      <span className="sm:hidden block text-sm text-gray-500">–</span>
-                      <span className="sm:hidden">
-                        <Side players={g.side2} won={g.winner === 2} clubs={clubs} />
-                      </span>
-                    </td>
-                    <td className="hidden sm:table-cell py-2 px-4">
-                      <Side players={g.side2} won={g.winner === 2} clubs={clubs} />
-                    </td>
-                    <td className="py-2 px-2 sm:px-4 text-right tabular-nums">
-                      <Score g={g} />
-                      {g.winChance != null && <span className="sm:hidden block text-sm text-gray-500" title={t("teamMatches.match.chanceTitle")}>{pct(g.winChance)}</span>}
-                      {g.upset && <span className="block mt-1" title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span>}
-                    </td>
-                    <td className="hidden sm:table-cell py-2 px-4 text-right tabular-nums">{g.winChance != null ? pct(g.winChance) : ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ol className="grid gap-2">
+            {tie.games.map((g, i) => <GameRow key={i} g={g} clubs={clubs} />)}
+            {golden && (
+              <GameRow
+                g={{ game: "", pool: golden.pool, side1: golden.side1, side2: golden.side2, winner: golden.winner, score: golden.score, walkover: false, winChance: null, upset: false }}
+                label={t("teamMatches.match.goldenSet")}
+                clubs={clubs}
+              />
+            )}
+          </ol>
         ) : (
           <p className="text-gray-600">{t("teamMatches.match.noMatches")}</p>
         )}
@@ -175,26 +133,60 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
   );
 }
 
-/** A side's players, one per line, with their rating before and its change; the winners bold */
-function Side({ players, won, clubs }: { players: TeamMatchPlayer[]; won: boolean; clubs: Record<string, ClubEntry> }) {
-  return players.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={won} rating />);
+/**
+ * One match as a row of the scoreboard: the discipline on the left and the head to head link on the
+ * right along the top, then the home side on the left, the away side on the right (the winners bold)
+ * and between them the sets (side by side from md up) and the sides' chances as a bar
+ */
+async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<string, ClubEntry>; label?: string }) {
+  const { t, pct, pools, poolCodes } = await getI18n();
+  const n = g.game.match(/^(\d+)\./)?.[1] ?? "";
+  const name = label ?? (g.pool ? `${pools[g.pool]} ${n}` : g.game);
+  const code = label ?? (g.pool ? `${poolCodes[g.pool]}${n}` : g.game);
+  return (
+    <li className="bg-white p-3 sm:p-4">
+      <div className="flex items-baseline justify-between gap-2 mb-2">
+        <abbr className="font-mono text-xs text-gray-600 no-underline" title={name}>{code}</abbr>
+        <HeadToHead g={g} />
+      </div>
+      {/* The middle has a fixed width, so every match's chance bar is as long */}
+      <div className="grid grid-cols-[minmax(0,1fr)_6rem_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_11rem_minmax(0,1fr)] gap-2 sm:gap-6 items-center max-sm:[overflow-wrap:anywhere]">
+        <div>
+          {g.side1.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 1} muted={g.winner === 2} rating />)}
+        </div>
+        <div className="text-center">
+          <Score g={g} />
+          {g.winChance != null && (
+            <div className="mt-1.5" title={t("teamMatches.match.chanceTitle")}>
+              <div className="flex h-1.5 gap-0.5" role="img" aria-label={`${pct(g.winChance)} – ${pct(1 - g.winChance)}`}>
+                <div className="rounded-l" style={{ width: `${(g.winChance * 100).toFixed(1)}%`, background: SIDE_COLORS[0] }} />
+                <div className="rounded-r flex-1" style={{ background: SIDE_COLORS[1] }} />
+              </div>
+              <div className="flex justify-between gap-2 text-xs text-gray-500 tabular-nums mt-0.5" aria-hidden="true">
+                <span>{pct(g.winChance)}</span>
+                <span>{pct(1 - g.winChance)}</span>
+              </div>
+            </div>
+          )}
+          {g.upset && <p className="mt-1" title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></p>}
+        </div>
+        <div>
+          {g.side2.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 2} muted={g.winner === 1} rating right />)}
+        </div>
+      </div>
+    </li>
+  );
 }
 
-/** The sets, one per line on phones ("21–12"), or why there's no score */
+/** The sets ("21–12"), one per line on phones and side by side from md up, or why there's no score */
 async function Score({ g }: { g: TeamMatchGame }) {
   const { t } = await getI18n();
-  if (g.walkover) return <span className="text-sm text-gray-600">{t("teamMatches.match.walkover")}</span>;
-  if (!g.winner || !g.score) return <span className="text-sm text-gray-600">{t("teamMatches.match.notPlayed")}</span>;
-  const sets = g.score.split(",").map((set) => set.replace("/", "–"));
+  if (g.walkover) return <p className="text-sm text-gray-600">{t("teamMatches.match.walkover")}</p>;
+  if (!g.winner || !g.score) return <p className="text-sm text-gray-600">{t("teamMatches.match.notPlayed")}</p>;
   return (
-    <span className="whitespace-nowrap">
-      {sets.map((set, i) => (
-        <span key={i} className="block sm:inline">
-          {set}
-          {i < sets.length - 1 && <span className="hidden sm:inline">, </span>}
-        </span>
-      ))}
-    </span>
+    <p className="tabular-nums leading-snug md:flex md:justify-center md:gap-3">
+      {g.score.split(",").map((set, i) => <span key={i} className="block whitespace-nowrap">{set.replace("/", "–")}</span>)}
+    </p>
   );
 }
 
@@ -204,5 +196,5 @@ async function HeadToHead({ g }: { g: TeamMatchGame }) {
   const [a, b] = [g.side1.map((p) => p.id), g.side2.map((p) => p.id)];
   const href =
     a.length === 1 && b.length === 1 ? headToHeadHref(a[0], b[0]) : a.length === 2 && b.length === 2 && new Set([...a, ...b]).size === 4 ? doublesHeadToHeadHref(a, b) : null;
-  return href && <Link href={href} className="block text-sm text-gray-600 underline hover:text-blue-600">{t("teamMatches.match.headToHead")}</Link>;
+  return href && <Link href={href} className="text-xs text-gray-600 underline hover:text-blue-600 whitespace-nowrap">{t("teamMatches.match.headToHead")}</Link>;
 }

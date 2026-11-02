@@ -22,20 +22,19 @@
   "matches": "Kamper",
   "match": {
     "loading": "Laster lagkampen…",
-    "chances": "Sjansene før, med oppstillingene som ble brukt",
-    "chancesTitle": "Fra hver kamps seierssjanse, ut fra spillernes ratinger rett før den",
-    "wins": "{team} vinner",
+    "chances": "Sjansene før",
+    "chancesTitle": "Med oppstillingene som ble brukt: fra hver kamps seierssjanse, ut fra spillernes ratinger rett før den",
     "draw": "Uavgjort",
     "notRated": "Ingen av kampene ble ratet, så det er ingen sjanse å vise.",
     "noMatches": "Kampene i denne lagkampen er ikke tilgjengelige.",
-    "match": "Kamp",
-    "score": "Resultat",
-    "chance": "Sjanse",
-    "chanceTitle": "Hjemmesidens sjanse til å vinne kampen, ut fra ratingene rett før den",
+    "chanceTitle": "Hver sides sjanse til å vinne kampen, ut fra ratingene rett før den",
     "walkover": "Walkover",
     "notPlayed": "Ikke spilt",
     "headToHead": "head to head",
     "upsetTitle": "Vunnet med under jevn sjanse, mellom etablerte spillere",
-    "explanation": "Hver spiller vises med ratingen før kampen og ratingen kampen ga eller kostet. Sjansen er hjemmesidens sjanse til å vinne kampen. Walkover teller som seier for siden som fikk den; kamper som ikke ble ratet teller for ingen."
+    "explanation": "Hver spiller vises med ratingen før kampen og ratingen kampen ga eller kostet. Linjen under resultatet er hver sides sjanse til å vinne kampen, ut fra ratingene rett før den. Walkover teller som seier for siden som fikk den; kamper som ikke ble ratet teller for ingen.",
+    "won": "{team} vant",
+    "expected": "Forventet resultat med oppstillingene som ble brukt: {home}–{away}",
+    "goldenSet": "Gullsett"
   }
 }
