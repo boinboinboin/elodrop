@@ -109,7 +109,9 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
               e.preventDefault();
               choose(i);
             }}
-            className="px-3 py-2 cursor-pointer aria-selected:bg-gray-100"
+            // Hovering moves the highlight, so the mouse and the arrow keys share one
+            onMouseEnter={() => setActive(i)}
+            className="px-3 py-2 cursor-pointer transition-colors duration-150 aria-selected:bg-gray-100"
           >
             {p.name}
             <span className="block text-sm text-gray-600">{p.club ?? ""}</span>
