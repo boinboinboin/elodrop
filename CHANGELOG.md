@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.21.1 (2026-11-02)
+
+- Search: hovering over a result highlights it, the same as moving to it with the arrow keys, in the search bar and in the head to head player picker.
+
 ## v1.21.0 (2026-11-02)
 
 - Team matches: a new page with every league team match, week by week, from Eliteserien down to the junior series, since 2013. Pick a season and then one of its team match weekends (with how many team matches each had) to see that week's team matches, grouped by division, with the result and their upsets. "Team matches" is in the menu.
