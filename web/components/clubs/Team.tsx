@@ -14,10 +14,12 @@ interface Props {
   clubs: Record<string, ClubEntry>;
   size?: number;
   stacked?: boolean;
+  /** Link to the club page (false inside another link) */
+  linked?: boolean;
   className?: string;
 }
 
-export default function Team({ name, club, clubs, size = 6, stacked = false, className = "" }: Props) {
+export default function Team({ name, club, clubs, size = 6, stacked = false, linked = true, className = "" }: Props) {
   const entry = clubs[club ?? name];
   const inner = (
     <>
@@ -29,7 +31,7 @@ export default function Team({ name, club, clubs, size = 6, stacked = false, cla
     </>
   );
   const classes = `inline-flex ${stacked ? "flex-col" : ""} items-center gap-1.5 align-middle ${className}`;
-  return entry ? (
+  return entry && linked ? (
     <Link href={clubHref(entry.slug)} className={`${classes} hover:text-blue-600`}>
       {inner}
     </Link>

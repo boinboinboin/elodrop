@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "Team matches",
-    "year": "Team matches {year}",
-    "week": "Team matches, week {week}",
-    "match": "{home} – {away}, {date}"
+    "week": "Team matches, {week}",
+    "match": "{home} – {away}, {date}",
+    "season": "Team matches {season}"
   },
   "breadcrumb": "Team matches",
   "title": "Team matches",
@@ -11,8 +11,12 @@
   "explanation": "A team's strength is the lineup it played: each match's win chance is from the players' ratings right before it, and together they give each team's chance of winning the team match. A team match is an upset when the winner had less than a 30% chance; a match is an upset by the same rules as the biggest upsets, between settled players.",
   "loading": "Loading team matches…",
   "none": "No team matches yet: run the pipeline.",
-  "weekOf": "Week {week}",
-  "years": "Each year's team matches",
+  "season": "Season",
+  "weekend": "Weekend",
+  "count": {
+    "one": "{count} team match",
+    "other": "{count} team matches"
+  },
   "upset": "Upset",
   "upsetTitle": "Won by the team with less than a 30% chance, with the lineups played",
   "matchUpsets": {

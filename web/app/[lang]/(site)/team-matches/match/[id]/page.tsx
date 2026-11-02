@@ -1,7 +1,6 @@
 // One league team match (/team-matches/match/13061; pipeline/team-matches.mjs): the result, each
 // team's chance with the lineups played, and every match with the players' ratings, its win chance and
 // whether it was an upset.
-import { getISOWeek, parseISO } from "date-fns";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -19,6 +18,7 @@ import { getTeamMatch } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, TeamMatchGame } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
+import { seasonLabel } from "@/utils/format";
 import { doublesHeadToHeadHref, headToHeadHref, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
@@ -54,7 +54,6 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
   if (!tie) notFound();
   // The start time, when known ("12:00"; some only have the day)
   const time = tie.time.length > 10 ? tie.time.slice(11, 16) : null;
-  const week = getISOWeek(parseISO(tie.week));
   const names: [string, string] = [tie.home, tie.away];
   // The expected score with the lineups played: the rated matches' chances plus the walkovers
   const rated = tie.games.filter((g) => g.winChance != null);
@@ -69,7 +68,8 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
         <Breadcrumbs
           trail={[
             { label: t("teamMatches.breadcrumb"), href: teamMatchesHref() },
-            { label: `${t("teamMatches.weekOf", { week })}, ${tie.week.slice(0, 4)}`, href: teamMatchesHref(tie.week) },
+            // The season, at this team match's week
+            { label: seasonLabel(tie.season, true), href: teamMatchesHref(tie.week) },
             { label: `${tie.home} – ${tie.away}` },
           ]}
         />
@@ -134,8 +134,8 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
 }
 
 /**
- * One match as a row of the scoreboard: the discipline on the left and the head to head link on the
- * right along the top, then the home side on the left, the away side on the right (the winners bold)
+ * One match as a row of the scoreboard: the discipline on the left, the upset label in the middle and the
+ * head to head link on the right along the top, then the home side on the left, the away side on the right (the winners bold)
  * and between them the sets (side by side from md up) and the sides' chances as a bar
  */
 async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<string, ClubEntry>; label?: string }) {
@@ -145,9 +145,11 @@ async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<st
   const code = label ?? (g.pool ? `${poolCodes[g.pool]}${n}` : g.game);
   return (
     <li className="bg-white p-3 sm:p-4">
-      <div className="flex items-baseline justify-between gap-2 mb-2">
-        <abbr className="font-mono text-xs text-gray-600 no-underline" title={name}>{code}</abbr>
-        <HeadToHead g={g} />
+      {/* The top line: the discipline, the upset label in the middle and the head to head link */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mb-2">
+        <abbr className="font-mono text-xs text-gray-600 no-underline justify-self-start" title={name}>{code}</abbr>
+        {g.upset ? <span title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span> : <span />}
+        <span className="justify-self-end"><HeadToHead g={g} /></span>
       </div>
       {/* The middle has a fixed width, so every match's chance bar is as long */}
       <div className="grid grid-cols-[minmax(0,1fr)_6rem_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_11rem_minmax(0,1fr)] gap-2 sm:gap-6 items-center max-sm:[overflow-wrap:anywhere]">
@@ -168,7 +170,6 @@ async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<st
               </div>
             </div>
           )}
-          {g.upset && <p className="mt-1" title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></p>}
         </div>
         <div>
           {g.side2.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 2} muted={g.winner === 1} rating right />)}

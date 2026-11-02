@@ -24,7 +24,7 @@
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
 //   eliteserien.json, eliteserien-<season>.json, eliteserien-ten-matches.json
-//   team-matches/index.json       years, weeks and the newest week's team matches (team-matches.mjs)
+//   team-matches/index.json       seasons with their weeks, and the newest week's team matches (team-matches.mjs)
 //   team-matches/weeks/<Monday>.json  that week's team matches
 //   team-matches/<matchId>.json   one team match with its individual matches
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation

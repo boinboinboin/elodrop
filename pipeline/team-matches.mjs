@@ -4,8 +4,8 @@
 // Usage: node team-matches.mjs   (after rate.mjs; needs data/league and data/league-games.json)
 //
 // Writes data/team-matches/:
-//   index.json          years, weeks (Mondays, newest first) and the newest week
-//   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level
+//   index.json          the seasons (newest first) with their weeks (Mondays, in order) and the newest week
+//   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level, and its season
 //   <matchId>.json      one tie: its summary, individual matches and golden set
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { playedOdds } from "./eliteserien.mjs";
@@ -22,6 +22,9 @@ const read = (file) => JSON.parse(readFileSync(file, "utf8"));
 const round3 = (x) => Math.round(x * 1000) / 1000;
 // "Sandefjord 2" -> "Sandefjord": the club, for its logo and page
 const clubOf = (team) => team.replace(/\s+\d+$/, "").trim();
+// Teams of several clubs as "Askøy/Stanghelle/Sotra", as most are written ("Askøy - Stanghelle - Sotra"
+// too); a hyphen without spaces is part of a club's name ("Mortensrud-Aker")
+const teamName = (team) => team.replace(/\s*[-–]\s+|\s+[-–]\s*/g, "/").trim();
 const DAY_MS = 86_400_000;
 const monday = (day) => {
   const t = Date.parse(`${day}T00:00:00Z`);
@@ -40,8 +43,9 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
   const group = read(`${DIR}data/league/${file}`);
   const rank = rankOf(group);
   for (const tie of group.ties) {
-    const [home, away] = tie.score.split("-").map(Number);
-    if (!Number.isFinite(home) || !Number.isFinite(away)) continue;
+    const [homeWon, awayWon] = tie.score.split("-").map(Number);
+    if (!Number.isFinite(homeWon) || !Number.isFinite(awayWon)) continue;
+    const [home, away] = [teamName(tie.home), teamName(tie.away)];
     const ratedGames = rated[tie.matchId] ?? {};
     const games = tie.games.map((g, i) => {
       const r = ratedGames[i];
@@ -71,7 +75,7 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
       const chance = games.find((g) => g.pool === POOL_OF[tie.goldenSet.discipline] && g.winChance != null)?.winChance ?? 0.5;
       odds = { ...odds, win: odds.win + odds.draw * chance, loss: odds.loss + odds.draw * (1 - chance), draw: 0 };
     }
-    const winner = home > away ? 1 : home < away ? 2 : (tie.goldenSet?.winner ?? 0);
+    const winner = homeWon > awayWon ? 1 : homeWon < awayWon ? 2 : (tie.goldenSet?.winner ?? 0);
     const upset = !!odds && ((winner === 1 && odds.win < TIE_UPSET) || (winner === 2 && odds.loss < TIE_UPSET));
     const day = tie.time.slice(0, 10);
     const summary = {
@@ -83,11 +87,11 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
       region: group.region,
       division: group.division,
       group: group.group,
-      home: tie.home,
-      away: tie.away,
-      homeClub: tie.home.includes("/") ? null : clubOf(tie.home),
-      awayClub: tie.away.includes("/") ? null : clubOf(tie.away),
-      score: [home, away],
+      home,
+      away,
+      homeClub: home.includes("/") ? null : clubOf(home),
+      awayClub: away.includes("/") ? null : clubOf(away),
+      score: [homeWon, awayWon],
       winner, // 1 home, 2 away, 0 draw
       // The home team's chances with the lineups played (null: no rated match)
       winChance: odds && { win: round3(odds.win), draw: round3(odds.draw), loss: round3(odds.loss) },
@@ -108,14 +112,26 @@ const byWeek = Map.groupBy(ties, (t) => t.week);
 const weeks = [...byWeek.keys()].sort().reverse();
 const weekFile = (week) => ({
   week,
+  season: byWeek.get(week)[0].summary.season,
   ties: byWeek
     .get(week)
     .sort((a, b) => a.rank - b.rank || a.summary.division.localeCompare(b.summary.division, "nb") || a.summary.group.localeCompare(b.summary.group, "nb") || a.summary.time.localeCompare(b.summary.time) || a.summary.matchId - b.summary.matchId)
     .map((t) => t.summary),
 });
 for (const week of weeks) writeFileSync(`${OUT}/weeks/${week}.json`, JSON.stringify(weekFile(week)));
+// Seasons, newest first, each with its weeks in order: the days played (first and last) and the
+// number of team matches. A week's season is its team matches' (no week has two seasons' matches).
+const seasons = [...Map.groupBy(weeks, (week) => byWeek.get(week)[0].summary.season)]
+  .sort(([a], [b]) => b - a)
+  .map(([season, list]) => ({
+    season,
+    weeks: list.sort().map((week) => {
+      const days = byWeek.get(week).map((t) => t.summary.day).sort();
+      return { week, from: days[0], to: days.at(-1), ties: days.length };
+    }),
+  }));
+writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), seasons, latest: weeks.length ? weekFile(weeks[0]) : null }));
 const years = [...new Set(weeks.map((w) => w.slice(0, 4)))];
-writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), years, weeks, latest: weeks.length ? weekFile(weeks[0]) : null }));
 
 const upsets = ties.filter((t) => t.summary.upset).length;
 console.log(`Wrote ${ties.length} team matches in ${weeks.length} weeks (${years.at(-1)}–${years[0]}): ${upsets} upsets, ${ties.filter((t) => !t.summary.winChance).length} without a rated match.`);

@@ -9,7 +9,7 @@ import { getClubEntries } from "@/data/sanity";
 import { getTournamentsIndex } from "@/data/tournaments";
 import { getTeamMatchesIndex } from "@/data/teamMatches";
 import { getUpsetsIndex } from "@/data/upsets";
-import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, SITE_URL, teamMatchesHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
+import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, seasonSlug, SITE_URL, teamMatchesHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
 import { combinedRankingHref, juniorRankingHref, RANKING_LISTS, rankingHref, strongestClubsHref } from "@/utils/rankings";
 
@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/upsets",
     ...(upsets?.years ?? []).map(upsetsHref),
     teamMatchesHref(),
-    ...(teamMatches?.years ?? []).map(teamMatchesHref),
+    ...(teamMatches?.seasons ?? []).map((s) => teamMatchesHref(seasonSlug(s.season))),
     "/how-it-works",
     "/whats-new",
     ...players.map(([id]) => playerHref(id)),

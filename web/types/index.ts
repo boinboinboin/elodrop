@@ -297,14 +297,14 @@ export interface TeamMatch extends TeamMatchSummary {
 
 export interface TeamMatchWeek {
   week: string;
+  season: number;
   ties: TeamMatchSummary[];
 }
 
 export interface TeamMatchesIndex {
   generatedAt: string;
-  years: string[];
-  /** Mondays, newest first */
-  weeks: string[];
+  /** Newest first, each with its weeks in order: the Monday, the first and last day played and the number of team matches */
+  seasons: { season: number; weeks: { week: string; from: string; to: string; ties: number }[] }[];
   latest: TeamMatchWeek | null;
 }
 

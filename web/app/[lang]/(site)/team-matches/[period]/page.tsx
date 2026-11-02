@@ -1,26 +1,32 @@
-// One week's team matches (/team-matches/2025-11-10) or a year's newest week (/team-matches/2025).
-import { getISOWeek, getISOWeekYear, parseISO } from "date-fns";
+// One week's team matches (/team-matches/2025-11-10) or a season's newest week (/team-matches/2025-26).
 import type { Metadata } from "next";
 import TeamMatches from "@/components/team-matches/TeamMatches";
 import { getTeamMatchesIndex } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
-import { teamMatchesHref } from "@/utils/hrefs";
+import { seasonLabel } from "@/utils/format";
+import { seasonSlug, teamMatchesHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
-// Every year is prerendered; weeks are rendered on their first visit and then cached
+// Every season is prerendered; weeks are rendered on their first visit and then cached
 export async function generateStaticParams() {
-  const years = (await getTeamMatchesIndex())?.years ?? [];
-  return years.length ? years.map((period) => ({ period })) : [{ period: "0" }];
+  const seasons = (await getTeamMatchesIndex())?.seasons ?? [];
+  return seasons.length ? seasons.map((s) => ({ period: seasonSlug(s.season) })) : [{ period: "0" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/team-matches/[period]">): Promise<Metadata> {
   const i18n = await getI18n();
-  const { t } = i18n;
+  const { t, dateRange } = i18n;
   const { period } = await params;
-  if (/^\d{4}$/.test(period)) return pageMetadata(i18n, { title: t("teamMatches.metadata.year", { year: period }), description: t("seo.descriptions.teamMatchesYear", { year: period }), path: teamMatchesHref(period) });
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(period)) return { title: t("teamMatches.metadata.title") };
-  const week = `${getISOWeek(parseISO(period))}, ${getISOWeekYear(parseISO(period))}`;
-  return pageMetadata(i18n, { title: t("teamMatches.metadata.week", { week }), description: t("seo.descriptions.teamMatchesWeek", { week }), path: teamMatchesHref(period) });
+  const index = await getTeamMatchesIndex();
+  const bySeason = index?.seasons.find((s) => seasonSlug(s.season) === period);
+  if (bySeason) {
+    const season = seasonLabel(bySeason.season, true);
+    return pageMetadata(i18n, { title: t("teamMatches.metadata.season", { season }), description: t("seo.descriptions.teamMatchesSeason", { season }), path: teamMatchesHref(period) });
+  }
+  const week = index?.seasons.flatMap((s) => s.weeks).find((w) => w.week === period);
+  if (!week) return { title: t("teamMatches.metadata.title") };
+  const days = dateRange(week.from, week.to);
+  return pageMetadata(i18n, { title: t("teamMatches.metadata.week", { week: days }), description: t("seo.descriptions.teamMatchesWeek", { week: days }), path: teamMatchesHref(period) });
 }
 
 export default function TeamMatchPeriodPage(props: PageProps<"/[lang]/team-matches/[period]">) {
