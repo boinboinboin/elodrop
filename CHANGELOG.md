@@ -11,6 +11,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.20.1 (2026-11-02)
 
 - Biggest upsets: the table of each week's biggest upset shows the week number ("Week 41", "W41" on phones) instead of the week's Monday. Hover over it to see the week's dates.
+- What's new: on phones, the date that stays at the top while you scroll now has a thin line under it.
 
 ## v1.20.0 (2026-11-02)
 

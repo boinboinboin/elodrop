@@ -62,8 +62,8 @@ export default async function WhatsNewPage() {
           {byDay(launched).map((day) => (
             <li key={day.date} className="grid grid-cols-[minmax(0,1fr)] md:grid-cols-[10rem_minmax(0,1fr)] gap-x-8 gap-y-3">
               {/* The day stays in view while its versions scroll past: above them on phones (on the
-                  page's background), beside them from md */}
-              <div className="sticky top-0 z-10 py-2 bg-stone-100 flex items-baseline justify-between gap-3 md:top-6 md:self-start md:py-0 md:bg-transparent md:block">
+                  page's background, with a thin line under it), beside them from md */}
+              <div className="sticky top-0 z-10 py-2 bg-stone-100 border-b border-gray-300 flex items-baseline justify-between gap-3 md:top-6 md:self-start md:py-0 md:bg-transparent md:border-0 md:block">
                 <time dateTime={day.date} className="block text-xl">{date(day.date)}</time>
                 <span className="text-sm text-gray-600">{plural("whatsNew.releases", day.releases.length)}</span>
               </div>
