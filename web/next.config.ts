@@ -45,7 +45,9 @@ const nextConfig: NextConfig = {
         { source: "/index.segments/:path*", destination: "/nb.segments/:path*" },
         { source: "/index.prefetch.rsc", destination: "/nb.prefetch.rsc" },
         { source: "/index", destination: "/nb" },
-        { source: "/:path((?!(?:en|nb|api|studio|_next)(?:/|$)).+)", destination: "/nb/:path" },
+        // Not the other roots, nor their data requests ("/studio.segments/...", "/studio.rsc": the
+        // Studio's own, which would otherwise get the 404 page)
+        { source: "/:path((?!(?:en|nb|api|studio|_next)(?:/|\\.|$)).+)", destination: "/nb/:path" },
       ],
       fallback: [],
     };

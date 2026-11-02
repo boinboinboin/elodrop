@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.21.3 (2026-11-02)
+
+- Fixed: the Sanity Studio at /studio could show the site's "Out!" page, because the Studio's own page data was sent to the Norwegian pages' not-found page.
+
 ## v1.21.2 (2026-11-02)
 
 - Search finds names spelled another way or with a typo: Christian and Kristian, Alexander and Aleksander, Flaten for Flåtten, "barht" for Barth, "kristiansnad" for Kristiansand. Exact matches come first, then the close ones, in the search bar and in the head to head player picker.
