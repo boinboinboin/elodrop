@@ -15,7 +15,7 @@ import { getMeta } from "@/data/meta";
 import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Loose, Pool } from "@/types";
-import { eliteserienHref, playerHref } from "@/utils/hrefs";
+import { eliteserienHref, playerHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
 // Every season in review is prerendered (and refreshed with the data)
@@ -224,7 +224,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                             );
                           })}
                           <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-                            {tie.score[0]}–{tie.score[1]}
+                            <Link href={teamMatchHref(tie.matchId)} className="underline hover:text-blue-600">{tie.score[0]}–{tie.score[1]}</Link>
                             {!tie.playoff && (
                               <span className="text-sm text-gray-500" title={t("eliteserien.review.ties.tablePoints")}>
                                 {" "}

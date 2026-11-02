@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "title": "Lagkamper",
+    "year": "Lagkamper {year}",
+    "week": "Lagkamper, uke {week}",
+    "match": "{home} – {away}, {date}"
+  },
+  "breadcrumb": "Lagkamper",
+  "title": "Lagkamper",
+  "intro": "Alle lagkamper i seriene, uke for uke: resultatet, hver kamp og overraskelsene.",
+  "explanation": "Et lags styrke er oppstillingen det stilte med: hver kamps seierssjanse er regnet ut fra spillernes ratinger rett før den, og sammen gir de hvert lags sjanse til å vinne lagkampen. En lagkamp er en overraskelse når vinneren hadde under 30 % sjanse; en kamp er en overraskelse etter de samme reglene som de største overraskelsene, mellom etablerte spillere.",
+  "loading": "Laster lagkamper…",
+  "none": "Ingen lagkamper ennå: kjør pipelinen.",
+  "weekOf": "Uke {week}",
+  "years": "Lagkampene hvert år",
+  "upset": "Overraskelse",
+  "upsetTitle": "Vunnet av laget med under 30 % sjanse, med oppstillingene som ble brukt",
+  "matchUpsets": {
+    "one": "{count} overraskelse",
+    "other": "{count} overraskelser"
+  },
+  "matches": "Kamper",
+  "match": {
+    "loading": "Laster lagkampen…",
+    "chances": "Sjansene før, med oppstillingene som ble brukt",
+    "chancesTitle": "Fra hver kamps seierssjanse, ut fra spillernes ratinger rett før den",
+    "wins": "{team} vinner",
+    "draw": "Uavgjort",
+    "notRated": "Ingen av kampene ble ratet, så det er ingen sjanse å vise.",
+    "noMatches": "Kampene i denne lagkampen er ikke tilgjengelige.",
+    "match": "Kamp",
+    "score": "Resultat",
+    "chance": "Sjanse",
+    "chanceTitle": "Hjemmesidens sjanse til å vinne kampen, ut fra ratingene rett før den",
+    "walkover": "Walkover",
+    "notPlayed": "Ikke spilt",
+    "headToHead": "head to head",
+    "upsetTitle": "Vunnet med under jevn sjanse, mellom etablerte spillere",
+    "explanation": "Hver spiller vises med ratingen før kampen og ratingen kampen ga eller kostet. Sjansen er hjemmesidens sjanse til å vinne kampen. Walkover teller som seier for siden som fikk den; kamper som ikke ble ratet teller for ingen."
+  }
+}

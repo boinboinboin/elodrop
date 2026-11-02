@@ -1,6 +1,6 @@
 // Export the generated data for the website: web-ready JSON files in export/, each small enough
 // for the site's data cache (at most 2 MB), uploaded to the data bucket by the pipeline workflow.
-// Usage: node export.mjs   (after rate.mjs, gender-gap.mjs, eliteserien*.mjs and upcoming.mjs)
+// Usage: node export.mjs   (after rate.mjs, gender-gap.mjs, eliteserien*.mjs, team-matches.mjs and upcoming.mjs)
 //
 // export/
 //   meta.json                     generatedAt (ratings), updatedAt (this export), pool labels,
@@ -24,6 +24,9 @@
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
 //   eliteserien.json, eliteserien-<season>.json, eliteserien-ten-matches.json
+//   team-matches/index.json       years, weeks and the newest week's team matches (team-matches.mjs)
+//   team-matches/weeks/<Monday>.json  that week's team matches
+//   team-matches/<matchId>.json   one team match with its individual matches
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
 //   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)
@@ -155,6 +158,11 @@ const eliteserienSeasons = readdirSync(DATA)
 if (existsSync(`${DATA}/eliteserien.json`)) write("eliteserien.json", read("eliteserien.json"));
 if (existsSync(`${DATA}/eliteserien-ten-matches.json`)) write("eliteserien-ten-matches.json", read("eliteserien-ten-matches.json"));
 for (const season of eliteserienSeasons) write(`eliteserien-${season}.json`, read(`eliteserien-${season}.json`));
+
+// Team matches: the index, each week and each team match
+if (existsSync(`${DATA}/team-matches`)) {
+  for (const f of readdirSync(`${DATA}/team-matches`, { recursive: true }).filter((f) => f.endsWith(".json"))) write(`team-matches/${f}`, read(`team-matches/${f}`));
+}
 
 // Tournaments with a draw
 const tournaments = optional("upcoming.json");

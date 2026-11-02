@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "title": "Team matches",
+    "year": "Team matches {year}",
+    "week": "Team matches, week {week}",
+    "match": "{home} – {away}, {date}"
+  },
+  "breadcrumb": "Team matches",
+  "title": "Team matches",
+  "intro": "Every league team match, week by week: the result, each match and the upsets.",
+  "explanation": "A team's strength is the lineup it played: each match's win chance is from the players' ratings right before it, and together they give each team's chance of winning the team match. A team match is an upset when the winner had less than a 30% chance; a match is an upset by the same rules as the biggest upsets, between settled players.",
+  "loading": "Loading team matches…",
+  "none": "No team matches yet: run the pipeline.",
+  "weekOf": "Week {week}",
+  "years": "Each year's team matches",
+  "upset": "Upset",
+  "upsetTitle": "Won by the team with less than a 30% chance, with the lineups played",
+  "matchUpsets": {
+    "one": "{count} match upset",
+    "other": "{count} match upsets"
+  },
+  "matches": "Matches",
+  "match": {
+    "loading": "Loading the team match…",
+    "chances": "Chances before, with the lineups played",
+    "chancesTitle": "From each match's win chance, from the players' ratings right before it",
+    "wins": "{team} wins",
+    "draw": "Draw",
+    "notRated": "None of its matches were rated, so there's no chance to show.",
+    "noMatches": "The matches of this team match aren't available.",
+    "match": "Match",
+    "score": "Score",
+    "chance": "Chance",
+    "chanceTitle": "The home side's chance of winning the match, from the ratings right before it",
+    "walkover": "Walkover",
+    "notPlayed": "Not played",
+    "headToHead": "head to head",
+    "upsetTitle": "Won with less than an even chance, between settled players",
+    "explanation": "Each player is shown with their rating before the match and the rating it gained or cost them. The chance is the home side's chance of winning the match. Walkovers count as won by the side given them; matches not rated count for neither side."
+  }
+}

@@ -221,6 +221,29 @@ export function tieOdds(chances) {
   };
 }
 
+// A tie's odds from the lineups played (eliteserien-review.mjs, team-matches.mjs): the matches played with their win chances for the home
+// team, plus walkovers as certain wins for the side given them (as in the actual result); matches
+// not played count for neither side.
+export function playedOdds(chances, walkovers) {
+  let dist = [1]; // dist[k]: chance the home team wins k of the matches played
+  for (const p of chances) {
+    const next = Array(dist.length + 1).fill(0);
+    dist.forEach((q, k) => {
+      next[k] += q * (1 - p);
+      next[k + 1] += q * p;
+    });
+    dist = next;
+  }
+  const odds = { win: 0, draw: 0, loss: 0, expected: walkovers[0], points: 0 };
+  dist.forEach((q, k) => {
+    const home = walkovers[0] + k;
+    const away = walkovers[1] + chances.length - k;
+    odds[home > away ? "win" : home < away ? "loss" : "draw"] += q;
+    odds.expected += q * k;
+    odds.points += q * tablePoints(home);
+  });
+  return odds;
+}
 if (import.meta.url === `file://${process.argv[1]}`) {
   const source = currentSource();
   const teams = readRoster().map((t) => ({ ...t, players: t.players.map((p) => playerRatings(p, source)) }));

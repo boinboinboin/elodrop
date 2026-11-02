@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.21.0 (2026-11-02)
+
+- Team matches: a new page with every league team match, week by week, from Eliteserien down to the junior series, since 2013. Each week's team matches are grouped by division, with the result and their upsets; move between weeks and years as on the upsets page. "Team matches" is in the menu.
+- A page for each team match: the result, each team's chance of winning with the lineups they played, and every match with its score, the players' ratings before it and what they gained or lost, the home side's win chance and a head to head link.
+- Upsets in team matches: a team match is labelled an upset when the winner had less than a 30% chance with the lineups played, and a match when it was won with less than an even chance between settled players (as on the upsets page).
+- League matches on player pages and the results in Eliteserien's seasons in review link to their team match.
+
 ## v1.20.1 (2026-11-02)
 
 - Biggest upsets: the table of each week's biggest upset shows the week number ("Week 41", "W41" on phones) instead of the week's Monday. Hover over it to see the week's dates.

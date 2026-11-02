@@ -11,12 +11,8 @@
   "loading": "Laster overraskelser…",
   "none": "Ingen overraskelser regnet ut ennå: kjør pipelinen.",
   "weekOf": "Uke {week}",
-  "weeks": "Uker",
-  "earlier": "Tidligere",
-  "later": "Senere",
   "carousel": "De største overraskelsene, uke {week}",
   "eachWeek": "Ukens største overraskelse",
-  "year": "År",
   "table": {
     "week": "Uke",
     "weekNumber": "Uke {week}",

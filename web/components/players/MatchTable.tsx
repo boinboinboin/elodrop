@@ -15,7 +15,7 @@ import { BUTTON, ROW } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
-import { playerHref, tournamentHref } from "@/utils/hrefs";
+import { playerHref, teamMatchHref, tournamentHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
 import { eventHref } from "@/utils/tournament";
 
@@ -35,8 +35,11 @@ interface Props {
 
 const SORTS = ["date", "gain", "loss"] as const;
 
-/** The match's event page (or the tournament's), when its tournament has a draw-luck page */
+/** A league match's team match page, or a tournament match's event page (or the tournament's) when its tournament has a draw-luck page */
 function matchEventHref(m: Match, links: Record<string, number> | undefined, pool: Pool | undefined) {
+  // A league match: its team match's page
+  const teamMatch = m.key?.match(/^L(\d+) /)?.[1];
+  if (teamMatch) return teamMatchHref(Number(teamMatch));
   const id = m.key?.match(/^T(\d+)/)?.[1];
   const cupId = id ? links?.[id] : undefined;
   if (!cupId) return null;

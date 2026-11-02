@@ -1,6 +1,7 @@
 // A team or club name with its logo, linking to the club page when the club has an entry.
 // `clubs`: club entries by short name (data/sanity.ts getClubMap); `size` is the logo size in Tailwind
-// units (default 6); `stacked` puts the logo above the name.
+// units (default 6); `stacked` puts the logo above the name; `club` is the club when the name is a
+// team's ("Sandefjord 2").
 import Link from "@/components/ui/Link";
 import type { ClubEntry } from "@/types";
 import { logoSrc } from "@/utils/clubs";
@@ -8,14 +9,16 @@ import { clubHref } from "@/utils/hrefs";
 
 interface Props {
   name: string;
+  /** The club, when it isn't the name (a league team's: "Sandefjord" for "Sandefjord 2") */
+  club?: string | null;
   clubs: Record<string, ClubEntry>;
   size?: number;
   stacked?: boolean;
   className?: string;
 }
 
-export default function Team({ name, clubs, size = 6, stacked = false, className = "" }: Props) {
-  const entry = clubs[name];
+export default function Team({ name, club, clubs, size = 6, stacked = false, className = "" }: Props) {
+  const entry = clubs[club ?? name];
   const inner = (
     <>
       {entry?.logo && (

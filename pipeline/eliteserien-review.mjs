@@ -12,7 +12,7 @@
 import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { sideRating } from "./rules.mjs";
-import { SLOTS, SLOT_POOL, bestLineup, lowestRatings, playerRatings, rankingPoints, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
+import { SLOTS, SLOT_POOL, bestLineup, lowestRatings, playedOdds, playerRatings, rankingPoints, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 // Per season: the team list, the rounds with the ranking version from right before each
@@ -230,29 +230,6 @@ function loggedGame(tie, game) {
 
 const round2 = (x, d = 2) => Math.round(x * 10 ** d) / 10 ** d;
 
-// A tie's odds from the lineups played: the matches played with their win chances for the home
-// team, plus walkovers as certain wins for the side given them (as in the actual result); matches
-// not played count for neither side.
-function playedOdds(chances, walkovers) {
-  let dist = [1]; // dist[k]: chance the home team wins k of the matches played
-  for (const p of chances) {
-    const next = Array(dist.length + 1).fill(0);
-    dist.forEach((q, k) => {
-      next[k] += q * (1 - p);
-      next[k + 1] += q * p;
-    });
-    dist = next;
-  }
-  const odds = { win: 0, draw: 0, loss: 0, expected: walkovers[0], points: 0 };
-  dist.forEach((q, k) => {
-    const home = walkovers[0] + k;
-    const away = walkovers[1] + chances.length - k;
-    odds[home > away ? "win" : home < away ? "loss" : "draw"] += q;
-    odds.expected += q * k;
-    odds.points += q * tablePoints(home);
-  });
-  return odds;
-}
 // Play-offs: a tie ends as soon as a team has won 5 matches, and a tie at 4-4 is decided by a
 // golden set in one discipline (the teams take turns striking disciplines). We take the golden
 // set to be played in the discipline whose top players or pairs (1st singles, the doubles, 1st

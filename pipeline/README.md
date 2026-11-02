@@ -351,6 +351,16 @@ A player's biggest rival is the opponent they have had the closest matches again
 
 `rate.mjs` writes each week's (Monday to Sunday) 10 biggest upsets to `data/upsets.json`: the matches won with the lowest chance of winning, from the ratings right before the match. Only matches between settled players count: every player has at least 10 matches (as for biggest wins) and a rating certain to within ±250 in singles or ±288 in doubles (RD before the match at most 125 or 144, about the more certain half of ranked players). Without the RD limit, the list filled up with juniors improving faster than their rating. Walkovers and draws are left out. The rankings page highlights the top 3 of the current week, or of the last week with matches; `/upsets` shows the newest week's top 10, `/upsets/<Monday>` any other week's and `/upsets/<year>` that year's newest week, each with the biggest upset of every week of its year. Each player is shown with their rating before the match, the rating the match gained or cost them, and their club at the time and its logo (when the club has one).
 
+### Team matches
+
+`team-matches.mjs` (after `rate.mjs`) writes every league team match (tie), in every division and age group, to `data/team-matches/`: `<matchId>.json` for each team match, `weeks/<Monday>.json` for each week's team matches (Eliteserien first, then senior divisions by level, then juniors) and `index.json` with the years and weeks. `rate.mjs` records each league match's win chance, the players' ratings before it and its rating changes in `data/league-games.json` for it. Teams aren't known beyond Eliteserien, so a team's strength is the lineup it actually played:
+
+- **The team match's win chance** combines its matches' win chances, as independent matches, into the chances of winning, drawing and losing it (as for [Eliteserien's lineups played](#earlier-seasons-in-review)). Walkovers count as won by the side given them, and matches not rated (no score, a side not identified) for neither side. When a draw was settled by a golden set, the draw's chance goes to each side by the win chance of that discipline's first match.
+- **A team match upset** is one won by the team with less than a 30% chance of winning it, as in the Eliteserien review.
+- **A match upset** follows the rules for [biggest upsets](#biggest-upsets): a decisive match between settled players won by the side with less than an even chance.
+
+The score is the official one; 78 older team matches have no individual matches. `/team-matches` shows the newest week's team matches, `/team-matches/<Monday>` any other week's and `/team-matches/<year>` that year's newest week; `/team-matches/match/<matchId>` shows one team match with its matches, each player's rating before it and the rating it gained or cost them.
+
 ### Strongest clubs
 
 Clubs are ranked per pool by a weighted average of their best ranked players (singles) or pairs (doubles), the best counting most:

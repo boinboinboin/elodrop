@@ -3,6 +3,12 @@
   "clear": "Tøm",
   "backToRankOrder": "Tilbake til rangeringen",
   "week": "Uke {week}, {year}",
+  "periods": {
+    "weeks": "Uker",
+    "earlier": "Tidligere",
+    "later": "Senere",
+    "year": "År"
+  },
   "pools": {
     "men": "Herresingle",
     "women": "Damesingle",

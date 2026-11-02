@@ -237,6 +237,77 @@ export interface UpsetWeek {
   matches: Upset[];
 }
 
+// ---- Team matches (pipeline/team-matches.mjs) ----
+
+/** A player in a team match: rating before the match and its change (missing when the match wasn't rated) */
+export interface TeamMatchPlayer {
+  id: number;
+  name: string;
+  rating?: number;
+  change?: number;
+}
+
+/** One match in a team match; side 1 is the home team */
+export interface TeamMatchGame {
+  /** As in the data: "1. HS", "2. MD" */
+  game: string;
+  pool: Pool | null;
+  side1: TeamMatchPlayer[];
+  side2: TeamMatchPlayer[];
+  /** 1 home, 2 away, 0 not played */
+  winner: 0 | 1 | 2;
+  /** "21/12,18/21,21/15" */
+  score: string | null;
+  walkover: boolean;
+  /** The home side's chance of winning, from the ratings right before (null: not rated) */
+  winChance: number | null;
+  upset: boolean;
+}
+
+export interface TeamMatchSummary {
+  matchId: number;
+  day: string;
+  /** "2025-11-15T12:00" */
+  time: string;
+  season: number;
+  ageGroup: string;
+  region: string;
+  division: string;
+  group: string;
+  /** Team names ("Sandefjord 2") and their clubs ("Sandefjord"; null for combined teams) */
+  home: string;
+  away: string;
+  homeClub: string | null;
+  awayClub: string | null;
+  score: [number, number];
+  /** 1 home, 2 away, 0 draw */
+  winner: 0 | 1 | 2;
+  /** The home team's chances with the lineups played (null: no rated match) */
+  winChance: { win: number; draw: number; loss: number } | null;
+  upset: boolean;
+  /** How many of its matches were upsets */
+  upsets: number;
+}
+
+export interface TeamMatch extends TeamMatchSummary {
+  week: string;
+  games: TeamMatchGame[];
+  goldenSet: { pool: Pool | null; side1: { id: number; name: string }[]; side2: { id: number; name: string }[]; winner: 1 | 2; score: string } | null;
+}
+
+export interface TeamMatchWeek {
+  week: string;
+  ties: TeamMatchSummary[];
+}
+
+export interface TeamMatchesIndex {
+  generatedAt: string;
+  years: string[];
+  /** Mondays, newest first */
+  weeks: string[];
+  latest: TeamMatchWeek | null;
+}
+
 // ---- Tournament draws (pipeline/upcoming.mjs) ----
 
 export interface Chances {

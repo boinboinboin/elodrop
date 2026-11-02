@@ -11,12 +11,8 @@
   "loading": "Loading upsets…",
   "none": "No upsets calculated yet: run the pipeline.",
   "weekOf": "Week of {week}",
-  "weeks": "Weeks",
-  "earlier": "Earlier",
-  "later": "Later",
   "carousel": "The biggest upsets, week of {week}",
   "eachWeek": "Biggest upset of each week",
-  "year": "Year",
   "table": {
     "week": "Week",
     "weekNumber": "Week {week}",

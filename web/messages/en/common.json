@@ -3,6 +3,12 @@
   "clear": "Clear",
   "backToRankOrder": "Back to rank order",
   "week": "Week {week}, {year}",
+  "periods": {
+    "weeks": "Weeks",
+    "earlier": "Earlier",
+    "later": "Later",
+    "year": "Year"
+  },
   "pools": {
     "men": "Men's singles",
     "women": "Women's singles",

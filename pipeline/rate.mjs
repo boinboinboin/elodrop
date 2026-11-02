@@ -445,6 +445,10 @@ export function computeRatings(
   // Upsets by week (Monday): decisive matches between settled players won by the side with less
   // than an even chance
   const upsets = new Map();
+  // League games by team match (data/league-games.json, for team-matches.mjs): matchId -> game index ->
+  // the home side's win chance, each player's rating before and change, and whether it was an upset
+  // (by the rules for the weekly upsets)
+  const leagueGames = new Map();
 
   // Not playing penalty for the time between the end of the grace period and `day`.
   function applyInactivity(p, day) {
@@ -602,6 +606,17 @@ export function computeRatings(
       }
     }
 
+    if (keepWeekly && g.source.startsWith("L")) {
+      const matchId = Number(g.source.slice(1));
+      if (!leagueGames.has(matchId)) leagueGames.set(matchId, {});
+      const winnerChance = g.s === 1 ? ea : 1 - ea;
+      leagueGames.get(matchId)[g.order] = {
+        winChance: Math.round(ea * 1000) / 1000,
+        upset: decisive && settled && certain && winnerChance < 0.5,
+        ...Object.fromEntries(perSide.map((side, i) => [`side${i + 1}`, side.players.map((p, j) => ({ id: p.id, rating: Math.round(p.rating), change: Math.round(side.changes[j] * 10) / 10 }))])),
+      };
+    }
+
     if (keepWeekly) {
       // club: the club the player played for at the time (their club history, as for the upsets)
       const ref = (p) => ({ id: p.id, name: p.name, rating: Math.round(p.rating), club: p.clubs.at(-1)?.[1] ?? null });
@@ -690,12 +705,12 @@ export function computeRatings(
       p.rd = R.rdAfterTime(p.rd, (toTime(today) - toTime(p.rdDay)) / DAY_MS, rdMax(pool));
     }
   }
-  return { players, calibration, returns, upsets };
+  return { players, calibration, returns, upsets, leagueGames };
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const games = collectGames();
-  const { players, calibration, returns, upsets } = computeRatings(games);
+  const { players, calibration, returns, upsets, leagueGames } = computeRatings(games);
 
   const today = new Date().toISOString().slice(0, 10);
   const round = (x) => Math.round(x * 10) / 10;
@@ -1273,6 +1288,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       matches: list.sort((x, y) => x.winChance - y.winChance || y.day.localeCompare(x.day)).slice(0, WEEKLY_UPSETS),
     }));
   writeFileSync(`${DIR}data/upsets.json`, JSON.stringify({ generatedAt: new Date().toISOString(), weekStartsOn: "Monday", weeks: upsetWeeks }));
+  writeFileSync(`${DIR}data/league-games.json`, JSON.stringify({ generatedAt: new Date().toISOString(), ties: Object.fromEntries(leagueGames) }));
 
   const perPool = [...Map.groupBy(games, (g) => g.pool)].map(([pool, list]) => `${list.length} ${pool}`);
   console.log(`Rated ${games.length} games (${games[0]?.day} to ${games.at(-1)?.day}): ${perPool.join(", ")}.`);

@@ -171,6 +171,11 @@ jobs:
         if: steps.build.outputs.mode == 'full'
         run: node eliteserien-review.mjs > /dev/null
 
+      # Every league team match with its matches' win chances and upsets, from the ratings
+      - name: Team matches
+        if: steps.build.outputs.mode == 'full'
+        run: node team-matches.mjs > /dev/null
+
       - name: Tournament draws
         if: steps.build.outputs.mode != 'none'
         run: node upcoming.mjs --offline

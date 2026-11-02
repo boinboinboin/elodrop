@@ -20,6 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/rankings", label: t("layout.nav.rankings") },
     { href: "/clubs", label: t("layout.nav.clubs") },
     { href: "/eliteserien", label: t("layout.nav.eliteserien") },
+    { href: "/team-matches", label: t("layout.nav.teamMatches") },
     { href: "/tournaments", label: t("layout.nav.tournaments") },
     { href: "/upsets", label: t("layout.nav.upsets") },
     { href: "/head-to-head", label: t("layout.nav.headToHead") },

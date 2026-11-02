@@ -8,6 +8,10 @@ export const clubHref = (slug: string) => `/clubs/${slug}`;
 export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournaments/${cup2000Id}${view ? `/${view}` : ""}`;
 /** A week's upsets (its Monday, "2026-10-12"), or a year's newest week ("2026") */
 export const upsetsHref = (period: string) => `/upsets/${period}`;
+/** The newest week's team matches, a week's (its Monday) or a year's newest week */
+export const teamMatchesHref = (period?: string) => `/team-matches${period ? `/${period}` : ""}`;
+/** One team match (its badmintonportalen match id) */
+export const teamMatchHref = (matchId: number) => `/team-matches/match/${matchId}`;
 /** Eliteserien this season, and what if a tie were 10 matches */
 export const ELITESERIEN_HREF = "/eliteserien";
 export const ELITESERIEN_TEN_MATCHES_HREF = "/eliteserien/ten-matches";

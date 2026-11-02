@@ -4,22 +4,22 @@
 import { getISOWeek, parseISO } from "date-fns";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, ArrowRight } from "@/components/SVG";
-import { ClubLogo } from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import PlayerLine from "@/components/players/PlayerLine";
 import Carousel from "@/components/ui/Carousel";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
+import { WeekArrows, YearLinks } from "@/components/ui/PeriodNav";
 import Section from "@/components/ui/Section";
-import { ROW, toggleClass } from "@/components/ui/styles";
+import { ROW } from "@/components/ui/styles";
 import UpsetCard from "@/components/upsets/UpsetCard";
 import { getClubMap } from "@/data/sanity";
 import { getUpsetYear, getUpsetsIndex } from "@/data/upsets";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
-import type { ClubEntry, UpsetPlayer, UpsetWeek } from "@/types";
-import { addDays, toneClass } from "@/utils/format";
-import { playerHref, upsetsHref } from "@/utils/hrefs";
+import type { UpsetWeek } from "@/types";
+import { addDays } from "@/utils/format";
+import { upsetsHref } from "@/utils/hrefs";
 
 /** The page for a period: null for the newest week, a year ("2019") for its newest week, or a week's Monday */
 export default async function Upsets({ period }: { period: Promise<string | null> }) {
@@ -69,28 +69,14 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
       <Section>
         <div className="flex flex-wrap items-baseline justify-between gap-4 mb-6">
           <h2 className="text-3xl">{t("upsets.weekOf", { week: weekOf })}</h2>
-          <nav className="flex gap-2" aria-label={t("upsets.weeks")}>
-            {earlier && <Link href={upsetsHref(earlier.week)} className={toggleClass(false)}><ArrowLeft /> {t("upsets.earlier")}</Link>}
-            {later && <Link href={upsetsHref(later.week)} className={toggleClass(false)}>{t("upsets.later")} <ArrowRight /></Link>}
-          </nav>
+          <WeekArrows earlier={earlier && upsetsHref(earlier.week)} later={later && upsetsHref(later.week)} />
         </div>
         {/* The week's top 10 as a carousel: 1 card at a time on phones, 2 on tablets, 3 on desktop */}
         <Carousel label={t("upsets.carousel", { week: weekOf })} slides={current.matches.map((u, i) => <UpsetCard key={i} upset={u} rank={i + 1} clubs={clubs} />)} />
       </Section>
 
       <Section title={t("upsets.eachWeek")}>
-        <nav className="flex flex-wrap gap-2 mb-6" aria-label={t("upsets.year")}>
-          {years.map((y) => (
-            <Link
-              key={y}
-              href={upsetsHref(y)}
-              className={`px-3 py-1 border border-black transition-colors duration-200 ${y === year ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
-              aria-current={y === year ? "page" : undefined}
-            >
-              {y}
-            </Link>
-          ))}
-        </nav>
+        <YearLinks years={years} current={year} href={upsetsHref} />
         <div className="bg-white overflow-x-auto">
           <table className="w-full text-left">
             <thead className="text-sm text-gray-600 border-b border-gray-200">
@@ -113,9 +99,9 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                       </Link></td>
                     {/* One player per line, "beat" between the sides; on phones the chance under the event */}
                     <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                      {u.winners.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} bold />)}
+                      {u.winners.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold />)}
                       <span className="block text-sm text-gray-600">{t("upsets.table.beat")}</span>
-                      {u.losers.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} />)}
+                      {u.losers.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} />)}
                       <span className="block mt-1 text-sm text-gray-600">{u.score} · {pools[u.pool]} · {u.event}</span>
                       <span className="sm:hidden block text-sm text-gray-600 tabular-nums">{rich("upsets.table.chanceOnPhones", { strong: (text) => <strong className="text-gray-900">{text}</strong> }, { chance: chanceText })}</span>
                     </td>
@@ -128,29 +114,5 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
         </div>
       </Section>
     </>
-  );
-}
-
-/**
- * A player on a line of their own: their club's logo (if any) and name, then the club and the
- * rating gained or lost, which wrap together onto the next line when they don't fit
- */
-async function UpsetName({ p, clubs, bold = false }: { p: UpsetPlayer; clubs: Record<string, ClubEntry>; bold?: boolean }) {
-  const { signed, t } = await getI18n();
-  return (
-    <span className="flex flex-wrap items-baseline gap-x-1.5" title={p.club ?? undefined}>
-      <span className="inline-flex items-center gap-1 self-center">
-        <ClubLogo name={p.club} clubs={clubs} />
-        <Link href={playerHref(p.id)} className={`${bold ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>
-      </span>
-      <span className="text-sm whitespace-nowrap">
-        {p.club && <span className="text-gray-500">{p.club}</span>}
-        {p.change !== undefined && (
-          <span className={`tabular-nums ${p.club ? "ml-1.5 " : ""}${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>
-            {signed(p.change, 1)}
-          </span>
-        )}
-      </span>
-    </span>
   );
 }

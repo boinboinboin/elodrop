@@ -7,13 +7,14 @@ import { getMeta } from "@/data/meta";
 import { getSearchIndex } from "@/data/players";
 import { getClubEntries } from "@/data/sanity";
 import { getTournamentsIndex } from "@/data/tournaments";
+import { getTeamMatchesIndex } from "@/data/teamMatches";
 import { getUpsetsIndex } from "@/data/upsets";
-import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, SITE_URL, tournamentHref, upsetsHref } from "@/utils/hrefs";
+import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, SITE_URL, teamMatchesHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
 import { combinedRankingHref, juniorRankingHref, RANKING_LISTS, rankingHref, strongestClubsHref } from "@/utils/rankings";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [meta, players, clubs, tournaments, upsets] = await Promise.all([getMeta(), getSearchIndex(), getClubEntries(), getTournamentsIndex(), getUpsetsIndex()]);
+  const [meta, players, clubs, tournaments, upsets, teamMatches] = await Promise.all([getMeta(), getSearchIndex(), getClubEntries(), getTournamentsIndex(), getUpsetsIndex(), getTeamMatchesIndex()]);
   const lists = Object.values(RANKING_LISTS);
   const paths = [
     "/",
@@ -30,6 +31,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(meta?.eliteserien.seasons ?? []).map(eliteserienHref),
     "/upsets",
     ...(upsets?.years ?? []).map(upsetsHref),
+    teamMatchesHref(),
+    ...(teamMatches?.years ?? []).map(teamMatchesHref),
     "/how-it-works",
     "/whats-new",
     ...players.map(([id]) => playerHref(id)),
