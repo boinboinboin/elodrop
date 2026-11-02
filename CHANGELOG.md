@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.21.2 (2026-11-02)
+
+- Search finds names spelled another way or with a typo: Christian and Kristian, Alexander and Aleksander, Flaten for Flåtten, "barht" for Barth, "kristiansnad" for Kristiansand. Exact matches come first, then the close ones, in the search bar and in the head to head player picker.
+
 ## v1.21.1 (2026-11-02)
 
 - Search: hovering over a result highlights it, the same as moving to it with the arrow keys, in the search bar and in the head to head player picker.
