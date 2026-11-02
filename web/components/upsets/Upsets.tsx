@@ -1,6 +1,7 @@
 // Each week's biggest upsets (pipeline/rate.mjs): the newest week's top 10, and the biggest upset of
 // every week of its year. /upsets/<Monday> shows another week and /upsets/<year> that year's newest
 // (app/(site)/upsets/[period]); each is a static page.
+import { getISOWeek, parseISO } from "date-fns";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft, ArrowRight } from "@/components/SVG";
@@ -41,7 +42,7 @@ export default async function Upsets({ period }: { period: Promise<string | null
 const withLabels = (w: UpsetWeek, pools: I18n["pools"]): UpsetWeek => ({ ...w, matches: w.matches.map((m) => ({ ...m, poolLabel: pools[m.pool] })) });
 
 async function Content({ period: periodPromise }: { period: Promise<string | null> }) {
-  const { date, dateRange, pct, pools, rich, t } = await getI18n();
+  const { dateRange, pct, pools, rich, t } = await getI18n();
   const [period, index, clubs] = await Promise.all([periodPromise, getUpsetsIndex(), getClubMap()]);
   if (!index?.latest) return <p className="base-container px-4 text-gray-600">{t("upsets.none")}</p>;
   const years = index.years;
@@ -105,7 +106,11 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                 const chanceText = pct(u.winChance);
                 return (
                   <tr key={w.week} className={`${ROW} align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
-                    <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap"><Link href={upsetsHref(w.week)} className="hover:text-blue-600">{date(w.week, "dayMonth")}</Link></td>
+                    <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap">{/* The ISO week number, "Week 41" (W41 on phones), the week's days on hover */}
+                      <Link href={upsetsHref(w.week)} className="hover:text-blue-600 tabular-nums" title={dateRange(w.week, addDays(w.week, 6))}>
+                        <span className="sm:hidden">{t("upsets.table.weekShort", { week: getISOWeek(parseISO(w.week)) })}</span>
+                        <span className="max-sm:hidden">{t("upsets.table.weekNumber", { week: getISOWeek(parseISO(w.week)) })}</span>
+                      </Link></td>
                     {/* One player per line, "beat" between the sides; on phones the chance under the event */}
                     <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                       {u.winners.map((p) => <UpsetName key={p.id} p={p} clubs={clubs} bold />)}

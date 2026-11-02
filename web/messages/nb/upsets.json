@@ -19,6 +19,8 @@
   "year": "År",
   "table": {
     "week": "Uke",
+    "weekNumber": "Uke {week}",
+    "weekShort": "U{week}",
     "upset": "Overraskelse",
     "chance": "Sjanse",
     "chanceTitle": "Vinnerens sjanse til å vinne før kampen",

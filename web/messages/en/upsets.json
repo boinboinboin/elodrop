@@ -19,6 +19,8 @@
   "year": "Year",
   "table": {
     "week": "Week",
+    "weekNumber": "Week {week}",
+    "weekShort": "W{week}",
     "upset": "Upset",
     "chance": "Chance",
     "chanceTitle": "The winner's chance of winning before the match",
