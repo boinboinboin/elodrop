@@ -83,7 +83,6 @@ K 17745  Nora Omdal
 K 26665  Marlen Nygård
 K 29866  Mi Celina Le-Thanh | loan OSI
 K 24320  Karina Andreassen
-K 18132  Sara Buvik
 
 [Klemetsrud]
 M 51528  Jonathan Larsen
