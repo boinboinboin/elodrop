@@ -39,7 +39,7 @@
     "player": "The player's name, club, and rating and rank in each discipline, on elodrop",
     "club": "The badminton club's name and its rank among Norwegian clubs in each discipline, on elodrop",
     "tournament": "The tournament's name, dates and number of events and entries, on elodrop",
-    "teamMatch": "The teams, the result and the winner's chance before the team match, on elodrop",
+    "teamMatch": "The teams, the result and the chances before the team match, on elodrop",
     "headToHead": "The two players, their record against each other and their chances now, on elodrop",
     "doublesHeadToHead": "The two pairs, their record against each other and their chances now, on elodrop"
   },
@@ -65,11 +65,9 @@
     "players": "Players",
     "teamMatch": "Team match",
     "result": "Result",
-    "upsetResult": "Result, an upset",
-    "teamChance": "{team}'s chance before",
+    "upsetResult": "Upset",
     "headToHead": "Head to head",
     "doublesHeadToHead": "Doubles head to head",
-    "record": "Record",
-    "chanceFor": "Chance for {name} in {pool}"
+    "record": "H2H"
   }
 }

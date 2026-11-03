@@ -39,7 +39,7 @@
     "player": "Spillerens navn, klubb, og rating og plassering i hver disiplin, på elodrop",
     "club": "Badmintonklubbens navn og plassering blant norske klubber i hver disiplin, på elodrop",
     "tournament": "Turneringens navn, datoer og antall klasser og påmeldinger, på elodrop",
-    "teamMatch": "Lagene, resultatet og sjansen vinneren hadde før lagkampen, på elodrop",
+    "teamMatch": "Lagene, resultatet og sjansene før lagkampen, på elodrop",
     "headToHead": "De to spillerne, kampene mot hverandre og sjansene deres nå, på elodrop",
     "doublesHeadToHead": "De to parene, kampene mot hverandre og sjansene deres nå, på elodrop"
   },
@@ -65,11 +65,9 @@
     "players": "Spillere",
     "teamMatch": "Lagkamp",
     "result": "Resultat",
-    "upsetResult": "Resultat, en overraskelse",
-    "teamChance": "Sjansen {team} hadde",
+    "upsetResult": "Overraskelse",
     "headToHead": "Head to head",
     "doublesHeadToHead": "Head to head i double",
-    "record": "Innbyrdes",
-    "chanceFor": "Sjanse for {name} i {pool}"
+    "record": "H2H"
   }
 }

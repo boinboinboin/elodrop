@@ -10,10 +10,11 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.23.0 (2026-11-03)
 
-- Link previews for head to head: a shared comparison of two players or two pairs shows who's in it, in its title and in a preview image with their record against each other and the chance of winning now, instead of the general head to head preview. X, LinkedIn, Slack, Discord and the other link preview bots may now open head to head pages; search engines are still kept off them (a page for every pair).
-- Link previews for team matches: a preview image with the teams, the division and day, the result (and whether it was an upset) and the chance the winner had with the lineups played.
+- Link previews for head to head: a shared comparison of two players or two pairs shows who's in it, in its title and in a preview image with their record against each other (H2H) and a bar of each side's chance of winning now, as on the page (in singles for two players, in their doubles discipline for two pairs), instead of the general head to head preview. X, LinkedIn, Slack, Discord and the other link preview bots may now open head to head pages; search engines are still kept off them (a page for every pair).
+- Link previews for team matches: a preview image with the teams, the division and day, the result (and whether it was an upset) and a bar of the chances before (home win, draw, away win) with the lineups played, as on the page.
 - Share buttons (open the preview image, share or copy the link) on the front page and on club, tournament, team match and head to head pages, as on player pages.
 - A player's preview image says which day its ratings are from ("Ratinger per 2. nov. 2026", as on the head to head previews) and shows at most three disciplines, their own gender's, without the ratings a woman has in the men's lists.
+- A club's preview image shows its rank in all five disciplines it's ranked in (it stopped at four, leaving out mixed doubles).
 - Discord shows shared links with the elodrop orange, and phones' browsers colour their bar with it.
 - Search results and link previews say "badminton" for the clubs: a club page is titled "Alta: badmintonklubb" ("Alta: badminton club" in English) and its description starts with "Badmintonklubben Alta", and the strongest clubs lists are "Sterkeste badmintonklubber".
 - Search engines: the sitemap now lists every team match weekend and every team match, so they're found without going through the division pages, and an English club page's structured data gives the English page's address (it gave the Norwegian one).
