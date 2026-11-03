@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.22.1 (2026-11-03)
+
+- Fixed: the site failed to deploy when its data was from before the team match divisions (until the next nightly data run). Team matches now show without the division list and links until the divisions are in the data.
+
 ## v1.22.0 (2026-11-03)
 
 - Team matches are now organised by division: each season lists its divisions by region (the national ones first, junior series marked with their age group), and each division has its own page with every round's team matches. The weekend picker is still there, and each group in a weekend links to its division.
