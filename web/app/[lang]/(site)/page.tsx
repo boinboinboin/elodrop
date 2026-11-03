@@ -10,6 +10,7 @@ import HomeCard from "@/components/home/HomeCard";
 import JsonLd from "@/components/seo/JsonLd";
 import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getI18n } from "@/messages/server";
@@ -62,6 +63,10 @@ export default async function Home() {
             <PlayersRated />
           </Suspense>
           <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorksLink")}</Link>
+          {/* The site's preview image and sharing, at the end of the row */}
+          <div className="ml-auto">
+            <ShareButtons path="/" image="/opengraph-image" title={t("seo.homeTitle")} kind="site" />
+          </div>
         </div>
       </Section>
       <Section title={t("home.pages")} titleClassName="sr-only">

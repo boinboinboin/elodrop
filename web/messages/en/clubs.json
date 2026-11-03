@@ -4,8 +4,9 @@
   "clubs": "Clubs",
   "metadata": {
     "club": "Club",
-    "strongest": "Strongest clubs",
-    "strongestPool": "Strongest clubs: {pool}"
+    "clubPage": "{name}: badminton club",
+    "strongest": "Strongest badminton clubs",
+    "strongestPool": "Strongest badminton clubs: {pool}"
   },
   "rule": {
     "weights": "{weights}, best first",

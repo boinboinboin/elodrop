@@ -12,7 +12,7 @@
     "playerRating": "{pool}-rating {rating}, #{rank} i Norge",
     "playerUnranked": "{pool}-rating {rating}",
     "playerNoRatings": "{name}{club}: Elo-ratinger, plasseringshistorikk og alle kamper i norsk badminton.",
-    "club": "{name}{details}: klubbens spillere og Elo-ratingene deres, styrken i hver disiplin og hvordan den har endret seg.",
+    "club": "Badmintonklubben {name}{details}: spillerne og Elo-ratingene deres, styrken i hver disiplin og hvordan den har endret seg.",
     "clubs": "De sterkeste badmintonklubbene i Norge, ut fra de beste spillernes Elo-ratinger: single, double og mixdouble samlet.",
     "clubsPool": "De sterkeste badmintonklubbene i Norge i {pool}, ut fra de beste spillernes Elo-ratinger.",
     "tournaments": "Kommende og nylige norske badmintonturneringer: hvem som fikk heldig eller uheldig trekning, ut fra spillernes Elo-ratinger.",
@@ -30,13 +30,18 @@
     "headToHead": "Head to head mellom to vilkårlige norske badmintonspillere: kampene mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
     "doublesHeadToHead": "Head to head mellom to vilkårlige norske badmintonpar: sjansene mot hverandre nå, ut fra spillernes Elo-ratinger.",
     "whatsNew": "Alt som har endret seg på elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
-    "teamMatchesDivision": "{division} {season}: alle lagkampene, runde for runde, og en styrkerangering av lagene etter spillerne som spilte for dem."
+    "teamMatchesDivision": "{division} {season}: alle lagkampene, runde for runde, og en styrkerangering av lagene etter spillerne som spilte for dem.",
+    "headToHeadPair": "Head to head mellom {a} og {b} i badminton: kampene mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
+    "doublesHeadToHeadPair": "Head to head mellom parene {a} og {b} i badminton: kampene mot hverandre og sjansene deres nå, ut fra spillernes Elo-ratinger."
   },
   "imageAlt": {
     "site": "elodrop: Elo-ratinger for norsk badminton",
     "player": "Spillerens navn, klubb, og rating og plassering i hver disiplin, på elodrop",
-    "club": "Klubbens navn og plassering blant norske klubber i hver disiplin, på elodrop",
-    "tournament": "Turneringens navn, datoer og antall klasser og påmeldinger, på elodrop"
+    "club": "Badmintonklubbens navn og plassering blant norske klubber i hver disiplin, på elodrop",
+    "tournament": "Turneringens navn, datoer og antall klasser og påmeldinger, på elodrop",
+    "teamMatch": "Lagene, resultatet og sjansen vinneren hadde før lagkampen, på elodrop",
+    "headToHead": "De to spillerne, kampene mot hverandre og sjansene deres nå, på elodrop",
+    "doublesHeadToHead": "De to parene, kampene mot hverandre og sjansene deres nå, på elodrop"
   },
   "faq": {
     "idea": "Hvordan regnes elodrops badmintonratinger ut?",
@@ -54,8 +59,17 @@
     "tournament": "Turneringstrekning",
     "rank": "#{rank} {pool}",
     "rating": "{pool}",
+    "asOf": "Ratinger per {date}",
     "events": "Klasser",
     "entries": "Påmeldinger",
-    "players": "Spillere"
+    "players": "Spillere",
+    "teamMatch": "Lagkamp",
+    "result": "Resultat",
+    "upsetResult": "Resultat, en overraskelse",
+    "teamChance": "Sjansen {team} hadde",
+    "headToHead": "Head to head",
+    "doublesHeadToHead": "Head to head i double",
+    "record": "Innbyrdes",
+    "chanceFor": "Sjanse for {name} i {pool}"
   }
 }

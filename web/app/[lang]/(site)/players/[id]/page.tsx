@@ -10,7 +10,6 @@ import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MatchTable from "@/components/players/MatchTable";
 import SeasonTable from "@/components/players/SeasonTable";
-import ShareButtons from "@/components/players/ShareButtons";
 import { WeekChange } from "@/components/rankings/RankMovement";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
@@ -18,6 +17,7 @@ import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import StatCard from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -114,7 +114,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           ) : (
             <span />
           )}
-          <ShareButtons path={playerHref(player.id)} title={player.name} />
+          <ShareButtons path={playerHref(player.id)} image={`${playerHref(player.id)}/preview.png`} title={player.name} kind="player" />
         </div>
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">

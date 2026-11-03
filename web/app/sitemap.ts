@@ -2,19 +2,24 @@
 // rebuilt with them (the elo-data and sanity tags). Head to head is left out (a page for every pair,
 // and kept out in robots.ts), as are the lists with inactive players (the same players as the
 // ranked list, and more) and a tournament's single events.
+// About 36,200 addresses with the team matches (2026-11), under the 50,000 one sitemap may hold;
+// past that it needs splitting (generateSitemaps).
 import type { MetadataRoute } from "next";
 import { getMeta } from "@/data/meta";
 import { getSearchIndex } from "@/data/players";
 import { getClubEntries } from "@/data/sanity";
 import { getTournamentsIndex } from "@/data/tournaments";
-import { getTeamMatchesIndex } from "@/data/teamMatches";
+import { getTeamMatchesIndex, getTeamMatchWeek } from "@/data/teamMatches";
 import { getUpsetsIndex } from "@/data/upsets";
-import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, seasonSlug, SITE_URL, teamDivisionHref, teamMatchesHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
+import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, seasonSlug, SITE_URL, teamDivisionHref, teamMatchesHref, teamMatchHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
 import { combinedRankingHref, juniorRankingHref, RANKING_LISTS, rankingHref, strongestClubsHref } from "@/utils/rankings";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [meta, players, clubs, tournaments, upsets, teamMatches] = await Promise.all([getMeta(), getSearchIndex(), getClubEntries(), getTournamentsIndex(), getUpsetsIndex(), getTeamMatchesIndex()]);
+  // Each team match is listed from its week's file, the one place that has every team match's id
+  const weeks = (teamMatches?.seasons ?? []).flatMap((s) => s.weeks.map((w) => w.week));
+  const weekFiles = await Promise.all(weeks.map(getTeamMatchWeek));
   const lists = Object.values(RANKING_LISTS);
   const paths = [
     "/",
@@ -34,6 +39,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     teamMatchesHref(),
     ...(teamMatches?.seasons ?? []).map((s) => teamMatchesHref(seasonSlug(s.season))),
     ...(teamMatches?.seasons ?? []).flatMap((s) => (s.divisions ?? []).map((d) => teamDivisionHref(s.season, d.slug))),
+    ...weeks.map(teamMatchesHref),
+    ...weekFiles.flatMap((w) => (w?.ties ?? []).map((tie) => teamMatchHref(tie.matchId))),
     "/how-it-works",
     "/whats-new",
     ...players.map(([id]) => playerHref(id)),

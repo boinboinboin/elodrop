@@ -14,6 +14,7 @@ import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import Tabs from "@/components/ui/Tabs";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getClubHistory, getClubPlayers, getClubsFile } from "@/data/clubs";
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/clubs/[slu
   const club = await getClubBySlug(decodeURIComponent((await params).slug));
   if (!club) return { title: t("clubs.metadata.club") };
   const details = [club.fullName !== club.title ? club.fullName : null, club.region].filter(Boolean).join(", ");
-  return pageMetadata(i18n, { title: club.title, description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
+  return pageMetadata(i18n, { title: t("clubs.metadata.clubPage", { name: club.title }), description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
 }
 
 export default async function ClubPage(props: PageProps<"/[lang]/clubs/[slug]">) {
@@ -54,7 +55,7 @@ export default async function ClubPage(props: PageProps<"/[lang]/clubs/[slug]">)
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "params">) {
-  const { t } = await getI18n();
+  const { t, href } = await getI18n();
   const entry = await getClubBySlug(decodeURIComponent((await params).slug));
   if (!entry) notFound();
   const [{ pools: history, players: names }, file] = await Promise.all([entry.nbfClubId ? getClubHistory(entry.nbfClubId) : Promise.resolve<ClubHistory>({ players: {}, pools: {} }), getClubsFile()]);
@@ -71,7 +72,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
             name: entry.title,
             ...(entry.fullName && entry.fullName !== entry.title ? { alternateName: entry.fullName } : {}),
             sport: "Badminton",
-            url: absoluteUrl(clubHref(entry.slug)),
+            url: absoluteUrl(href(clubHref(entry.slug))),
             ...(entry.logo ? { logo: entry.logo.startsWith("/") ? absoluteUrl(entry.logo) : entry.logo } : {}),
             ...(entry.website ? { sameAs: [entry.website] } : {}),
             address: { "@type": "PostalAddress", addressCountry: "NO", ...(entry.region ? { addressRegion: entry.region } : {}) },
@@ -85,21 +86,25 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
             {entry.fullName && entry.fullName !== entry.title && <p className="text-2xl text-gray-700">{entry.fullName}</p>}
           </div>
         </div>
-        <p className="text-gray-600 mt-4">
-          {entry.region}
-          {combinedStanding && (
-            <>
-              {" · "}
-              <Link href="/clubs" className={TEXT_LINK}>{t("clubs.club.combinedRank", { rank: combinedStanding.rank })}</Link>
-            </>
-          )}
-          {entry.website && (
-            <>
-              {" · "}
-              <a href={entry.website} className={TEXT_LINK} rel="noopener">{entry.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a>
-            </>
-          )}
-        </p>
+        {/* The region, rank and website, and the preview and share buttons at the end of the line */}
+        <div className="flex items-center justify-between gap-4 mt-4">
+          <p className="text-gray-600">
+            {entry.region}
+            {combinedStanding && (
+              <>
+                {" · "}
+                <Link href="/clubs" className={TEXT_LINK}>{t("clubs.club.combinedRank", { rank: combinedStanding.rank })}</Link>
+              </>
+            )}
+            {entry.website && (
+              <>
+                {" · "}
+                <a href={entry.website} className={TEXT_LINK} rel="noopener">{entry.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a>
+              </>
+            )}
+          </p>
+          <ShareButtons path={clubHref(entry.slug)} image={`${clubHref(entry.slug)}/preview.png`} title={entry.title} kind="club" />
+        </div>
       </Section>
 
       <OverTime history={history} />

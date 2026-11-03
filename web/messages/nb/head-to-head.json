@@ -1,6 +1,8 @@
 {
   "title": "Head to head",
   "doublesTitle": "Head to head i double",
+  "pairTitle": "{a} mot {b}: head to head",
+  "doublesPairTitle": "{a} mot {b}: head to head i double",
   "doublesCrumb": "Double",
   "intro": "To spilleres kamper mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
   "introDoubles": "To doublepars kamper mot hverandre, og sjansene deres hvis de møttes nå.",

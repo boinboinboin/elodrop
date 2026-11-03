@@ -2,7 +2,9 @@
 // entirely: they fetched every player page over and over, and each page view runs a Vercel Function.
 // robots.txt only asks; Vercel's firewall (the AI bots rule) is what turns away those that don't listen. Search engines are
 // welcome, except on head to head (a page for every pair of players), the API and the Studio, and
-// are pointed to the sitemap (app/sitemap.ts).
+// are pointed to the sitemap (app/sitemap.ts). Link preview bots (what fetches a link shared in a
+// chat or a post, to show its title and picture) may also open head to head, so a shared comparison
+// gets its preview; they only fetch the links people share, never the pages linked from them.
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/utils/hrefs";
 
@@ -47,10 +49,30 @@ const AI_CRAWLERS = [
   "img2dataset",
 ];
 
+// By the names they give (iMessage has none: the phone fetches the preview itself)
+const PREVIEW_BOTS = [
+  "Twitterbot",
+  "LinkedInBot",
+  "Slackbot",
+  "Slackbot-LinkExpanding",
+  "Discordbot",
+  "TelegramBot",
+  "facebookexternalhit",
+  "Facebot",
+  "WhatsApp",
+  "Pinterestbot",
+  "redditbot",
+  "SkypeUriPreview",
+  "Mastodon",
+  "Bluesky",
+  "Embedly",
+];
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: AI_CRAWLERS, disallow: "/" },
+      { userAgent: PREVIEW_BOTS, allow: "/", disallow: ["/api/", "/studio"] },
       { userAgent: "*", allow: "/", disallow: ["/head-to-head", "/en/head-to-head", "/api/", "/studio"] },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

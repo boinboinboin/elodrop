@@ -1,5 +1,6 @@
-// A player's link preview, at /players/<id>/preview.png: their name, club, and rating and rank in up to four disciplines
-import { previewCard } from "@/components/seo/PreviewCard";
+// A player's link preview, at /players/<id>/preview.png: their name, club, and rating and rank in up to three disciplines,
+// and the day the ratings are from
+import { previewCard, ratingsNote } from "@/components/seo/PreviewCard";
 import { getPlayer } from "@/data/players";
 import { createI18n, isLanguage } from "@/messages/i18n";
 import type { PlayerPool, Pool } from "@/types";
@@ -11,15 +12,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ lan
   const i18n = createI18n(lang);
   const { t, num, poolCodes } = i18n;
   const id = parseId(rawId);
-  const player = id !== null ? await getPlayer(id) : null;
+  const [player, note] = await Promise.all([id !== null ? getPlayer(id) : null, ratingsNote(i18n)]);
   if (!player) return new Response(null, { status: 404 });
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
   return previewCard(i18n, {
     kicker: t("seo.preview.player"),
     title: player.name,
     subtitle: player.club ?? undefined,
-    // Rated disciplines in page order (their own gender's first), ranked ones first
-    stats: [...pools.filter(([, p]) => p.rank !== null), ...pools.filter(([, p]) => p.rank === null)].map(([pool, p]) => ({
+    note,
+    // Rated disciplines in page order (their own gender's first), ranked ones first, and only three:
+    // a fourth or fifth is mostly a woman's rating in the men's lists, which says little
+    stats: [...pools.filter(([, p]) => p.rank !== null), ...pools.filter(([, p]) => p.rank === null)].slice(0, 3).map(([pool, p]) => ({
       value: num(Math.round(p.rating)),
       label: p.rank !== null ? t("seo.preview.rank", { rank: p.rank, pool: poolCodes[pool] }) : t("seo.preview.rating", { pool: poolCodes[pool] }),
     })),

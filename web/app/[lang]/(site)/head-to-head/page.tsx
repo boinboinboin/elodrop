@@ -25,6 +25,7 @@ import MatchTable from "@/components/players/MatchTable";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
 import Tabs from "@/components/ui/Tabs";
 import { getGenderGap, getHeadToHead } from "@/data/head-to-head";
@@ -39,10 +40,22 @@ import { DOUBLES_POOLS } from "@/utils/pools";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 
-export async function generateMetadata(): Promise<Metadata> {
+// Two players compared get their own title, description, address and preview (so a shared
+// comparison shows who's in it); the page without them the general ones
+export async function generateMetadata({ searchParams }: PageProps<"/[lang]/head-to-head">): Promise<Metadata> {
   const i18n = await getI18n();
-  return pageMetadata(i18n, { title: i18n.t("headToHead.title"), description: i18n.t("seo.descriptions.headToHead"), path: "/head-to-head" });
+  const { t } = i18n;
+  const params = await searchParams;
+  const [idA, idB] = [parseId(params.a), parseId(params.b)];
+  const [a, b] = idA !== null && idB !== null && idA !== idB ? await Promise.all([getPlayer(idA), getPlayer(idB)]) : [null, null];
+  if (!a || !b) return pageMetadata(i18n, { title: t("headToHead.title"), description: t("seo.descriptions.headToHead"), path: "/head-to-head" });
+  const { path, image } = pairAddresses(a.id, b.id);
+  const names = { a: a.name, b: b.name };
+  return pageMetadata(i18n, { title: t("headToHead.pairTitle", names), description: t("seo.descriptions.headToHeadPair", names), path, image: { url: image, alt: t("seo.imageAlt.headToHead") } });
 }
+
+/** Two players' comparison and its link preview (without the language) */
+const pairAddresses = (a: number, b: number) => ({ path: `/head-to-head?a=${a}&b=${b}`, image: `/head-to-head/preview.png?a=${a}&b=${b}` });
 
 export default async function HeadToHeadPage(props: PageProps<"/[lang]/head-to-head">) {
   return (
@@ -93,9 +106,13 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: 
   const { t } = await getI18n();
   const { a, b, record } = h2h;
   const pools = Object.entries(h2h.pools) as [Pool, HeadToHeadPool][];
+  const { path, image } = pairAddresses(a.id, b.id);
   return (
     <>
       <Section>
+        <div className="flex justify-end mb-4">
+          <ShareButtons path={path} image={image} title={t("headToHead.pairTitle", { a: a.name, b: b.name })} kind="headToHead" />
+        </div>
         {/* The two players and their record against each other */}
         <div className="bg-white p-4 md:p-6 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-4 items-center text-center [overflow-wrap:anywhere]">
           {[a, b].map((player, i) => (

@@ -2,6 +2,7 @@
 // winning margins, each side's chance now, and (just for fun) men against women, with women's
 // ratings moved onto the men's scale by the gender gap (pipeline/gender-gap.mjs).
 import { differenceInCalendarDays, parseISO } from "date-fns";
+import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type {
   DoublesHeadToHead,
@@ -77,11 +78,13 @@ function margins(meetings: Match[]): Margins {
 }
 
 /** Two players head to head, from A's complete match logs */
-export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | null> {
+// The texts are in the page's language, or `i18n`'s where there's no page to read it from (the link previews: route handlers)
+export async function getHeadToHead(a: number, b: number, i18n?: I18n): Promise<HeadToHead | null> {
   const [playerA, playerB] = await Promise.all([getPlayer(a), getPlayer(b)]);
   if (!playerA || !playerB || a === b) return null;
   // The disciplines' names in the page's language (the data's labels are English)
-  const { pools: names } = await getI18n();
+  const lang = i18n ?? (await getI18n());
+  const { pools: names } = lang;
   const allMatches = await getPlayerMatches(playerA);
   const meetings: Match[] = [];
   const together: Match[] = [];
@@ -104,7 +107,7 @@ export async function getHeadToHead(a: number, b: number): Promise<HeadToHead | 
     const chance = DOUBLES_POOLS.includes(pool) ? equalPartnersChance(p.rating, q.rating) : expectedScore(p.rating, q.rating);
     pools[pool] = { label: names[pool], a: p, b: q, chance, record: record(inPool), margins: margins(inPool) };
   }
-  return { a: playerA, b: playerB, meetings, together, record: record(meetings), margins: margins(meetings), togetherRecord: record(together), pools, crossovers: await crossovers(playerA, playerB, meetings) };
+  return { a: playerA, b: playerB, meetings, together, record: record(meetings), margins: margins(meetings), togetherRecord: record(together), pools, crossovers: await crossovers(playerA, playerB, meetings, lang) };
 }
 
 export const getGenderGap = async () => load<GenderGap>("gender-gap.json");
@@ -162,8 +165,8 @@ function onOneScale(players: Player[], format: Format, gap: GenderGap): { sides:
 }
 
 /** A man against a woman in singles and in doubles, for the players' head to head */
-async function crossovers(a: Player, b: Player, meetings: Match[]): Promise<HeadToHeadCrossover[]> {
-  const [gap, { t }] = await Promise.all([getGenderGap(), getI18n()]);
+async function crossovers(a: Player, b: Player, meetings: Match[], { t }: I18n): Promise<HeadToHeadCrossover[]> {
+  const gap = await getGenderGap();
   const genders = [playerGender(a), playerGender(b)];
   if (!gap || !genders[0] || !genders[1] || genders[0] === genders[1]) return [];
   const list: HeadToHeadCrossover[] = [];
@@ -191,11 +194,11 @@ async function crossovers(a: Player, b: Player, meetings: Match[]): Promise<Head
  * pairs in men's doubles, two mixed pairs in mixed doubles, and so on.
  */
 /** A player may be chosen more than once (the page's hidden jokes): they never met nor partnered themselves */
-export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b2: number): Promise<DoublesHeadToHead | null> {
+export async function getDoublesHeadToHead(a1: number, a2: number, b1: number, b2: number, i18n?: I18n): Promise<DoublesHeadToHead | null> {
   const players = await Promise.all([a1, a2, b1, b2].map(getPlayer));
   if (players.some((p) => !p)) return null;
   const [pa1, pa2, pb1, pb2] = players as Player[];
-  const [matchesA, matchesB, { t, pools: names }] = await Promise.all([getPlayerMatches(pa1), getPlayerMatches(pb1), getI18n()]);
+  const [matchesA, matchesB, { t, pools: names }] = await Promise.all([getPlayerMatches(pa1), getPlayerMatches(pb1), i18n ?? getI18n()]);
   const meetings: Match[] = [];
   const togetherA: Match[] = [];
   const togetherB: Match[] = [];

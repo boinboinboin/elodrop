@@ -84,5 +84,15 @@
   "changeSort": {
     "gain": "Sort by the biggest gain since last week",
     "loss": "Sort by the biggest loss since last week"
+  },
+  "share": {
+    "preview": "Open the link preview image",
+    "copied": "Link copied",
+    "player": "Share this player",
+    "club": "Share this club",
+    "tournament": "Share this tournament",
+    "teamMatch": "Share this team match",
+    "headToHead": "Share this comparison",
+    "site": "Share elodrop"
   }
 }

@@ -18,6 +18,7 @@ import LinkTabs from "@/components/ui/LinkTabs";
 import Loading from "@/components/ui/Loading";
 import ScrollRow from "@/components/ui/ScrollRow";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import { Stat } from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
@@ -111,10 +112,14 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
         />
         <h1 className="h1 mt-4">{tour.name}</h1>
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
-        <p className="mt-2 flex flex-wrap gap-x-6 gap-y-1">
-          <a href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`} className={TEXT_LINK} rel="noopener">{t("tournaments.page.cup2000")}</a>
-          {tour.portalenId && <span className="text-gray-600">{t("tournaments.page.portalen", { id: tour.portalenId })}</span>}
-        </p>
+        {/* The tournament's links, and the preview and share buttons at the end of the line */}
+        <div className="mt-2 flex items-center justify-between gap-4">
+          <p className="flex flex-wrap gap-x-6 gap-y-1">
+            <a href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`} className={TEXT_LINK} rel="noopener">{t("tournaments.page.cup2000")}</a>
+            {tour.portalenId && <span className="text-gray-600">{t("tournaments.page.portalen", { id: tour.portalenId })}</span>}
+          </p>
+          <ShareButtons path={tournamentHref(tour.cup2000Id)} image={`${tournamentHref(tour.cup2000Id)}/preview.png`} title={tour.name} kind="tournament" />
+        </div>
         {tour.cancelled && <p className="mt-4 inline-block px-3 py-2 border border-red-700 text-red-700">{rich("tournaments.page.cancelled", { strong }, { reason: cancelledReason(i18n, tour.cancelled) })}</p>}
         {/* Two views: the event tables (default) and the tournament's summary */}
         <LinkTabs

@@ -8,6 +8,16 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.23.0 (2026-11-03)
+
+- Link previews for head to head: a shared comparison of two players or two pairs shows who's in it, in its title and in a preview image with their record against each other and the chance of winning now, instead of the general head to head preview. X, LinkedIn, Slack, Discord and the other link preview bots may now open head to head pages; search engines are still kept off them (a page for every pair).
+- Link previews for team matches: a preview image with the teams, the division and day, the result (and whether it was an upset) and the chance the winner had with the lineups played.
+- Share buttons (open the preview image, share or copy the link) on the front page and on club, tournament, team match and head to head pages, as on player pages.
+- A player's preview image says which day its ratings are from ("Ratinger per 2. nov. 2026", as on the head to head previews) and shows at most three disciplines, their own gender's, without the ratings a woman has in the men's lists.
+- Discord shows shared links with the elodrop orange, and phones' browsers colour their bar with it.
+- Search results and link previews say "badminton" for the clubs: a club page is titled "Alta: badmintonklubb" ("Alta: badminton club" in English) and its description starts with "Badmintonklubben Alta", and the strongest clubs lists are "Sterkeste badmintonklubber".
+- Search engines: the sitemap now lists every team match weekend and every team match, so they're found without going through the division pages, and an English club page's structured data gives the English page's address (it gave the Norwegian one).
+
 ## v1.22.3 (2026-11-03)
 
 - The site's types are checked with TypeScript 7, the new native compiler, before every build: the whole site in under a second (TypeScript 6 took about 6). A type error now stops the build before it starts. Locally: `pnpm --filter web typecheck`. Next.js and the linter keep using TypeScript 6's interface until TypeScript 7 has one.

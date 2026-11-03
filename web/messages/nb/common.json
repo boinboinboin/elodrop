@@ -84,5 +84,15 @@
   "changeSort": {
     "gain": "Sorter etter største økning siden forrige uke",
     "loss": "Sorter etter største nedgang siden forrige uke"
+  },
+  "share": {
+    "preview": "Åpne forhåndsvisningsbildet",
+    "copied": "Lenke kopiert",
+    "player": "Del denne spilleren",
+    "club": "Del denne klubben",
+    "tournament": "Del denne turneringen",
+    "teamMatch": "Del denne lagkampen",
+    "headToHead": "Del denne sammenligningen",
+    "site": "Del elodrop"
   }
 }

@@ -29,6 +29,7 @@ import MatchTable from "@/components/players/MatchTable";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
 import Tabs from "@/components/ui/Tabs";
 import { getDoublesHeadToHead, getGenderGap } from "@/data/head-to-head";
@@ -45,12 +46,28 @@ import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
 
-export async function generateMetadata(): Promise<Metadata> {
+const FIELDS = ["a1", "a2", "b1", "b2"] as const;
+
+// Two pairs compared get their own title, description, address and preview (so a shared comparison
+// shows who's in it); the page without all four players the general ones
+export async function generateMetadata({ searchParams }: PageProps<"/[lang]/head-to-head/doubles">): Promise<Metadata> {
   const i18n = await getI18n();
-  return pageMetadata(i18n, { title: i18n.t("headToHead.doublesTitle"), description: i18n.t("seo.descriptions.doublesHeadToHead"), path: "/head-to-head/doubles" });
+  const { t } = i18n;
+  const params = await searchParams;
+  const ids = FIELDS.map((field) => parseId(params[field]));
+  const players = ids.every((id) => id !== null) ? await Promise.all((ids as number[]).map(getPlayer)) : [];
+  if (players.length < 4 || players.some((p) => !p)) return pageMetadata(i18n, { title: t("headToHead.doublesTitle"), description: t("seo.descriptions.doublesHeadToHead"), path: "/head-to-head/doubles" });
+  const [a1, a2, b1, b2] = players as Player[];
+  const { path, image } = pairsAddresses([a1, a2, b1, b2].map((p) => p.id));
+  const names = { a: `${a1.name}/${a2.name}`, b: `${b1.name}/${b2.name}` };
+  return pageMetadata(i18n, { title: t("headToHead.doublesPairTitle", names), description: t("seo.descriptions.doublesHeadToHeadPair", names), path, image: { url: image, alt: t("seo.imageAlt.doublesHeadToHead") } });
 }
 
-const FIELDS = ["a1", "a2", "b1", "b2"] as const;
+/** Two pairs' comparison and its link preview (without the language), the players in a1, a2, b1, b2 order */
+function pairsAddresses(ids: number[]) {
+  const query = `?${FIELDS.map((field, i) => `${field}=${ids[i]}`).join("&")}`;
+  return { path: `/head-to-head/doubles${query}`, image: `/head-to-head/doubles/preview.png${query}` };
+}
 
 /** Players chosen more than once: the same pair on both sides (AB v AB), one player in all four places,
  *  or doppelgangers (the extra copies: AA v BC has one, AA v AB and AA v BB two) */
@@ -137,9 +154,14 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
   const { record } = h2h;
   const pools = Object.entries(h2h.pools) as [Pool, DoublesHeadToHeadPool][];
   const names: [string, string] = [t("headToHead.pairs.a"), t("headToHead.pairs.b")];
+  const { path, image } = pairsAddresses([...h2h.a, ...h2h.b].map((p) => p.id));
+  const shareTitle = t("headToHead.doublesPairTitle", { a: `${h2h.a[0].name}/${h2h.a[1].name}`, b: `${h2h.b[0].name}/${h2h.b[1].name}` });
   return (
     <>
       <Section>
+        <div className="flex justify-end mb-4">
+          <ShareButtons path={path} image={image} title={shareTitle} kind="headToHead" />
+        </div>
         {/* The two pairs, their record against each other and each pair's record together */}
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 md:gap-4 items-stretch text-center [overflow-wrap:anywhere]">
           {[h2h.a, h2h.b].map((pair, i) => (

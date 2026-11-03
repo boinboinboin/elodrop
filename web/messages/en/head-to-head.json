@@ -1,6 +1,8 @@
 {
   "title": "Head to head",
   "doublesTitle": "Doubles head to head",
+  "pairTitle": "{a} vs {b}: head to head",
+  "doublesPairTitle": "{a} vs {b}: doubles head to head",
   "doublesCrumb": "Doubles",
   "intro": "Two players' matches against each other and together, and their chances if they met now.",
   "introDoubles": "Two doubles pairs' matches against each other, and their chances if they met now.",

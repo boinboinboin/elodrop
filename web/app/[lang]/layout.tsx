@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/messages/client";
 import { isLanguage, LANGUAGES } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import { SITE_URL } from "@/utils/hrefs";
+import { ACCENT } from "@/utils/logo";
 import { THEME_SCRIPT } from "@/utils/theme";
 import "../globals.css";
 
@@ -38,6 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: { card: "summary_large_image" },
   };
 }
+
+// The brand orange: Discord colours a shared link's embed with it, and phones' browsers their bar
+export const viewport: Viewport = { themeColor: ACCENT };
 
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) has its own root layout
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {

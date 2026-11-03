@@ -12,6 +12,7 @@ import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
+import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
 import { getClubMap } from "@/data/sanity";
 import { getTeamMatch } from "@/data/teamMatches";
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/team-match
   const tie = id === null ? null : await getTeamMatch(id);
   if (!tie) return { title: t("teamMatches.metadata.title") };
   const values = { home: tie.home, away: tie.away, date: date(tie.day), division: tie.division, score: `${tie.score[0]}–${tie.score[1]}` };
-  return pageMetadata(i18n, { title: t("teamMatches.metadata.match", values), description: t("seo.descriptions.teamMatch", values), path: teamMatchHref(tie.matchId) });
+  return pageMetadata(i18n, { title: t("teamMatches.metadata.match", values), description: t("seo.descriptions.teamMatch", values), path: teamMatchHref(tie.matchId), image: { url: `${teamMatchHref(tie.matchId)}/preview.png`, alt: t("seo.imageAlt.teamMatch") } });
 }
 
 export default async function TeamMatchPage(props: PageProps<"/[lang]/team-matches/match/[id]">) {
@@ -75,9 +76,13 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
           ]}
         />
         <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{breakable(tie.home)} – {breakable(tie.away)}</h1>
-        <p className="mt-2 text-gray-600">
-          {tie.division} · {tie.group} · <time dateTime={tie.time}>{date(tie.day, "long")}{time && time !== "00:00" && `, ${time}`}</time>
-        </p>
+        {/* The division, group and day, and the preview and share buttons at the end of the line */}
+        <div className="mt-2 flex items-center justify-between gap-4">
+          <p className="text-gray-600">
+            {tie.division} · {tie.group} · <time dateTime={tie.time}>{date(tie.day, "long")}{time && time !== "00:00" && `, ${time}`}</time>
+          </p>
+          <ShareButtons path={teamMatchHref(tie.matchId)} image={`${teamMatchHref(tie.matchId)}/preview.png`} title={`${tie.home} – ${tie.away}`} kind="teamMatch" />
+        </div>
 
         {/* The scoreboard: the teams in their colours either side of the score, then the chances before */}
         <div className="bg-white p-4 md:p-6 mt-6">
