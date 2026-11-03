@@ -65,15 +65,17 @@ const FAQ: Record<FaqPart, MessageKey[]> = {
   data: ["howItWorks.data.p1", "howItWorks.data.p2"],
 };
 const strong = (text: React.ReactNode) => <strong>{text}</strong>;
+/** A part's text: a paragraph, or several and lists (the part spaces them) */
 async function P({ k }: { k: MessageKey }) {
-  const { rich } = await getI18n();
-  return <p>{rich(k, { strong })}</p>;
+  const { blocks } = await getI18n();
+  return <>{blocks(k, { strong })}</>;
 }
 const Sub = ({ children }: { children: React.ReactNode }) => <sub>{children}</sub>;
 
 export default async function HowItWorksPage() {
   const { t, rich, num } = await getI18n();
-  const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "");
+  // Without markup, and with paragraphs and list items run together as sentences
+  const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "").replace(/\s*\n+(- )?/g, " ");
   return (
     <>
       <JsonLd

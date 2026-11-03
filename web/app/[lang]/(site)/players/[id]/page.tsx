@@ -210,7 +210,7 @@ async function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
 
 /** Rating and ranking of all disciplines together, with tables by season (precomputed by rate.mjs) */
 async function AllDisciplines({ player }: { player: Player }) {
-  const { t, num, pools: poolNames } = await getI18n();
+  const { blocks, t, num, pools: poolNames } = await getI18n();
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
   // slot: a fixed colour per discipline, in the order of POOLS, as on the club pages
   const ratingSeries: (ChartSeries & { pool: Pool })[] = [];
@@ -266,7 +266,7 @@ async function AllDisciplines({ player }: { player: Player }) {
                       label: t("players.history.ranking"),
                       content: (
                         <>
-                          <p className="text-sm text-gray-600 mb-4">{t("players.history.rankingIntro")}</p>
+                          <div className="text-sm text-gray-600 mb-4 space-y-2">{blocks("players.history.rankingIntro")}</div>
                           <LineChart series={rankSeries} label={t("players.history.rank")} rank className="relative h-72" />
                           <Disclosure summary={t("players.history.rankBySeason")} className="mt-4">
                             <SeasonTable

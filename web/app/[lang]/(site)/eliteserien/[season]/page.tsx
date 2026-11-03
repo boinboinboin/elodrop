@@ -49,7 +49,7 @@ export default async function ReviewPage(props: PageProps<"/[lang]/eliteserien/[
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]">, "params">) {
-  const { t, plural, rich, num, pct, signed, dateRange, poolCodes } = await getI18n();
+  const { t, plural, rich, blocks, num, pct, signed, dateRange, poolCodes } = await getI18n();
   const disciplineCode = (discipline: string) => (DISCIPLINE_POOLS[discipline] ? poolCodes[DISCIPLINE_POOLS[discipline]] : discipline);
   /** "+1.2", "−0.4", "0.0" */
   const diff = (x: number) => signed(x, 1, "");
@@ -76,8 +76,8 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
           </nav>
         )}
         <p className="text-2xl max-w-3xl mt-3">{t("eliteserien.review.intro")}</p>
-        <div className="max-w-3xl mt-4 text-gray-700 space-y-2">
-          <p>{rich("eliteserien.review.howItWorks", { strong })}</p>
+        <div className="max-w-3xl mt-4 text-gray-700 space-y-3">
+          {blocks("eliteserien.review.howItWorks", { strong })}
           {data.rankingNote && <p>{data.rankingNote}</p>}
           <p>
             {rich("eliteserien.review.teams", {
@@ -132,7 +132,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
         </div>
       </Section>
 
-      <Section title={t("eliteserien.review.potential.title")} titleClassName="text-3xl mb-2" intro={rich("eliteserien.review.potential.intro", { strong })}>
+      <Section title={t("eliteserien.review.potential.title")} titleClassName="text-3xl mb-2" intro={blocks("eliteserien.review.potential.intro", { strong })}>
         <div className="bg-white overflow-x-auto">
           <table className="w-full text-left">
             <thead className="text-sm text-gray-600 border-b border-gray-200">
@@ -176,8 +176,8 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
         </div>
       </Section>
 
-      <Section title={t("eliteserien.review.ties.title")} titleClassName="text-3xl mb-2" intro={rich("eliteserien.review.ties.intro", { strong })}>
-        <p className="text-gray-700 mb-4 max-w-3xl">{t("eliteserien.review.ties.playoffs")}</p>
+      <Section title={t("eliteserien.review.ties.title")} titleClassName="text-3xl mb-2" intro={blocks("eliteserien.review.ties.intro", { strong })}>
+        <div className="text-gray-700 mb-4 max-w-3xl space-y-3">{blocks("eliteserien.review.ties.playoffs")}</div>
         {data.rounds.map((round: Loose) => (
           <div key={round.name}>
             <h3 className="text-xl mt-6 mb-2">

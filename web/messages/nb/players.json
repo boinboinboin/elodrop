@@ -31,7 +31,7 @@
     "ranking": "Rangering",
     "rank": "Plassering",
     "ratingIntro": "Rating i hver disiplin ved slutten av hver uke. Doubleratinger er på samme type skala som single, men hver disiplin rates for seg, så sammenlign hvordan hver linje beveger seg i stedet for nivåene mellom disiplinene.",
-    "rankingIntro": "Landsplassering ved slutten av hver uke, blant spillere som hadde spilt de siste 12 månedene; herredisiplinene rangerer bare herrer og damedisiplinene bare damer, og mixdouble rangerer herrer og damer hver for seg. Hull er perioder uten plassering. Skalaen er logaritmisk, så et hopp fra #100 til #50 ser like stort ut som fra #20 til #10.",
+    "rankingIntro": "Landsplassering ved slutten av hver uke, blant spillere som hadde spilt de siste 12 månedene. Herredisiplinene rangerer bare herrer og damedisiplinene bare damer; mixdouble rangerer herrer og damer hver for seg.\n\nHull er perioder uten plassering. Skalaen er logaritmisk, så et hopp fra #100 til #50 ser like stort ut som fra #20 til #10.",
     "amongWomen": "{pool} (blant damer)",
     "amongMen": "{pool} (blant herrer)",
     "ratingBySeason": "Rating per sesong",

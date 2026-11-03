@@ -3,12 +3,13 @@
     "title": "Lagkamper",
     "week": "Lagkamper, {week}",
     "match": "{home} – {away}, {date}",
-    "season": "Lagkamper {season}"
+    "season": "Lagkamper {season}",
+    "division": "{division} {season}"
   },
   "breadcrumb": "Lagkamper",
   "title": "Lagkamper",
-  "intro": "Alle lagkamper i seriene, uke for uke: resultatet, hver kamp og overraskelsene.",
-  "explanation": "Et lags styrke er oppstillingen det stilte med: hver kamps seierssjanse er regnet ut fra spillernes ratinger rett før den, og sammen gir de hvert lags sjanse til å vinne lagkampen. En lagkamp er en overraskelse når vinneren hadde under 30 % sjanse; en kamp er en overraskelse etter de samme reglene som de største overraskelsene, mellom etablerte spillere.",
+  "intro": "Alle lagkamper i seriene, divisjon for divisjon: resultatene, hver kamp, overraskelsene og hvor sterke lagene var.",
+  "explanation": "Et lags styrke er oppstillingen det stilte med. Hver kamps seierssjanse er regnet ut fra spillernes ratinger rett før den, og sammen gir de lagets sjanse til å vinne lagkampen.\n\n- En <strong>lagkamp</strong> er en overraskelse når vinneren hadde under 30 % sjanse.\n- En <strong>kamp</strong> er en overraskelse etter de samme reglene som de største overraskelsene: mellom etablerte spillere.",
   "loading": "Laster lagkamper…",
   "none": "Ingen lagkamper ennå: kjør pipelinen.",
   "season": "Sesong",
@@ -43,13 +44,32 @@
   },
   "power": {
     "title": "Styrkerangering",
-    "intro": "Gruppens lag etter hvor sterke spillerne som har spilt for dem denne sesongen er: hvert lags beste oppstilling av dem, med dagens ratinger, mot de andre lagenes oppstillinger, kamp for kamp.",
+    "intro": "Kamper vunnet per lagkamp, av {matches}: forventet ut fra spillerne som spilte for hvert lag, og hva som faktisk skjedde.",
     "team": "Lag",
-    "expected": "Kamper vunnet (av {matches})",
+    "expected": "Forventet",
     "expectedTitle": "Forventede kamper vunnet per lagkamp mot gruppens andre lag, med hvert lags beste oppstilling",
     "win": "Seier",
     "winTitle": "Gjennomsnittlig sjanse for å vinne en lagkamp mot gruppens andre lag",
     "players": "Spillere",
-    "playersTitle": "Spillere som har spilt for laget denne sesongen"
+    "playersTitle": "Spillere som spilte for laget i sesongen",
+    "actual": "Faktisk",
+    "actualTitle": "Kamper faktisk vunnet per lagkamp i gruppen",
+    "actualCell": "Over {ties} lagkamper",
+    "howTitle": "Slik regnes det",
+    "how": "- <strong>Troppen:</strong> alle som spilte for laget i sesongen, med ratingene fra uken {date}, gruppens siste lagkamp. Mangler en double- eller mixrating, regnes den fra singleratingen.\n- <strong>Oppstillingen:</strong> lagets beste i gruppens format. Kampene fylles én om gangen med spilleren eller paret som har best sjanse mot gruppens gjennomsnittlige motstander. Hver spiller spiller høyst to kamper, og én per disiplin.\n- <strong>Lagkampene:</strong> lagene møtes oppstilling mot oppstilling, kamp for kamp, med de samme seierssjansene som ratingene. En kamp et lag ikke kan stille i, er walkover.\n\n<strong>Forventet</strong> er kampene vunnet per lagkamp, i snitt mot gruppens andre lag. <strong>Seier</strong> er sjansen for å vinne en lagkamp. <strong>Faktisk</strong> er kampene laget virkelig vant per lagkamp, fra de offisielle resultatene.\n\nTroppene regnes på full styrke. Et lag som sjelden stilte sine beste spillere, gjør det derfor dårligere enn forventet."
+  },
+  "latestWeekend": "Siste helg",
+  "allDivisions": "Alle divisjoner",
+  "divisions": {
+    "title": "Divisjoner {season}",
+    "intro": "Hver divisjons side har alle lagkampene, runde for runde, og en styrkerangering: lagene etter spillerne som spilte for dem.",
+    "national": "Nasjonalt",
+    "teams": {
+      "one": "{count} lag",
+      "other": "{count} lag"
+    }
+  },
+  "division": {
+    "loading": "Laster divisjonen…"
   }
 }

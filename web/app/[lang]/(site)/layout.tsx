@@ -50,7 +50,11 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             <SearchBar />
           </div>
           <div className="ml-auto md:ml-0 flex">
-            <MenuButton links={NAV} about={ABOUT} />
+            {/* It reads the URL (the current page in the menu): on a page whose address is only known when
+                it's asked for (a division not prerendered), the button's outline stands in until then */}
+            <Suspense fallback={<span aria-hidden="true" className="w-[42px] h-[42px] border border-black" />}>
+              <MenuButton links={NAV} about={ABOUT} />
+            </Suspense>
           </div>
         </div>
       </header>

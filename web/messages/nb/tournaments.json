@@ -8,7 +8,7 @@
     "intro": "Hvem som fikk heldig eller uheldig trekning i kommende turneringer, ut fra spillernes ratinger.",
     "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er ferdigspilt, viser siden hvordan prediksjonene gikk.",
     "loading": "Laster turneringer…",
-    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen; hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet. «Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null): nær 1 ga en trekning som var en runde heldigere omtrent en runde mer.",
+    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen. Hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet.\n\n«Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere, omtrent en runde mer.",
     "correlation": "Flaks forklarer bare en liten del av et resultat (korrelasjon {correlation}): mesteparten er hvordan kampene går.",
     "upcoming": "Kommende",
     "noUpcoming": "Ingen kommende turneringer med publisert trekning.",
@@ -50,7 +50,7 @@
     "summary": "Oppsummering"
   },
   "summary": {
-    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen. «Flaksen viste seg i resultatene»: hver deltakers runder minus forventningen med rettferdig trekning, mot flaksen (en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere omtrent en runde mer; nær 0 viste ikke flaksen seg.",
+    "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen.\n\n«Flaksen viste seg i resultatene» setter hver deltakers runder minus forventningen med rettferdig trekning opp mot flaksen (en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere, omtrent en runde mer. Nær 0 viste ikke flaksen seg.",
     "lists": "Lister",
     "surprises": "Mest overraskende vinnere",
     "luckiest": "Heldigste trekninger",
@@ -62,8 +62,8 @@
   },
   "howItWorks": {
     "title": "Slik fungerer det",
-    "simulation": "Hvor heldig hver spillers trekning er, ut fra ratingene ved slutten av uken før turneringen. Hver klasse spilles ut {runs} ganger, med hver kamp avgjort av spillernes seierssjanser, én gang med den faktiske trekningen og én gang med en rettferdig trekning: de samme spillerne trukket på nytt etter reglene, seedene plassert der reglene plasserer dem og alle andre tilfeldig.",
-    "seeds": "<strong>Seeding</strong> er etter den offisielle rankingen{version}, listen som gjaldt onsdagen etter at påmeldingen stengte (et par har summen av spillernes poeng; uten poeng, ingen seeding): 2, 4 fra 16 deltakere, 8 fra 32 og 16 fra 64, og i puljespill høyst én per pulje. Seed 1 går øverst i trekningen, seed 2 nederst, seed 3–4 trekkes inn i andre og tredje kvart, 5–8 i åttedelene uten seed. En seed arrangøren plasserte annerledes, eller utelot, regnes som flaks. Klasser uten rankingliste (som U11) seedes etter rating.",
+    "simulation": "Hvor heldig hver spillers trekning er, ut fra ratingene ved slutten av uken før turneringen.\n\nHver klasse spilles ut {runs} ganger, med hver kamp avgjort av spillernes seierssjanser. Det gjøres to ganger:\n\n- med den faktiske trekningen\n- med en rettferdig trekning: de samme spillerne trukket på nytt etter reglene, seedene plassert der reglene plasserer dem og alle andre tilfeldig",
+    "seeds": "<strong>Seeding</strong> er etter den offisielle rankingen{version}: listen som gjaldt onsdagen etter at påmeldingen stengte. Et par har summen av spillernes poeng, og uten poeng blir det ingen seeding.\n\n- <strong>Antall seeder:</strong> 2, 4 fra 16 deltakere, 8 fra 32 og 16 fra 64. I puljespill høyst én per pulje.\n- <strong>Plassering:</strong> seed 1 går øverst i trekningen og seed 2 nederst. Seed 3–4 trekkes inn i andre og tredje kvart, 5–8 i åttedelene uten seed.\n\nEn seed arrangøren plasserte annerledes, eller utelot, regnes som flaks. Klasser uten rankingliste (som U11) seedes etter rating.",
     "seedsVersion": " fra {date}",
     "rounds": "<strong>Runder</strong> er hvor langt en spiller forventes å komme: én runde for å komme videre fra puljen og én for hver utslagsrunde etter det (en frirunde teller også), og én til for å vinne. <strong>Flaks</strong> er rundene forventet med den faktiske trekningen minus med en rettferdig.",
     "placement": "I X-klassene får alle en sluttplassering, så flaksen der regnes i plasser: åtte spillere eller par i to puljer på fire, de to beste til kryssende semifinaler, treerne spiller om 5. plass og firerne om 7.",

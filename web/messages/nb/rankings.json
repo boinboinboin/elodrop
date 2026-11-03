@@ -53,7 +53,7 @@
   "combined": {
     "tab": "Samlet",
     "crumb": "Samlet",
-    "explanation": "Single, double og mixdouble samlet, for alle som er rangert i minst to av dem: snittet av hvor langt hver av ratingene deres ligger over eller under de andres, i standardavvik, så hver disiplin teller likt. I en disiplin spilleren ikke er rangert i, teller ratingen fra sist de spilte den (minus eventuelt fratrekk for manglende spilling, bare over 1850); en disiplin de aldri har spilt som voksne teller som den svakeste av de andre, men aldri høyere enn noen som spiller den og er minst like god i de to andre.",
+    "explanation": "Single, double og mixdouble samlet, for alle som er rangert i minst to av dem. Poengsummen er snittet av hvor langt hver av ratingene deres ligger over eller under de andres, i standardavvik, så hver disiplin teller likt.\n\n- En disiplin spilleren ikke er rangert i, teller med ratingen fra sist de spilte den (minus eventuelt fratrekk for manglende spilling, bare over 1850).\n- En disiplin de aldri har spilt som voksne, teller som den svakeste av de andre. Men aldri høyere enn noen som spiller den og er minst like god i de to andre.",
     "summary": "{count} spillere rangert i minst to av de tre disiplinene.",
     "juniorSummary": "{count} juniorer rangert i minst to av de tre disiplinene: født i {year} eller senere, med juniorkamper de siste 12 månedene.",
     "score": "Poengsum",

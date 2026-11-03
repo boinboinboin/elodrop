@@ -287,6 +287,8 @@ export interface TeamMatchSummary {
   upset: boolean;
   /** How many of its matches were upsets */
   upsets: number;
+  /** Its division's address in the season (/team-matches/<season>/<slug>) */
+  divisionSlug: string;
 }
 
 export interface TeamMatch extends TeamMatchSummary {
@@ -301,34 +303,52 @@ export interface TeamMatchWeek {
   ties: TeamMatchSummary[];
 }
 
-/** The newest season's power ranking (pipeline/team-matches.mjs): each group's teams by the best lineup of the players who have played for them */
+/** A group's power ranking (pipeline/team-matches.mjs): its teams by the best lineup of the players who played for them that season */
 export interface TeamPowerRanking {
-  generatedAt: string;
-  season: number;
-  groups: {
-    ageGroup: string;
-    division: string;
-    group: string;
-    /** Matches in a team match */
-    matches: number;
-    teams: {
-      rank: number;
-      team: string;
-      club: string | null;
-      /** Expected matches won per team match against the group's other teams, and the chances of winning and drawing one */
-      expected: number;
-      win: number;
-      draw: number;
-      /** Players who have played for the team this season */
-      players: number;
-    }[];
+  /** The ratings are from the end of this day's week: the group's last team match */
+  ratingsDay: string;
+  /** Matches in a team match */
+  matches: number;
+  teams: {
+    rank: number;
+    team: string;
+    club: string | null;
+    /** Expected matches won per team match against the group's other teams, and the chances of winning and drawing one */
+    expected: number;
+    win: number;
+    draw: number;
+    /** Players who played for the team that season */
+    players: number;
+    /** Matches actually won per team match in the group, and its team matches played (null: none) */
+    actual: { matches: number; ties: number } | null;
   }[];
+}
+
+/** One division (or series) in a season: its groups, each with its team matches in order and its power ranking */
+export interface TeamDivision {
+  season: number;
+  slug: string;
+  ageGroup: string;
+  region: string;
+  division: string;
+  groups: { group: string; power: TeamPowerRanking | null; ties: TeamMatchSummary[] }[];
+}
+
+/** A division in the index: its address and how many groups, teams and team matches it has */
+export interface TeamDivisionEntry {
+  slug: string;
+  ageGroup: string;
+  region: string;
+  division: string;
+  groups: number;
+  teams: number;
+  ties: number;
 }
 
 export interface TeamMatchesIndex {
   generatedAt: string;
-  /** Newest first, each with its weeks in order: the Monday, the first and last day played and the number of team matches */
-  seasons: { season: number; weeks: { week: string; from: string; to: string; ties: number }[] }[];
+  /** Newest first, each with its divisions (Eliteserien first, then by level, juniors after) and its weeks in order: the Monday, the first and last day played and the number of team matches */
+  seasons: { season: number; divisions: TeamDivisionEntry[]; weeks: { week: string; from: string; to: string; ties: number }[] }[];
   latest: TeamMatchWeek | null;
 }
 

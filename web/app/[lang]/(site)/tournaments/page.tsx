@@ -62,7 +62,7 @@ async function Row({ tournament: tour }: { tournament: TournamentSummary }) {
 }
 
 async function Content() {
-  const { t, num, date } = await getI18n();
+  const { t, blocks, num, date } = await getI18n();
   const index = await getTournamentsIndex();
   const tournaments = index?.tournaments ?? [];
   // "Today" is the day of the data update, which the page is rendered with
@@ -83,10 +83,10 @@ async function Content() {
       {season && season.winners > 0 && (
         <Section title={t("tournaments.predictions.title")}>
           <PredictionStats ev={season} />
-          <p className="text-gray-700 max-w-3xl">
-            {t("tournaments.list.predictionsExplained")}
-            {fit?.correlation != null && ` ${t("tournaments.list.correlation", { correlation: num(fit.correlation, 2) })}`}
-          </p>
+          <div className="text-gray-700 max-w-3xl space-y-3">
+            {blocks("tournaments.list.predictionsExplained")}
+            {fit?.correlation != null && <p>{t("tournaments.list.correlation", { correlation: num(fit.correlation, 2) })}</p>}
+          </div>
         </Section>
       )}
       <Section title={t("tournaments.list.upcoming")}>

@@ -37,7 +37,7 @@ export interface CalculatorSide {
 }
 
 export default function ScoreCalculator({ sides }: { sides: [CalculatorSide, CalculatorSide] }) {
-  const { t, num, signed } = useI18n();
+  const { blocks, t, num, signed } = useI18n();
   const id = useId();
   const [fields, setFields] = useState<Field[]>(EMPTY);
 
@@ -157,7 +157,7 @@ export default function ScoreCalculator({ sides }: { sides: [CalculatorSide, Cal
             )}
           </div>
         </div>
-        <p className="text-sm text-gray-600 mt-5 max-w-3xl">{t(doubles ? "headToHead.calculator.noteDoubles" : "headToHead.calculator.note")}</p>
+        <div className="text-sm text-gray-600 mt-5 max-w-3xl space-y-2">{blocks(doubles ? "headToHead.calculator.noteDoubles" : "headToHead.calculator.note")}</div>
       </Disclosure>
     </div>
   );

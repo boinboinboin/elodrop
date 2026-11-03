@@ -8,10 +8,12 @@ export const clubHref = (slug: string) => `/clubs/${slug}`;
 export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournaments/${cup2000Id}${view ? `/${view}` : ""}`;
 /** A week's upsets (its Monday, "2026-10-12"), or a year's newest week ("2026") */
 export const upsetsHref = (period: string) => `/upsets/${period}`;
-/** The newest week's team matches, a week's (its Monday, "2025-11-10") or a season's newest week ("2025-26") */
+/** The newest season's team matches, a week's (its Monday, "2025-11-10") or a season's ("2025-26") */
 export const teamMatchesHref = (period?: string) => `/team-matches${period ? `/${period}` : ""}`;
 /** A league season (2025, for 2025/26) in team match URLs: "2025-26" */
 export const seasonSlug = (season: number) => `${season}-${String((season + 1) % 100).padStart(2, "0")}`;
+/** A division's page in a season: its groups' team matches and power rankings */
+export const teamDivisionHref = (season: number, slug: string) => `/team-matches/${seasonSlug(season)}/${slug}`;
 /** One team match (its badmintonportalen match id) */
 export const teamMatchHref = (matchId: number) => `/team-matches/match/${matchId}`;
 /** Eliteserien this season, and what if a tie were 10 matches */

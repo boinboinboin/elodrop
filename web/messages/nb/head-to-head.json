@@ -131,7 +131,7 @@
     "big": "Stor seier",
     "newRating": "{from} → {to}",
     "note": "Ratet som en kamp på toppnivå (SEN A, E eller X) mellom klubber i samme krets. Lavere klasser flytter færre poeng, kamper mellom kretser 1,5 ganger så mange.",
-    "noteDoubles": "Ratet som en kamp på toppnivå (SEN A, E eller X) mellom klubber i samme krets. Hvert par spiller på snittet av spillernes ratinger, og deler endringen mellom dem etter hvor sikre ratingene er: en mindre etablert spiller tar mer av den. Lavere klasser flytter færre poeng, kamper mellom kretser 1,5 ganger så mange.",
+    "noteDoubles": "Ratet som en kamp på toppnivå (SEN A, E eller X) mellom klubber i samme krets. Lavere klasser flytter færre poeng, kamper mellom kretser 1,5 ganger så mange.\n\nHvert par spiller på snittet av spillernes ratinger. Endringen deles mellom dem etter hvor sikre ratingene er: en mindre etablert spiller tar mer av den.",
     "expected": "Som ventet",
     "weight": "teller ×{weight}",
     "weightTitle": "Vekten for seiersmarginen: en jevn kamp flytter færre poeng, en stor seier flere",

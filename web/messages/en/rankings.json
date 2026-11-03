@@ -53,7 +53,7 @@
   "combined": {
     "tab": "Combined",
     "crumb": "Combined",
-    "explanation": "Singles, doubles and mixed doubles together, for everyone ranked in at least two of them: the average of how far each of their ratings is above or below the others', in standard deviations, so each discipline counts the same. In a discipline a player isn't ranked in, their rating from when they last played it counts (less any not playing penalty, only above 1850); one they never played as an adult counts as their weaker one, but never above anyone who plays it and is at least as good in the other two.",
+    "explanation": "Singles, doubles and mixed doubles together, for everyone ranked in at least two of them. The score is the average of how far each of their ratings is above or below the others', in standard deviations, so each discipline counts the same.\n\n- A discipline a player isn't ranked in counts with their rating from when they last played it (less any not playing penalty, only above 1850).\n- A discipline they never played as an adult counts as their weaker one. But never above anyone who plays it and is at least as good in the other two.",
     "summary": "{count} players ranked in at least two of the three disciplines.",
     "juniorSummary": "{count} juniors ranked in at least two of the three disciplines: born in {year} or later, with junior matches in the last 12 months.",
     "score": "Score",

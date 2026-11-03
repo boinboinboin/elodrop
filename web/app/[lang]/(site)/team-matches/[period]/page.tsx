@@ -1,4 +1,4 @@
-// One week's team matches (/team-matches/2025-11-10) or a season's newest week (/team-matches/2025-26).
+// One week's team matches (/team-matches/2025-11-10) or a season with its divisions and newest weekend (/team-matches/2025-26).
 import type { Metadata } from "next";
 import TeamMatches from "@/components/team-matches/TeamMatches";
 import { getTeamMatchesIndex } from "@/data/teamMatches";

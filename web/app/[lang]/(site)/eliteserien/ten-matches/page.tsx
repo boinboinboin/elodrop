@@ -43,7 +43,7 @@ export default async function TenMatchesPage() {
 }
 
 async function Content() {
-  const { t, rich, num, pct, chance, signed } = await getI18n();
+  const { t, rich, blocks, num, pct, chance, signed } = await getI18n();
   const [data, clubs] = await Promise.all([getEliteserienTenMatches(), getClubMap()]);
   const teams: Loose[] = data?.teams ?? [];
   const pointsChange = (team: Loose) => team.strength.ten.tablePoints - team.strength.eight.tablePoints;
@@ -94,9 +94,9 @@ async function Content() {
             })}
           </div>
         )}
-        <p className="max-w-3xl mt-4 text-gray-700">
-          {t("eliteserien.tenMatches.howItWorks", { ranking: data?.rankingPeriod ? t("eliteserien.tenMatches.rankingPeriod", { period: data.rankingPeriod }) : "" })}
-        </p>
+        <div className="max-w-3xl mt-4 text-gray-700 space-y-3">
+          {blocks("eliteserien.tenMatches.howItWorks", {}, { ranking: data?.rankingPeriod ? t("eliteserien.tenMatches.rankingPeriod", { period: data.rankingPeriod }) : "" })}
+        </div>
       </Section>
 
       {teams.length === 0 ? (

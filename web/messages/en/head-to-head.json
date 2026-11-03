@@ -131,7 +131,7 @@
     "big": "Big win",
     "newRating": "{from} → {to}",
     "note": "Rated as a top-level match (SEN A, E or X) between clubs in the same region. Lower classes move fewer points, matches between regions 1.5 times as many.",
-    "noteDoubles": "Rated as a top-level match (SEN A, E or X) between clubs in the same region. Each pair plays at the average of its players' ratings, and shares its change between them by how certain their ratings are: a less established player takes more of it. Lower classes move fewer points, matches between regions 1.5 times as many.",
+    "noteDoubles": "Rated as a top-level match (SEN A, E or X) between clubs in the same region. Lower classes move fewer points, matches between regions 1.5 times as many.\n\nEach pair plays at the average of its players' ratings. The change is shared between them by how certain their ratings are: a less established player takes more of it.",
     "expected": "As expected",
     "weight": "counts ×{weight}",
     "weightTitle": "The margin of victory weight: a close match moves fewer points, a big win more",

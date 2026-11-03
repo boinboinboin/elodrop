@@ -12,6 +12,8 @@
 //   chosen by the language's plural rules ({count} is n, unless given in the values)
 // - rich("tournaments.howItWorks.seeds", { strong: (text) => <strong>{text}</strong>, link: … }):
 //   a sentence with markup, <strong>…</strong> and {placeholders} that are React nodes
+// - blocks("teamMatches.power.how"): a longer text as paragraphs (split by a blank line) and bulleted
+//   lists (lines starting "- "), with the same markup as rich()
 // - num, signed, pct, chance, date, dateRange, dateTime, dayAt, weekAt: numbers and dates as the
 //   language writes them ("2 646" and "31. okt. 2026" in Norwegian, "2,646" and "31 Oct 2026" in English)
 // - pools, poolCodes: the disciplines' names and short codes
@@ -79,8 +81,40 @@ function build(lang: Language) {
   };
 
   /** A text with markup: <tag>…</tag> wrapped by parts[tag], {name} replaced by parts[name] (or values) */
-  const rich = (key: MessageKey, parts: Record<string, Part>, values?: Values): ReactNode => {
+  const rich = (key: MessageKey, parts: Record<string, Part>, values?: Values): ReactNode => markup(fill(lookup(key) as string, values), parts);
+
+  /**
+   * A longer text in blocks, for reading: a blank line starts a new paragraph (<p>), and lines that
+   * start with "- " make a bulleted list (<ul>). Markup and placeholders as for rich(). The caller
+   * spaces the blocks (a container with space-y-*), since they can't go inside a <p>. <strong> needs no part.
+   */
+  const blocks = (key: MessageKey, given: Record<string, Part> = {}, values?: Values): ReactNode => {
     const text = fill(lookup(key) as string, values);
+    // <strong> is bold without being asked for, as the lists' labels use it
+    const parts: Record<string, Part> = { strong: (inner: ReactNode) => createElement("strong", { className: "font-semibold" }, inner), ...given };
+    const out: ReactNode[] = [];
+    for (const block of text.split(/\n\s*\n/)) {
+      // A block's lines: runs of text lines are a paragraph, runs of "- " lines a list
+      const runs: { list: boolean; lines: string[] }[] = [];
+      for (const line of block.split("\n").filter((l) => l.trim())) {
+        const list = line.startsWith("- ");
+        if (runs.at(-1)?.list !== list) runs.push({ list, lines: [] });
+        runs.at(-1)!.lines.push(list ? line.slice(2) : line);
+      }
+      for (const run of runs) {
+        const key = out.length;
+        out.push(
+          run.list
+            ? createElement("ul", { key, className: "list-disc pl-5 space-y-1" }, run.lines.map((line, i) => createElement("li", { key: i }, markup(line, parts))))
+            : createElement("p", { key }, markup(run.lines.join(" "), parts)),
+        );
+      }
+    }
+    return out;
+  };
+
+  /** Markup in a text: <tag>…</tag> wrapped by parts[tag], {name} replaced by parts[name] */
+  function markup(text: string, parts: Record<string, Part>): ReactNode {
     const nodes: ReactNode[] = [];
     let last = 0;
     for (const m of text.matchAll(/<(\w+)>([\s\S]*?)<\/\1>|\{(\w+)\}/g)) {
@@ -91,7 +125,7 @@ function build(lang: Language) {
     }
     if (last < text.length) nodes.push(text.slice(last));
     return nodes.map((node, i) => createElement(Fragment, { key: i }, node));
-  };
+  }
 
   const numberFormats = new Map<number, Intl.NumberFormat>();
   const numberFormat = (decimals: number) => {
@@ -168,7 +202,7 @@ function build(lang: Language) {
   /** A page's address in this language: as it is in Norwegian, under /en in English ("/" → "/en") */
   const href = (path: string): string => (lang === "en" && path.startsWith("/") ? (path === "/" ? "/en" : `/en${path}`) : path);
 
-  return { lang, locale: locale.intl, openGraphLocale: locale.openGraph, t, plural, rich, num, signed, pct, chance, date, dateTime, dateRange, dayAt, weekAt, pools, poolCodes, href };
+  return { lang, locale: locale.intl, openGraphLocale: locale.openGraph, t, plural, rich, blocks, num, signed, pct, chance, date, dateTime, dateRange, dayAt, weekAt, pools, poolCodes, href };
 }
 
 export type I18n = ReturnType<typeof build>;

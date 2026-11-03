@@ -41,7 +41,7 @@ export default async function EliteserienPage() {
 }
 
 async function Content() {
-  const { t, rich, num, pct, chance } = await getI18n();
+  const { t, rich, blocks, num, pct, chance } = await getI18n();
   const [data, clubs, meta] = await Promise.all([getEliteserien(), getClubMap(), getMeta()]);
   const teams: Loose[] = data?.teams ?? [];
   // Chance against the average Eliteserien opponent in a slot
@@ -75,8 +75,8 @@ async function Content() {
             ),
           })}
         </p>
-        <div className="max-w-3xl mt-4 text-gray-700 space-y-2">
-          <p>{t("eliteserien.howItWorks.tie", { ranking: data?.rankingPeriod ? t("eliteserien.howItWorks.rankingPeriod", { period: data.rankingPeriod }) : "" })}</p>
+        <div className="max-w-3xl mt-4 text-gray-700 space-y-3">
+          {blocks("eliteserien.howItWorks.tie", {}, { ranking: data?.rankingPeriod ? t("eliteserien.howItWorks.rankingPeriod", { period: data.rankingPeriod }) : "" })}
           <p>
             {rich("eliteserien.howItWorks.teams", {
               link: (text) => (
@@ -100,33 +100,33 @@ async function Content() {
               <table className="w-full text-left">
                 <thead className="text-sm text-gray-600 border-b border-gray-200">
                   <tr>
-                    <th scope="col" className="py-3 px-4 font-normal text-right w-12">{t("common.table.rank")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal">{t("eliteserien.table.team")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right" title={t("eliteserien.table.tablePointsTitle")}>{t("eliteserien.table.tablePoints")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right hidden md:table-cell" title={t("eliteserien.table.matchesPerTieTitle")}>{t("eliteserien.table.matchesPerTie")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right">{t("eliteserien.table.winsTie")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right hidden sm:table-cell">{t("eliteserien.table.draw")}</th>
-                    <th scope="col" className="py-3 px-4 font-normal text-right hidden sm:table-cell">{t("eliteserien.table.losesTie")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right w-12">{t("common.table.rank")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal">{t("eliteserien.table.team")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right" title={t("eliteserien.table.tablePointsTitle")}>{t("eliteserien.table.tablePoints")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right hidden md:table-cell" title={t("eliteserien.table.matchesPerTieTitle")}>{t("eliteserien.table.matchesPerTie")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right">{t("eliteserien.table.winsTie")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right hidden sm:table-cell">{t("eliteserien.table.draw")}</th>
+                    <th scope="col" className="py-3 px-2 sm:px-4 font-normal text-right hidden sm:table-cell">{t("eliteserien.table.losesTie")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {teams.map((team) => (
                     <tr key={team.team} className={`${ROW} hover:bg-gray-50`}>
-                      <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{team.rank}</td>
-                      <td className="py-3 px-4">
+                      <td className="py-3 px-2 sm:px-4 text-right text-gray-600 tabular-nums">{team.rank}</td>
+                      <td className="py-3 px-2 sm:px-4">
                         <a href={`#${teamId(team.team)}`} className="flex items-center gap-2 hover:text-blue-600">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           {clubs[team.team]?.logo && <img src={logoSrc(clubs[team.team].logo!, 6)} alt="" className="w-6 h-6 object-contain" />}
                           {team.team}
                         </a>
                       </td>
-                      <td className="py-3 px-4 text-right tabular-nums font-semibold">{num(team.strength.tablePoints, 1)}</td>
-                      <td className="py-3 px-4 text-right tabular-nums hidden md:table-cell">
+                      <td className="py-3 px-2 sm:px-4 text-right tabular-nums font-semibold">{num(team.strength.tablePoints, 1)}</td>
+                      <td className="py-3 px-2 sm:px-4 text-right tabular-nums hidden md:table-cell">
                         {num(team.strength.expected, 2)} <span className="text-sm text-gray-500">{t("eliteserien.table.ofEight")}</span>
                       </td>
-                      <td className="py-3 px-4 text-right tabular-nums">{pct(team.strength.win)}</td>
-                      <td className="py-3 px-4 text-right tabular-nums hidden sm:table-cell">{pct(team.strength.draw)}</td>
-                      <td className="py-3 px-4 text-right tabular-nums hidden sm:table-cell">{pct(team.strength.loss)}</td>
+                      <td className="py-3 px-2 sm:px-4 text-right tabular-nums">{pct(team.strength.win)}</td>
+                      <td className="py-3 px-2 sm:px-4 text-right tabular-nums hidden sm:table-cell">{pct(team.strength.draw)}</td>
+                      <td className="py-3 px-2 sm:px-4 text-right tabular-nums hidden sm:table-cell">{pct(team.strength.loss)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -222,13 +222,13 @@ async function Content() {
                   <Card>
                     <h3 className="text-xl mb-4">{t("eliteserien.team.players")}</h3>
                     <div className="overflow-x-auto">
-                      <table className="w-full text-left">
+                      <table className="w-full text-left text-sm sm:text-base">
                         <thead className="text-sm text-gray-600 border-b border-gray-200">
                           <tr>
-                            <th scope="col" className="py-2 pr-4 font-normal">{t("common.table.player")}</th>
-                            <th scope="col" className="py-2 pr-4 font-normal text-right">{t("eliteserien.team.singles")}</th>
-                            <th scope="col" className="py-2 pr-4 font-normal text-right">{t("eliteserien.team.doubles")}</th>
-                            <th scope="col" className="py-2 pr-4 font-normal text-right">{t("eliteserien.team.mixed")}</th>
+                            <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal">{t("common.table.player")}</th>
+                            <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right">{t("eliteserien.team.singles")}</th>
+                            <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right">{t("eliteserien.team.doubles")}</th>
+                            <th scope="col" className="py-2 pr-2 sm:pr-4 font-normal text-right">{t("eliteserien.team.mixed")}</th>
                             <th scope="col" className="py-2 font-normal text-right" title={t("eliteserien.team.pointsTitle")}>{t("eliteserien.team.points")}</th>
                           </tr>
                         </thead>
@@ -236,15 +236,15 @@ async function Content() {
                           {/* Men first, then women, each by singles rating (as the note says) */}
                           {[...team.players].sort((a: Loose, b: Loose) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles).map((p: Loose) => (
                             <tr key={String(p.id ?? p.listName)} className={`${ROW} align-top`}>
-                              <td className="py-2 pr-4">
+                              <td className="py-2 pr-2 sm:pr-4">
                                 {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
                                 {p.loanFrom && (
-                                  <span className="ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.team.loanFrom", { club: p.loanFrom })}</span>
+                                  <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 sm:whitespace-nowrap">{t("eliteserien.team.loanFrom", { club: p.loanFrom })}</span>
                                 )}
                                 {!p.rated && <span className="block text-sm text-gray-500">{t("eliteserien.team.noRatedMatches")}</span>}
                               </td>
                               {(["singles", "doubles", "mixed"] as const).map((kind) => (
-                                <td key={kind} className="py-2 pr-4 text-right tabular-nums text-gray-700">
+                                <td key={kind} className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-700">
                                   {p.rated ? `${p.estimated?.[kind] ? "≈" : ""}${p[kind]}` : EMPTY}
                                 </td>
                               ))}

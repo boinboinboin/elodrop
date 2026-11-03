@@ -8,7 +8,7 @@
     "intro": "Who got a lucky or unlucky draw in upcoming tournaments, from the players' ratings.",
     "about": "Draws are from Cup2000 and the players from the entry lists on badmintonportalen, as soon as the draw is published, with their ratings from the week before. Once a tournament is played, its page shows how the predictions turned out.",
     "loading": "Loading tournaments…",
-    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw; if the chances are right, about as many favourites win as expected. “Luck showed in the results” compares each entry's result against a fair draw with its draw luck (in rounds, a regression through zero): near 1, a draw rated a round luckier gave about a round more.",
+    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw. If the chances are right, about as many favourites win as expected.\n\n“Luck showed in the results” compares each entry's result against a fair draw with its draw luck (in rounds, a regression through zero). Near 1, a draw rated a round luckier gave about a round more.",
     "correlation": "Luck explains only a small part of a result (correlation {correlation}): most of it is how the matches go.",
     "upcoming": "Upcoming",
     "noUpcoming": "No upcoming tournaments with a published draw.",
@@ -50,7 +50,7 @@
     "summary": "Summary"
   },
   "summary": {
-    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw. “Luck showed in the results”: each entry's rounds minus its fair-draw expectation, against its luck (a regression through zero). Near 1, a draw rated a round luckier gave about a round more; near 0, the luck didn't show.",
+    "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw.\n\n“Luck showed in the results” sets each entry's rounds minus its fair-draw expectation against its luck (a regression through zero). Near 1, a draw rated a round luckier gave about a round more. Near 0, the luck didn't show.",
     "lists": "Lists",
     "surprises": "Most surprising winners",
     "luckiest": "Luckiest draws",
@@ -62,8 +62,8 @@
   },
   "howItWorks": {
     "title": "How it works",
-    "simulation": "How lucky each player's draw is, from their ratings at the end of the week before the tournament. Every event is played out {runs} times with each match decided by the players' win chances, once with the actual draw and once with a fair draw: the same players drawn again by the rules, the seeds placed where the rules put them and everyone else at random.",
-    "seeds": "<strong>Seeds</strong> are by the official ranking{version}, the list valid the Wednesday after registration closed (a pair has the sum of its players' points; without points, no seed): 2, 4 from 16 entries, 8 from 32 and 16 from 64, and in groups at most one per group. Seed 1 goes to the top of the draw, seed 2 to the bottom, seeds 3–4 are drawn into the second and third quarters, 5–8 into the eighths without a seed. A seed the organiser placed differently, or left out, counts as luck. Classes without a ranking (such as U11) are seeded by rating.",
+    "simulation": "How lucky each player's draw is, from their ratings at the end of the week before the tournament.\n\nEvery event is played out {runs} times, with each match decided by the players' win chances. That's done twice:\n\n- with the actual draw\n- with a fair draw: the same players drawn again by the rules, the seeds placed where the rules put them and everyone else at random",
+    "seeds": "<strong>Seeds</strong> are by the official ranking{version}: the list valid the Wednesday after registration closed. A pair has the sum of its players' points, and without points there's no seed.\n\n- <strong>How many:</strong> 2, 4 from 16 entries, 8 from 32 and 16 from 64. In groups, at most one per group.\n- <strong>Where:</strong> seed 1 goes to the top of the draw and seed 2 to the bottom. Seeds 3–4 are drawn into the second and third quarters, 5–8 into the eighths without a seed.\n\nA seed the organiser placed differently, or left out, counts as luck. Classes without a ranking (such as U11) are seeded by rating.",
     "seedsVersion": " of {date}",
     "rounds": "<strong>Rounds</strong> is how far a player is expected to get: one round for getting out of the group and one for every knockout round after that (a bye counts too), and one more for winning. <strong>Luck</strong> is the rounds expected with the actual draw minus with a fair one.",
     "placement": "In the X classes everyone gets a final place, so luck there is in places: eight players or pairs in two groups of four, the top two to cross-over semi-finals, the third-placed playing for 5th and the fourth-placed for 7th.",

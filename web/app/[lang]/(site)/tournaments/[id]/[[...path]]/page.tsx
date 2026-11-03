@@ -136,7 +136,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
 
 async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string, ClubEntry> }) {
   const i18n = await getI18n();
-  const { t, rich, num, pct, signed, date } = i18n;
+  const { t, rich, blocks, num, pct, signed, date } = i18n;
   const all = allEntries(i18n, tour);
   // Luck in each event's own measure: places in events that place everyone (the X classes), else rounds
   const byLuck = all.filter((e) => e.luck).sort((a, b) => b.luck!.score - a.luck!.score);
@@ -159,7 +159,7 @@ async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string
       {ev?.events > 0 && (
         <Section title={t("tournaments.predictions.title")}>
           <PredictionStats ev={ev} totalEvents={tour.events.length} />
-          <p className="text-gray-700 max-w-3xl">{t("tournaments.summary.predictionsExplained")}</p>
+          <div className="text-gray-700 max-w-3xl space-y-3">{blocks("tournaments.summary.predictionsExplained")}</div>
         </Section>
       )}
       {lists.length > 0 && (
@@ -208,9 +208,9 @@ async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string
         </Section>
       )}
       <Section title={t("tournaments.howItWorks.title")}>
-        <div className="max-w-3xl text-gray-700 space-y-2">
-          <p>{t("tournaments.howItWorks.simulation", { runs: num(tour.runs) })}</p>
-          <p>{rich("tournaments.howItWorks.seeds", { strong }, { version: tour.rankingVersion ? t("tournaments.howItWorks.seedsVersion", { date: date(tour.rankingVersion) }) : "" })}</p>
+        <div className="max-w-3xl text-gray-700 space-y-3 [&_strong]:font-semibold">
+          {blocks("tournaments.howItWorks.simulation", {}, { runs: num(tour.runs) })}
+          {blocks("tournaments.howItWorks.seeds", { strong }, { version: tour.rankingVersion ? t("tournaments.howItWorks.seedsVersion", { date: date(tour.rankingVersion) }) : "" })}
           <p>
             {hasRounds && (
               <>

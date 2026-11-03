@@ -4,6 +4,7 @@
 // 10,000 players), with a link to the page with all of them. The junior rankings (JuniorRankings) and the combined
 // rankings (CombinedRankings, men or women) have ranked players only.
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { ArrowRight, Check, Female, Male } from "@/components/SVG";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CombinedTable, { type CombinedRow } from "@/components/rankings/CombinedTable";
@@ -53,7 +54,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
         </Link>
       </div>
 
-      {gender && <Explanation text={t("rankings.genders.explanation")} />}
+      {gender && <Explanation>{t("rankings.genders.explanation")}</Explanation>}
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -99,7 +100,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
         <DisciplineTabs current={listTabs(pool, gender)} junior />
       </div>
 
-      {gender && <Explanation text={t("rankings.genders.explanation")} />}
+      {gender && <Explanation>{t("rankings.genders.explanation")}</Explanation>}
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -119,7 +120,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
  * everyone or of the juniors (U19)
  */
 export async function CombinedRankings({ gender, junior }: { gender: Gender; junior: boolean }) {
-  const { num, t } = await getI18n();
+  const { blocks, num, t } = await getI18n();
   const [{ players, bornFrom }, clubs] = await Promise.all([getCombinedRankings(gender, junior), getClubMap()]);
   const pools = Object.keys(players[0]?.pools ?? {}) as Pool[];
   const crumbs = junior
@@ -136,7 +137,7 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
       <div className="mb-6">
         <DisciplineTabs current={listTabs("combined", gender)} junior={junior} />
       </div>
-      <Explanation text={t("rankings.combined.explanation")} />
+      <Explanation>{blocks("rankings.combined.explanation")}</Explanation>
 
       {players.length === 0 ? (
         <p>{t("rankings.noRatings")}</p>
@@ -204,8 +205,8 @@ async function DisciplineTabs({ current, junior = false, showInactive = false }:
 }
 
 /** Why mixed doubles and the combined lists rank men and women separately (and how the combined one is made) */
-function Explanation({ text }: { text: string }) {
-  return <p className="text-gray-600 mb-6 max-w-3xl">{text}</p>;
+function Explanation({ children }: { children: ReactNode }) {
+  return <div className="text-gray-600 mb-6 max-w-3xl space-y-3">{children}</div>;
 }
 
 /** The list a /rankings/<list> page shows, from its params (404 for an unknown list) */

@@ -23,13 +23,14 @@
     "upsets": "The biggest upsets in Norwegian badminton: the matches won with the lowest chance of winning, week by week.",
     "upsetsYear": "The biggest upsets in Norwegian badminton in {year}: the matches won with the lowest chance of winning.",
     "upsetsWeek": "The biggest upsets in Norwegian badminton in the week {week}: the matches won with the lowest chance of winning.",
-    "teamMatches": "Every team match in the Norwegian badminton leagues, week by week: results, each match's win chance and the upsets.",
+    "teamMatches": "Every team match in the Norwegian badminton leagues, division by division: results, each match's win chance, the upsets and each team's strength.",
     "teamMatchesSeason": "Team matches in the Norwegian badminton leagues in {season}: results, each match's win chance and the upsets.",
     "teamMatchesWeek": "Team matches in the Norwegian badminton leagues on {week}: results, each match's win chance and the upsets.",
     "teamMatch": "{home} against {away} in {division}, {date}: {score}, with each match, the players' ratings and the chances before.",
     "headToHead": "Any two Norwegian badminton players head to head: their matches against each other and together, and their chances if they met now.",
     "doublesHeadToHead": "Any two Norwegian badminton pairs head to head: their chances against each other now, from the players' Elo ratings.",
-    "whatsNew": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes."
+    "whatsNew": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes.",
+    "teamMatchesDivision": "{division} {season}: every team match, round by round, and a power ranking of the teams by the players who played for them."
   },
   "imageAlt": {
     "site": "elodrop: Elo ratings for Norwegian badminton",

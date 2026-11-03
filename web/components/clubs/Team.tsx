@@ -2,6 +2,7 @@
 // `clubs`: club entries by short name (data/sanity.ts getClubMap); `size` is the logo size in Tailwind
 // units (default 6); `stacked` puts the logo above the name; `club` is the club when the name is a
 // team's ("Sandefjord 2").
+import { Fragment } from "react";
 import Link from "@/components/ui/Link";
 import type { ClubEntry } from "@/types";
 import { logoSrc } from "@/utils/clubs";
@@ -19,6 +20,15 @@ interface Props {
   className?: string;
 }
 
+/** A combined team's name ("Lambertseter/Frogner") may break after each slash, on narrow screens */
+export const breakable = (name: string) =>
+  name.split("/").map((part, i, parts) => (
+    <Fragment key={i}>
+      {part}
+      {i < parts.length - 1 && <>/<wbr /></>}
+    </Fragment>
+  ));
+
 export default function Team({ name, club, clubs, size = 6, stacked = false, linked = true, className = "" }: Props) {
   const entry = clubs[club ?? name];
   const inner = (
@@ -27,7 +37,7 @@ export default function Team({ name, club, clubs, size = 6, stacked = false, lin
         // eslint-disable-next-line @next/next/no-img-element -- small logos from the CMS or public/
         <img src={logoSrc(entry.logo, size)} alt="" className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />
       )}
-      <span>{name}</span>
+      <span>{breakable(name)}</span>
     </>
   );
   const classes = `inline-flex ${stacked ? "flex-col" : ""} items-center gap-1.5 align-middle ${className}`;

@@ -4,7 +4,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import Team from "@/components/clubs/Team";
+import Team, { breakable } from "@/components/clubs/Team";
 import ChanceBar from "@/components/head-to-head/ChanceBar";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PlayerLine from "@/components/players/PlayerLine";
@@ -19,7 +19,7 @@ import { getI18n } from "@/messages/server";
 import type { ClubEntry, TeamMatchGame } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { seasonLabel } from "@/utils/format";
-import { doublesHeadToHeadHref, headToHeadHref, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
+import { doublesHeadToHeadHref, headToHeadHref, seasonSlug, teamDivisionHref, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 
@@ -68,28 +68,29 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
         <Breadcrumbs
           trail={[
             { label: t("teamMatches.breadcrumb"), href: teamMatchesHref() },
-            // The season, at this team match's week
-            { label: seasonLabel(tie.season, true), href: teamMatchesHref(tie.week) },
+            // The season, and the division with all its team matches
+            { label: seasonLabel(tie.season, true), href: teamMatchesHref(seasonSlug(tie.season)) },
+            ...(tie.divisionSlug ? [{ label: tie.division, href: teamDivisionHref(tie.season, tie.divisionSlug) }] : []),
             { label: `${tie.home} – ${tie.away}` },
           ]}
         />
-        <h1 className="h1 mt-4">{tie.home} – {tie.away}</h1>
+        <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{breakable(tie.home)} – {breakable(tie.away)}</h1>
         <p className="mt-2 text-gray-600">
           {tie.division} · {tie.group} · <time dateTime={tie.time}>{date(tie.day, "long")}{time && time !== "00:00" && `, ${time}`}</time>
         </p>
 
         {/* The scoreboard: the teams in their colours either side of the score, then the chances before */}
         <div className="bg-white p-4 md:p-6 mt-6">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-6 items-center text-center [overflow-wrap:anywhere]">
+          <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-2 sm:gap-6 items-center text-center [overflow-wrap:anywhere] max-sm:gap-1">
             {[0, 1].map((i) => (
               <div key={i} className={i === 0 ? "order-1" : "order-3"}>
                 <Swatch color={SIDE_COLORS[i]} className="w-8 h-1 mb-3" />
-                <p className={`text-lg sm:text-2xl ${tie.winner === i + 1 ? "font-semibold" : ""}`}>
+                <p className={`text-base sm:text-2xl ${tie.winner === i + 1 ? "font-semibold" : ""}`}>
                   <Team name={names[i]} club={i === 0 ? tie.homeClub : tie.awayClub} clubs={clubs} size={12} stacked />
                 </p>
               </div>
             ))}
-            <div className="order-2 px-1 sm:px-4">
+            <div className="order-2 sm:px-4">
               <p className="text-5xl sm:text-6xl font-semibold tabular-nums whitespace-nowrap">
                 {tie.score[0]}<span className="text-gray-400 mx-1 sm:mx-2">–</span>{tie.score[1]}
               </p>

@@ -23,14 +23,14 @@ import { upsetsHref } from "@/utils/hrefs";
 
 /** The page for a period: null for the newest week, a year ("2019") for its newest week, or a week's Monday */
 export default async function Upsets({ period }: { period: Promise<string | null> }) {
-  const { t } = await getI18n();
+  const { blocks, t } = await getI18n();
   return (
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("upsets.breadcrumb") }]} />
         <h1 className="h1 mt-4">{t("upsets.title")}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("upsets.intro")}</p>
-        <p className="max-w-3xl mt-4 text-gray-700">{t("upsets.explanation")}</p>
+        <div className="max-w-3xl mt-4 space-y-3 text-gray-700">{blocks("upsets.explanation")}</div>
       </Section>
       <Suspense fallback={<Loading label={t("upsets.loading")} />}>
         <Content period={period} />

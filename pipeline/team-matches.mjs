@@ -4,11 +4,13 @@
 // Usage: node team-matches.mjs   (after rate.mjs; needs data/league and data/league-games.json)
 //
 // Writes data/team-matches/:
-//   index.json          the seasons (newest first) with their weeks (Mondays, in order) and the newest week
+//   index.json          the seasons (newest first) with their divisions (by region and age group)
+//                       and weeks (Mondays, in order), and the newest week
 //   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level, and its season
 //   <matchId>.json      one tie: its summary, individual matches and golden set
-//   power.json          the newest season's power ranking: each group's teams by the strength of
-//                       the players who have played for them this season (their best lineup)
+//   divisions/<season>/<slug>.json  one division (or series) in a season: its groups, each with
+//                       its team matches and its power ranking (the teams by the strength of the
+//                       players who played for them that season, their best lineup)
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { lowestRatings, playedOdds, playerRatings } from "./eliteserien.mjs";
 import * as R from "./rules.mjs";
@@ -116,6 +118,22 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
   }
 }
 
+// Each division's address in its season ("1-divisjon"; with the region, then the age group, when
+// two divisions in a season have the same name), in every team match's summary for its links
+const slugify = (text) => text.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const divisionKey = (x) => `${x.season}|${x.ageGroup}|${x.region}|${x.division}`;
+const slugs = new Map();
+for (const { group } of [...played].sort((a, b) => rankOf(a.group) - rankOf(b.group) || a.group.division.localeCompare(b.group.division, "nb"))) {
+  const key = divisionKey(group);
+  if (slugs.has(key)) continue;
+  const taken = new Set([...slugs].filter(([k]) => k.startsWith(`${group.season}|`)).map(([, v]) => v));
+  let slug = slugify(group.division) || "division";
+  if (taken.has(slug)) slug = `${slug}-${slugify(group.region)}`;
+  if (taken.has(slug)) slug = `${slug}-${slugify(group.ageGroup)}`;
+  slugs.set(key, slug);
+}
+for (const t of ties) t.summary.divisionSlug = slugs.get(divisionKey(t.summary));
+
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(`${OUT}/weeks`, { recursive: true });
 for (const t of ties) writeFileSync(`${OUT}/${t.summary.matchId}.json`, JSON.stringify({ ...t.summary, week: t.week, games: t.games, goldenSet: t.goldenSet }));
@@ -141,36 +159,72 @@ const seasons = [...Map.groupBy(weeks, (week) => byWeek.get(week)[0].summary.sea
       return { week, from: days[0], to: days.at(-1), ties: days.length };
     }),
   }));
-writeFileSync(`${OUT}/power.json`, JSON.stringify(powerRanking()));
+// Divisions: each season's divisions (Eliteserien first, then by level, juniors after), each with
+// its groups in order, every group's team matches by time and its power ranking
+const weekly = read(`${DIR}data/ratings-weekly.json`).pools;
+const current = read(`${DIR}data/ratings.json`).pools;
+for (const s of seasons) {
+  const inSeason = played.filter((p) => p.group.season === s.season);
+  const power = powerRanking(inSeason, weekly, current);
+  const byDivision = Map.groupBy(inSeason, (p) => `${p.group.ageGroup}|${p.group.region}|${p.group.division}`);
+  s.divisions = [...byDivision.values()]
+    .map((list) => {
+      const { group } = list[0];
+      const slug = slugs.get(divisionKey(group));
+      const groups = [...Map.groupBy(list, (p) => p.group.group)]
+        .map(([name, l]) => {
+          const ids = new Set(l.map((p) => p.tie.matchId));
+          return {
+            group: name,
+            power: power.get(`${group.ageGroup}|${group.division}|${name}`) ?? null,
+            ties: ties.filter((t) => ids.has(t.summary.matchId)).map((t) => t.summary).sort((a, b) => a.time.localeCompare(b.time) || a.matchId - b.matchId),
+          };
+        })
+        .sort((a, b) => a.ties[0].time.localeCompare(b.ties[0].time) || a.group.localeCompare(b.group, "nb"));
+      return { slug, rank: rankOf(group), season: s.season, ageGroup: group.ageGroup, region: group.region, division: group.division, groups };
+    })
+    .sort((a, b) => a.rank - b.rank || a.region.localeCompare(b.region, "nb") || a.division.localeCompare(b.division, "nb"));
+  mkdirSync(`${OUT}/divisions/${s.season}`, { recursive: true });
+  for (const { rank, ...d } of s.divisions) writeFileSync(`${OUT}/divisions/${s.season}/${d.slug}.json`, JSON.stringify(d));
+  s.divisions = s.divisions.map((d) => ({
+    slug: d.slug,
+    ageGroup: d.ageGroup,
+    region: d.region,
+    division: d.division,
+    groups: d.groups.length,
+    teams: new Set(d.groups.flatMap((g) => g.ties.flatMap((t) => [t.home, t.away]))).size,
+    ties: d.groups.reduce((n, g) => n + g.ties.length, 0),
+  }));
+}
 writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), seasons, latest: weeks.length ? weekFile(weeks[0]) : null }));
 const years = [...new Set(weeks.map((w) => w.slice(0, 4)))];
 
 const upsets = ties.filter((t) => t.summary.upset).length;
 console.log(`Wrote ${ties.length} team matches in ${weeks.length} weeks (${years.at(-1)}–${years[0]}): ${upsets} upsets, ${ties.filter((t) => !t.summary.winChance).length} without a rated match.`);
 
-// The newest season's power ranking, group by group: each team's roster is everyone who has played
-// for it this season (in any of its groups), at their current ratings (missing ones as for
-// Eliteserien, playerRatings). Each team fields its best lineup in the group's format (the format of
-// most of its ties) against the group's average opponent, and the teams meet lineup against lineup,
-// match by match: a team's power is its expected matches won per tie against the group's other teams.
-function powerRanking() {
-  const season = Math.max(...played.map((p) => p.group.season));
-  const current = played.filter((p) => p.group.season === season);
-  const { pools } = read(`${DIR}data/ratings.json`);
+// A season's power ranking, group by group: each team's roster is everyone who played for it that
+// season (in any of its groups), at their ratings at the end of the week of the group's last team
+// match (missing ones as for Eliteserien, playerRatings). Each team
+// fields its best lineup in the group's format (the format of most of its ties) against the group's
+// average opponent, and the teams meet lineup against lineup, match by match: a team's power is its
+// expected matches won per tie against the group's other teams.
+function powerRanking(inSeason, weekly, pools) {
   const byId = Object.fromEntries(Object.entries(pools).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
-  const source = {
-    rating: (id, pool) => byId[pool].get(id)?.rating ?? null,
-    name: () => null,
-    club: () => null,
-    points: () => 0,
-    replacement: lowestRatings(pools),
+  // A player's rating at the end of the week of `day` (today's when the history doesn't reach it)
+  const ratingAt = (id, pool, day) => {
+    const now = byId[pool].get(id)?.rating ?? null;
+    const h = weekly[pool]?.[id];
+    if (!h) return now;
+    const week = Math.floor((Date.parse(`${day}T00:00:00Z`) - Date.parse(`${h.from}T00:00:00Z`)) / DAY_MS / 7);
+    return week < 0 ? null : week < h.ratings.length ? h.ratings[week] : now;
   };
+  const sourceAt = (day) => ({ rating: (id, pool) => ratingAt(id, pool, day), name: () => null, club: () => null, points: () => 0, replacement: lowestRatings(pools) });
   const GENDER_OF = { MensSingles: "M", MensDoubles: "M", WomensSingles: "K", WomensDoubles: "K" };
   const genderOf = (id) => Object.values(byId).map((m) => m.get(id)?.gender).find(Boolean);
 
   // Rosters: age group and team -> players (with the gender seen in their matches when not rated)
   const rosters = new Map();
-  for (const { group, tie, home, away } of current) {
+  for (const { group, tie, home, away } of inSeason) {
     for (const g of tie.games) {
       for (const [n, team] of [[1, home], [2, away]]) {
         const key = `${group.ageGroup}|${team}`;
@@ -186,8 +240,8 @@ function powerRanking() {
     }
   }
 
-  const groups = [];
-  for (const list of Map.groupBy(current, (p) => `${p.group.ageGroup}|${p.group.division}|${p.group.group}`).values()) {
+  const groups = new Map();
+  for (const list of Map.groupBy(inSeason, (p) => `${p.group.ageGroup}|${p.group.division}|${p.group.group}`).values()) {
     const { group } = list[0];
     // The format: how many matches of each discipline, from the group's most common list of matches
     const formats = Map.groupBy(list, (p) => p.tie.games.map((g) => POOL_OF[g.discipline]).filter(Boolean).sort().join(","));
@@ -195,6 +249,8 @@ function powerRanking() {
     if (!format.length) continue;
     const slots = Object.entries(Object.groupBy(format, (pool) => pool)).map(([pool, l]) => ({ pool, count: l.length }));
     const names = [...new Set(list.flatMap((p) => [p.home, p.away]))];
+    const day = list.map((p) => p.tie.time.slice(0, 10)).sort().at(-1);
+    const source = sourceAt(day);
     const teams = names.map((team) => ({
       team,
       players: [...(rosters.get(`${group.ageGroup}|${team}`)?.values() ?? [])].filter((p) => p.gender).map((p) => playerRatings({ ...p, listName: p.name }, source)),
@@ -218,12 +274,17 @@ function powerRanking() {
       const mean = (key) => (odds.length ? odds.reduce((sum, o) => sum + o[key], 0) / odds.length : 0);
       a.power = { expected: mean("expected"), win: mean("win"), draw: mean("draw") };
     }
+    // What actually happened in the group: matches won per team match (the official scores)
+    for (const t of teams) {
+      const won = list.flatMap((p) => {
+        const [h, a] = p.tie.score.split("-").map(Number);
+        return p.home === t.team ? [h] : p.away === t.team ? [a] : [];
+      });
+      t.actual = won.length ? { matches: won.reduce((x, y) => x + y, 0) / won.length, ties: won.length } : null;
+    }
     teams.sort((a, b) => b.power.expected - a.power.expected || b.power.win - a.power.win);
-    groups.push({
-      sort: rankOf(group),
-      ageGroup: group.ageGroup,
-      division: group.division,
-      group: group.group,
+    groups.set(`${group.ageGroup}|${group.division}|${group.group}`, {
+      ratingsDay: day,
       matches: format.length,
       teams: teams.map((t, i) => ({
         rank: i + 1,
@@ -233,11 +294,12 @@ function powerRanking() {
         win: round3(t.power.win),
         draw: round3(t.power.draw),
         players: t.players.length,
+        // Matches actually won per team match in the group, and its team matches played
+        actual: t.actual && { matches: Math.round(t.actual.matches * 100) / 100, ties: t.actual.ties },
       })),
     });
   }
-  groups.sort((a, b) => a.sort - b.sort || a.division.localeCompare(b.division, "nb") || a.group.localeCompare(b.group, "nb"));
-  return { generatedAt: new Date().toISOString(), season, groups: groups.map(({ sort, ...g }) => g) };
+  return groups;
 }
 
 // The average opponent in each match of the format, as for Eliteserien (references): the average of

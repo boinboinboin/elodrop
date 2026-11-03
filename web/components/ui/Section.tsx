@@ -21,7 +21,8 @@ export default function Section({
     <section className={`base-section ${className}`} id={id}>
       <div className="base-container px-4">
         {title && <h2 className={titleClassName}>{title}</h2>}
-        {intro && <p className="text-gray-700 mb-4 max-w-3xl">{intro}</p>}
+        {/* A div, not a p: an intro can be several paragraphs (blocks()) */}
+        {intro && <div className="text-gray-700 mb-4 max-w-3xl space-y-3 [&_strong]:font-semibold">{intro}</div>}
         {children}
       </div>
     </section>

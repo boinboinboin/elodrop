@@ -10,10 +10,13 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.22.0 (2026-11-03)
 
-- Team matches: each group in the current season has a power ranking, folded under its team matches. It ranks the teams by the players who have played for them this season: each team's best lineup of them at their current ratings, against the other teams' lineups, as expected matches won per team match.
-- Player pages: two icon buttons by the player's name, one that opens the page's link preview image and one that shares the page (the phone's share menu, or the link copied on a computer).
+- Team matches are now organised by division: each season lists its divisions by region (the national ones first, junior series marked with their age group), and each division has its own page with every round's team matches. The weekend picker is still there, and each group in a weekend links to its division.
+- Power rankings: every division page ranks each group's teams by the players who played for them that season, as expected matches won per team match with each team's best lineup, next to the matches each team actually won, with a note on how it's worked out. The ratings are from the week of the group's last team match, so earlier seasons show how strong the squads were by the end.
+- Player pages: two icon buttons on the club's line, under the player's name: one that opens the page's link preview image and one that shares the page (the phone's share menu, or the link copied on a computer).
 - Club pages: the players table can be sorted by matches played, most first, with a click on the Matches header, as in the rankings.
 - Eliteserien: the note under a team's players only explains ≈ (an estimated rating) when one of the team's players has one.
+- Easier reading: the longer explanations around the site (team matches, upsets, Eliteserien and its season reviews, tournaments' draw luck, combined rankings, a player's ranking history, the score calculator and How it works) are split into short paragraphs and lists, with the key terms in bold. The power ranking's "how it's worked out" note is a list of its steps.
+- Phones: the team match pages, the division pages and Eliteserien's tables fit a 375 px screen (iPhone SE) without scrolling sideways. Combined teams' names ("Lambertseter/Frogner") break after the slash instead of mid-word.
 - Fixed: Eliteserien's team player lists showed the women first; they now show the men first, then the women, each by singles rating, as the note under them says.
 
 ## v1.21.3 (2026-11-02)

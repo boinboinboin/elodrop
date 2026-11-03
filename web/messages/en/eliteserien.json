@@ -5,7 +5,7 @@
   "intro": "How strong the eight teams are, from their players' ratings.",
   "earlierSeasons": "Earlier seasons in review, predicted against actual results:",
   "howItWorks": {
-    "tie": "A tie is 8 matches: 2 men's singles, 2 women's singles, 1 men's doubles, 1 women's doubles and 2 mixed doubles, and a player plays at most 2 of them. Each team is assumed to field the lineup that gives it the most expected match wins against an average Eliteserien opponent. As the rules require, the first singles player has more official ranking points than the second, and the first mixed pair more combined mixed doubles points than the second{ranking}. Win chances use the same formula as the ratings, match against match, and a tie is won with 5 matches and drawn at 4-4. Table points per tie are as in the league: 4-0 for winning 6-2 or better, 3-1 for 5-3 and 2-2 for 4-4.",
+    "tie": "A tie is 8 matches: 2 men's singles, 2 women's singles, 1 men's doubles, 1 women's doubles and 2 mixed doubles. A player plays at most 2 of them.\n\nEach team is assumed to field the lineup that gives it the most expected match wins against an average Eliteserien opponent. As the rules require, the first singles player has more official ranking points than the second, and the first mixed pair more combined mixed doubles points than the second{ranking}.\n\nWin chances use the same formula as the ratings, match against match. A tie is won with 5 matches and drawn at 4-4. Table points per tie are as in the league:\n\n- 4-0 for winning 6-2 or better\n- 3-1 for 5-3\n- 2-2 for 4-4",
     "rankingPeriod": " (ranking {period})",
     "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, including players on loan from other clubs. Players without a doubles or mixed rating are counted as starting doubles from their singles rating (marked ≈)."
   },
@@ -49,7 +49,7 @@
     "loading": "Loading season…",
     "seasons": "Seasons",
     "intro": "The team strengths before each round against what actually happened.",
-    "howItWorks": "Before each round, every team's best lineup is worked out as for this season, with the players' ratings from the week before and the official ranking from the day before. That gives each tie a <strong>potential</strong>: the expected result if both teams field their best lineup. It is compared with the result <strong>expected with the lineups actually played</strong> (each match's win chance from right before it) and with the <strong>actual result</strong>. Walkovers and matches not played are left out, except in the play-offs (see below).",
+    "howItWorks": "Before each round, every team's best lineup is worked out as for this season, with the players' ratings from the week before and the official ranking from the day before. Each tie then has three results:\n\n- <strong>Potential:</strong> the expected result if both teams field their best lineup.\n- <strong>Expected with the lineups actually played:</strong> from each match's win chance right before it.\n- <strong>Actual result.</strong>\n\nWalkovers and matches not played are left out, except in the play-offs (see below).",
     "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, with the players who played for a team without being on its list added from their first match.",
     "preseason": {
       "title": "Before the season",
@@ -66,7 +66,7 @@
     },
     "potential": {
       "title": "Who beat their potential",
-      "intro": "Matches won over the season against the potential, split in two: <strong>lineups</strong> (the expected result with the lineups actually played against the potential: players missing or rested, and opponents not at full strength either) and <strong>performance</strong> (matches won against what the lineups played were expected to win). Table points are for the regular season, against the points expected from the potential of each tie.",
+      "intro": "Matches won over the season against the potential, split in two:\n\n- <strong>Lineups:</strong> the expected result with the lineups actually played, against the potential. It captures players missing or rested, and opponents not at full strength either.\n- <strong>Performance:</strong> matches won against what the lineups played were expected to win.\n\nTable points are for the regular season, against the points expected from the potential of each tie.",
       "team": "Team",
       "potential": "Potential",
       "potentialTitle": "Expected matches won with both teams at their best",
@@ -86,8 +86,8 @@
     },
     "ties": {
       "title": "Ties",
-      "intro": "Each tie's expected score and the home team's chance of winning, with both teams' best lineups (<strong>potential</strong>) and with the <strong>lineups actually played</strong> (walkovers counted as won, as in the result), against the actual result. An upset is a tie won by a team that had less than a 30% chance with the lineups played.",
-      "playoffs": "In the play-offs a tie ends as soon as a team has won 5 matches, so the matches left are counted with their listed lineups' chances from before the round. A tie at 4–4 is decided by a golden set: the teams take turns striking out disciplines, and one set is played in the last one left. It is taken to be the discipline where the teams' top players or pairs are closest in rating, so there are no draws.",
+      "intro": "Each tie's expected score and the home team's chance of winning, against the actual result:\n\n- with both teams' best lineups (<strong>potential</strong>)\n- with the <strong>lineups actually played</strong> (walkovers counted as won, as in the result)\n\nAn upset is a tie won by a team that had less than a 30% chance with the lineups played.",
+      "playoffs": "In the play-offs a tie ends as soon as a team has won 5 matches. So the matches left are counted with their listed lineups' chances from before the round.\n\nA tie at 4–4 is decided by a golden set: the teams take turns striking out disciplines, and one set is played in the last one left. It is taken to be the discipline where the teams' top players or pairs are closest in rating, so there are no draws.",
       "tie": "Tie",
       "potential": "Potential",
       "potentialTitle": "Both teams' best lineups: expected score, and the home team's chance of winning",
@@ -130,7 +130,7 @@
       "addedEight": "{name} would also make {team}'s 8-match lineup, so {team}'s 8-match numbers here differ from the Eliteserien page.",
       "addedNotEight": "{name} wouldn't make {team}'s 8-match lineup, so the 8-match numbers here are the same as on <link>the Eliteserien page</link>."
     },
-    "howItWorks": "A tie of 10 is 3 men's singles, 2 women's singles, 2 men's doubles, 1 women's doubles and 2 mixed doubles. Everything else is as today: a player plays at most 2 matches and at most one in each discipline, the singles players play in order of their singles ranking points, and the first pair in order of combined ranking points (men's doubles points for the two men's doubles){ranking}. Each team fields the lineup with the most expected match wins against an average opponent in each match (for the 3rd men's singles, the average of the 17th to 24th best men; for the 2nd men's doubles, of the 17th to 32nd best doubles ratings). A tie is won with 6 matches and drawn at 5-5, and table points are by the same margins as today: 4-0 for winning 7-3 or better, 3-1 for 6-4 and 2-2 for 5-5.",
+    "howItWorks": "A tie of 10 is 3 men's singles, 2 women's singles, 2 men's doubles, 1 women's doubles and 2 mixed doubles.\n\nEverything else is as today:\n\n- A player plays at most 2 matches, and at most one in each discipline.\n- The singles players play in order of their singles ranking points, and the pairs by combined ranking points (men's doubles points for the two men's doubles){ranking}.\n- A tie is won with 6 matches and drawn at 5-5. Table points are by the same margins as today: 4-0 for winning 7-3 or better, 3-1 for 6-4 and 2-2 for 5-5.\n\nEach team fields the lineup with the most expected match wins against an average opponent in each match. For the 3rd men's singles that's the average of the 17th to 24th best men, and for the 2nd men's doubles of the 17th to 32nd best doubles ratings.",
     "rankingPeriod": " (ranking {period})",
     "findings": {
       "title": "What changes",
