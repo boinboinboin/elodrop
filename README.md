@@ -59,6 +59,7 @@ pnpm install
 cd pipeline && node rate.mjs && node eliteserien.mjs && node upcoming.mjs --offline && node export.mjs && cd ..
 cp web/.env.example web/.env.local   # set DATA_DIR=../pipeline/export
 pnpm dev                             # http://localhost:3000
+pnpm --filter web typecheck          # the types, with TypeScript 7 (as the build checks them)
 ```
 
 To work with the same data as the live site instead, pull it from the buckets (needs rclone with a remote named `r2`, see below): `pnpm data:pull` copies the site's data into `pipeline/export` (what `DATA_DIR` reads), and `pnpm data:pull-raw` the latest fetched results into `pipeline/data`, so a local `rate.mjs` run starts from them. Or set `DATA_URL=https://data.<domain>` instead of `DATA_DIR` in `web/.env.local` to read the live data directly.
