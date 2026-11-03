@@ -39,7 +39,7 @@ export function placeOf(venue: Venue | null, name?: string | null) {
 
 /**
  * The club an organiser's name is ("Haugerud IF-Badminton", "Moss Badmintonklubb", "Sandefjord"):
- * by full name or short name, else by the name's first word as a club's short name
+ * by full name or short name, else the longest club short name its first words are ("Vestre Aker Skiklubb-Badminton")
  */
 export function clubByOrganiser(organiser: string | null | undefined, clubs: Record<string, ClubEntry>): ClubEntry | null {
   if (!organiser) return null;
@@ -47,8 +47,14 @@ export function clubByOrganiser(organiser: string | null | undefined, clubs: Rec
   const all = Object.values(clubs);
   const exact = all.find((c) => venueKey(c.title) === wanted || (c.fullName && venueKey(c.fullName) === wanted));
   if (exact) return exact;
-  const first = venueKey(organiser.split(/[\s-]+/)[0]);
-  return all.find((c) => venueKey(c.title) === first) ?? null;
+  // The longest short name the organiser's name starts with, word for word ("Vestre Aker Skiklubb-Badminton": Vestre Aker)
+  const words = organiser.split(/[\s-]+/);
+  for (let n = words.length - 1; n >= 1; n--) {
+    const start = venueKey(words.slice(0, n).join(" "));
+    const club = all.find((c) => venueKey(c.title) === start);
+    if (club) return club;
+  }
+  return null;
 }
 
 /** A SportsOrganization: a club, with its page's address in the page's language (`href`), or just a name */
