@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.22.2 (2026-11-03)
+
+- The site and the nightly pipeline run on Node.js 26 (the current LTS, supported until April 2029), installed with pnpm 12 and type-checked with TypeScript 6. Nothing changes on the site; the pipeline's ratings come out the same. To run it locally, use Node.js 26 (on Linux it needs `libatomic1`; `.nvmrc` picks it with `nvm use`) and pnpm 12, installed with `npm install -g pnpm@12.17.0` now that Node.js no longer ships Corepack; the README's setup steps say how.
+
 ## v1.22.1 (2026-11-03)
 
 - Fixed: the site failed to deploy when its data was from before the team match divisions (until the next nightly data run). Team matches now show without the division list and links until the divisions are in the data.
