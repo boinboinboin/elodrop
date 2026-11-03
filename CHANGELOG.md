@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.22.3 (2026-11-03)
+
+- The site's types are checked with TypeScript 7, the new native compiler, before every build: the whole site in under a second (TypeScript 6 took about 6). A type error now stops the build before it starts. Locally: `pnpm --filter web typecheck`. Next.js and the linter keep using TypeScript 6's interface until TypeScript 7 has one.
+
 ## v1.22.2 (2026-11-03)
 
 - The site and the nightly pipeline run on Node.js 26 (the current LTS, supported until April 2029), installed with pnpm 12 and type-checked with TypeScript 6. Nothing changes on the site; the pipeline's ratings come out the same. To run it locally, use Node.js 26 (on Linux it needs `libatomic1`; `.nvmrc` picks it with `nvm use`) and pnpm 12, installed with `npm install -g pnpm@12.17.0` now that Node.js no longer ships Corepack; the README's setup steps say how.

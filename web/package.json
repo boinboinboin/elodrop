@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next typegen && tsc --noEmit && next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts",
     "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts",
     "make-icons": "tsx scripts/make-icons.mts"
@@ -35,7 +36,8 @@
     "sharp": "^0.35.5",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
-    "typescript": "^6"
+    "typescript": "npm:@typescript/typescript6@^6.0.0",
+    "typescript-7": "npm:typescript@^7.0.0"
   },
   "engines": {
     "node": "26.x"

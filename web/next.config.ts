@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // The types are checked by TypeScript 7 (`tsc`) in the build script, before `next build`; Next.js
+  // itself would check them again with the TypeScript 6 API (the `typescript` package)
+  typescript: { ignoreBuildErrors: true },
   // The rankings used to be one page with query parameters (/?pool=women&inactive=1); each list
   // is now its own static page (utils/rankings.ts), men's singles at /rankings. Most specific first. (Old tournament event links,
   // ?event= and ?class=&pool=, open the tournament's first event.)
