@@ -12,7 +12,7 @@ import { pageMetadata } from "@/utils/metadata";
 export async function generateStaticParams({ params }: { params: { period: string } }) {
   const index = await getTeamMatchesIndex();
   const newest = index?.seasons[0];
-  const divisions = newest && params.period === seasonSlug(newest.season) ? newest.divisions : [];
+  const divisions = newest && params.period === seasonSlug(newest.season) ? (newest.divisions ?? []) : [];
   return divisions.length ? divisions.map((d) => ({ division: d.slug })) : [{ division: "0" }];
 }
 

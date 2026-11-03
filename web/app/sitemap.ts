@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(upsets?.years ?? []).map(upsetsHref),
     teamMatchesHref(),
     ...(teamMatches?.seasons ?? []).map((s) => teamMatchesHref(seasonSlug(s.season))),
-    ...(teamMatches?.seasons ?? []).flatMap((s) => s.divisions.map((d) => teamDivisionHref(s.season, d.slug))),
+    ...(teamMatches?.seasons ?? []).flatMap((s) => (s.divisions ?? []).map((d) => teamDivisionHref(s.season, d.slug))),
     "/how-it-works",
     "/whats-new",
     ...players.map(([id]) => playerHref(id)),

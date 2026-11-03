@@ -347,8 +347,8 @@ export interface TeamDivisionEntry {
 
 export interface TeamMatchesIndex {
   generatedAt: string;
-  /** Newest first, each with its divisions (Eliteserien first, then by level, juniors after) and its weeks in order: the Monday, the first and last day played and the number of team matches */
-  seasons: { season: number; divisions: TeamDivisionEntry[]; weeks: { week: string; from: string; to: string; ties: number }[] }[];
+  /** Newest first, each with its divisions (Eliteserien first, then by level, juniors after; missing in data from before them) and its weeks in order: the Monday, the first and last day played and the number of team matches */
+  seasons: { season: number; divisions?: TeamDivisionEntry[]; weeks: { week: string; from: string; to: string; ties: number }[] }[];
   latest: TeamMatchWeek | null;
 }
 

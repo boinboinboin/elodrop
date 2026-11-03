@@ -63,7 +63,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
       <Section>
         <Pickers index={index} season={season} week={byWeek ? week.week : null} />
         {/* (Data from before the divisions has none: the code can be deployed before the next data run) */}
-        {!byWeek && season.divisions?.length > 0 && <Divisions season={season.season} divisions={season.divisions} />}
+        {!byWeek && !!season.divisions?.length && <Divisions season={season.season} divisions={season.divisions} />}
       </Section>
       <Section>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-6">
