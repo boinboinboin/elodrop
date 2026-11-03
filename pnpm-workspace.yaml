@@ -1,8 +1,11 @@
 packages:
   - web
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
+# Packages whose install scripts may run (pnpm 11+): none. sharp and unrs-resolver use their
+# prebuilt binaries, and esbuild's script only checks its binary, as it was skipped before pnpm 11 too.
+allowBuilds:
+  esbuild: false
+  sharp: false
+  unrs-resolver: false
 overrides:
   '@vercel/frameworks>js-yaml': ^3.15.2
   '@vercel/frameworks>smol-toml': ^1.9.1

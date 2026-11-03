@@ -57,7 +57,7 @@ jobs:
       # pipeline doesn't install, as it needs no packages
       - uses: actions/setup-node@v5
         with:
-          node-version: 24
+          node-version: 26
           package-manager-cache: false
 
       - name: Install rclone

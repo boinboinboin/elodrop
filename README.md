@@ -47,9 +47,13 @@ Then it rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inp
 
 ## Local development
 
-Requires Node 24 and pnpm (`corepack enable`).
+Requires Node 26 and pnpm 12. Node 26 no longer ships Corepack, so pnpm is installed on its own, at the version in `package.json`'s `packageManager`. On Linux, Node 26 also needs `libatomic1` (`sudo apt install libatomic1` on Debian and Ubuntu).
+
+Check that `node -v` says 26 before installing pnpm. Run under an older Node that had `corepack enable`, `npm install -g pnpm` fails with `EEXIST` on Corepack's own `pnpm` link.
 
 ```bash
+nvm install && nvm use               # Node 26, from .nvmrc (or install Node 26 another way)
+npm install -g pnpm@12.17.0          # the version in package.json's packageManager
 pnpm install
 # the data: run the pipeline (or copy pipeline/data from a previous run)
 cd pipeline && node rate.mjs && node eliteserien.mjs && node upcoming.mjs --offline && node export.mjs && cd ..
