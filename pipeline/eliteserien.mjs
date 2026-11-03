@@ -292,7 +292,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       team: t.team,
       strength: t.strength,
       lineup: Object.fromEntries(SLOTS.map((s) => [s.key, { rating: Math.round(t.lineup[s.key].rating), players: t.lineup[s.key].players.map((p) => p.id ?? p.listName) }])),
-      players: t.players.map(playerOut).sort((a, b) => a.gender.localeCompare(b.gender) || b.singles - a.singles),
+      players: t.players.map(playerOut).sort((a, b) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles),
     })),
     headToHead,
   };

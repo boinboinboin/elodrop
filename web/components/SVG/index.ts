@@ -7,5 +7,7 @@ export { Check } from "./Check";
 export { ChevronRight } from "./ChevronRight";
 export { Cross } from "./Cross";
 export { Female } from "./Female";
+export { Picture } from "./Picture";
 export { Male } from "./Male";
 export { Search } from "./Search";
+export { Share } from "./Share";

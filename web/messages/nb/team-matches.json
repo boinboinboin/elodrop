@@ -40,5 +40,16 @@
     "won": "{team} vant",
     "expected": "Forventet resultat med oppstillingene som ble brukt: {home}–{away}",
     "goldenSet": "Gullsett"
+  },
+  "power": {
+    "title": "Styrkerangering",
+    "intro": "Gruppens lag etter hvor sterke spillerne som har spilt for dem denne sesongen er: hvert lags beste oppstilling av dem, med dagens ratinger, mot de andre lagenes oppstillinger, kamp for kamp.",
+    "team": "Lag",
+    "expected": "Kamper vunnet (av {matches})",
+    "expectedTitle": "Forventede kamper vunnet per lagkamp mot gruppens andre lag, med hvert lags beste oppstilling",
+    "win": "Seier",
+    "winTitle": "Gjennomsnittlig sjanse for å vinne en lagkamp mot gruppens andre lag",
+    "players": "Spillere",
+    "playersTitle": "Spillere som har spilt for laget denne sesongen"
   }
 }

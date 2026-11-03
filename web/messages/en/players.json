@@ -5,6 +5,11 @@
   "loading": "Loading player…",
   "born": "Born {year}",
   "compare": "Compare head to head with another player",
+  "share": {
+    "preview": "Open the link preview image",
+    "share": "Share this player",
+    "copied": "Link copied"
+  },
   "disciplines": "Disciplines",
   "rival": {
     "title": "Biggest rival",

@@ -10,6 +10,7 @@ import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import MatchTable from "@/components/players/MatchTable";
 import SeasonTable from "@/components/players/SeasonTable";
+import ShareButtons from "@/components/players/ShareButtons";
 import { WeekChange } from "@/components/rankings/RankMovement";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
@@ -102,13 +103,19 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           }}
         />
         <h1 className="h1 mt-4">{player.name}</h1>
-        {player.club && (
-          <p className="flex items-center gap-3 text-2xl text-gray-700 mt-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {club?.logo && <img src={logoSrc(club.logo, 10)} alt="" className="w-10 h-10 object-contain shrink-0" />}
-            {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
-          </p>
-        )}
+        {/* The club, and the preview and share buttons at the end of its line */}
+        <div className="flex items-center justify-between gap-4 mt-2">
+          {player.club ? (
+            <p className="flex items-center gap-3 text-2xl text-gray-700 min-w-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {club?.logo && <img src={logoSrc(club.logo, 10)} alt="" className="w-10 h-10 object-contain shrink-0" />}
+              {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
+            </p>
+          ) : (
+            <span />
+          )}
+          <ShareButtons path={playerHref(player.id)} title={player.name} />
+        </div>
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>

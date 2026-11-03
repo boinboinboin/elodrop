@@ -1,21 +1,24 @@
 // Each week's league team matches (pipeline/team-matches.mjs), grouped by division and group, picked
 // by season and then by week (a season has a handful of team match weekends): /team-matches shows the
 // newest week, /team-matches/<Monday> another week and /team-matches/<season> ("2025-26") that
-// season's newest (app/(site)/team-matches/[period]). Each team match links to its own page.
+// season's newest (app/(site)/team-matches/[period]). Each team match links to its own page. In the
+// newest season each group has its power ranking: its teams by the players who have played for them.
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { ArrowRight } from "@/components/SVG";
 import Badge from "@/components/ui/Badge";
+import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import LinkSelect from "@/components/ui/LinkSelect";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
-import { getTeamMatchesIndex, getTeamMatchWeek } from "@/data/teamMatches";
+import { getTeamMatchesIndex, getTeamMatchWeek, getTeamPowerRanking } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
-import type { ClubEntry, TeamMatchSummary } from "@/types";
+import type { ClubEntry, TeamMatchSummary, TeamPowerRanking } from "@/types";
+import { ROW } from "@/components/ui/styles";
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
 
@@ -39,7 +42,7 @@ export default async function TeamMatches({ period }: { period: Promise<string |
 
 async function Content({ period: periodPromise }: { period: Promise<string | null> }) {
   const { date, dateRange, plural, t } = await getI18n();
-  const [period, index, clubs] = await Promise.all([periodPromise, getTeamMatchesIndex(), getClubMap()]);
+  const [period, index, clubs, power] = await Promise.all([periodPromise, getTeamMatchesIndex(), getClubMap(), getTeamPowerRanking()]);
   if (!index?.latest) return <p className="base-container px-4 text-gray-600">{t("teamMatches.none")}</p>;
   // The season and week: the newest week, a season's newest or a week
   const season = !period
@@ -57,6 +60,9 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
     from === to ? date(from, "dayMonth") : from.slice(0, 7) === to.slice(0, 7) ? `${date(from, "dayOnly")}–${date(to, "dayMonth")}` : `${date(from, "dayMonth")} – ${date(to, "dayMonth")}`;
   // The week's team matches by division and group, in the data's order (Eliteserien first)
   const groups = Map.groupBy(current.ties, (tie) => `${tie.division} · ${tie.group}`);
+  // Each group's power ranking, in the newest season only (it's from the current ratings)
+  const powerOf = (tie: TeamMatchSummary) =>
+    power?.season === season.season ? power.groups.find((g) => g.ageGroup === tie.ageGroup && g.division === tie.division && g.group === tie.group) : undefined;
 
   return (
     <Section>
@@ -87,6 +93,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
             <ul className="grid gap-2">
               {ties.map((tie) => <Row key={tie.matchId} tie={tie} clubs={clubs} />)}
             </ul>
+            {powerOf(ties[0]) && <PowerRanking group={powerOf(ties[0])!} clubs={clubs} />}
           </div>
         ))}
       </div>
@@ -122,5 +129,41 @@ async function Row({ tie, clubs }: { tie: TeamMatchSummary; clubs: Record<string
         </span>
       </Link>
     </li>
+  );
+}
+
+/** A group's power ranking, folded: its teams by expected matches won per team match against the others in the group */
+async function PowerRanking({ group, clubs }: { group: TeamPowerRanking["groups"][number]; clubs: Record<string, ClubEntry> }) {
+  const { num, pct, t } = await getI18n();
+  return (
+    <Disclosure summary={t("teamMatches.power.title")} className="mt-3">
+      <div className="bg-white p-3 sm:px-4 mt-2">
+        <p className="text-sm text-gray-600 mb-2 max-w-3xl">{t("teamMatches.power.intro")}</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="text-sm text-gray-600 border-b border-gray-200">
+              <tr>
+                <th scope="col" className="py-2 pr-4 font-normal">#</th>
+                <th scope="col" className="py-2 pr-4 font-normal">{t("teamMatches.power.team")}</th>
+                <th scope="col" className="py-2 pr-4 font-normal text-right" title={t("teamMatches.power.expectedTitle")}>{t("teamMatches.power.expected", { matches: group.matches })}</th>
+                <th scope="col" className="py-2 pr-4 font-normal text-right" title={t("teamMatches.power.winTitle")}>{t("teamMatches.power.win")}</th>
+                <th scope="col" className="py-2 font-normal text-right" title={t("teamMatches.power.playersTitle")}>{t("teamMatches.power.players")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.teams.map((team) => (
+                <tr key={team.team} className={ROW}>
+                  <td className="py-2 pr-4 tabular-nums text-gray-600">{team.rank}</td>
+                  <td className="py-2 pr-4"><Team name={team.team} club={team.club} clubs={clubs} size={5} /></td>
+                  <td className="py-2 pr-4 text-right tabular-nums">{num(team.expected, 2)}</td>
+                  <td className="py-2 pr-4 text-right tabular-nums">{pct(team.win)}</td>
+                  <td className="py-2 text-right tabular-nums text-gray-600">{team.players}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </Disclosure>
   );
 }

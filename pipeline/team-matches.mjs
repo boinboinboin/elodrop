@@ -7,8 +7,11 @@
 //   index.json          the seasons (newest first) with their weeks (Mondays, in order) and the newest week
 //   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level, and its season
 //   <matchId>.json      one tie: its summary, individual matches and golden set
+//   power.json          the newest season's power ranking: each group's teams by the strength of
+//                       the players who have played for them this season (their best lineup)
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { playedOdds } from "./eliteserien.mjs";
+import { lowestRatings, playedOdds, playerRatings } from "./eliteserien.mjs";
+import * as R from "./rules.mjs";
 import { leagueLevel } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -17,6 +20,11 @@ const OUT = `${DIR}data/team-matches`;
 // played (as in the Eliteserien review)
 const TIE_UPSET = 0.3;
 const POOL_OF = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
+
+// The rating a player brings to a discipline: singles, doubles (men's and women's) or mixed
+const powerRating = (p, pool) => (pool === "men" || pool === "women" ? p.singles : pool === "mixedDoubles" ? p.mixed : p.doubles);
+const POWER_GENDER = { men: "M", women: "K", mensDoubles: "M", womensDoubles: "K" };
+const sideRatingOf = (side, pool) => R.sideRating(side.map((p) => powerRating(p, pool)));
 
 const read = (file) => JSON.parse(readFileSync(file, "utf8"));
 const round3 = (x) => Math.round(x * 1000) / 1000;
@@ -39,6 +47,8 @@ function rankOf(group) {
 
 const { ties: rated } = read(`${DIR}data/league-games.json`);
 const ties = [];
+// The groups' played ties as in the data, for the power ranking
+const played = [];
 for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".json"))) {
   const group = read(`${DIR}data/league/${file}`);
   const rank = rankOf(group);
@@ -102,6 +112,7 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
       ? { pool: POOL_OF[tie.goldenSet.discipline] ?? null, side1: tie.goldenSet.side1.map(({ id, name }) => ({ id, name })), side2: tie.goldenSet.side2.map(({ id, name }) => ({ id, name })), winner: tie.goldenSet.winner, score: tie.goldenSet.score }
       : null;
     ties.push({ summary, games, goldenSet, rank, week: monday(day) });
+    played.push({ group, tie, home, away });
   }
 }
 
@@ -130,8 +141,162 @@ const seasons = [...Map.groupBy(weeks, (week) => byWeek.get(week)[0].summary.sea
       return { week, from: days[0], to: days.at(-1), ties: days.length };
     }),
   }));
+writeFileSync(`${OUT}/power.json`, JSON.stringify(powerRanking()));
 writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), seasons, latest: weeks.length ? weekFile(weeks[0]) : null }));
 const years = [...new Set(weeks.map((w) => w.slice(0, 4)))];
 
 const upsets = ties.filter((t) => t.summary.upset).length;
 console.log(`Wrote ${ties.length} team matches in ${weeks.length} weeks (${years.at(-1)}–${years[0]}): ${upsets} upsets, ${ties.filter((t) => !t.summary.winChance).length} without a rated match.`);
+
+// The newest season's power ranking, group by group: each team's roster is everyone who has played
+// for it this season (in any of its groups), at their current ratings (missing ones as for
+// Eliteserien, playerRatings). Each team fields its best lineup in the group's format (the format of
+// most of its ties) against the group's average opponent, and the teams meet lineup against lineup,
+// match by match: a team's power is its expected matches won per tie against the group's other teams.
+function powerRanking() {
+  const season = Math.max(...played.map((p) => p.group.season));
+  const current = played.filter((p) => p.group.season === season);
+  const { pools } = read(`${DIR}data/ratings.json`);
+  const byId = Object.fromEntries(Object.entries(pools).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
+  const source = {
+    rating: (id, pool) => byId[pool].get(id)?.rating ?? null,
+    name: () => null,
+    club: () => null,
+    points: () => 0,
+    replacement: lowestRatings(pools),
+  };
+  const GENDER_OF = { MensSingles: "M", MensDoubles: "M", WomensSingles: "K", WomensDoubles: "K" };
+  const genderOf = (id) => Object.values(byId).map((m) => m.get(id)?.gender).find(Boolean);
+
+  // Rosters: age group and team -> players (with the gender seen in their matches when not rated)
+  const rosters = new Map();
+  for (const { group, tie, home, away } of current) {
+    for (const g of tie.games) {
+      for (const [n, team] of [[1, home], [2, away]]) {
+        const key = `${group.ageGroup}|${team}`;
+        if (!rosters.has(key)) rosters.set(key, new Map());
+        const roster = rosters.get(key);
+        for (const p of g[`side${n}`] ?? []) {
+          if (!p.id) continue;
+          const seen = roster.get(p.id) ?? { id: p.id, name: p.name, gender: genderOf(p.id) ?? null };
+          seen.gender ??= GENDER_OF[g.discipline] ?? null;
+          roster.set(p.id, seen);
+        }
+      }
+    }
+  }
+
+  const groups = [];
+  for (const list of Map.groupBy(current, (p) => `${p.group.ageGroup}|${p.group.division}|${p.group.group}`).values()) {
+    const { group } = list[0];
+    // The format: how many matches of each discipline, from the group's most common list of matches
+    const formats = Map.groupBy(list, (p) => p.tie.games.map((g) => POOL_OF[g.discipline]).filter(Boolean).sort().join(","));
+    const format = [...formats.keys()].reduce((a, b) => (formats.get(b).length > formats.get(a).length ? b : a)).split(",").filter(Boolean);
+    if (!format.length) continue;
+    const slots = Object.entries(Object.groupBy(format, (pool) => pool)).map(([pool, l]) => ({ pool, count: l.length }));
+    const names = [...new Set(list.flatMap((p) => [p.home, p.away]))];
+    const teams = names.map((team) => ({
+      team,
+      players: [...(rosters.get(`${group.ageGroup}|${team}`)?.values() ?? [])].filter((p) => p.gender).map((p) => playerRatings({ ...p, listName: p.name }, source)),
+    }));
+    const ref = powerReferences(teams, slots);
+    for (const t of teams) t.lineup = powerLineup(t.players, slots, ref);
+    for (const a of teams) {
+      const odds = teams.filter((b) => b !== a).map((b) => {
+        const chances = [];
+        const walkovers = [0, 0];
+        for (const { pool, count } of slots) {
+          for (let i = 0; i < count; i++) {
+            const [x, y] = [a.lineup[pool][i], b.lineup[pool][i]];
+            if (x != null && y != null) chances.push(R.expectedScore(x, y, pool));
+            else if (x != null) walkovers[0]++;
+            else if (y != null) walkovers[1]++;
+          }
+        }
+        return playedOdds(chances, walkovers);
+      });
+      const mean = (key) => (odds.length ? odds.reduce((sum, o) => sum + o[key], 0) / odds.length : 0);
+      a.power = { expected: mean("expected"), win: mean("win"), draw: mean("draw") };
+    }
+    teams.sort((a, b) => b.power.expected - a.power.expected || b.power.win - a.power.win);
+    groups.push({
+      sort: rankOf(group),
+      ageGroup: group.ageGroup,
+      division: group.division,
+      group: group.group,
+      matches: format.length,
+      teams: teams.map((t, i) => ({
+        rank: i + 1,
+        team: t.team,
+        club: t.team.includes("/") ? null : clubOf(t.team),
+        expected: Math.round(t.power.expected * 100) / 100,
+        win: round3(t.power.win),
+        draw: round3(t.power.draw),
+        players: t.players.length,
+      })),
+    });
+  }
+  groups.sort((a, b) => a.sort - b.sort || a.division.localeCompare(b.division, "nb") || a.group.localeCompare(b.group, "nb"));
+  return { generatedAt: new Date().toISOString(), season, groups: groups.map(({ sort, ...g }) => g) };
+}
+
+// The average opponent in each match of the format, as for Eliteserien (references): the average of
+// the best players over the group's teams, the n best for the first match of a discipline, the next n
+// for the second, and so on (doubles from the 2n best, as pair averages; mixed from men and women apart)
+function powerReferences(teams, slots) {
+  const n = teams.length;
+  const all = teams.flatMap((t) => t.players);
+  const avg = (l) => (l.length ? l.reduce((a, b) => a + b, 0) / l.length : null);
+  const top = (gender, pool) => all.filter((p) => p.gender === gender).map((p) => powerRating(p, pool)).sort((a, b) => b - a);
+  const ref = {};
+  for (const { pool, count } of slots) {
+    ref[pool] = Array.from({ length: count }, (_, i) => {
+      if (pool === "mixedDoubles") {
+        const [m, k] = [avg(top("M", pool).slice(i * n, (i + 1) * n)), avg(top("K", pool).slice(i * n, (i + 1) * n))];
+        return m != null && k != null ? R.sideRating([m, k]) : null;
+      }
+      const size = pool === "men" || pool === "women" ? 1 : 2;
+      return avg(top(POWER_GENDER[pool], pool).slice(i * size * n, (i + 1) * size * n));
+    });
+  }
+  return ref;
+}
+
+// A team's best lineup, picked greedily: again and again, of the matches not yet filled (each
+// discipline's in order), the player or pair with the best chance against the average opponent there,
+// with each player in at most 2 matches and one per discipline. Each discipline's sides, strongest
+// first (null: no one to field). A greedy pick, not every lineup as for Eliteserien: formats vary,
+// and the official ranking points that order the matches aren't known below Eliteserien.
+function powerLineup(players, slots, ref) {
+  const uses = new Map(players.map((p) => [p, new Set()]));
+  const free = (p, pool) => uses.get(p).size < 2 && !uses.get(p).has(pool);
+  const sides = (pool) => {
+    const ok = players.filter((p) => free(p, pool));
+    if (pool === "men" || pool === "women") return ok.filter((p) => p.gender === POWER_GENDER[pool]).map((p) => [p]);
+    const pairs = ok.flatMap((a, i) => ok.slice(i + 1).map((b) => [a, b]));
+    return pool === "mixedDoubles" ? pairs.filter(([a, b]) => a.gender !== b.gender) : pairs.filter(([a, b]) => a.gender === POWER_GENDER[pool] && b.gender === POWER_GENDER[pool]);
+  };
+  const lineup = Object.fromEntries(slots.map(({ pool }) => [pool, []]));
+  const open = new Map(slots.map(({ pool, count }) => [pool, count]));
+  while ([...open.values()].some((c) => c > 0)) {
+    let best = null;
+    for (const [pool, left] of open) {
+      if (!left) continue;
+      const opponent = ref[pool][lineup[pool].length] ?? ref[pool].find((r) => r != null);
+      for (const side of sides(pool)) {
+        const rating = sideRatingOf(side, pool);
+        const value = opponent != null ? R.expectedScore(rating, opponent, pool) : rating;
+        if (!best || value > best.value) best = { pool, side, rating, value };
+      }
+    }
+    if (!best) break;
+    for (const p of best.side) uses.get(p).add(best.pool);
+    lineup[best.pool].push(best.rating);
+    open.set(best.pool, open.get(best.pool) - 1);
+  }
+  for (const { pool, count } of slots) {
+    lineup[pool].sort((a, b) => b - a);
+    while (lineup[pool].length < count) lineup[pool].push(null);
+  }
+  return lineup;
+}

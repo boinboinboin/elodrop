@@ -301,6 +301,30 @@ export interface TeamMatchWeek {
   ties: TeamMatchSummary[];
 }
 
+/** The newest season's power ranking (pipeline/team-matches.mjs): each group's teams by the best lineup of the players who have played for them */
+export interface TeamPowerRanking {
+  generatedAt: string;
+  season: number;
+  groups: {
+    ageGroup: string;
+    division: string;
+    group: string;
+    /** Matches in a team match */
+    matches: number;
+    teams: {
+      rank: number;
+      team: string;
+      club: string | null;
+      /** Expected matches won per team match against the group's other teams, and the chances of winning and drawing one */
+      expected: number;
+      win: number;
+      draw: number;
+      /** Players who have played for the team this season */
+      players: number;
+    }[];
+  }[];
+}
+
 export interface TeamMatchesIndex {
   generatedAt: string;
   /** Newest first, each with its weeks in order: the Monday, the first and last day played and the number of team matches */

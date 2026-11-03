@@ -233,7 +233,8 @@ async function Content() {
                           </tr>
                         </thead>
                         <tbody>
-                          {team.players.map((p: Loose) => (
+                          {/* Men first, then women, each by singles rating (as the note says) */}
+                          {[...team.players].sort((a: Loose, b: Loose) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles).map((p: Loose) => (
                             <tr key={String(p.id ?? p.listName)} className={`${ROW} align-top`}>
                               <td className="py-2 pr-4">
                                 {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
@@ -253,7 +254,10 @@ async function Content() {
                         </tbody>
                       </table>
                     </div>
-                    <p className="text-sm text-gray-600 mt-2">{t("eliteserien.team.note")}</p>
+                    <p className="text-sm text-gray-600 mt-2">
+                      {team.players.some((p: Loose) => p.rated && (p.estimated?.singles || p.estimated?.doubles || p.estimated?.mixed)) && `${t("eliteserien.team.estimatedNote")} `}
+                      {t("eliteserien.team.note")}
+                    </p>
                   </Card>
                 </div>
               </Section>

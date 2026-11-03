@@ -41,7 +41,8 @@
     "pointsTitle": "Official ranking points: singles / mixed doubles",
     "loanFrom": "Loan from {club}",
     "noRatedMatches": "No rated matches",
-    "note": "≈ estimated: no rating in that discipline yet. Points: official ranking points in singles / mixed doubles, which decide who plays first singles and first mixed. Men first, then women, by singles rating."
+    "estimatedNote": "≈ estimated: no rating in that discipline yet.",
+    "note": "Points: official ranking points in singles / mixed doubles, which decide who plays first singles and first mixed. Men first, then women, by singles rating."
   },
   "review": {
     "title": "Eliteserien {season} in review",

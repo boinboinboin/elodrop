@@ -40,5 +40,16 @@
     "won": "{team} won",
     "expected": "Expected score with the lineups played: {home}–{away}",
     "goldenSet": "Golden set"
+  },
+  "power": {
+    "title": "Power ranking",
+    "intro": "The group's teams by how strong the players who have played for them this season are: each team's best lineup of them, at their current ratings, against the other teams' lineups, match by match.",
+    "team": "Team",
+    "expected": "Matches won (of {matches})",
+    "expectedTitle": "Expected matches won per team match against the group's other teams, with each team's best lineup",
+    "win": "Wins",
+    "winTitle": "Average chance of winning a team match against the group's other teams",
+    "players": "Players",
+    "playersTitle": "Players who have played for the team this season"
   }
 }

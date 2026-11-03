@@ -205,7 +205,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         rank: { eight: eight.rank[t.team], ten: ten.rank[t.team] },
         strength: { eight: eight.strength[t.team], ten: ten.strength[t.team] },
         lineup: { eight: lineupOut(t.lineup8, SLOTS), ten: lineupOut(t.lineup10, SLOTS_TEN) },
-        players: t.players.map(playerOut(t)).sort((a, b) => a.gender.localeCompare(b.gender) || b.singles - a.singles),
+        players: t.players.map(playerOut(t)).sort((a, b) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles),
       })),
     headToHead: { eight: eight.headToHead, ten: ten.headToHead },
   };

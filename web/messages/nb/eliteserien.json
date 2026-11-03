@@ -41,7 +41,8 @@
     "pointsTitle": "Offisielle rankingpoeng: single / mixdouble",
     "loanFrom": "Utlån fra {club}",
     "noRatedMatches": "Ingen ratede kamper",
-    "note": "≈ anslått: ingen rating i den disiplinen ennå. Poeng: offisielle rankingpoeng i single / mixdouble, som avgjør hvem som spiller første single og første mix. Herrer først, så damer, etter singlerating."
+    "estimatedNote": "≈ anslått: ingen rating i den disiplinen ennå.",
+    "note": "Poeng: offisielle rankingpoeng i single / mixdouble, som avgjør hvem som spiller første single og første mix. Herrer først, så damer, etter singlerating."
   },
   "review": {
     "title": "Eliteserien {season} oppsummert",

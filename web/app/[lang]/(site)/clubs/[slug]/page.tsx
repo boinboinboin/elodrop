@@ -3,11 +3,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import ClubPlayers, { type ClubPlayerRow } from "@/components/clubs/ClubPlayers";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
 import SeasonLabel from "@/components/format/SeasonLabel";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
-import { WeekChange } from "@/components/rankings/RankMovement";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
@@ -15,7 +15,7 @@ import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import Tabs from "@/components/ui/Tabs";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { TEXT_LINK } from "@/components/ui/styles";
 import { getClubHistory, getClubPlayers, getClubsFile } from "@/data/clubs";
 import { getClubBySlug, getClubEntries } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
@@ -23,7 +23,7 @@ import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@
 import { clubRule } from "@/utils/clubs";
 import { logoSrc } from "@/utils/clubs";
 import { EMPTY, seasonLabel } from "@/utils/format";
-import { clubHref, playerHref } from "@/utils/hrefs";
+import { clubHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
@@ -235,33 +235,10 @@ async function Discipline({ pool, entry, history, names, file, players }: { pool
               </>
             )}
           </p>
-          <div className="bg-white overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="text-sm text-gray-600 border-b border-gray-200">
-                <tr>
-                  <th scope="col" className="py-3 px-4 font-normal text-right w-16">{t("common.table.rank")}</th>
-                  <th scope="col" className="py-3 px-4 font-normal">{t("common.table.player")}</th>
-                  <th scope="col" className="py-3 pl-4 pr-1.5 font-normal text-right">{t("common.table.rating")}</th>
-                  <th scope="col" className="py-3 pr-4 font-normal w-14"><span className="sr-only">{t("common.table.changeSinceLastWeek")}</span></th>
-                  <th scope="col" className="py-3 px-4 font-normal text-right hidden sm:table-cell">{t("common.table.matches")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {players.map((p) => (
-                  <tr key={p.id} className={`${ROW} hover:bg-gray-50`}>
-                    <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{p.rank}</td>
-                    <td className="py-3 px-4">
-                      <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>
-                      {pool === "mixedDoubles" && <span className="text-sm text-gray-600"> {t(p.gender === "K" ? "clubs.club.woman" : "clubs.club.man")}</span>}
-                    </td>
-                    <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(p.rating)}</td>
-                    <td className="py-3 pr-4 whitespace-nowrap"><WeekChange change={p.ratingChange} /></td>
-                    <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{num(p.matches)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ClubPlayers
+            rows={players.map((p): ClubPlayerRow => [p.id, p.name, p.rank, p.rating, p.ratingChange, p.matches, p.gender])}
+            mixed={pool === "mixedDoubles"}
+          />
           <p className="text-sm text-gray-600 mt-2">{t(pool === "mixedDoubles" ? "clubs.club.rankNoteMixed" : "clubs.club.rankNote", { pool: t(`common.poolsInSentence.${pool}`) })}</p>
         </>
       )}

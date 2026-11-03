@@ -8,6 +8,14 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.22.0 (2026-11-03)
+
+- Team matches: each group in the current season has a power ranking, folded under its team matches. It ranks the teams by the players who have played for them this season: each team's best lineup of them at their current ratings, against the other teams' lineups, as expected matches won per team match.
+- Player pages: two icon buttons by the player's name, one that opens the page's link preview image and one that shares the page (the phone's share menu, or the link copied on a computer).
+- Club pages: the players table can be sorted by matches played, most first, with a click on the Matches header, as in the rankings.
+- Eliteserien: the note under a team's players only explains ≈ (an estimated rating) when one of the team's players has one.
+- Fixed: Eliteserien's team player lists showed the women first; they now show the men first, then the women, each by singles rating, as the note under them says.
+
 ## v1.21.3 (2026-11-02)
 
 - Fixed: the Sanity Studio at /studio could show the site's "Out!" page, because the Studio's own page data was sent to the Norwegian pages' not-found page.

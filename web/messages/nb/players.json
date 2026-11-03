@@ -5,6 +5,11 @@
   "loading": "Laster spiller…",
   "born": "Født {year}",
   "compare": "Head to head mot en annen spiller",
+  "share": {
+    "preview": "Åpne forhåndsvisningsbildet",
+    "share": "Del denne spilleren",
+    "copied": "Lenke kopiert"
+  },
   "disciplines": "Disipliner",
   "rival": {
     "title": "Største rival",
