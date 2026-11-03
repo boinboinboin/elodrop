@@ -113,6 +113,11 @@ jobs:
       - name: Fetch league ties
         run: node fetch-league.mjs --season ${{ steps.mode.outputs.season }} ${{ steps.mode.outputs.weekly == 'true' && '--list-groups --all' || '' }}
 
+      # The halls and arranging clubs of ties saved before they were fetched: every saved group once
+      # (one request each), then nothing (a group's ties have them from then on)
+      - name: Add halls to saved league ties
+        run: node fetch-league.mjs --venues
+
       # New players and club changes, and the clubs and their regions (about a minute): weekly
       - name: Fetch the player register and clubs
         if: steps.mode.outputs.weekly == 'true'

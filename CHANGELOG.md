@@ -17,7 +17,9 @@ Every change merged into `main` gets an entry here, newest first.
 - A club's preview image shows its rank in all five disciplines it's ranked in (it stopped at four, leaving out mixed doubles).
 - Discord shows shared links with the elodrop orange, and phones' browsers colour their bar with it.
 - Search results and link previews say "badminton" for the clubs: a club page is titled "Alta: badmintonklubb" ("Alta: badminton club" in English) and its description starts with "Badmintonklubben Alta", and the strongest clubs lists are "Sterkeste badmintonklubber".
-- Search engines: the sitemap now lists every team match weekend and every team match, so they're found without going through the division pages, and an English club page's structured data gives the English page's address (it gave the Norwegian one).
+- Search results say "badminton" for the players too: a player page is titled "Markus Barth: badmintonspiller" ("Markus Barth: badminton player") and its description starts with "Badmintonspilleren Markus Barth".
+- Search engines: the sitemap now lists every team match weekend and every team match, so they're found without going through the division pages, and gives each page the day it last changed (a player's last match, a tournament's last update, the day of a team match) instead of the same date for every page. An English club page's structured data gives the English page's address (it gave the Norwegian one).
+- Search engines: tournaments and team matches are described as sports events with their organiser, their hall and a description and picture, and team matches with their two teams, for Google's event results. The halls and their addresses are kept in Sanity (Venues, and each club's home hall), and team matches now have their hall and arranging club from badmintonportalen.
 
 ## v1.22.3 (2026-11-03)
 

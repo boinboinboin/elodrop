@@ -1,5 +1,5 @@
 // Fetch singles and doubles games from team matches (league play) on badmintonportalen.no.
-// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--list-groups] [--all]
+// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--list-groups] [--all] [--venues]
 //
 // GetLeagueStanding is one method with "subpages":
 //   1: leagues for season + age group + region -> groups
@@ -11,6 +11,9 @@
 // or in the last LATE_DAYS days isn't in yet (results are sometimes registered late), or with --all
 // (the weekly sweep, which also catches postponed ties). Ties already saved with the same score keep
 // their games, so only new ties are fetched. Complete groups are skipped once saved.
+// Each tie has its hall (`venue`, free text: "Klæbu idrettshall") and the club arranging it when it
+// isn't the home team (`organiser`; null: the home team), both from subpage 4. --venues adds them to
+// the groups saved before they were fetched (one request per group; their games are kept).
 // The season's list of groups (180 requests: every region and age group) is kept in
 // data/cache/league-groups-<season>.json and listed again with --list-groups (weekly) or if missing.
 import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
@@ -84,7 +87,12 @@ function isoTime(s) {
   return m ? `${m[3]}-${m[2]}-${m[1]}${m[4] ? `T${m[4]}` : ""}` : null;
 }
 
-// Subpage 4: one row per tie with time, match number, teams and overall score.
+// A hall as badmintonportalen writes it ("Oppsal Arena 3 (6) 1-2": its courts after the name; cleaned
+// up in team-matches.mjs), without its soft hyphens ("Jotun&shy;hallen"); null when there's none
+const hallName = (cell) => text(cell.replace(/&shy;|\u00ad/g, "")) || null;
+
+// Subpage 4: one row per tie with time, match number, teams, arranging club (a third 'team' cell,
+// empty when it's the home team), hall ('venue') and overall score.
 async function listTies(g) {
   const html = await standing(4, g);
   return html
@@ -100,6 +108,8 @@ async function listTies(g) {
         home: teams[0],
         away: teams[1],
         score: text(row.match(/<td class='score'>(.*?)<\/td>/)?.[1] ?? ""),
+        venue: hallName(row.match(/<td class='venue'>(.*?)<\/td>/)?.[1] ?? ""),
+        organiser: teams[2] || null,
       };
     })
     .filter(Boolean);
@@ -166,6 +176,12 @@ async function fetchGames(g, tie) {
 }
 
 /** A group's played ties with their games; `previous` is the saved file of a group still being played */
+// --venues: a saved group's ties with their halls and arranging clubs added (the games as saved)
+async function addVenues(group) {
+  const listed = new Map((await listTies(group)).map((t) => [t.matchId, t]));
+  return { ...group, ties: group.ties.map((t) => ({ ...t, venue: listed.get(t.matchId)?.venue ?? null, organiser: listed.get(t.matchId)?.organiser ?? null })) };
+}
+
 async function fetchGroup(g, previous) {
   const ties = await listTies(g);
   // Unplayed ties show "-" as their score.
@@ -211,10 +227,12 @@ const today = new Date().toISOString().slice(0, 10);
 const since = new Date(Date.parse(today) - LATE_DAYS * 86_400_000).toISOString().slice(0, 10);
 const due = (group) => !group.schedule || group.schedule.some((t) => !t.time || (t.time.slice(0, 10) <= today && t.time.slice(0, 10) >= since));
 
-// The seasons' groups, from the cache unless asked to list them again (or not cached yet)
+// The seasons' groups, from the cache unless asked to list them again (or not cached yet); not
+// needed for --venues, which only goes through the saved groups
+const venues = process.argv.includes("--venues");
 await mkdir(CACHE, { recursive: true });
 const groups = new Map();
-for (const season of seasons) {
+for (const season of venues ? [] : seasons) {
   const cacheFile = `${CACHE}/league-groups-${season}.json`;
   let list = null;
   if (!process.argv.includes("--list-groups")) list = JSON.parse(await readFile(cacheFile, "utf8").catch(() => "null"))?.groups ?? null;
@@ -233,9 +251,16 @@ for (const season of seasons) {
 }
 const all = process.argv.includes("--all");
 const open = [...groups.values()].filter((g) => !done.has(fileKey(g)));
-const pending = open.filter((g) => all || !saved.has(fileKey(g)) || due(saved.get(fileKey(g))));
+// --venues: instead, the saved groups of these seasons with a tie saved before halls were fetched
+const pending = venues
+  ? [...saved.values()].filter((g) => seasons.includes(g.season) && g.ties.some((t) => !("venue" in t)))
+  : open.filter((g) => all || !saved.has(fileKey(g)) || due(saved.get(fileKey(g))));
 const todo = pending.slice(0, process.argv.includes("--limit") ? +arg("--limit") : undefined);
-console.error(`${groups.size} groups: ${groups.size - open.length} complete, ${open.length - pending.length} with no ties due, ${todo.length} to fetch`);
+console.error(
+  venues
+    ? `${todo.length} saved groups without halls to fetch them for`
+    : `${groups.size} groups: ${groups.size - open.length} complete, ${open.length - pending.length} with no ties due, ${todo.length} to fetch`
+);
 if (process.argv.includes("--dry-run")) process.exit(0);
 
 let failed = 0;
@@ -247,6 +272,12 @@ async function worker() {
     const g = todo[i];
     const label = `[${i + 1}/${todo.length}] ${g.season} ${g.region} ${g.ageGroup} ${g.division} ${g.group}`;
     try {
+      if (venues) {
+        const group = await addVenues(g);
+        await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(group));
+        console.error(`${label}: halls for ${group.ties.filter((t) => t.venue).length} of ${group.ties.length} ties`);
+        continue;
+      }
       const { group, fetched, unplayed } = await fetchGroup(g, saved.get(fileKey(g)));
       await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(group));
       const games = group.ties.reduce((n, t) => n + t.games.length, 0);

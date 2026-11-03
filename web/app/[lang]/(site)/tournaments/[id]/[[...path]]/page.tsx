@@ -30,6 +30,7 @@ import type { ClubEntry, Entry, Tournament, TournamentEvent } from "@/types";
 import { EMPTY, place, toneClass } from "@/utils/format";
 import { tournamentHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
+import { clubByOrganiser, organizationOf, placeOf } from "@/utils/structuredData";
 import { parseId } from "@/utils/parse";
 import { isSingles } from "@/utils/pools";
 import {
@@ -95,6 +96,10 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
   const shown = pickView(tour, path);
   if (!shown) notFound();
   const { view } = shown;
+  // The organiser's club and its home hall, for the structured data
+  const organiser = clubByOrganiser(tour.organiser, clubs);
+  const location = placeOf(organiser?.homeVenue ?? null);
+  const organizer = organizationOf(organiser, tour.organiser, href);
 
   return (
     <>
@@ -106,8 +111,12 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
             name: tour.name,
             sport: "Badminton",
             url: absoluteUrl(href(tournamentHref(tour.cup2000Id))),
+            description: t("seo.descriptions.tournament", { name: tour.name, dates: tour.startDate ? `, ${dateRange(tour.startDate, tour.endDate)}` : "" }),
+            image: absoluteUrl(href(`${tournamentHref(tour.cup2000Id)}/preview.png`)),
             ...(tour.startDate ? { startDate: tour.startDate, endDate: tour.endDate ?? tour.startDate } : {}),
             eventStatus: tour.cancelled ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
+            ...(location ? { location } : {}),
+            ...(organizer ? { organizer } : {}),
           }}
         />
         <h1 className="h1 mt-4">{tour.name}</h1>

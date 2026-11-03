@@ -8,7 +8,7 @@
     "junior": "{list}: alle norske juniorer (U19) rangert etter Elo-rating fra bare juniorkamper, oppdatert hver natt.",
     "combined": "Den samlede rangeringen i norsk badminton, {gender}: single, double og mixdouble samlet, for alle som er rangert i minst to av dem.",
     "juniorCombined": "Den samlede juniorrangeringen (U19) i norsk badminton, {gender}: single, double og mixdouble samlet.",
-    "player": "{name}{club}: {ratings}. Rating- og plasseringshistorikk, alle kamper siden {since}, rivaler og head to head.",
+    "player": "Badmintonspilleren {name}{club}: {ratings}. Rating- og plasseringshistorikk, alle kamper siden {since}, rivaler og head to head.",
     "playerRating": "{pool}-rating {rating}, #{rank} i Norge",
     "playerUnranked": "{pool}-rating {rating}",
     "playerNoRatings": "{name}{club}: Elo-ratinger, plasseringshistorikk og alle kamper i norsk badminton.",

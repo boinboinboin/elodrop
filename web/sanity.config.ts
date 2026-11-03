@@ -1,4 +1,4 @@
-// The Sanity Studio, embedded at /studio (app/studio). Content: the clubs (sanity/schemas).
+// The Sanity Studio, embedded at /studio (app/studio). Content: the clubs and the halls (sanity/schemas).
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { schemaTypes } from "./sanity/schemas/club";

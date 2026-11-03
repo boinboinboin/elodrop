@@ -11,6 +11,9 @@
 //   divisions/<season>/<slug>.json  one division (or series) in a season: its groups, each with
 //                       its team matches and its power ranking (the teams by the strength of the
 //                       players who played for them that season, their best lineup)
+//   venues.json         every hall team matches were played in (badmintonportalen's free text), most
+//                       used first, with the clubs hosting there: for the site's venues in Sanity
+//                       (web/scripts/import-venues.mts)
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { lowestRatings, playedOdds, playerRatings } from "./eliteserien.mjs";
 import * as R from "./rules.mjs";
@@ -32,6 +35,9 @@ const read = (file) => JSON.parse(readFileSync(file, "utf8"));
 const round3 = (x) => Math.round(x * 1000) / 1000;
 // "Sandefjord 2" -> "Sandefjord": the club, for its logo and page
 const clubOf = (team) => team.replace(/\s+\d+$/, "").trim();
+// A hall's name without the courts badmintonportalen writes after some: their number in brackets
+// and the courts used ("Oppsal Arena 3 (6) 1-2", "Karmøyhallen 1-11" -> "Oppsal Arena 3", "Karmøyhallen")
+const hallOf = (venue) => venue?.replace(/\s+\d+\s*-\s*\d+$/, "").replace(/\s*\(\d+\)$/, "").trim() || null;
 // Teams of several clubs as "Askøy/Stanghelle/Sotra", as most are written ("Askøy - Stanghelle - Sotra"
 // too); a hyphen without spaces is part of a club's name ("Mortensrud-Aker")
 const teamName = (team) => team.replace(/\s*[-–]\s+|\s+[-–]\s*/g, "/").trim();
@@ -103,6 +109,10 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
       away,
       homeClub: home.includes("/") ? null : clubOf(home),
       awayClub: away.includes("/") ? null : clubOf(away),
+      // The hall (free text, null: not given) and the club arranging the tie when it isn't the home
+      // team (Eliteserien's rounds), from badmintonportalen; missing in data fetched before them
+      venue: hallOf(tie.venue),
+      organiser: tie.organiser ?? null,
       score: [homeWon, awayWon],
       winner, // 1 home, 2 away, 0 draw
       // The home team's chances with the lineups played (null: no rated match)
@@ -197,6 +207,18 @@ for (const s of seasons) {
   }));
 }
 writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), seasons, latest: weeks.length ? weekFile(weeks[0]) : null }));
+
+// The halls: { name, ties, hosts: { club: ties } } (the host: the arranging club, else the home team's)
+const halls = new Map();
+for (const { summary: s } of ties) {
+  if (!s.venue) continue;
+  const hall = halls.get(s.venue) ?? { name: s.venue, ties: 0, hosts: {} };
+  hall.ties++;
+  const host = s.organiser ?? s.homeClub;
+  if (host) hall.hosts[host] = (hall.hosts[host] ?? 0) + 1;
+  halls.set(s.venue, hall);
+}
+writeFileSync(`${OUT}/venues.json`, JSON.stringify([...halls.values()].sort((a, b) => b.ties - a.ties || a.name.localeCompare(b.name, "nb"))));
 const years = [...new Set(weeks.map((w) => w.slice(0, 4)))];
 
 const upsets = ties.filter((t) => t.summary.upset).length;

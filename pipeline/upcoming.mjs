@@ -747,6 +747,15 @@ function findCup2000(info, title) {
   return found.length === 1 ? found[0].tournamentId : null;
 }
 
+// The organising club's name in Cup2000's list of tournaments (data/tournaments.json,
+// list-organisers.mjs: "Haugerud IF-Badminton"), or null when it isn't there
+let cup2000List = null;
+function organiserOf(cupId) {
+  const file = `${DIR}data/tournaments.json`;
+  cup2000List ??= existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {};
+  return cup2000List[cupId]?.organiser?.replace(/\s+/g, " ").trim() || null;
+}
+
 // ---- CLI ----
 
 const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : null);
@@ -822,7 +831,7 @@ for (const target of targets) {
       console.error(`${label}: no draw published yet`);
       continue;
     }
-    writeFileSync(`${OUT}/${t.cup2000Id}.json`, JSON.stringify(t));
+    writeFileSync(`${OUT}/${t.cup2000Id}.json`, JSON.stringify({ ...t, organiser: organiserOf(t.cup2000Id) }));
     const entries = t.events.reduce((s, e) => s + e.entries.length, 0);
     const ev = t.evaluation;
     console.error(
@@ -839,10 +848,19 @@ for (const target of targets) {
 
 if (fetchOnly) process.exit(0);
 
-// The list of tournaments, newest first, and the season's evaluation summed over them
+// The list of tournaments, newest first, and the season's evaluation summed over them. A file
+// without its organiser (analysed before organisers were kept, or before Cup2000's list had it) gets
+// it once the list has it: played tournaments aren't analysed again
 const tournaments = readdirSync(OUT)
   .filter((f) => f.endsWith(".json"))
-  .map((f) => JSON.parse(readFileSync(`${OUT}/${f}`, "utf8")))
+  .map((f) => {
+    const t = JSON.parse(readFileSync(`${OUT}/${f}`, "utf8"));
+    const organiser = t.organiser ?? organiserOf(t.cup2000Id);
+    if ("organiser" in t && organiser === t.organiser) return t;
+    const updated = { ...t, organiser };
+    writeFileSync(`${OUT}/${f}`, JSON.stringify(updated));
+    return updated;
+  })
   .map(({ events, unmatched, ...t }) => ({ ...t, events: events.length, entries: events.reduce((s, e) => s + e.entries.length, 0), played: events.filter((e) => e.played).length }))
   .sort((a, b) => (b.startDate ?? "").localeCompare(a.startDate ?? ""));
 const total = { events: 0, winners: 0, favouritesWon: 0, favouritesExpected: 0, winnerChance: 0, logLoss: 0, luck: { rounds: { n: 0, xx: 0, xy: 0, yy: 0 }, places: { n: 0, xx: 0, xy: 0, yy: 0 } } };

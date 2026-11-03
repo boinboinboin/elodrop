@@ -1,6 +1,6 @@
 // Import the clubs into Sanity from content/clubs.json (exported from the old Craft site) and their
 // logos from public/club-logos. Existing clubs are updated (document id club-<slug>), so it can be
-// run again.
+// run again, but each document is replaced whole: fields set only in the Studio (the home hall) are lost.
 // Usage: pnpm --filter web import-clubs   (reads NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_WRITE_TOKEN from .env.local)
 import { createReadStream, existsSync } from "node:fs";
 import { join } from "node:path";

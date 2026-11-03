@@ -20,7 +20,7 @@
 //                                 and their rivals over all disciplines
 //   matches/<id>.json             one player's every match per pool, newest first (for "show all"
 //                                 and head to head)
-//   search-index.json             [id, name, club, ranked, matches] for the name search
+//   search-index.json             [id, name, club, ranked, matches, lastPlayed] for the name search (and the sitemap's dates)
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
 //   eliteserien.json, eliteserien-<season>.json, eliteserien-ten-matches.json
@@ -132,10 +132,12 @@ for (const [id, entries] of byPlayer) {
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 
-// Name search: every player once, with whether they are ranked anywhere and their matches
+// Name search: every player once, with whether they are ranked anywhere, their matches and the day
+// of their last match (for the sitemap: when their page last changed with a result)
 const search = [...byPlayer].map(([id, entries]) => {
   const list = Object.values(entries);
-  return [id, list[0].name, list[0].club ?? null, list.some((p) => p.rank !== null) ? 1 : 0, list.reduce((s, p) => s + p.matches, 0)];
+  const lastPlayed = list.map((p) => p.lastPlayed ?? "").sort().at(-1) || null;
+  return [id, list[0].name, list[0].club ?? null, list.some((p) => p.rank !== null) ? 1 : 0, list.reduce((s, p) => s + p.matches, 0), lastPlayed];
 });
 write("search-index.json", { generatedAt, players: search });
 

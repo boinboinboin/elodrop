@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts",
     "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts",
+    "import-venues": "tsx --env-file=.env.local scripts/import-venues.mts",
     "make-icons": "tsx scripts/make-icons.mts"
   },
   "dependencies": {

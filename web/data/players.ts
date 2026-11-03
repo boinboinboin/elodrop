@@ -17,5 +17,6 @@ export async function getPlayerMatches(player: Player): Promise<Partial<Record<P
 }
 
 /** The search index (search-index.json): [id, name, club, ranked, matches] per player; app/api/search-index serves it to the browser */
-export type SearchRow = [number, string, string | null, 0 | 1, number];
+/** [id, name, club, ranked, matches, the day of their last match (missing in older data)] */
+export type SearchRow = [number, string, string | null, 0 | 1, number, (string | null)?];
 export const getSearchIndex = async () => (await load<{ players: SearchRow[] }>("search-index.json"))?.players ?? [];

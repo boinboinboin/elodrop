@@ -289,6 +289,9 @@ export interface TeamMatchSummary {
   upsets: number;
   /** Its division's address in the season (/team-matches/<season>/<slug>) */
   divisionSlug: string;
+  /** The hall (badmintonportalen's free text) and the club arranging it when not the home team; missing in older data */
+  venue?: string | null;
+  organiser?: string | null;
 }
 
 export interface TeamMatch extends TeamMatchSummary {
@@ -459,6 +462,8 @@ export interface Tournament {
   /** The registration deadline, and the ranking list version the seeding is from */
   deadline?: string | null;
   rankingVersion?: string | null;
+  /** The organiser in Cup2000's list ("Haugerud IF-Badminton"); missing in older data */
+  organiser?: string | null;
   fetchedAt: string;
   runs: number;
   events: TournamentEvent[];
@@ -478,7 +483,7 @@ export interface TournamentsIndex {
   tournaments: TournamentSummary[];
 }
 
-/** A club's content (CMS): short name, full name, region, website, NBF id and logo */
+/** A club's content (CMS): short name, full name, region, website, NBF id, logo and home hall */
 export interface ClubEntry {
   title: string;
   slug: string;
@@ -487,6 +492,16 @@ export interface ClubEntry {
   website: string | null;
   nbfClubId: number | null;
   logo: string | null;
+  homeVenue: Venue | null;
+}
+
+/** A hall (CMS, sanity/schemas/venue.ts): its name, the other spellings the results use, and its address */
+export interface Venue {
+  name: string;
+  aliases: string[] | null;
+  streetAddress: string | null;
+  postalCode: string | null;
+  town: string | null;
 }
 
 export * from "./head-to-head";

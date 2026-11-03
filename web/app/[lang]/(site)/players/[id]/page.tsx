@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/players/[i
   const { t } = i18n;
   const player = await getPlayer(Number((await params).id));
   if (!player) return { title: t("players.metadata.title") };
-  return pageMetadata(i18n, { title: player.name, description: playerDescription(i18n, player), path: playerHref(player.id), image: { url: `${playerHref(player.id)}/preview.png`, alt: t("seo.imageAlt.player") } });
+  return pageMetadata(i18n, { title: t("players.metadata.page", { name: player.name }), description: playerDescription(i18n, player), path: playerHref(player.id), image: { url: `${playerHref(player.id)}/preview.png`, alt: t("seo.imageAlt.player") } });
 }
 
 /** "Markus Barth (Bergen): men's singles rating 2341, #1 in Norway; …. Rating and rank history, every match since 2013, …" */

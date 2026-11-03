@@ -8,25 +8,65 @@ import Team, { breakable } from "@/components/clubs/Team";
 import ChanceBar from "@/components/head-to-head/ChanceBar";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PlayerLine from "@/components/players/PlayerLine";
+import JsonLd from "@/components/seo/JsonLd";
 import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
-import { getClubMap } from "@/data/sanity";
+import { getClubMap, getVenues } from "@/data/sanity";
 import { getTeamMatch } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
-import type { ClubEntry, TeamMatchGame } from "@/types";
+import type { ClubEntry, TeamMatch, TeamMatchGame } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { seasonLabel } from "@/utils/format";
 import { doublesHeadToHeadHref, headToHeadHref, seasonSlug, teamDivisionHref, teamMatchesHref, teamMatchHref } from "@/utils/hrefs";
-import { pageMetadata } from "@/utils/metadata";
+import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
+import { clubByOrganiser, findVenue, organizationOf, placeOf } from "@/utils/structuredData";
 
 // Team matches are rendered on their first visit and then cached
 export async function generateStaticParams() {
   return [{ id: "0" }];
+}
+
+/** The title's and description's values: the teams, day, division and score */
+const descriptionValues = (tie: TeamMatch, date: (day: string) => string) => ({ home: tie.home, away: tie.away, date: date(tie.day), division: tie.division, score: `${tie.score[0]}–${tie.score[1]}` });
+
+/**
+ * The team match as a schema.org SportsEvent: the two teams, the hall (the venue in Sanity with its
+ * name, else just the name given; with none given, the hosting club's home hall) and the club
+ * arranging it (else the home team's)
+ */
+async function EventData({ tie, clubs }: { tie: TeamMatch; clubs: Record<string, ClubEntry> }) {
+  const { t, date, href } = await getI18n();
+  const venues = await getVenues();
+  const host = clubByOrganiser(tie.organiser ?? tie.homeClub, clubs);
+  const location = tie.venue ? placeOf(findVenue(tie.venue, venues), tie.venue) : placeOf(host?.homeVenue ?? null);
+  const organizer = organizationOf(host, tie.organiser ?? tie.homeClub, href);
+  const team = (name: string) => ({ "@type": "SportsTeam", name, sport: "Badminton" });
+  return (
+    <JsonLd
+      data={{
+        "@type": "SportsEvent",
+        name: `${tie.home} – ${tie.away}`,
+        sport: "Badminton",
+        url: absoluteUrl(href(teamMatchHref(tie.matchId))),
+        description: t("seo.descriptions.teamMatch", descriptionValues(tie, date)),
+        image: absoluteUrl(href(`${teamMatchHref(tie.matchId)}/preview.png`)),
+        // The day, with the start time when known ("2025-11-15T12:00", Norwegian time)
+        startDate: tie.time.length > 10 && !tie.time.endsWith("00:00") ? tie.time : tie.day,
+        eventStatus: "https://schema.org/EventScheduled",
+        homeTeam: team(tie.home),
+        awayTeam: team(tie.away),
+        competitor: [team(tie.home), team(tie.away)],
+        performer: [team(tie.home), team(tie.away)],
+        ...(location ? { location } : {}),
+        ...(organizer ? { organizer } : {}),
+      }}
+    />
+  );
 }
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/team-matches/match/[id]">): Promise<Metadata> {
@@ -35,7 +75,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/team-match
   const id = parseId((await params).id);
   const tie = id === null ? null : await getTeamMatch(id);
   if (!tie) return { title: t("teamMatches.metadata.title") };
-  const values = { home: tie.home, away: tie.away, date: date(tie.day), division: tie.division, score: `${tie.score[0]}–${tie.score[1]}` };
+  const values = descriptionValues(tie, date);
   return pageMetadata(i18n, { title: t("teamMatches.metadata.match", values), description: t("seo.descriptions.teamMatch", values), path: teamMatchHref(tie.matchId), image: { url: `${teamMatchHref(tie.matchId)}/preview.png`, alt: t("seo.imageAlt.teamMatch") } });
 }
 
@@ -66,6 +106,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
   return (
     <>
       <Section>
+        <EventData tie={tie} clubs={clubs} />
         <Breadcrumbs
           trail={[
             { label: t("teamMatches.breadcrumb"), href: teamMatchesHref() },

@@ -1,6 +1,7 @@
 {
   "metadata": {
-    "title": "Spiller"
+    "title": "Spiller",
+    "page": "{name}: badmintonspiller"
   },
   "loading": "Laster spiller…",
   "born": "Født {year}",
