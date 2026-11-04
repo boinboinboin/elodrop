@@ -18,4 +18,4 @@ The PR check (`.github/workflows/changelog.yml`) fails when a PR into `main` doe
 ## Git
 
 - Never commit or push without the owner's explicit permission; work on a feature branch from an up-to-date `origin/main`, and check the current branch right before committing (the owner often merges, pulls and deletes branches in between).
-- `main` deploys to production (Vercel).
+- `main` deploys to production (Vercel), except pushes that change nothing the site uses (`web/vercel.json`: `ignoreCommand`). Each deploy may start the pages' cache afresh (to confirm in Vercel's ISR writes), so merging several PRs together may cost less than one at a time.
