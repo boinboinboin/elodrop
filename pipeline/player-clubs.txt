@@ -1,0 +1,6 @@
+# Players whose club in badmintonportalen's register isn't the one to show. Read by rate.mjs before
+# the register.
+#
+# One player per line:  <badmintonportalen player id>  <club, as the results write it>  # note, without the name
+
+48186  Norborg  # registered as "Norborg (GDS - Grupo Desportivo de Sesimbra)"

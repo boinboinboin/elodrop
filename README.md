@@ -12,7 +12,7 @@ Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from eve
 | What | Where |
 |---|---|
 | Fetched results, rankings, draws (raw input) | Cloudflare R2 bucket `elo-raw`; locally `pipeline/data` |
-| Hand-edited input: `corrections.txt`, Eliteserien rosters, `organisers.txt` | this repo, `pipeline/` |
+| Hand-edited input: `corrections.txt`, Eliteserien rosters, `organisers.txt`, `player-clubs.txt` | this repo, `pipeline/` |
 | The site's data (rankings, players, clubs, upsets, Eliteserien, tournaments) | R2 bucket `elo-data`, public on `data.<domain>`; locally `pipeline/export` |
 | Club content (names, regions, logos, home halls), halls, and the season's tournaments' organiser and hall | Sanity (Studio at `/studio`; the nightly run adds the tournaments); `web/content/clubs.json` until Sanity is set up |
 | The site | Vercel |

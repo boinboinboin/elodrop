@@ -295,7 +295,7 @@ With the singles maximum, doubles ranges were about 30% too wide.
 
 Ranking lists only include players who have played in the last 12 months, with time during Covid-19 counting slower (see [Covid-19 period adjustment](#covid-19-period-adjustment)). Inactive players keep their rating and history, and reappear in the rankings as soon as they play again. The rankings page can show them too (without a rank) with "Show inactive players": the 500 best of them, with a link to a page with everyone. Each list is its own page (`/rankings` for men's singles, `/rankings/<list>`, `/rankings/<list>/inactive` and `/rankings/<list>/inactive/all`; mixed doubles women at `mixedDoubles-women`), as are the strongest clubs (`/clubs` combined, `/clubs/strongest/<pool>`), so every page can be cached until the next data update.
 
-The club shown for a player is their club registered on badmintonportalen. Players no longer in the register show the club of their last tournament, or otherwise the club of their last league team. League team names such as "Kristiansand 2" are team numbers, not clubs.
+The club shown for a player is their club registered on badmintonportalen, or the one given for them in `player-clubs.txt` (by player id) where the register's isn't the one to show. Players no longer in the register show the club of their last tournament, or otherwise the club of their last league team. League team names such as "Kristiansand 2" are team numbers, not clubs.
 
 ### Since last week
 

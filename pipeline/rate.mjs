@@ -717,10 +717,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const ratings = {};
   const weekly = {};
   // Club shown for each player: the club registered on badmintonportalen (current as of the last
-  // fetch-players.mjs run), else the last tournament club, else the last league team's club.
+  // fetch-players.mjs run; or the one in player-clubs.txt), else the last tournament club, else the
+  // last league team's club.
   const registered = new Map(
     JSON.parse(readFileSync(`${DIR}data/players.json`, "utf8")).map((p) => [p.id, p.club.trim()])
   );
+  for (const [i, raw] of readFileSync(`${DIR}player-clubs.txt`, "utf8").split("\n").entries()) {
+    const line = raw.replace(/\s+#.*$|^#.*$/, "").trim();
+    if (!line) continue;
+    const m = line.match(/^(\d+)\s+(.+)$/);
+    if (!m) console.warn(`player-clubs.txt line ${i + 1}: can't read "${raw.trim()}"`);
+    else registered.set(Number(m[1]), m[2].trim());
+  }
   const clubOf = (p) => registered.get(p.id) || p.tournamentClub || p.leagueClub || null;
   const genders = new Map(JSON.parse(readFileSync(`${DIR}data/players.json`, "utf8")).map((p) => [p.id, p.gender]));
   // Players not in the register: the opposite of most of their mixed doubles partners' genders,
