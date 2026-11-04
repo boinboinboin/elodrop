@@ -7,7 +7,7 @@
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
 // data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
-// over all pools), data/junior.json (the U19 rankings, from junior matches only) and data/combined.json
+// over all pools, in singles and in doubles), data/junior.json (the U19 rankings, from junior matches only) and data/combined.json
 // (the combined rankings of singles, doubles and mixed doubles, men and women, also for juniors).
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
@@ -28,7 +28,8 @@ const BIGGEST_MATCHES = 5;
 // certain half of ranked players), so a fast-improving junior beating a favourite isn't an upset.
 const WEEKLY_UPSETS = 10;
 const UPSET_MAX_RD = { singles: 125, doubles: 90 * R.DOUBLES_UNIT };
-// Rivals: opponents met at least RIVAL_MIN_MATCHES times in all disciplines together, closest first by the average point
+// Rivals: opponents met at least RIVAL_MIN_MATCHES times in all disciplines together (and likewise in singles alone and
+// in doubles alone: men's, women's and mixed together), closest first by the average point
 // margin d (as in the margin of victory weight). The average is pulled towards a typical margin
 // as if there were RIVAL_PRIOR_MATCHES more matches, so many close matches beat a few: with 10, a
 // long rivalry (20-30 meetings at a 10-13% margin) beats three very close matches.
@@ -1222,8 +1223,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Number of ranked players per week (mixed doubles: { M, K }), from the Monday `from`
   writeFileSync(`${DIR}data/rank-counts.json`, JSON.stringify({ from: firstWeek, pools: rankCounts }));
 
-  // A player's rivals over all their disciplines: every match with a point margin, against each
-  // opposing player (in doubles both count), with how many were in each discipline.
+  // A player's rivals over the given pools (all of them, singles or doubles): every match with a
+  // point margin, against each opposing player (in doubles both count), with how many were in each discipline.
   // A player's club now, as in the rankings: from any pool they've played in
   const currentClub = (id) => {
     for (const map of Object.values(players)) {
@@ -1232,10 +1233,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     }
     return null;
   };
-  function rivals(id) {
-    const meetings = Object.entries(players).flatMap(([pool, map]) =>
-      (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, pool, opponent: o }))),
-    );
+  const SINGLES = ["men", "women"];
+  const DOUBLES = ["mensDoubles", "womensDoubles", "mixedDoubles"];
+  function rivals(id, pools = Object.keys(players)) {
+    const meetings = Object.entries(players)
+      .filter(([pool]) => pools.includes(pool))
+      .flatMap(([pool, map]) =>
+        (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, pool, opponent: o }))),
+      );
     const byOpponent = Map.groupBy(meetings, (m) => m.opponent.id);
     return [...byOpponent.values()]
       .filter((list) => list.length >= RIVAL_MIN_MATCHES)
@@ -1282,8 +1287,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       });
     }
   }
-  // Rivals over all disciplines, beside the pools (every reader of these files looks pools up by name)
-  for (const [id, m] of matches) m.rivals = rivals(id);
+  // Rivals over all disciplines, in singles and in doubles, beside the pools (every reader of these
+  // files looks pools up by name)
+  for (const [id, m] of matches) {
+    m.rivals = rivals(id);
+    m.singlesRivals = rivals(id, SINGLES);
+    m.doublesRivals = rivals(id, DOUBLES);
+  }
   mkdirSync(`${DIR}data/matches`, { recursive: true });
   for (const [id, m] of matches) writeFileSync(`${DIR}data/matches/${id}.json`, JSON.stringify(m));
 

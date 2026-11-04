@@ -105,7 +105,7 @@ export interface Match {
   margin?: number | null;
 }
 
-/** A rival over all disciplines (pipeline/rate.mjs): the opponent with the closest matches */
+/** A rival (pipeline/rate.mjs): the opponent with the closest matches, over all disciplines, in singles or in doubles */
 export interface Rival {
   /** With their club now */
   opponent: Pick<PlayerRef, "id" | "name" | "club">;
@@ -144,6 +144,9 @@ export interface Player {
   birthYear?: number | null;
   /** The closest rivals over all disciplines (missing in exports from before they were) */
   rivals?: Rival[];
+  /** The closest rivals in singles and in doubles (men's, women's and mixed together; missing in older exports) */
+  singlesRivals?: Rival[];
+  doublesRivals?: Rival[];
   /** In page order: the player's own gender's disciplines first */
   pools: Partial<Record<Pool, PlayerPool>>;
 }

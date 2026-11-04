@@ -1,6 +1,7 @@
 // One player: club, rating and ranking history in every discipline (with tables by season), their
-// biggest rivals over all disciplines, and per discipline their rating, rank, peak, matches, rating
-// history, match list and highlights (biggest wins and losses, rating gains and drops).
+// biggest rivals (over all disciplines, in singles and in doubles), and per discipline their rating,
+// rank, peak, matches, rating history, match list and highlights (biggest wins and losses, rating
+// gains and drops).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
@@ -124,7 +125,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
 
       <AllDisciplines player={player} />
 
-      {player.rivals && player.rivals.length > 0 && <Rivals player={player} rivals={player.rivals} />}
+      {player.rivals && player.rivals.length > 0 && <Rivals player={player} />}
 
       {/* One tab per discipline (no tabs for players with a single discipline) */}
       <Section>
@@ -139,8 +140,44 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   );
 }
 
-/** The closest rivals over all disciplines: the biggest in full, then the others */
-async function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
+/**
+ * The closest rivals, with tabs for over all disciplines, in singles and in doubles. A singles or
+ * doubles tab is left out when it has no rivals or the same ones as all disciplines (a player who
+ * only plays singles); with only one left, there are no tabs.
+ */
+async function Rivals({ player }: { player: Player }) {
+  const { t } = await getI18n();
+  const all = player.rivals ?? [];
+  const same = (a: readonly Rival[], b: readonly Rival[]) => a.length === b.length && a.every((r, i) => r.opponent.id === b[i].opponent.id && r.matches === b[i].matches);
+  const lists = [
+    { id: "all", rivals: all, subtitle: "players.rival.subtitle" },
+    { id: "singles", rivals: player.singlesRivals ?? [], subtitle: "players.rival.singlesSubtitle" },
+    { id: "doubles", rivals: player.doublesRivals ?? [], subtitle: "players.rival.doublesSubtitle" },
+  ] as const;
+  const shown = lists.filter((list) => list.id === "all" || (list.rivals.length > 0 && !same(list.rivals, all)));
+  return (
+    <Section>
+      <Card>
+        <h2 className="text-xl mb-3">{t("players.rival.title")}</h2>
+        <Tabs
+          label={t("players.rival.tabs")}
+          param="rivals"
+          id="rivals"
+          small
+          className="mb-4"
+          tabs={shown.map(({ id, rivals, subtitle }) => ({
+            id,
+            label: t(`players.rival.${id}`),
+            content: <RivalList player={player} rivals={rivals} subtitle={t(subtitle)} />,
+          }))}
+        />
+      </Card>
+    </Section>
+  );
+}
+
+/** One list of rivals: the biggest in full, then the others */
+async function RivalList({ player, rivals, subtitle }: { player: Player; rivals: Rival[]; subtitle: string }) {
   const { t, plural, rich, pct, date } = await getI18n();
   const [rival, ...others] = rivals;
   // "4 matches: 1 in men's singles, 1 in men's doubles, 2 in mixed doubles"
@@ -157,54 +194,51 @@ async function Rivals({ player, rivals }: { player: Player; rivals: Rival[] }) {
       return <Link href={headToHeadHref(player.id, r.opponent.id)} className={TEXT_LINK}>{text}</Link>;
     };
   return (
-    <Section>
-      <Card>
-        <h2 className="text-xl mb-1">{t("players.rival.title")}</h2>
-        <p className="text-sm text-gray-600 mb-4">{t("players.rival.subtitle")}</p>
-        <p className="text-2xl">
-          <Link href={playerHref(rival.opponent.id)} className="hover:text-blue-600">{rival.opponent.name}</Link>
-          {rival.opponent.club && <span className="text-base text-gray-600"> · {rival.opponent.club}</span>}
-        </p>
-        <p className="text-gray-700 mt-1">
-          {rich(
-            "players.rival.summary",
-            { link: headToHead(rival) },
-            {
-              matches: where(rival),
-              record: rival.draws
-                ? t("players.rival.recordWithDraws", { wins: rival.wins, draws: rival.draws, losses: rival.losses })
-                : t("players.rival.record", { wins: rival.wins, losses: rival.losses }),
-              margin: pct(rival.margin, 1),
-              date: date(rival.lastPlayed),
-            },
-          )}
-        </p>
-        {others.length > 0 && (
-          <>
-            <p className="text-sm text-gray-600 mt-4">{t("players.rival.alsoClose")}</p>
-            <ul className="mt-1">
-              {others.map((r) => (
-                <li key={r.opponent.id}>
-                  <Link href={playerHref(r.opponent.id)} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
-                  <span className="text-sm text-gray-600">
-                    {r.opponent.club && `${r.opponent.club} · `}
-                    {rich(
-                      "players.rival.other",
-                      { link: headToHead(r) },
-                      {
-                        matches: where(r),
-                        score: r.draws ? t("players.rival.scoreWithDraws", { wins: r.wins, losses: r.losses, draws: r.draws }) : t("players.rival.score", { wins: r.wins, losses: r.losses }),
-                        margin: pct(r.margin, 1),
-                      },
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </>
+    <>
+      <p className="text-sm text-gray-600 mb-4">{subtitle}</p>
+      <p className="text-2xl">
+        <Link href={playerHref(rival.opponent.id)} className="hover:text-blue-600">{rival.opponent.name}</Link>
+        {rival.opponent.club && <span className="text-base text-gray-600"> · {rival.opponent.club}</span>}
+      </p>
+      <p className="text-gray-700 mt-1">
+        {rich(
+          "players.rival.summary",
+          { link: headToHead(rival) },
+          {
+            matches: where(rival),
+            record: rival.draws
+              ? t("players.rival.recordWithDraws", { wins: rival.wins, draws: rival.draws, losses: rival.losses })
+              : t("players.rival.record", { wins: rival.wins, losses: rival.losses }),
+            margin: pct(rival.margin, 1),
+            date: date(rival.lastPlayed),
+          },
         )}
-      </Card>
-    </Section>
+      </p>
+      {others.length > 0 && (
+        <>
+          <p className="text-sm text-gray-600 mt-4">{t("players.rival.alsoClose")}</p>
+          <ul className="mt-1">
+            {others.map((r) => (
+              <li key={r.opponent.id}>
+                <Link href={playerHref(r.opponent.id)} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
+                <span className="text-sm text-gray-600">
+                  {r.opponent.club && `${r.opponent.club} · `}
+                  {rich(
+                    "players.rival.other",
+                    { link: headToHead(r) },
+                    {
+                      matches: where(r),
+                      score: r.draws ? t("players.rival.scoreWithDraws", { wins: r.wins, losses: r.losses, draws: r.draws }) : t("players.rival.score", { wins: r.wins, losses: r.losses }),
+                      margin: pct(r.margin, 1),
+                    },
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </>
   );
 }
 

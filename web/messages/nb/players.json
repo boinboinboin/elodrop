@@ -10,6 +10,12 @@
   "rival": {
     "title": "Største rival",
     "subtitle": "Motstanderen med jevnest kamper, i alle disipliner samlet, fra minst 3 møter",
+    "singlesSubtitle": "Motstanderen med jevnest kamper i single, fra minst 3 møter",
+    "doublesSubtitle": "Motstanderen med jevnest kamper i double (herre-, dame- og mixed double samlet), fra minst 3 møter",
+    "tabs": "Rivaler per disiplin",
+    "all": "Alle",
+    "singles": "Single",
+    "doubles": "Double",
     "inPool": "{matches} i {pool}",
     "inPools": "{matches}: {list}",
     "inOnePool": "{count} i {pool}",

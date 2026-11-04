@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.2 (2026-11-04)
+
+- The "Biggest rival" box on the player page has tabs for singles and doubles rivals, beside the rivals over all disciplines together. Doubles counts men's, women's and mixed doubles together. A tab is left out when it would show the same rivals as all disciplines.
+
 ## v1.24.1 (2026-11-04)
 
 - Publishing an approved tournament in the Studio adds its hall to the organiser's home halls, if it isn't there yet (after the ones it has, so the club's default stays first).

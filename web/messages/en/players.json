@@ -10,6 +10,12 @@
   "rival": {
     "title": "Biggest rival",
     "subtitle": "The opponent with the closest matches, in all disciplines together, from at least 3 meetings",
+    "singlesSubtitle": "The opponent with the closest matches in singles, from at least 3 meetings",
+    "doublesSubtitle": "The opponent with the closest matches in doubles (men's, women's and mixed together), from at least 3 meetings",
+    "tabs": "Rivals by discipline",
+    "all": "All",
+    "singles": "Singles",
+    "doubles": "Doubles",
     "inPool": "{matches} in {pool}",
     "inPools": "{matches}: {list}",
     "inOnePool": "{count} in {pool}",
