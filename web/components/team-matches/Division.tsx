@@ -1,21 +1,20 @@
 // One division in a season (/team-matches/2025-26/eliteserien-2025-2026; pipeline/team-matches.mjs):
 // each of its groups (the regular season, the playoffs) with its power ranking and its team matches,
-// round by round.
+// round by round. The season and division dropdowns (components/team-matches/Pickers.tsx) lead to
+// the season's other divisions.
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import Pickers from "@/components/team-matches/Pickers";
 import PowerRanking from "@/components/team-matches/PowerRanking";
 import TieRow from "@/components/team-matches/TieRow";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
-import { getTeamDivision, isJuniorAgeGroup } from "@/data/teamMatches";
+import { getTeamDivision, getTeamMatchesIndex, isJuniorAgeGroup, NATIONAL } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamMatchesHref } from "@/utils/hrefs";
-
-/** The national divisions' region (Eliteserien, the national finals): shown as "National" */
-const NATIONAL = "Norges Badminton Forbund";
 
 /** A season ("2025-26") as its first year, or null */
 export const parseSeason = (slug: string): number | null => {
@@ -37,10 +36,11 @@ async function Content({ params }: { params: Promise<{ period: string; division:
   const { period, division: slug } = await params;
   const season = parseSeason(period);
   if (season === null) notFound();
-  const [division, clubs] = await Promise.all([getTeamDivision(season, slug), getClubMap()]);
+  const [division, clubs, index] = await Promise.all([getTeamDivision(season, slug), getClubMap(), getTeamMatchesIndex()]);
   if (!division) notFound();
   const ties = division.groups.reduce((n, g) => n + g.ties.length, 0);
   const junior = isJuniorAgeGroup(division.ageGroup);
+  const seasonEntry = index?.seasons.find((s) => s.season === season);
 
   return (
     <>
@@ -59,6 +59,11 @@ async function Content({ params }: { params: Promise<{ period: string; division:
           {[division.region === NATIONAL ? t("teamMatches.divisions.national") : division.region, division.ageGroup !== "SEN" ? division.ageGroup : null, seasonLabel(season, true)].filter(Boolean).join(" · ")}
         </p>
         <p className="text-gray-600 mt-2">{plural("teamMatches.count", ties)}</p>
+        {index && seasonEntry && (
+          <div className="mt-8">
+            <Pickers seasons={index.seasons} season={seasonEntry} division={slug} junior={junior} />
+          </div>
+        )}
       </Section>
       {division.groups.map((group) => {
         // The group's team matches by day: a round each

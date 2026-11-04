@@ -2,7 +2,8 @@
 // /team-matches/<season> ("2025-26") another, each with its divisions by region (each division's page
 // has its team matches and power rankings, components/team-matches/Division.tsx) and its newest
 // weekend's team matches; /team-matches/<Monday> shows one weekend's team matches, grouped by division
-// and group (app/(site)/team-matches/[period]). Each team match links to its own page. Senior and
+// and group (app/(site)/team-matches/[period]). A dropdown picks the season and one of its divisions
+// (components/team-matches/Pickers.tsx). Each team match links to its own page. Senior and
 // junior (U13 to U19) team matches are apart: the same pages under /team-matches/junior have the
 // juniors', with a toggle between them (to the same season or weekend where the other has it).
 import type { Metadata } from "next";
@@ -10,14 +11,14 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { ArrowRight } from "@/components/SVG";
+import Pickers from "@/components/team-matches/Pickers";
 import TieRow from "@/components/team-matches/TieRow";
 import Link from "@/components/ui/Link";
-import LinkSelect from "@/components/ui/LinkSelect";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
-import { getTeamMatchesIndex, getTeamMatchWeek, isJuniorAgeGroup, seasonWeeks } from "@/data/teamMatches";
+import { getTeamMatchesIndex, getTeamMatchWeek, isJuniorAgeGroup, NATIONAL, seasonWeeks } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
 import type { TeamDivisionEntry, TeamMatchesIndex, TeamMatchesWeekEntry } from "@/types";
 import { seasonLabel } from "@/utils/format";
@@ -104,9 +105,6 @@ async function AgeTabs({ seasons, period, junior }: { seasons: Season[]; period:
   );
 }
 
-/** The national divisions' region (Eliteserien, the national finals): shown as "National" */
-const NATIONAL = "Norges Badminton Forbund";
-
 async function Content({ period: periodPromise, junior }: { period: Promise<string | null>; junior: boolean }) {
   const { dateRange, href, plural, t } = await getI18n();
   const [period, index, clubs] = await Promise.all([periodPromise, getTeamMatchesIndex(), getClubMap()]);
@@ -142,7 +140,7 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
     <>
       <Section>
         {tabs}
-        <Pickers seasons={index.seasons.filter((s) => seasonWeeks(s, junior).length)} season={season} week={byWeek ? week.week : null} junior={junior} />
+        <Pickers seasons={index.seasons} season={season} division={null} junior={junior} />
         {/* (Data from before the divisions has none: the code can be deployed before the next data run) */}
         {!byWeek && !!divisions?.length && <Divisions season={season.season} divisions={divisions} />}
       </Section>
@@ -157,8 +155,10 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
         <div className="grid gap-8">
           {[...groups].map(([name, ties]) => (
             <div key={name}>
-              {/* The group's heading links to its division: all its team matches and its power ranking */}
-              <h3 className="text-xl mb-2">
+              {/* The group's heading links to its division: all its team matches and its power ranking. It
+                  sticks to the top of the page while scrolling through the group's team matches, on the
+                  page's background, until the next group's pushes it off */}
+              <h3 className="sticky top-0 z-10 -mx-4 px-4 py-2 mb-2 bg-stone-100 border-b border-gray-300 text-xl">
                 {ties[0].divisionSlug ? (
                   <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="inline-flex items-center gap-1 hover:text-blue-600">
                     {name} <ArrowRight className="text-base" />
@@ -175,33 +175,6 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
         </div>
       </Section>
     </>
-  );
-}
-
-/** Pick a season (its divisions and newest weekend), then one of its team match weekends: senior or junior */
-async function Pickers({ seasons, season, week, junior }: { seasons: Season[]; season: Season; week: string | null; junior: boolean }) {
-  const { date, plural, t } = await getI18n();
-  /** A week's days played, short: "15–16 Nov", "30 Jan – 1 Feb", "4 Oct" */
-  const days = (from: string, to: string) =>
-    from === to ? date(from, "dayMonth") : from.slice(0, 7) === to.slice(0, 7) ? `${date(from, "dayOnly")}–${date(to, "dayMonth")}` : `${date(from, "dayMonth")} – ${date(to, "dayMonth")}`;
-  return (
-    <div className="flex flex-wrap gap-4">
-      <LinkSelect
-        label={t("teamMatches.season")}
-        current={String(season.season)}
-        options={seasons.map((s) => ({ key: String(s.season), href: teamMatchesHref(seasonSlug(s.season), junior), label: seasonLabel(s.season, true) }))}
-        className="w-32"
-      />
-      <LinkSelect
-        label={t("teamMatches.weekend")}
-        current={week ?? ""}
-        options={[
-          { key: "", href: teamMatchesHref(seasonSlug(season.season), junior), label: t("teamMatches.allDivisions") },
-          ...seasonWeeks(season, junior).map((w) => ({ key: w.week, href: teamMatchesHref(w.week, junior), label: `${days(w.from, w.to)} · ${plural("teamMatches.count", w.ties)}` })),
-        ]}
-        className="w-full sm:w-72"
-      />
-    </div>
   );
 }
 

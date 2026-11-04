@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.10 (2026-11-04)
+
+- On the team match pages, the second dropdown now picks a division, listed under its region (the national ones first), instead of a weekend. Each region's heading stays at the top of the list while you scroll through its divisions.
+- A weekend's team matches keep their division and group heading ("2. divisjon · Grunnspill") at the top of the page while you scroll through them. It's also on each division's page, to go straight to the season's other divisions. Weekend pages still open from their links.
+
 ## v1.24.9 (2026-11-04)
 
 - Links are prefetched when you point at, tab to or touch them, not as soon as they scroll into view, so pages with hundreds of player links no longer make the server render pages nobody opens.

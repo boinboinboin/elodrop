@@ -22,7 +22,6 @@
   "loading": "Loading team matches…",
   "none": "No team matches yet: run the pipeline.",
   "season": "Season",
-  "weekend": "Weekend",
   "count": {
     "one": "{count} team match",
     "other": "{count} team matches"
@@ -73,6 +72,7 @@
     "title": "Divisions {season}",
     "intro": "Each division's page has all its team matches, round by round, and its power ranking: the teams by the players who played for them.",
     "national": "National",
+    "select": "Division",
     "teams": {
       "one": "{count} team",
       "other": "{count} teams"

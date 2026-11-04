@@ -2,6 +2,9 @@
 import type { TeamMatch, TeamMatchesIndex, TeamMatchWeek, TeamDivision } from "@/types";
 import { load } from "./load";
 
+/** The national divisions' region (Eliteserien, the national finals): shown as "National" */
+export const NATIONAL = "Norges Badminton Forbund";
+
 /** Junior team matches and divisions: the U13 to U19 age groups (as pipeline/rules.mjs leagueLevel); Åpen club events are senior */
 export const isJuniorAgeGroup = (ageGroup: string) => /^U\d+$/.test(ageGroup);
 

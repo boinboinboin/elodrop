@@ -22,7 +22,6 @@
   "loading": "Laster lagkamper…",
   "none": "Ingen lagkamper ennå: kjør pipelinen.",
   "season": "Sesong",
-  "weekend": "Helg",
   "count": {
     "one": "{count} lagkamp",
     "other": "{count} lagkamper"
@@ -73,6 +72,7 @@
     "title": "Divisjoner {season}",
     "intro": "Hver divisjons side har alle lagkampene, runde for runde, og en styrkerangering: lagene etter spillerne som spilte for dem.",
     "national": "Nasjonalt",
+    "select": "Divisjon",
     "teams": {
       "one": "{count} lag",
       "other": "{count} lag"
