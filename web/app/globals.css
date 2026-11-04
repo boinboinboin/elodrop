@@ -7,6 +7,14 @@ input[type="search"]::-webkit-search-decoration {
   display: none;
 }
 
+/* Underlines (links, abbreviations) a little further below the text than the browser's, scaling with
+   its size (em, set on every element so it's each one's own size, not the page's) */
+@layer base {
+  * {
+    text-underline-offset: 0.2em;
+  }
+}
+
 @theme {
   --font-sans: var(--font-redaction), ui-serif, Georgia, serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;

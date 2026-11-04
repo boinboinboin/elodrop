@@ -10,9 +10,10 @@ import RatingDistribution from "@/components/how-it-works/RatingDistribution";
 import WinChance from "@/components/how-it-works/WinChance";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { ROW } from "@/components/ui/styles";
 import { getDistributions } from "@/data/distribution";
 import type { en } from "@/messages/en";
 import type { MessageKey } from "@/messages/i18n";
@@ -289,8 +290,8 @@ export default async function HowItWorksPage() {
                 <p>{t("howItWorks.tested.nerd2")}</p>
                 <p>
                   {rich("howItWorks.tested.nerd3", {
-                    spec: (text) => <a href={repoHref("pipeline/README.md")} className={TEXT_LINK}>{text}</a>,
-                    benchmark: (text) => <a href={repoHref("pipeline/BENCHMARK.md")} className={TEXT_LINK}>{text}</a>,
+                    spec: (text) => <ExternalLink href={repoHref("pipeline/README.md")}>{text}</ExternalLink>,
+                    benchmark: (text) => <ExternalLink href={repoHref("pipeline/BENCHMARK.md")}>{text}</ExternalLink>,
                   })}
                 </p>
               </Nerdy>
@@ -299,8 +300,8 @@ export default async function HowItWorksPage() {
             <Part id="data" number={number("data")} color={color("data")} title={t("howItWorks.data.title")}>
               <p>
                 {rich("howItWorks.data.p1", {
-                  portalen: (text) => <a href="https://badmintonportalen.no" className={TEXT_LINK} rel="noopener">{text}</a>,
-                  cup2000: (text) => <a href="https://www.cup2000.dk" className={TEXT_LINK} rel="noopener">{text}</a>,
+                  portalen: (text) => <ExternalLink href="https://badmintonportalen.no">{text}</ExternalLink>,
+                  cup2000: (text) => <ExternalLink href="https://www.cup2000.dk">{text}</ExternalLink>,
                 })}
               </p>
               <P k="howItWorks.data.p2" />

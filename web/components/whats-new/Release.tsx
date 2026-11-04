@@ -2,6 +2,7 @@
 // new or improved what was there, and its changes. A change with a lead ("Fixed: …", "A front page:
 // …") shows the lead as its title; changes for developers (the pipeline, commands) come last, smaller.
 import Badge from "@/components/ui/Badge";
+import ExternalLink from "@/components/ui/ExternalLink";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getI18n } from "@/messages/server";
 import { type ChangeItem, type Release as ReleaseData, isFeature, isTechnical, parseInline, splitLead } from "@/utils/changelog";
@@ -90,7 +91,7 @@ export async function Markdown({ text }: { text: string }) {
         if (part.type === "strong") return <strong key={i}>{part.text}</strong>;
         if (part.type === "link") {
           const href = part.href.startsWith("/") ? localize(part.href) : /^(https?:|#)/.test(part.href) ? part.href : repoHref(part.href);
-          return <a key={i} href={href} className={TEXT_LINK}>{part.text}</a>;
+          return part.href.startsWith("/") || part.href.startsWith("#") ? <a key={i} href={href} className={TEXT_LINK}>{part.text}</a> : <ExternalLink key={i} href={href}>{part.text}</ExternalLink>;
         }
         return part.text;
       })}

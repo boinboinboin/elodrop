@@ -7,12 +7,14 @@ import { notFound } from "next/navigation";
 import { Suspense, type ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import { MapPin } from "@/components/SVG";
 import JsonLd from "@/components/seo/JsonLd";
 import EntryNames from "@/components/tournaments/EntryNames";
 import EventResult, { EventFavourite } from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Loading from "@/components/ui/Loading";
@@ -21,7 +23,7 @@ import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import { Stat } from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { ROW } from "@/components/ui/styles";
 import { getApprovedTournaments, getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
 import type { I18n } from "@/messages/i18n";
@@ -129,13 +131,16 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
         {hallLine && (
           <p className="mt-1 text-gray-700">
-            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hallLine)}`} className={TEXT_LINK} rel="noopener">{hallLine}</a>
+            <ExternalLink href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hallLine)}`}>
+              <MapPin className="mr-1.5" />
+              {hallLine}
+            </ExternalLink>
           </p>
         )}
         {/* The tournament's links, and the preview and share buttons at the end of the line */}
         <div className="mt-2 flex items-center justify-between gap-4">
           <p className="flex flex-wrap gap-x-6 gap-y-1">
-            <a href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`} className={TEXT_LINK} rel="noopener">{t("tournaments.page.cup2000")}</a>
+            <ExternalLink href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`}>{t("tournaments.page.cup2000")}</ExternalLink>
             {tour.portalenId && <span className="text-gray-600">{t("tournaments.page.portalen", { id: tour.portalenId })}</span>}
           </p>
           <ShareButtons path={tournamentHref(tour.cup2000Id)} image={`${tournamentHref(tour.cup2000Id)}/preview.png`} title={tour.name} kind="tournament" />

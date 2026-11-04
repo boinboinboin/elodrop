@@ -6,10 +6,11 @@ import { Suspense, type ReactNode } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { ROW } from "@/components/ui/styles";
 import { getEliteserienReview } from "@/data/eliteserien";
 import { getMeta } from "@/data/meta";
 import { getClubMap } from "@/data/sanity";
@@ -81,11 +82,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
           {data.rankingNote && <p>{data.rankingNote}</p>}
           <p>
             {rich("eliteserien.review.teams", {
-              link: (text) => (
-                <a href={data.source ?? "#"} className={TEXT_LINK} rel="noopener">
-                  {text}
-                </a>
-              ),
+              link: (text) => (data.source ? <ExternalLink href={data.source}>{text}</ExternalLink> : text),
             })}
           </p>
         </div>

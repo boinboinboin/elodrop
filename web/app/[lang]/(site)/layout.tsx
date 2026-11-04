@@ -7,6 +7,7 @@ import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
 import SearchBar from "@/components/layout/SearchBar";
 import UpdatedAt from "@/components/layout/UpdatedAt";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
 import { getReleases } from "@/utils/changelog";
@@ -71,8 +72,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           </nav>
           <p>
             {rich("layout.footer.sources", {
-              portalen: <a href="https://badmintonportalen.no" className={FOOTER_LINK} rel="noopener">badmintonportalen.no</a>,
-              cup2000: <a href="https://www.cup2000.dk" className={FOOTER_LINK} rel="noopener">Cup2000</a>,
+              portalen: <ExternalLink href="https://badmintonportalen.no" className={FOOTER_LINK}>badmintonportalen.no</ExternalLink>,
+              cup2000: <ExternalLink href="https://www.cup2000.dk" className={FOOTER_LINK}>Cup2000</ExternalLink>,
             })}
           </p>
           <Suspense fallback={null}>

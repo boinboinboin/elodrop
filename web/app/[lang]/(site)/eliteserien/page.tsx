@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
@@ -79,11 +80,7 @@ async function Content() {
           {blocks("eliteserien.howItWorks.tie", {}, { ranking: data?.rankingPeriod ? t("eliteserien.howItWorks.rankingPeriod", { period: data.rankingPeriod }) : "" })}
           <p>
             {rich("eliteserien.howItWorks.teams", {
-              link: (text) => (
-                <a href={data?.source ?? "#"} className={TEXT_LINK} rel="noopener">
-                  {text}
-                </a>
-              ),
+              link: (text) => (data?.source ? <ExternalLink href={data?.source}>{text}</ExternalLink> : text),
             })}
           </p>
         </div>

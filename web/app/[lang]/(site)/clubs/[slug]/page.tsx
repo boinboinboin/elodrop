@@ -11,6 +11,7 @@ import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
+import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
@@ -99,7 +100,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
             {entry.website && (
               <>
                 {" · "}
-                <a href={entry.website} className={TEXT_LINK} rel="noopener">{entry.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a>
+                <ExternalLink href={entry.website}>{entry.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}</ExternalLink>
               </>
             )}
           </p>
