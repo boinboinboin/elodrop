@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.6 (2026-11-04)
+
+- Breadcrumbs are separated by › instead of /, which seasons use ("25/26").
+
 ## v1.24.5 (2026-11-04)
 
 - Junior and senior team matches are apart. The team matches pages show the senior leagues; a Seniors / Juniors (U13–U19) toggle leads to the junior leagues at /team-matches/junior, each with its own seasons, weekends and divisions. The toggle keeps the season or weekend you're on where the other has it.

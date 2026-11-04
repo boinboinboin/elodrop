@@ -1,6 +1,8 @@
-// Where a page sits on the site, above its title: Home / Clubs / Bergen. Every step but the last
-// (the page itself) links to its page; the trail wraps on narrow screens. Search engines get it as
+// Where a page sits on the site, above its title: Home › Clubs › Bergen. Every step but the last
+// (the page itself) links to its page; the trail wraps on narrow screens. The steps are separated by
+// a chevron, not a slash: a season is written with one ("25/26"). Search engines get it as
 // structured data too (BreadcrumbList), for the trail under a search result.
+import { ChevronRight } from "@/components/SVG";
 import JsonLd from "@/components/seo/JsonLd";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
@@ -26,7 +28,7 @@ export default async function Breadcrumbs({ trail }: { trail: Crumb[] }) {
             ) : (
               <>
                 <Link href={c.href ?? "/"} className="hover:text-black">{c.label}</Link>
-                <span aria-hidden="true" className="text-gray-400">/</span>
+                <ChevronRight className="text-[0.8em] text-gray-400" />
               </>
             )}
           </li>
