@@ -9,7 +9,8 @@ export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournam
 /** A week's upsets (its Monday, "2026-10-12"), or a year's newest week ("2026") */
 export const upsetsHref = (period: string) => `/upsets/${period}`;
 /** The newest season's team matches, a week's (its Monday, "2025-11-10") or a season's ("2025-26") */
-export const teamMatchesHref = (period?: string) => `/team-matches${period ? `/${period}` : ""}`;
+/** The senior team matches, or the junior ones (/team-matches/junior), of a season ("2025-26") or week (its Monday) */
+export const teamMatchesHref = (period?: string | null, junior = false) => `/team-matches${junior ? "/junior" : ""}${period ? `/${period}` : ""}`;
 /** A league season (2025, for 2025/26) in team match URLs: "2025-26" */
 export const seasonSlug = (season: number) => `${season}-${String((season + 1) % 100).padStart(2, "0")}`;
 /** A division's page in a season: its groups' team matches and power rankings */

@@ -2,68 +2,149 @@
 // /team-matches/<season> ("2025-26") another, each with its divisions by region (each division's page
 // has its team matches and power rankings, components/team-matches/Division.tsx) and its newest
 // weekend's team matches; /team-matches/<Monday> shows one weekend's team matches, grouped by division
-// and group (app/(site)/team-matches/[period]). Each team match links to its own page.
-import { notFound } from "next/navigation";
+// and group (app/(site)/team-matches/[period]). Each team match links to its own page. Senior and
+// junior (U13 to U19) team matches are apart: the same pages under /team-matches/junior have the
+// juniors', with a toggle between them (to the same season or weekend where the other has it).
+import type { Metadata } from "next";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { ArrowRight } from "@/components/SVG";
 import TieRow from "@/components/team-matches/TieRow";
 import Link from "@/components/ui/Link";
 import LinkSelect from "@/components/ui/LinkSelect";
+import LinkTabs from "@/components/ui/LinkTabs";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
-import { getTeamMatchesIndex, getTeamMatchWeek } from "@/data/teamMatches";
+import { getTeamMatchesIndex, getTeamMatchWeek, isJuniorAgeGroup, seasonWeeks } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
-import type { TeamDivisionEntry, TeamMatchesIndex } from "@/types";
+import type { TeamDivisionEntry, TeamMatchesIndex, TeamMatchesWeekEntry } from "@/types";
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamDivisionHref, teamMatchesHref } from "@/utils/hrefs";
+import { pageMetadata } from "@/utils/metadata";
 
-/** The page for a period: null for the newest season, a season ("2025-26") or a week's Monday */
-export default async function TeamMatches({ period }: { period: Promise<string | null> }) {
+type Season = TeamMatchesIndex["seasons"][number];
+
+/** A week's Monday ("2025-11-10"), not a season */
+const isWeek = (period: string) => /^\d{4}-\d{2}-\d{2}$/.test(period);
+
+/** The page for a period: null for the newest season, a season ("2025-26") or a week's Monday; senior or junior team matches */
+export default async function TeamMatches({ period, junior = false }: { period: Promise<string | null>; junior?: boolean }) {
   const { blocks, t } = await getI18n();
   return (
     <>
       <Section>
-        <Breadcrumbs trail={[{ label: t("teamMatches.breadcrumb") }]} />
-        <h1 className="h1 mt-4">{t("teamMatches.title")}</h1>
+        <Breadcrumbs trail={junior ? [{ label: t("teamMatches.breadcrumb"), href: teamMatchesHref() }, { label: t("teamMatches.juniorsCrumb") }] : [{ label: t("teamMatches.breadcrumb") }]} />
+        <h1 className="h1 mt-4">{t(junior ? "teamMatches.juniorTitle" : "teamMatches.title")}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("teamMatches.intro")}</p>
         <div className="max-w-3xl mt-4 space-y-3 text-gray-700 [&_strong]:font-semibold">{blocks("teamMatches.explanation")}</div>
       </Section>
       <Suspense fallback={<Loading label={t("teamMatches.loading")} />}>
-        <Content period={period} />
+        <Content period={period} junior={junior} />
       </Suspense>
     </>
+  );
+}
+
+/** The page's title and description: the senior or junior team matches, of a season or week, or the newest */
+export async function teamMatchesMetadata(period: string | null, junior: boolean): Promise<Metadata> {
+  const i18n = await getI18n();
+  const { t, dateRange } = i18n;
+  const kind = junior ? "Junior" : "";
+  if (!period) return pageMetadata(i18n, { title: t(`teamMatches.metadata.title${kind}`), description: t(`seo.descriptions.teamMatches${kind}`), path: teamMatchesHref(null, junior) });
+  const index = await getTeamMatchesIndex();
+  const bySeason = index?.seasons.find((s) => seasonSlug(s.season) === period);
+  if (bySeason) {
+    const season = seasonLabel(bySeason.season, true);
+    return pageMetadata(i18n, { title: t(`teamMatches.metadata.season${kind}`, { season }), description: t(`seo.descriptions.teamMatchesSeason${kind}`, { season }), path: teamMatchesHref(period, junior) });
+  }
+  const week = index?.seasons.flatMap((s) => seasonWeeks(s, junior)).find((w) => w.week === period);
+  if (!week) return { title: t(`teamMatches.metadata.title${kind}`) };
+  const days = dateRange(week.from, week.to);
+  return pageMetadata(i18n, { title: t(`teamMatches.metadata.week${kind}`, { week: days }), description: t(`seo.descriptions.teamMatchesWeek${kind}`, { week: days }), path: teamMatchesHref(period, junior) });
+}
+
+/** The seasons with senior or junior team matches, prerendered: the period of each */
+export async function teamMatchesSeasonParams(junior: boolean) {
+  const seasons = ((await getTeamMatchesIndex())?.seasons ?? []).filter((s) => seasonWeeks(s, junior).length);
+  return seasons.length ? seasons.map((s) => ({ period: seasonSlug(s.season) })) : [{ period: "0" }];
+}
+
+/** The season and week of a period among the senior or junior team matches (week: the season's newest without one), or null */
+function find(seasons: Season[], period: string | null, junior: boolean): { season: Season; week: TeamMatchesWeekEntry } | null {
+  const list = seasons.filter((s) => seasonWeeks(s, junior).length);
+  const season = !period ? list[0] : isWeek(period) ? list.find((s) => seasonWeeks(s, junior).some((w) => w.week === period)) : list.find((s) => seasonSlug(s.season) === period);
+  const weeks = season ? seasonWeeks(season, junior) : [];
+  const week = period && isWeek(period) ? weeks.find((w) => w.week === period) : weeks.at(-1);
+  return season && week ? { season, week } : null;
+}
+
+/** Seniors or juniors: the other's link goes to the same weekend or season where it has one, else to its newest */
+async function AgeTabs({ seasons, period, junior }: { seasons: Season[]; period: string | null; junior: boolean }) {
+  const { t } = await getI18n();
+  const href = (juniors: boolean) => {
+    if (juniors === junior || !period) return teamMatchesHref(period, juniors);
+    if (find(seasons, period, juniors)) return teamMatchesHref(period, juniors);
+    // A weekend the other doesn't have: its season, if it has that
+    const season = isWeek(period) ? find(seasons, period, junior)?.season : null;
+    return teamMatchesHref(season && find(seasons, seasonSlug(season.season), juniors) ? seasonSlug(season.season) : null, juniors);
+  };
+  return (
+    <LinkTabs
+      label={t("teamMatches.ages")}
+      current={junior ? "junior" : "senior"}
+      size="sm"
+      className="flex flex-wrap gap-2 mb-6"
+      tabs={[
+        { key: "senior", href: href(false), label: t("teamMatches.seniors") },
+        { key: "junior", href: href(true), label: t("teamMatches.juniors") },
+      ]}
+    />
   );
 }
 
 /** The national divisions' region (Eliteserien, the national finals): shown as "National" */
 const NATIONAL = "Norges Badminton Forbund";
 
-async function Content({ period: periodPromise }: { period: Promise<string | null> }) {
-  const { dateRange, plural, t } = await getI18n();
+async function Content({ period: periodPromise, junior }: { period: Promise<string | null>; junior: boolean }) {
+  const { dateRange, href, plural, t } = await getI18n();
   const [period, index, clubs] = await Promise.all([periodPromise, getTeamMatchesIndex(), getClubMap()]);
   if (!index?.latest) return <p className="base-container px-4 text-gray-600">{t("teamMatches.none")}</p>;
-  // The season, and the week: a week's page, or a season's newest weekend
-  const byWeek = !!period && /^\d{4}-\d{2}-\d{2}$/.test(period);
-  const season = !period
-    ? index.seasons.find((s) => s.season === index.latest?.season)
-    : byWeek
-      ? index.seasons.find((s) => s.weeks.some((w) => w.week === period))
-      : index.seasons.find((s) => seasonSlug(s.season) === period);
-  const week = !season ? undefined : byWeek ? season.weeks.find((w) => w.week === period) : season.weeks.at(-1);
-  if (!season || !week) notFound();
+  const tabs = <AgeTabs seasons={index.seasons} period={period} junior={junior} />;
+  // The season, and the week: a week's page, or a season's newest weekend. A weekend or season with
+  // only the other's team matches (an older link) goes to the other's page
+  const found = find(index.seasons, period, junior);
+  if (!found) {
+    if (!period)
+      return (
+        <Section>
+          {tabs}
+          <p className="text-gray-600">{t("teamMatches.noneOfAge")}</p>
+        </Section>
+      );
+    // (In the page's language: a redirect isn't a Link, which adds it)
+    if (find(index.seasons, period, !junior)) redirect(href(teamMatchesHref(period, !junior)));
+    notFound();
+  }
+  const { season, week } = found;
+  const byWeek = !!period && isWeek(period);
   const current = week.week === index.latest.week ? index.latest : await getTeamMatchWeek(week.week);
   if (!current) notFound();
-  // The week's team matches by division and group, in the data's order (Eliteserien first)
-  const groups = Map.groupBy(current.ties, (tie) => `${tie.division} · ${tie.group}`);
+  // The week's senior or junior team matches by division and group, in the data's order (Eliteserien first)
+  const groups = Map.groupBy(
+    current.ties.filter((tie) => isJuniorAgeGroup(tie.ageGroup) === junior),
+    (tie) => `${tie.division} · ${tie.group}`,
+  );
+  const divisions = season.divisions?.filter((d) => isJuniorAgeGroup(d.ageGroup) === junior);
 
   return (
     <>
       <Section>
-        <Pickers index={index} season={season} week={byWeek ? week.week : null} />
+        {tabs}
+        <Pickers seasons={index.seasons.filter((s) => seasonWeeks(s, junior).length)} season={season} week={byWeek ? week.week : null} junior={junior} />
         {/* (Data from before the divisions has none: the code can be deployed before the next data run) */}
-        {!byWeek && !!season.divisions?.length && <Divisions season={season.season} divisions={season.divisions} />}
+        {!byWeek && !!divisions?.length && <Divisions season={season.season} divisions={divisions} />}
       </Section>
       <Section>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-6">
@@ -97,8 +178,8 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
   );
 }
 
-/** Pick a season (its divisions and newest weekend), then one of its team match weekends */
-async function Pickers({ index, season, week }: { index: TeamMatchesIndex; season: TeamMatchesIndex["seasons"][number]; week: string | null }) {
+/** Pick a season (its divisions and newest weekend), then one of its team match weekends: senior or junior */
+async function Pickers({ seasons, season, week, junior }: { seasons: Season[]; season: Season; week: string | null; junior: boolean }) {
   const { date, plural, t } = await getI18n();
   /** A week's days played, short: "15–16 Nov", "30 Jan – 1 Feb", "4 Oct" */
   const days = (from: string, to: string) =>
@@ -108,15 +189,15 @@ async function Pickers({ index, season, week }: { index: TeamMatchesIndex; seaso
       <LinkSelect
         label={t("teamMatches.season")}
         current={String(season.season)}
-        options={index.seasons.map((s) => ({ key: String(s.season), href: teamMatchesHref(seasonSlug(s.season)), label: seasonLabel(s.season, true) }))}
+        options={seasons.map((s) => ({ key: String(s.season), href: teamMatchesHref(seasonSlug(s.season), junior), label: seasonLabel(s.season, true) }))}
         className="w-32"
       />
       <LinkSelect
         label={t("teamMatches.weekend")}
         current={week ?? ""}
         options={[
-          { key: "", href: teamMatchesHref(seasonSlug(season.season)), label: t("teamMatches.allDivisions") },
-          ...season.weeks.map((w) => ({ key: w.week, href: teamMatchesHref(w.week), label: `${days(w.from, w.to)} · ${plural("teamMatches.count", w.ties)}` })),
+          { key: "", href: teamMatchesHref(seasonSlug(season.season), junior), label: t("teamMatches.allDivisions") },
+          ...seasonWeeks(season, junior).map((w) => ({ key: w.week, href: teamMatchesHref(w.week, junior), label: `${days(w.from, w.to)} · ${plural("teamMatches.count", w.ties)}` })),
         ]}
         className="w-full sm:w-72"
       />

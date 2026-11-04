@@ -1,15 +1,9 @@
-// The newest week's team matches (components/team-matches/TeamMatches.tsx); other weeks and years are at /team-matches/<period>.
+// The newest week's senior team matches (components/team-matches/TeamMatches.tsx); other weeks and years are at
+// /team-matches/<period>, the juniors' at /team-matches/junior.
 import type { Metadata } from "next";
-import TeamMatches from "@/components/team-matches/TeamMatches";
-import { getI18n } from "@/messages/server";
-import { teamMatchesHref } from "@/utils/hrefs";
-import { pageMetadata } from "@/utils/metadata";
+import TeamMatches, { teamMatchesMetadata } from "@/components/team-matches/TeamMatches";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const i18n = await getI18n();
-  const { t } = i18n;
-  return pageMetadata(i18n, { title: t("teamMatches.metadata.title"), description: t("seo.descriptions.teamMatches"), path: teamMatchesHref() });
-}
+export const generateMetadata = (): Promise<Metadata> => teamMatchesMetadata(null, false);
 
 export default function TeamMatchesPage() {
   return <TeamMatches period={Promise.resolve(null)} />;

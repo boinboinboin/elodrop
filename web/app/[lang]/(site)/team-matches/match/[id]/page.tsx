@@ -16,7 +16,7 @@ import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
 import { getClubMap, getVenues } from "@/data/sanity";
-import { getTeamMatch } from "@/data/teamMatches";
+import { getTeamMatch, isJuniorAgeGroup } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, TeamMatch, TeamMatchGame } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
@@ -110,8 +110,9 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
         <Breadcrumbs
           trail={[
             { label: t("teamMatches.breadcrumb"), href: teamMatchesHref() },
-            // The season, and the division with all its team matches
-            { label: seasonLabel(tie.season, true), href: teamMatchesHref(seasonSlug(tie.season)) },
+            // The season (a junior team match's among the juniors'), and the division with all its team matches
+            ...(isJuniorAgeGroup(tie.ageGroup) ? [{ label: t("teamMatches.juniorsCrumb"), href: teamMatchesHref(null, true) }] : []),
+            { label: seasonLabel(tie.season, true), href: teamMatchesHref(seasonSlug(tie.season), isJuniorAgeGroup(tie.ageGroup)) },
             ...(tie.divisionSlug ? [{ label: tie.division, href: teamDivisionHref(tie.season, tie.divisionSlug) }] : []),
             { label: `${tie.home} – ${tie.away}` },
           ]}

@@ -355,10 +355,22 @@ export interface TeamDivisionEntry {
   ties: number;
 }
 
+export interface TeamMatchesWeekEntry {
+  week: string;
+  from: string;
+  to: string;
+  ties: number;
+}
+
 export interface TeamMatchesIndex {
   generatedAt: string;
-  /** Newest first, each with its divisions (Eliteserien first, then by level, juniors after; missing in data from before them) and its weeks in order: the Monday, the first and last day played and the number of team matches */
-  seasons: { season: number; divisions?: TeamDivisionEntry[]; weeks: { week: string; from: string; to: string; ties: number }[] }[];
+  /**
+   * Newest first, each with its divisions (Eliteserien first, then by level, juniors after; missing in data from before
+   * them) and its weeks in order: the Monday, the first and last day played and the number of team matches. `weeks` has
+   * all of them; `seniorWeeks` and `juniorWeeks` the weeks with senior or junior team matches, with their days and
+   * number (missing in data from before they were apart)
+   */
+  seasons: { season: number; divisions?: TeamDivisionEntry[]; weeks: TeamMatchesWeekEntry[]; seniorWeeks?: TeamMatchesWeekEntry[]; juniorWeeks?: TeamMatchesWeekEntry[] }[];
   latest: TeamMatchWeek | null;
 }
 

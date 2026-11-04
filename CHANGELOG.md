@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.5 (2026-11-04)
+
+- Junior and senior team matches are apart. The team matches pages show the senior leagues; a Seniors / Juniors (U13–U19) toggle leads to the junior leagues at /team-matches/junior, each with its own seasons, weekends and divisions. The toggle keeps the season or weekend you're on where the other has it.
+- An old weekend or season link that only has the other age group's team matches leads there. A junior division's and team match's breadcrumbs go back to the junior pages.
+
 ## v1.24.4 (2026-11-04)
 
 - Players on the same rating no longer swap places from week to week, showing a move up or down that didn't happen. Last week's ranks were worked out from ratings rounded to whole points, so players on the same rounded rating were put in no particular order. All rankings (also the weekly rank history and the junior rankings) now order players by their exact rating, then by the most matches played, then by name.

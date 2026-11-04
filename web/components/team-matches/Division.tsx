@@ -9,7 +9,7 @@ import TieRow from "@/components/team-matches/TieRow";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
-import { getTeamDivision } from "@/data/teamMatches";
+import { getTeamDivision, isJuniorAgeGroup } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamMatchesHref } from "@/utils/hrefs";
@@ -40,6 +40,7 @@ async function Content({ params }: { params: Promise<{ period: string; division:
   const [division, clubs] = await Promise.all([getTeamDivision(season, slug), getClubMap()]);
   if (!division) notFound();
   const ties = division.groups.reduce((n, g) => n + g.ties.length, 0);
+  const junior = isJuniorAgeGroup(division.ageGroup);
 
   return (
     <>
@@ -47,7 +48,9 @@ async function Content({ params }: { params: Promise<{ period: string; division:
         <Breadcrumbs
           trail={[
             { label: t("teamMatches.breadcrumb"), href: teamMatchesHref() },
-            { label: seasonLabel(season, true), href: teamMatchesHref(seasonSlug(season)) },
+            // A junior division's season is among the juniors'
+            ...(junior ? [{ label: t("teamMatches.juniorsCrumb"), href: teamMatchesHref(null, true) }] : []),
+            { label: seasonLabel(season, true), href: teamMatchesHref(seasonSlug(season), junior) },
             { label: division.division },
           ]}
         />

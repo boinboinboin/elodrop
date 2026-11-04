@@ -5,7 +5,8 @@
 //
 // Writes data/team-matches/:
 //   index.json          the seasons (newest first) with their divisions (by region and age group)
-//                       and weeks (Mondays, in order), and the newest week
+//                       and weeks (Mondays, in order; all, and the senior and the junior ones
+//                       apart: the site shows them apart), and the newest week
 //   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level, and its season
 //   <matchId>.json      one tie: its summary, individual matches and golden set
 //   divisions/<season>/<slug>.json  one division (or series) in a season: its groups, each with
@@ -160,14 +161,25 @@ const weekFile = (week) => ({
 for (const week of weeks) writeFileSync(`${OUT}/weeks/${week}.json`, JSON.stringify(weekFile(week)));
 // Seasons, newest first, each with its weeks in order: the days played (first and last) and the
 // number of team matches. A week's season is its team matches' (no week has two seasons' matches).
+// Also the weeks of the senior team matches and of the junior ones (U13 to U19, as in leagueLevel;
+// Åpen club events count as senior), each with their own days and number, for the site's senior
+// and junior pages.
+const isJunior = (t) => leagueLevel(t.summary.ageGroup, t.summary.division, "1. HS").junior;
+const weekList = (list, keep = () => true) =>
+  list
+    .sort()
+    .map((week) => {
+      const days = byWeek.get(week).filter(keep).map((t) => t.summary.day).sort();
+      return { week, from: days[0], to: days.at(-1), ties: days.length };
+    })
+    .filter((w) => w.ties > 0);
 const seasons = [...Map.groupBy(weeks, (week) => byWeek.get(week)[0].summary.season)]
   .sort(([a], [b]) => b - a)
   .map(([season, list]) => ({
     season,
-    weeks: list.sort().map((week) => {
-      const days = byWeek.get(week).map((t) => t.summary.day).sort();
-      return { week, from: days[0], to: days.at(-1), ties: days.length };
-    }),
+    weeks: weekList(list),
+    seniorWeeks: weekList(list, (t) => !isJunior(t)),
+    juniorWeeks: weekList(list, isJunior),
   }));
 // Divisions: each season's divisions (Eliteserien first, then by level, juniors after), each with
 // its groups in order, every group's team matches by time and its power ranking

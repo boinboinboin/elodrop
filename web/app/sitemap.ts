@@ -10,7 +10,7 @@ import { getMeta } from "@/data/meta";
 import { getSearchIndex } from "@/data/players";
 import { getClubEntries } from "@/data/sanity";
 import { getTournamentsIndex } from "@/data/tournaments";
-import { getTeamMatchesIndex, getTeamMatchWeek } from "@/data/teamMatches";
+import { getTeamMatchesIndex, getTeamMatchWeek, seasonWeeks } from "@/data/teamMatches";
 import { getUpsetsIndex } from "@/data/upsets";
 import { clubHref, ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, playerHref, seasonSlug, SITE_URL, teamDivisionHref, teamMatchesHref, teamMatchHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
@@ -45,10 +45,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(meta?.eliteserien.seasons ?? []).map((season): [string] => [eliteserienHref(season)]),
     ["/upsets"],
     ...(upsets?.years ?? []).map((year): [string] => [upsetsHref(year)]),
-    [teamMatchesHref()],
-    ...(teamMatches?.seasons ?? []).map((s): [string, string | undefined] => [teamMatchesHref(seasonSlug(s.season)), seasonEnd(s)]),
+    // The senior and the junior team matches: each one's seasons and weeks
+    ...[false, true].flatMap((junior): [string, string?][] => [
+      [teamMatchesHref(null, junior)],
+      ...(teamMatches?.seasons ?? []).filter((s) => seasonWeeks(s, junior).length).map((s): [string, string | undefined] => [teamMatchesHref(seasonSlug(s.season), junior), seasonEnd(s)]),
+      ...(teamMatches?.seasons ?? []).flatMap((s) => seasonWeeks(s, junior).map((w): [string, string] => [teamMatchesHref(w.week, junior), w.to])),
+    ]),
     ...(teamMatches?.seasons ?? []).flatMap((s) => (s.divisions ?? []).map((d): [string, string | undefined] => [teamDivisionHref(s.season, d.slug), seasonEnd(s)])),
-    ...(teamMatches?.seasons ?? []).flatMap((s) => s.weeks.map((w): [string, string] => [teamMatchesHref(w.week), w.to])),
     ...weekFiles.flatMap((w) => (w?.ties ?? []).map((tie): [string, string] => [teamMatchHref(tie.matchId), tie.day])),
     ["/how-it-works"],
     ["/whats-new"],
