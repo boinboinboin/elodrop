@@ -3,4 +3,8 @@
 #
 # One player per line:  <badmintonportalen player id>  <club, as the results write it>  # note, without the name
 
+26663  Vestre Aker  # registered as "Vestre Aker (Tyskland)"
+35286  Vestre Aker  # registered as "Vestre Aker (Badminton Club Drive)"
+43267  Vestre Aker  # registered as "Vestre Aker (Sveits)"
+44176  Haugerud  # registered as "Haugerud (Ullevi BK)"
 48186  Norborg  # registered as "Norborg (GDS - Grupo Desportivo de Sesimbra)"
