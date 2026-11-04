@@ -1,7 +1,9 @@
 // The Sanity Studio, embedded at /studio (app/studio). Content: this season's tournaments, the clubs
-// and the halls (sanity/schemas; the lists: sanity/structure.ts).
+// and the halls (sanity/schemas; the lists: sanity/structure.ts; publishing an approved tournament:
+// sanity/actions.ts).
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import { actions } from "./sanity/actions";
 import { schemaTypes } from "./sanity/schemas/club";
 import { structure } from "./sanity/structure";
 
@@ -16,4 +18,5 @@ export default defineConfig({
   dataset,
   plugins: [structureTool({ structure })],
   schema: { types: schemaTypes },
+  document: { actions },
 });

@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.1 (2026-11-04)
+
+- Publishing an approved tournament in the Studio adds its hall to the organiser's home halls, if it isn't there yet (after the ones it has, so the club's default stays first).
+
 ## v1.24.0 (2026-11-04)
 
 - Tournaments in the Studio: each night, this season's tournaments with a published programme are added to Sanity with their organiser (the club recognised from Cup2000's organiser) and hall (that club's first home hall). The Studio lists the ones needing a look (organiser not recognised, no hall, or a hall without an address) and the ones not approved yet. Once approved, a tournament's search engine data uses the organiser and hall given there; until then, the guess. The nightly run needs a `SANITY_WRITE_TOKEN` secret and a `SANITY_PROJECT_ID` variable in GitHub; locally: `pnpm --filter web import-tournaments`.

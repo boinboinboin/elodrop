@@ -2,7 +2,8 @@
 // SportsEvent): who organises it and the hall it's played in. Added every night by
 // scripts/import-tournaments.mts (the pipeline), with the organiser's club recognised from Cup2000's
 // name and the club's first home hall; checked and corrected here, then approved. The site uses the
-// organiser and hall given here once the tournament is approved, and the guess until then.
+// organiser and hall given here once the tournament is approved, and the guess until then. Publishing
+// it approved also adds the hall to the organiser's home halls (sanity/actions.ts).
 // `issuesOf` lists what to look at: also the Studio's lists (sanity/structure.ts) and previews.
 import { defineField, defineType } from "sanity";
 
@@ -55,7 +56,7 @@ export const tournament = defineType({
       name: "approved",
       type: "boolean",
       initialValue: false,
-      description: "Ticked: search engines get this organiser and hall. Unticked: the guess (the organiser recognised from Cup2000 and its first home hall), and the nightly run may still fill in what's empty.",
+      description: "Ticked: search engines get this organiser and hall, and publishing adds the hall to the organiser's home halls. Unticked: the guess (the organiser recognised from Cup2000 and its first home hall), and the nightly run may still fill in what's empty.",
     }),
   ],
   orderings: [{ title: "Start date", name: "startDate", by: [{ field: "startDate", direction: "desc" }] }],
