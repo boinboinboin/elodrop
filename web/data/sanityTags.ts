@@ -3,7 +3,7 @@
 
 /** All of Sanity's content */
 export const SANITY_TAG = "sanity";
-/** The clubs (names, slugs, logos): on nearly every page */
+/** The clubs (names, slugs, logos): on nearly every page, so refreshed by the full nightly run, not the Sanity webhook */
 export const CLUBS_TAG = "sanity:clubs";
 /** The halls, and the clubs' home halls: tournament and team match pages */
 export const VENUES_TAG = "sanity:venues";

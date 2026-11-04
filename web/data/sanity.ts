@@ -6,7 +6,8 @@
 // Cache tags: every entry has `sanity` (all of it) and the tags of what it reads, so a change in the Studio refreshes
 // only the pages using it (app/api/revalidate picks the tag from the Sanity webhook's changed document). Clubs (names,
 // logos) are on nearly every page; halls (with the clubs' home halls) only on tournament and team match pages; a
-// tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited.
+// tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited, so the
+// clubs' tag is left for the full nightly run (which refreshes every page anyway), not the webhook.
 import { cacheLife, cacheTag } from "next/cache";
 import clubsJson from "@/content/clubs.json";
 import type { ClubEntry, Venue } from "@/types";

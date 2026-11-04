@@ -10,7 +10,8 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.24.8 (2026-11-04)
 
-- Changes in the Studio refresh only the pages that show them, instead of the whole site: approving a tournament refreshes just its own pages, a hall (or a club's home halls) the tournament and team match pages. Only a club's name, slug or logo still refreshes nearly every page. This cuts Vercel's ISR writes for a publish from thousands to tens. The Sanity webhook needs the projection given in README.md to tell home halls apart from other club changes.
+- Changes in the Studio refresh only the pages that show them, instead of the whole site: approving a tournament refreshes just its own pages, a hall (or a club's home halls) the tournament and team match pages. This cuts Vercel's ISR writes for a publish from thousands to tens. The Sanity webhook needs the projection given in README.md to tell home halls apart from other club changes.
+- Other club changes (a new logo, a renamed club) show after the next full nightly run (Saturday to Monday, a night with new results, or a run started by hand), which refreshes every page anyway, instead of rewriting every page at once.
 
 ## v1.24.7 (2026-11-04)
 

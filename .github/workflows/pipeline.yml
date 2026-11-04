@@ -206,14 +206,17 @@ jobs:
 
       # Fails unless the site answers that it revalidated: a redirect (elodrop.no -> www.elodrop.no)
       # is followed, keeping the POST and the header (same site), instead of passing silently. A
-      # draws rebuild refreshes only the pages using the tournaments' data.
+      # draws rebuild refreshes only the pages using the tournaments' data. A full one also refreshes
+      # the clubs from Sanity (names, logos): every page is refreshed anyway, so it costs no extra ISR
+      # writes, and the Sanity webhook leaves club changes for this (web/app/api/revalidate/route.ts).
       - name: Refresh the site
         if: steps.build.outputs.mode != 'none' && vars.SITE_URL != ''
         run: |
-          tag=${{ steps.build.outputs.mode == 'full' && 'elo-data' || 'elo-data:tournaments' }}
-          answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate?tag=$tag")
-          echo "$answer"
-          echo "$answer" | grep -q '"revalidated":true'
+          for tag in ${{ steps.build.outputs.mode == 'full' && 'elo-data sanity:clubs' || 'elo-data:tournaments' }}; do
+            answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate?tag=$tag")
+            echo "$answer"
+            echo "$answer" | grep -q '"revalidated":true'
+          done
 
       # This season's tournaments to the Studio, for checking their organiser and hall
       # (web/scripts/import-tournaments.mts: plain Node, no packages). Sanity being down doesn't fail
