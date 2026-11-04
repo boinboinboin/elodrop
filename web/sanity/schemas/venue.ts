@@ -1,8 +1,8 @@
 // A hall team matches and tournaments are played in, for the events' structured data (schema.org
 // Place: utils/structuredData.ts). `name` and `aliases` are matched against badmintonportalen's free
 // text for a team match's hall ("Klæbu idrettshall"), ignoring case, spaces and punctuation; a club's
-// home hall (club.homeVenue) is the fallback, and a tournament's hall. Created from the team matches'
-// halls by scripts/import-venues.mts; the address is filled in here.
+// first home hall (club.homeVenues) is its tournaments' hall. Created from the team matches' halls by
+// scripts/import-venues.mts; the address is filled in here.
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const venue = defineType({

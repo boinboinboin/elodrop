@@ -483,7 +483,7 @@ export interface TournamentsIndex {
   tournaments: TournamentSummary[];
 }
 
-/** A club's content (CMS): short name, full name, region, website, NBF id, logo and home hall */
+/** A club's content (CMS): short name, full name, region, website, NBF id, logo and home halls (the first is the default) */
 export interface ClubEntry {
   title: string;
   slug: string;
@@ -492,7 +492,7 @@ export interface ClubEntry {
   website: string | null;
   nbfClubId: number | null;
   logo: string | null;
-  homeVenue: Venue | null;
+  homeVenues: Venue[];
 }
 
 /** A hall (CMS, sanity/schemas/venue.ts): its name, the other spellings the results use, and its address */

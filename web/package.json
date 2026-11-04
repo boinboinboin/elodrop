@@ -11,6 +11,7 @@
     "import-clubs": "tsx --env-file=.env.local scripts/import-clubs.mts",
     "trim-logos": "tsx --env-file=.env.local scripts/trim-logos.mts",
     "import-venues": "tsx --env-file=.env.local scripts/import-venues.mts",
+    "import-tournaments": "node --env-file=.env.local --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/import-tournaments.mts",
     "make-icons": "tsx scripts/make-icons.mts"
   },
   "dependencies": {

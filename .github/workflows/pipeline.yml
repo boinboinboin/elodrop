@@ -12,8 +12,10 @@
 # Sundays also rescan the whole season's tournament draws.
 #
 # Secrets: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (an R2 API token with read and
-# write on both buckets), REVALIDATE_SECRET (as on the site). Variables: SITE_URL (e.g.
-# https://example.com), R2_RAW_BUCKET (default elo-raw), R2_DATA_BUCKET (default elo-data).
+# write on both buckets), REVALIDATE_SECRET (as on the site), SANITY_WRITE_TOKEN (an Editor token
+# for the site's Sanity project; without it the tournaments aren't added to the Studio). Variables:
+# SITE_URL (e.g. https://example.com), R2_RAW_BUCKET (default elo-raw), R2_DATA_BUCKET (default
+# elo-data), SANITY_PROJECT_ID (as NEXT_PUBLIC_SANITY_PROJECT_ID on the site).
 name: Pipeline
 
 on:
@@ -212,6 +214,19 @@ jobs:
           answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate?tag=$tag")
           echo "$answer"
           echo "$answer" | grep -q '"revalidated":true'
+
+      # This season's tournaments to the Studio, for checking their organiser and hall
+      # (web/scripts/import-tournaments.mts: plain Node, no packages). Sanity being down doesn't fail
+      # the run; the next night tries again.
+      - name: Add the tournaments to Sanity
+        if: steps.build.outputs.mode != 'none'
+        continue-on-error: true
+        working-directory: web
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+          SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+          DATA_DIR: ../pipeline/export
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/import-tournaments.mts
 
       # Last, so a failed rebuild is tried again the next night
       - name: Save the fingerprint

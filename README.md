@@ -14,7 +14,7 @@ Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from eve
 | Fetched results, rankings, draws (raw input) | Cloudflare R2 bucket `elo-raw`; locally `pipeline/data` |
 | Hand-edited input: `corrections.txt`, Eliteserien rosters, `organisers.txt` | this repo, `pipeline/` |
 | The site's data (rankings, players, clubs, upsets, Eliteserien, tournaments) | R2 bucket `elo-data`, public on `data.<domain>`; locally `pipeline/export` |
-| Club content (names, regions, logos) | Sanity (Studio at `/studio`); `web/content/clubs.json` until Sanity is set up |
+| Club content (names, regions, logos, home halls), halls, and the season's tournaments' organiser and hall | Sanity (Studio at `/studio`; the nightly run adds the tournaments); `web/content/clubs.json` until Sanity is set up |
 | The site | Vercel |
 
 The pipeline writes plain JSON files (`pipeline/export.mjs`, at most 2 MB each). The site reads them on the server, caches them (`'use cache'`, tag `elo-data`, plus `elo-data:<area>` per area such as `elo-data:tournaments`), and refreshes when the nightly run calls `/api/revalidate`.
@@ -75,9 +75,10 @@ Fetching everything from scratch takes hours (`fetch-players.mjs`, `fetch-clubs.
    and the web data: `rclone sync pipeline/export r2:elo-data --checksum`.
 4. **Sanity.** Create a free project at [sanity.io/manage](https://sanity.io/manage) (dataset `production`), add the site's URL (and `http://localhost:3000`) as CORS origins, create a token with write access, then import the clubs:
    `SANITY_WRITE_TOKEN=... NEXT_PUBLIC_SANITY_PROJECT_ID=... pnpm --filter web import-clubs`.
-   Add a webhook (on create, update and delete of `club`) to `POST https://<domain>/api/revalidate?tag=sanity&secret=<REVALIDATE_SECRET>`.
+   Add a webhook (API → Webhooks; on create, update and delete, filter `_type in ["club", "venue", "tournament"]`) to `POST https://<domain>/api/revalidate?tag=sanity`, with the header `Authorization: Bearer <REVALIDATE_SECRET>`; without it, changes in the Studio show on the site within a day, when the cached content expires.
+   For the nightly run to add the season's tournaments (`web/scripts/import-tournaments.mts`), create an Editor token for GitHub.
 5. **Vercel.** Import the GitHub repo with root directory `web`, and set `DATA_URL=https://data.<domain>`, `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET=production` and `REVALIDATE_SECRET` (any long random string). Add the domain.
-6. **GitHub.** In the repo settings, add the secrets `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REVALIDATE_SECRET`, and the variable `SITE_URL=https://<domain>`. Run the Pipeline workflow by hand once to check it.
+6. **GitHub.** In the repo settings, add the secrets `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REVALIDATE_SECRET`, `SANITY_WRITE_TOKEN`, and the variables `SITE_URL=https://<domain>` and `SANITY_PROJECT_ID`. Run the Pipeline workflow by hand once to check it.
 
 ### Free-tier limits that matter
 

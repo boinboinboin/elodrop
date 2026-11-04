@@ -36,14 +36,14 @@ const descriptionValues = (tie: TeamMatch, date: (day: string) => string) => ({ 
 
 /**
  * The team match as a schema.org SportsEvent: the two teams, the hall (the venue in Sanity with its
- * name, else just the name given; with none given, the hosting club's home hall) and the club
- * arranging it (else the home team's)
+ * name, else just the name given; none when it isn't given: the home team's hall says nothing about
+ * where a team match weekend is played) and the club arranging it (else the home team's)
  */
 async function EventData({ tie, clubs }: { tie: TeamMatch; clubs: Record<string, ClubEntry> }) {
   const { t, date, href } = await getI18n();
   const venues = await getVenues();
   const host = clubByOrganiser(tie.organiser ?? tie.homeClub, clubs);
-  const location = tie.venue ? placeOf(findVenue(tie.venue, venues), tie.venue) : placeOf(host?.homeVenue ?? null);
+  const location = placeOf(findVenue(tie.venue, venues), tie.venue);
   const organizer = organizationOf(host, tie.organiser ?? tie.homeClub, href);
   const team = (name: string) => ({ "@type": "SportsTeam", name, sport: "Badminton" });
   return (

@@ -1,6 +1,8 @@
 // Create the halls (venue documents) in Sanity from the team matches' halls, and give each club
-// without a home hall the one it hosts the most team matches in. Only adds: an existing venue, or a
-// hall that is another venue's other spelling, is left alone, as is a club's home hall already set.
+// without home halls the one it hosts the most team matches in, as a first guess at where its
+// tournaments are played. Only adds: an existing venue, or a hall that is another venue's other
+// spelling, is left alone, as are a club's home halls already set. A club's single home hall from
+// before (homeVenue) is moved to its home halls (homeVenues).
 // The addresses are then filled in in the Studio (/studio), where spellings of the same hall can be
 // merged: keep one venue and add the others' names to its "Other spellings".
 // Reads team-matches/venues.json (pipeline/team-matches.mjs) from DATA_DIR or DATA_URL.
@@ -9,7 +11,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { createClient } from "@sanity/client";
-import { venueKey } from "../utils/structuredData";
+import { venueKey } from "../utils/organiser.ts";
 
 interface Hall {
   name: string;
@@ -37,7 +39,10 @@ const idFor = (name: string) => `venue-${name.toLowerCase().normalize("NFD").rep
 
 const halls = (await readHalls()).filter((h) => h.ties >= min);
 const venues = await client.fetch<{ _id: string; name: string; aliases: string[] | null }[]>(`*[_type == "venue"]{ _id, name, aliases }`);
-const clubs = await client.fetch<{ _id: string; title: string; homeVenue: { _ref: string } | null }[]>(`*[_type == "club" && !(_id in path("drafts.**"))]{ _id, title, homeVenue }`);
+const clubs = await client.fetch<{ _id: string; title: string; homeVenue: { _ref: string } | null; homeVenues: { _ref: string }[] | null }[]>(
+  `*[_type == "club" && !(_id in path("drafts.**"))]{ _id, title, homeVenue, homeVenues }`,
+);
+const homeHalls = (ref: string) => [{ _type: "reference", _ref: ref, _key: crypto.randomUUID().slice(0, 12) }];
 
 // Each hall's venue id: an existing venue with that name or spelling, else a new one
 const byKey = new Map(venues.flatMap((v) => [v.name, ...(v.aliases ?? [])].map((n) => [venueKey(n), v._id] as const)));
@@ -56,15 +61,26 @@ for (const hall of halls) {
   if (!dryRun) await client.createIfNotExists({ _id, _type: "venue", name: hall.name });
 }
 
-// Each club without a home hall: the hall it hosts the most team matches in
+// A club's single home hall from before: moved to its home halls (also with --venues-only)
+const moved: string[] = [];
+for (const club of clubs) {
+  if (!club.homeVenue) continue;
+  moved.push(club.title);
+  if (dryRun) continue;
+  const patch = client.patch(club._id).unset(["homeVenue"]);
+  await (club.homeVenues?.length ? patch : patch.set({ homeVenues: homeHalls(club.homeVenue._ref) })).commit();
+}
+
+// Each club without home halls: the hall it hosts the most team matches in
 const homes: string[] = [];
 for (const club of venuesOnly ? [] : clubs) {
-  if (club.homeVenue) continue;
+  if (club.homeVenues?.length || club.homeVenue) continue;
   const best = halls.filter((h) => h.hosts[club.title]).sort((a, b) => b.hosts[club.title] - a.hosts[club.title])[0];
   if (!best) continue;
   homes.push(`${club.title}: ${best.name} (${best.hosts[club.title]} of its hosted team matches)`);
-  if (!dryRun) await client.patch(club._id).set({ homeVenue: { _type: "reference", _ref: idOf.get(best.name)! } }).commit();
+  if (!dryRun) await client.patch(club._id).set({ homeVenues: homeHalls(idOf.get(best.name)!) }).commit();
 }
 
 console.log(`${dryRun ? "Would create" : "Created"} ${created.length} venues (of ${halls.length} halls with at least ${min} team matches):\n  ${created.join("\n  ") || "none"}`);
+if (moved.length) console.log(`${dryRun ? "Would move" : "Moved"} ${moved.length} clubs' home hall to their home halls: ${moved.join(", ")}`);
 if (!venuesOnly) console.log(`${dryRun ? "Would set" : "Set"} ${homes.length} clubs' home halls:\n  ${homes.join("\n  ") || "none"}`);

@@ -1,7 +1,10 @@
 // A club: what the site shows for it besides the ratings. `title` is the short name the results use
 // ("Kristiansand"), which links the club to its ratings; `nbfClubId` links its strength history.
-// `homeVenue`: the hall its tournaments and home team matches are played in, unless a team match says another.
-import { defineField, defineType } from "sanity";
+// `homeVenues`: the halls its tournaments are usually played in, the first being the one an event's
+// structured data gives (not team matches': a team match is played where its weekend's teams gather,
+// whichever is the home team, so only its own hall counts).
+import { defineArrayMember, defineField, defineType } from "sanity";
+import { tournament } from "./tournament";
 import { venue } from "./venue";
 
 export const club = defineType({
@@ -18,10 +21,17 @@ export const club = defineType({
     // hotspot: the crop tool, to trim a logo's margins (scripts/trim-logos.mts sets the crop to the
     // logo's visible part; the site applies it)
     defineField({ name: "logo", type: "image", options: { hotspot: true } }),
-    defineField({ name: "homeVenue", title: "Home hall", type: "reference", to: [{ type: "venue" }], description: "Where its tournaments and home team matches are usually played" }),
+    defineField({
+      name: "homeVenues",
+      title: "Home halls",
+      type: "array",
+      of: [defineArrayMember({ type: "reference", to: [{ type: "venue" }] })],
+      description: "Where its tournaments are usually played. The first is the default: drag it to the top.",
+      validation: (rule) => rule.unique(),
+    }),
   ],
   orderings: [{ title: "Name", name: "title", by: [{ field: "title", direction: "asc" }] }],
   preview: { select: { title: "title", subtitle: "fullName", media: "logo" } },
 });
 
-export const schemaTypes = [club, venue];
+export const schemaTypes = [tournament, club, venue];

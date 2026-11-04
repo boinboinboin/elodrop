@@ -5,9 +5,9 @@
 import type { ClubEntry, Venue } from "@/types";
 import { clubHref } from "./hrefs";
 import { absoluteUrl } from "./metadata";
+import { venueKey } from "./organiser";
 
-/** Names compared ignoring case, spaces and punctuation ("Klæbu Idrettshall" = "klæbu idrettshall."); also scripts/import-venues.mts */
-export const venueKey = (name: string) => name.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+export { clubByOrganiser, venueKey } from "./organiser";
 
 /** The venue with this name or another spelling of it */
 export function findVenue(name: string | null | undefined, venues: Venue[]): Venue | null {
@@ -35,26 +35,6 @@ export function placeOf(venue: Venue | null, name?: string | null) {
       addressCountry: "NO",
     },
   };
-}
-
-/**
- * The club an organiser's name is ("Haugerud IF-Badminton", "Moss Badmintonklubb", "Sandefjord"):
- * by full name or short name, else the longest club short name its first words are ("Vestre Aker Skiklubb-Badminton")
- */
-export function clubByOrganiser(organiser: string | null | undefined, clubs: Record<string, ClubEntry>): ClubEntry | null {
-  if (!organiser) return null;
-  const wanted = venueKey(organiser);
-  const all = Object.values(clubs);
-  const exact = all.find((c) => venueKey(c.title) === wanted || (c.fullName && venueKey(c.fullName) === wanted));
-  if (exact) return exact;
-  // The longest short name the organiser's name starts with, word for word ("Vestre Aker Skiklubb-Badminton": Vestre Aker)
-  const words = organiser.split(/[\s-]+/);
-  for (let n = words.length - 1; n >= 1; n--) {
-    const start = venueKey(words.slice(0, n).join(" "));
-    const club = all.find((c) => venueKey(c.title) === start);
-    if (club) return club;
-  }
-  return null;
 }
 
 /** A SportsOrganization: a club, with its page's address in the page's language (`href`), or just a name */

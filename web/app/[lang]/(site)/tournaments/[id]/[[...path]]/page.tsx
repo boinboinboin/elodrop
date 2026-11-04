@@ -22,7 +22,7 @@ import ShareButtons from "@/components/ui/ShareButtons";
 import { Stat } from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
-import { getClubMap } from "@/data/sanity";
+import { getApprovedTournaments, getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
@@ -91,15 +91,21 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
   const { id: param, path = [] } = await params;
   const id = parseId(param);
   if (id === null) notFound();
-  const [tour, clubs] = await Promise.all([getTournament(id), getClubMap()]);
+  const [tour, clubs, approved] = await Promise.all([getTournament(id), getClubMap(), getApprovedTournaments()]);
   if (!tour) notFound();
   const shown = pickView(tour, path);
   if (!shown) notFound();
   const { view } = shown;
-  // The organiser's club and its home hall, for the structured data
-  const organiser = clubByOrganiser(tour.organiser, clubs);
-  const location = placeOf(organiser?.homeVenue ?? null);
+  // The organiser's club and the hall, for the structured data: as approved in the Studio, else the
+  // club recognised from Cup2000's organiser and its first home hall
+  const checked = approved[tour.cup2000Id];
+  const organiser = checked ? (checked.organiser ? (clubs[checked.organiser] ?? null) : null) : clubByOrganiser(tour.organiser, clubs);
+  const location = placeOf(checked ? checked.venue : (organiser?.homeVenues[0] ?? null));
   const organizer = organizationOf(organiser, tour.organiser, href);
+  // The hall shown on the page: only once approved, as the guess can be wrong. The hall and its
+  // address ("Mossehallen, Nesparken 10, 1530 Moss"), linking to it on Google Maps
+  const hall = checked?.venue;
+  const hallLine = hall && [hall.name, hall.streetAddress, [hall.postalCode, hall.town].filter(Boolean).join(" ")].filter(Boolean).join(", ");
 
   return (
     <>
@@ -121,6 +127,11 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
         />
         <h1 className="h1 mt-4">{tour.name}</h1>
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
+        {hallLine && (
+          <p className="mt-1 text-gray-700">
+            <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hallLine)}`} className={TEXT_LINK} rel="noopener">{hallLine}</a>
+          </p>
+        )}
         {/* The tournament's links, and the preview and share buttons at the end of the line */}
         <div className="mt-2 flex items-center justify-between gap-4">
           <p className="flex flex-wrap gap-x-6 gap-y-1">

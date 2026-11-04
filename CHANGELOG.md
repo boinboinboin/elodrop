@@ -8,6 +8,14 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.0 (2026-11-04)
+
+- Tournaments in the Studio: each night, this season's tournaments with a published programme are added to Sanity with their organiser (the club recognised from Cup2000's organiser) and hall (that club's first home hall). The Studio lists the ones needing a look (organiser not recognised, no hall, or a hall without an address) and the ones not approved yet. Once approved, a tournament's search engine data uses the organiser and hall given there; until then, the guess. The nightly run needs a `SANITY_WRITE_TOKEN` secret and a `SANITY_PROJECT_ID` variable in GitHub; locally: `pnpm --filter web import-tournaments`.
+- An approved tournament's page shows its hall and address under the dates, linking to it on Google Maps.
+- Clubs can have several home halls in Sanity ("Home halls"); the first is the default hall for its tournaments.
+- Search engines: a team match's hall is only the one badmintonportalen gives for it. When none is given, the home team's club's home hall is no longer used, since team matches are played where the teams gather that weekend, not at the home team's hall.
+- `import-venues` moves each club's old single home hall to its home halls.
+
 ## v1.23.0 (2026-11-03)
 
 - Link previews for head to head: a shared comparison of two players or two pairs shows who's in it, in its title and in a preview image with their record against each other (H2H) and a bar of each side's chance of winning now, as on the page (in singles for two players, in their doubles discipline for two pairs), instead of the general head to head preview. X, LinkedIn, Slack, Discord and the other link preview bots may now open head to head pages; search engines are still kept off them (a page for every pair).

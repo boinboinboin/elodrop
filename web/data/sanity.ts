@@ -1,4 +1,4 @@
-// Club content: short name, full name, region, website, NBF id, logo and home hall, and the halls. From
+// Club content: short name, full name, region, website, NBF id, logo and home halls, and the halls. From
 // Sanity once it is set up (NEXT_PUBLIC_SANITY_PROJECT_ID), else from content/clubs.json (exported
 // from the old Craft site, also the source for importing into Sanity: scripts/import-clubs.mts),
 // which has no halls.
@@ -7,7 +7,7 @@ import clubsJson from "@/content/clubs.json";
 import type { ClubEntry, Venue } from "@/types";
 
 const fromJson = (): ClubEntry[] =>
-  (clubsJson as Omit<ClubEntry, "homeVenue">[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null, homeVenue: null }));
+  (clubsJson as Omit<ClubEntry, "homeVenues">[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null, homeVenues: [] }));
 
 interface SanityLogo {
   url: string;
@@ -42,11 +42,13 @@ async function query<T>(projectId: string, groq: string): Promise<T> {
 }
 
 async function fromSanity(projectId: string): Promise<ClubEntry[]> {
-  const result = await query<(Omit<ClubEntry, "logo" | "homeVenue"> & { logo: SanityLogo | null; homeVenue?: Venue | null })[]>(
+  // homeVenues: also the single home hall (homeVenue) clubs had before, until scripts/import-venues.mts
+  // has moved it (a reference to a deleted venue comes back null)
+  const result = await query<(Omit<ClubEntry, "logo" | "homeVenues"> & { logo: SanityLogo | null; homeVenues: (Venue | null)[] | null })[]>(
     projectId,
-    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop }), "homeVenue": homeVenue->{ ${VENUE_FIELDS} } }`,
+    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop }), "homeVenues": coalesce(homeVenues[]->{ ${VENUE_FIELDS} }, [homeVenue->{ ${VENUE_FIELDS} }]) }`,
   );
-  return result.map((c) => ({ ...c, logo: logoUrl(c.logo), homeVenue: c.homeVenue ?? null }));
+  return result.map((c) => ({ ...c, logo: logoUrl(c.logo), homeVenues: (c.homeVenues ?? []).filter((v): v is Venue => v !== null) }));
 }
 
 /** Every club entry, by title */
@@ -65,6 +67,26 @@ export async function getVenues(): Promise<Venue[]> {
   cacheLife("days");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   return projectId ? query<Venue[]>(projectId, `*[_type == "venue"] | order(name asc) { ${VENUE_FIELDS} }`) : [];
+}
+
+/** A tournament's organiser (the club's short name) and hall, as checked and approved in the Studio (sanity/schemas/tournament.ts) */
+export interface TournamentPlace {
+  organiser: string | null;
+  venue: Venue | null;
+}
+
+/** The approved tournaments' organiser and hall, by Cup2000 id (none without Sanity) */
+export async function getApprovedTournaments(): Promise<Record<number, TournamentPlace>> {
+  "use cache";
+  cacheTag("sanity");
+  cacheLife("days");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  if (!projectId) return {};
+  const result = await query<(TournamentPlace & { cup2000Id: number })[]>(
+    projectId,
+    `*[_type == "tournament" && approved == true]{ cup2000Id, "organiser": organiser->title, "venue": venue->{ ${VENUE_FIELDS} } }`,
+  );
+  return Object.fromEntries(result.map(({ cup2000Id, ...place }) => [cup2000Id, { organiser: place.organiser ?? null, venue: place.venue ?? null }]));
 }
 
 /** Club entries keyed by short name (the name the ratings use) */
