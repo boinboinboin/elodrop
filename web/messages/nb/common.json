@@ -50,6 +50,8 @@
     "ratingLost": "Rating ned siden forrige uke",
     "strengthGained": "Styrke opp siden forrige uke",
     "strengthLost": "Styrke ned siden forrige uke",
+    "scoreGained": "Poengsum opp siden forrige uke",
+    "scoreLost": "Poengsum ned siden forrige uke",
     "sinceLastWeek": "siden forrige uke"
   },
   "chart": {

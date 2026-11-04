@@ -86,6 +86,13 @@ function replacementRating(pool, ranked) {
   return { M: lowest(ranked.filter((p) => p.gender === "M")), K: lowest(ranked.filter((p) => p.gender === "K")) };
 }
 
+// The standard score among `values`: how far a value is above or below their mean, in their standard deviations
+function standardScore(values) {
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
+  return (x) => (x - mean) / sd;
+}
+
 // Combined rankings: men's and women's singles, doubles and mixed doubles together
 const COMBINED_POOLS = { M: ["men", "mensDoubles", "mixedDoubles"], K: ["women", "womensDoubles", "mixedDoubles"] };
 // Per gender, the players ranked in at least two of their three disciplines, best first, by the
@@ -103,17 +110,15 @@ const COMBINED_POOLS = { M: ["men", "mensDoubles", "mixedDoubles"], K: ["women",
 // the actual mixed doubles score of a better player). `ranked`: pool -> ranked players
 // ({ id, rating, gender }; mixed doubles both genders), each with any other fields to keep. Each
 // player's `entries` are per discipline: the inactive rating used, or undefined where none counted.
-function combinedRanking(ranked, inactiveRating = () => null) {
+// Per gender: the `list` and the `scales` used (each discipline's standard score function); with
+// `scales` given (another week's), those instead of this field's own (for the score change since
+// last week that comes from the player's own ratings only).
+function combinedRanking(ranked, inactiveRating = () => null, scales = null) {
   return Object.fromEntries(
     Object.entries(COMBINED_POOLS).map(([gender, pools]) => {
       const byPool = pools.map((pool) => new Map(ranked[pool].filter((p) => pool !== "mixedDoubles" || p.gender === gender).map((p) => [p.id, p])));
       const ids = [...new Set(byPool.flatMap((map) => [...map.keys()]))].filter((id) => byPool.filter((map) => map.has(id)).length >= 2);
-      const zScore = byPool.map((map) => {
-        const values = ids.filter((id) => map.has(id)).map((id) => map.get(id).rating);
-        const mean = values.reduce((a, b) => a + b, 0) / values.length;
-        const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
-        return (rating) => (rating - mean) / sd;
-      });
+      const zScore = scales?.[gender] ?? byPool.map((map) => standardScore(ids.filter((id) => map.has(id)).map((id) => map.get(id).rating)));
       const list = ids
         .map((id) => {
           const scores = byPool.flatMap((map, i) => (map.has(id) ? [zScore[i](map.get(id).rating)] : []));
@@ -135,7 +140,7 @@ function combinedRanking(ranked, inactiveRating = () => null) {
         })
         .sort((a, b) => b.score - a.score)
         .map((p, i) => ({ rank: i + 1, ...p }));
-      return [gender, list];
+      return [gender, { list, scales: zScore }];
     }),
   );
 }
@@ -809,14 +814,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const poolNames = Object.keys(clubs);
     const byPool = Object.fromEntries(poolNames.map((pool) => [pool, new Map(clubs[pool].map((c) => [c.club, c]))]));
     const listed = clubs.men.filter((m) => poolNames.every((pool) => byPool[pool].has(m.club))).map((m) => m.club);
-    const zScore = Object.fromEntries(
-      poolNames.map((pool) => {
-        const values = listed.map((club) => byPool[pool].get(club).strength);
-        const mean = values.reduce((a, b) => a + b, 0) / values.length;
-        const sd = Math.sqrt(values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length);
-        return [pool, (strength) => (strength - mean) / sd];
-      })
-    );
+    const zScore = Object.fromEntries(poolNames.map((pool) => [pool, standardScore(listed.map((club) => byPool[pool].get(club).strength))]));
     clubs.combined = clubs.men
       .filter((m) => listed.includes(m.club))
       .map((m) => {
@@ -1020,7 +1018,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Since last week, for the rankings: each ranked player's and club's rank at the end of baseWeek
   // (the week before the newest one; null if they weren't ranked then), and the rating (club:
-  // strength) gained or lost since then (null for players who started after it)
+  // strength; combined: score) gained or lost since then (null for players who started after it)
   for (const [pool, map] of Object.entries(players)) {
     for (const entry of ratings[pool]) {
       if (entry.rank === null) continue;
@@ -1051,6 +1049,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       c.previousRank = before.get(c.club)?.rank ?? null;
       if (pool !== "combined") c.strengthChange = before.has(c.club) ? Math.round(c.strength - before.get(c.club).strength) : null;
     }
+  }
+  // The combined score gained or lost: last week's strengths scored against this week's clubs (each
+  // pool's mean and standard deviation now), so it comes from the club's own strengths only, not from
+  // the other clubs moving; both scores rounded to hundredths, as shown. Null if not listed last week.
+  {
+    const poolNames = Object.keys(clubs).filter((pool) => pool !== "combined");
+    const now = Object.fromEntries(poolNames.map((pool) => [pool, new Map(clubs[pool].map((c) => [c.club, c.strength]))]));
+    const then = Object.fromEntries(poolNames.map((pool) => [pool, new Map(lastWeek[pool].map((c) => [c.club, c.strength]))]));
+    const listedThen = new Set(lastWeek.combined.map((c) => c.club));
+    const scale = Object.fromEntries(poolNames.map((pool) => [pool, standardScore(clubs.combined.map((c) => now[pool].get(c.club)))]));
+    const score = (strengths, club) => Math.round((100 * poolNames.reduce((sum, pool) => sum + scale[pool](strengths[pool].get(club)), 0)) / poolNames.length);
+    for (const c of clubs.combined) c.scoreChange = listedThen.has(c.club) ? (score(now, c.club) - score(then, c.club)) / 100 : null;
   }
   writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
 
@@ -1095,18 +1105,27 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   writeFileSync(`${DIR}data/junior.json`, JSON.stringify({ generatedAt: new Date().toISOString(), season, bornFrom, pools: junior }));
 
   // Combined rankings (combinedRanking), of the rankings and of the junior rankings, with "since last
-  // week" from the same lists at the end of baseWeek: the rank then
+  // week" from the same lists at the end of baseWeek: the rank then, and the score gained or lost. That
+  // is last week's ratings scored against this week's field (each discipline's mean and standard
+  // deviation now), so it comes from the player's own ratings only: the others moving, starting or
+  // stopping shifts everyone's score a little, which shows in the rank instead. Both scores rounded to
+  // hundredths, as shown; null if not in last week's list.
   function combined(now, then, inactiveRating) {
-    const [current, before] = [combinedRanking(now, inactiveRating), combinedRanking(then, inactiveRating)];
+    const current = combinedRanking(now, inactiveRating);
+    const before = combinedRanking(then, inactiveRating);
+    const own = combinedRanking(then, inactiveRating, Object.fromEntries(Object.entries(current).map(([gender, { scales }]) => [gender, scales])));
     return Object.fromEntries(
-      Object.entries(current).map(([gender, list]) => {
-        const previous = new Map(before[gender].map((p) => [p.id, p.rank]));
+      Object.entries(current).map(([gender, { list }]) => {
+        const previous = new Map(before[gender].list.map((p) => [p.id, p.rank]));
+        const ownThen = new Map(own[gender].list.map((p) => [p.id, p.score]));
+        const hundredths = (x) => Math.round(x * 100);
         return [
           gender,
           list.map(({ rank, id, entries, score }) => ({
             rank, previousRank: previous.get(id) ?? null,
             id, name: entries.find(Boolean).name, club: entries.find(Boolean).club, gender,
-            score: Math.round(score * 100) / 100,
+            score: hundredths(score) / 100,
+            scoreChange: previous.has(id) ? (hundredths(score) - hundredths(ownThen.get(id))) / 100 : null,
             matches: entries.reduce((sum, e) => sum + (e?.matches ?? 0), 0), // in the disciplines ranked in, together
             lastPlayed: entries.filter(Boolean).map((e) => e.lastPlayed).sort().at(-1),
             // Each discipline's rank and rating; an inactive rating counted has rank null and the day

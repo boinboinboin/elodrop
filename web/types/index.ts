@@ -54,6 +54,8 @@ export interface CombinedEntry {
   gender: Gender;
   /** The average standard score in the three disciplines */
   score: number;
+  /** The score gained or lost since the end of last week (null: not ranked then; missing in older exports) */
+  scoreChange?: number | null;
   /** Matches played in the disciplines ranked in, together */
   matches: number;
   lastPlayed: string;
@@ -175,6 +177,8 @@ export interface CombinedClubStanding {
   previousRank?: number | null;
   club: string;
   score: number;
+  /** The score gained or lost since the end of last week (null: not listed then; missing in older exports) */
+  scoreChange?: number | null;
   players: number;
   pools: Partial<Record<Pool, { rank: number; strength: number; players: number }>>;
 }

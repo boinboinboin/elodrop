@@ -144,7 +144,7 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
       ) : (
         <CombinedTable
           pools={pools}
-          rows={players.map((p): CombinedRow => [p.id, p.name, p.club, p.rank, p.score, p.matches, pools.map((pool) => { const e = p.pools[pool]; return e ? [e.rank, Math.round(e.rating)] : null; }), p.previousRank])}
+          rows={players.map((p): CombinedRow => [p.id, p.name, p.club, p.rank, p.score, p.matches, pools.map((pool) => { const e = p.pools[pool]; return e ? [e.rank, Math.round(e.rating)] : null; }), p.previousRank, p.scoreChange])}
           clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
           summary={
             junior

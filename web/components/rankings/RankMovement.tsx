@@ -39,15 +39,18 @@ export default function RankMovement({ rank, previous }: { rank: number | null; 
   );
 }
 
-/** The rating (club: strength) gained or lost since last week, in green or red; nothing when unchanged */
-export function WeekChange({ change, what = "rating" }: { change: number | null | undefined; what?: "rating" | "strength" }) {
-  const { t } = useI18n();
+/**
+ * The rating (club: strength; combined rankings: score, with two decimals) gained or lost since last week, in green or
+ * red; nothing when unchanged
+ */
+export function WeekChange({ change, what = "rating" }: { change: number | null | undefined; what?: "rating" | "strength" | "score" }) {
+  const { num, t } = useI18n();
   if (!change) return null;
   const up = change > 0;
   return (
     <span className={`text-sm tabular-nums [[data-sorted]:not([data-sorted=change])_&]:invisible ${toneClass(change)}`} title={t(`common.movement.${what}${up ? "Gained" : "Lost"}`)}>
       {up ? "+" : "−"}
-      {Math.abs(change)}
+      {what === "score" ? num(Math.abs(change), 2) : Math.abs(change)}
       <span className="sr-only"> {t("common.movement.sinceLastWeek")}</span>
     </span>
   );

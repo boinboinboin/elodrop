@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.3 (2026-11-04)
+
+- The combined rankings (all players and juniors) and the combined club ranking show the score gained or lost since last week beside each score, and can be sorted by it like the other rankings: a click on the ± header sorts by the biggest gain, again by the biggest loss, again back to rank order.
+- That change comes from the player's or club's own ratings only. Others moving, starting or stopping shows in the rank movement, not as a change in score.
+
 ## v1.24.2 (2026-11-04)
 
 - The "Biggest rival" box on the player page has tabs for singles and doubles rivals, beside the rivals over all disciplines together. Doubles counts men's, women's and mixed doubles together. A tab is left out when it would show the same rivals as all disciplines.

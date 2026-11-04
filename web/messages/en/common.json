@@ -50,6 +50,8 @@
     "ratingLost": "Rating lost since last week",
     "strengthGained": "Strength gained since last week",
     "strengthLost": "Strength lost since last week",
+    "scoreGained": "Score gained since last week",
+    "scoreLost": "Score lost since last week",
     "sinceLastWeek": "since last week"
   },
   "chart": {
