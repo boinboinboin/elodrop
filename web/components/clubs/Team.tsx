@@ -1,10 +1,10 @@
 // A team or club name with its logo, linking to the club page when the club has an entry.
 // `clubs`: club entries by short name (data/sanity.ts getClubMap); `size` is the logo size in Tailwind
 // units (default 6); `stacked` puts the logo above the name; `club` is the club when the name is a
-// team's ("Sandefjord 2").
+// team's ("Sandefjord 2"); `pool` opens the club page on that discipline.
 import { Fragment } from "react";
 import Link from "@/components/ui/Link";
-import type { ClubEntry } from "@/types";
+import type { ClubEntry, Pool } from "@/types";
 import { logoSrc } from "@/utils/clubs";
 import { clubHref } from "@/utils/hrefs";
 
@@ -17,6 +17,8 @@ interface Props {
   stacked?: boolean;
   /** Link to the club page (false inside another link) */
   linked?: boolean;
+  /** The discipline the club page opens on (a player's club beside a match in it) */
+  pool?: Pool;
   className?: string;
 }
 
@@ -29,7 +31,7 @@ export const breakable = (name: string) =>
     </Fragment>
   ));
 
-export default function Team({ name, club, clubs, size = 6, stacked = false, linked = true, className = "" }: Props) {
+export default function Team({ name, club, clubs, size = 6, stacked = false, linked = true, className = "", pool }: Props) {
   const entry = clubs[club ?? name];
   const inner = (
     <>
@@ -42,7 +44,7 @@ export default function Team({ name, club, clubs, size = 6, stacked = false, lin
   );
   const classes = `inline-flex ${stacked ? "flex-col" : ""} items-center gap-1.5 align-middle ${className}`;
   return entry && linked ? (
-    <Link href={clubHref(entry.slug)} className={`${classes} hover:text-blue-600`}>
+    <Link href={clubHref(entry.slug, pool)} className={`${classes} hover:text-blue-600`}>
       {inner}
     </Link>
   ) : (

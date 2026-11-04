@@ -202,7 +202,7 @@ async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<st
       {/* The middle has a fixed width, so every match's chance bar is as long */}
       <div className="grid grid-cols-[minmax(0,1fr)_6rem_minmax(0,1fr)] md:grid-cols-[minmax(0,1fr)_11rem_minmax(0,1fr)] gap-2 sm:gap-6 items-center max-sm:[overflow-wrap:anywhere]">
         <div>
-          {g.side1.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 1} muted={g.winner === 2} rating />)}
+          {g.side1.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 1} muted={g.winner === 2} rating pool={g.pool} />)}
         </div>
         <div className="text-center">
           <Score g={g} />
@@ -220,7 +220,7 @@ async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<st
           )}
         </div>
         <div>
-          {g.side2.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 2} muted={g.winner === 1} rating right />)}
+          {g.side2.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold={g.winner === 2} muted={g.winner === 1} rating right pool={g.pool} />)}
         </div>
       </div>
     </li>
@@ -239,11 +239,15 @@ async function Score({ g }: { g: TeamMatchGame }) {
   );
 }
 
-/** A link to the two players' or pairs' head to head, when both sides are complete */
+/** A link to the two players' or pairs' head to head, when both sides are complete, on the match's discipline */
 async function HeadToHead({ g }: { g: TeamMatchGame }) {
   const { t } = await getI18n();
   const [a, b] = [g.side1.map((p) => p.id), g.side2.map((p) => p.id)];
   const href =
-    a.length === 1 && b.length === 1 ? headToHeadHref(a[0], b[0]) : a.length === 2 && b.length === 2 && new Set([...a, ...b]).size === 4 ? doublesHeadToHeadHref(a, b) : null;
+    a.length === 1 && b.length === 1
+      ? headToHeadHref(a[0], b[0], g.pool ?? undefined)
+      : a.length === 2 && b.length === 2 && new Set([...a, ...b]).size === 4
+        ? doublesHeadToHeadHref(a, b, g.pool ?? undefined)
+        : null;
   return href && <Link href={href} className="text-xs text-gray-600 underline hover:text-blue-600 whitespace-nowrap">{t("teamMatches.match.headToHead")}</Link>;
 }

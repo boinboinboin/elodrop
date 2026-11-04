@@ -1,10 +1,22 @@
 // The site's URLs, built in one place (the ranking lists' and the strongest clubs' are in
 // utils/rankings.ts, a tournament event's in utils/tournament.ts)
+import type { Pool } from "@/types";
+
 /** The production address (sitemap.xml, robots.txt): Vercel's production domain, or elodrop.no outside Vercel */
 export const SITE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "elodrop.no"}`;
 
-export const playerHref = (id: number) => `/players/${id}`;
-export const clubHref = (slug: string) => `/clubs/${slug}`;
+/**
+ * The query parameter of the discipline tabs on the player, club and head to head pages (?discipline=mixedDoubles).
+ * A link from somewhere about one discipline (a ranking list, a match) opens the page on that tab; the page has a
+ * canonical address without it.
+ */
+export const DISCIPLINE_PARAM = "discipline";
+const discipline = (pool: Pool | undefined, join: "?" | "&") => (pool ? `${join}${DISCIPLINE_PARAM}=${pool}` : "");
+
+/** A player's page, on a discipline's tab */
+export const playerHref = (id: number, pool?: Pool) => `/players/${id}${discipline(pool, "?")}`;
+/** A club's page, on a discipline's tab */
+export const clubHref = (slug: string, pool?: Pool) => `/clubs/${slug}${discipline(pool, "?")}`;
 export const tournamentHref = (cup2000Id: number, view?: "summary") => `/tournaments/${cup2000Id}${view ? `/${view}` : ""}`;
 /** A week's upsets (its Monday, "2026-10-12"), or a year's newest week ("2026") */
 export const upsetsHref = (period: string) => `/upsets/${period}`;
@@ -23,10 +35,11 @@ export const ELITESERIEN_TEN_MATCHES_HREF = "/eliteserien/ten-matches";
 /** An Eliteserien season in review ("2024-25") */
 export const eliteserienHref = (season: string) => `/eliteserien/${season}`;
 
-/** Two players head to head (B left to be picked when not given) */
-export const headToHeadHref = (a: number, b?: number) => `/head-to-head?a=${a}${b !== undefined ? `&b=${b}` : ""}`;
-/** Two pairs head to head: A1 and A2 against B1 and B2 */
-export const doublesHeadToHeadHref = ([a1, a2]: number[], [b1, b2]: number[]) => `/head-to-head/doubles?a1=${a1}&a2=${a2}&b1=${b1}&b2=${b2}`;
+/** Two players head to head (B left to be picked when not given), on a discipline's tab */
+export const headToHeadHref = (a: number, b?: number, pool?: Pool) => `/head-to-head?a=${a}${b !== undefined ? `&b=${b}` : ""}${discipline(pool, "&")}`;
+/** Two pairs head to head: A1 and A2 against B1 and B2, on a discipline's tab */
+export const doublesHeadToHeadHref = ([a1, a2]: number[], [b1, b2]: number[], pool?: Pool) =>
+  `/head-to-head/doubles?a1=${a1}&a2=${a2}&b1=${b1}&b2=${b2}${discipline(pool, "&")}`;
 
 /** The site's code on GitHub, or a file in it ("pipeline/README.md") */
 export const REPO_URL = "https://github.com/boinboinboin/elodrop";

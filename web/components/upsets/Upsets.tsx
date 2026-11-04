@@ -99,9 +99,9 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                       </Link></td>
                     {/* One player per line, "beat" between the sides; on phones the chance under the event */}
                     <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                      {u.winners.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold />)}
+                      {u.winners.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold pool={u.pool} />)}
                       <span className="block text-sm text-gray-600">{t("upsets.table.beat")}</span>
-                      {u.losers.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} />)}
+                      {u.losers.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} pool={u.pool} />)}
                       <span className="block mt-1 text-sm text-gray-600">{u.score} · {pools[u.pool]} · {u.event}</span>
                       <span className="sm:hidden block text-sm text-gray-600 tabular-nums">{rich("upsets.table.chanceOnPhones", { strong: (text) => <strong className="text-gray-900">{text}</strong> }, { chance: chanceText })}</span>
                     </td>

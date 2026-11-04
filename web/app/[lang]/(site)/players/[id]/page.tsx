@@ -31,7 +31,7 @@ import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
 import { logoSrc } from "@/utils/clubs";
 import { addDays, EMPTY, seasonLabel } from "@/utils/format";
-import { clubHref, headToHeadHref, playerHref } from "@/utils/hrefs";
+import { clubHref, DISCIPLINE_PARAM, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { POOL_KEYS } from "@/utils/pools";
@@ -131,7 +131,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
       <Section>
         <Tabs
           label={t("players.disciplines")}
-          param="discipline"
+          param={DISCIPLINE_PARAM}
           sticky
           tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
         />
@@ -188,16 +188,18 @@ async function RivalList({ player, rivals, subtitle }: { player: Player; rivals:
       ? t("players.rival.inPools", { matches, list: pools.map(([pool, n]) => t("players.rival.inOnePool", { count: n, pool: t(`common.poolsInSentence.${pool}`) })).join(", ") })
       : t("players.rival.inPool", { matches, pool: t(`common.poolsInSentence.${pools[0][0]}`) });
   };
+  // The discipline they met in most: the rival's page and head to head open on it
+  const mostMet = (r: Rival) => (Object.entries(r.pools) as [Pool, number][]).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
   // The "head to head" link in a rival's line
   const headToHead = (r: Rival) =>
     function HeadToHeadLink(text: ReactNode) {
-      return <Link href={headToHeadHref(player.id, r.opponent.id)} className={TEXT_LINK}>{text}</Link>;
+      return <Link href={headToHeadHref(player.id, r.opponent.id, mostMet(r))} className={TEXT_LINK}>{text}</Link>;
     };
   return (
     <>
       <p className="text-sm text-gray-600 mb-4">{subtitle}</p>
       <p className="text-2xl">
-        <Link href={playerHref(rival.opponent.id)} className="hover:text-blue-600">{rival.opponent.name}</Link>
+        <Link href={playerHref(rival.opponent.id, mostMet(rival))} className="hover:text-blue-600">{rival.opponent.name}</Link>
         {rival.opponent.club && <span className="text-base text-gray-600"> · {rival.opponent.club}</span>}
       </p>
       <p className="text-gray-700 mt-1">
@@ -220,7 +222,7 @@ async function RivalList({ player, rivals, subtitle }: { player: Player; rivals:
           <ul className="mt-1">
             {others.map((r) => (
               <li key={r.opponent.id}>
-                <Link href={playerHref(r.opponent.id)} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
+                <Link href={playerHref(r.opponent.id, mostMet(r))} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
                 <span className="text-sm text-gray-600">
                   {r.opponent.club && `${r.opponent.club} · `}
                   {rich(

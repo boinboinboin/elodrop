@@ -41,7 +41,7 @@ import { getI18n } from "@/messages/server";
 import type { ClubEntry, DoublesHeadToHead, DoublesHeadToHeadPool, GenderGap, PairKind, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
 import { capitalize } from "@/utils/format";
-import { playerHref } from "@/utils/hrefs";
+import { DISCIPLINE_PARAM, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
@@ -198,7 +198,7 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
       {pools.length > 0 ? (
         <Section title={t("headToHead.now.title")} titleClassName="text-3xl mb-2">
           <p className="text-gray-700 mb-6 max-w-3xl">{t("headToHead.now.introDoubles")}</p>
-          <Tabs label={t("headToHead.now.tabs")} param="discipline" className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison pool={pool} p={p} h2h={h2h} names={names} showMargins={pools.length > 1} calculator={!twins} /> }))} />
+          <Tabs label={t("headToHead.now.tabs")} param={DISCIPLINE_PARAM} className="mb-6" tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <PoolComparison pool={pool} p={p} h2h={h2h} names={names} showMargins={pools.length > 1} calculator={!twins} /> }))} />
         </Section>
       ) : h2h.crossover ? (
         <Section title={t("headToHead.fun.title")} titleClassName="text-3xl mb-2">

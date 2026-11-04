@@ -5,7 +5,7 @@
 // again: the biggest loss first, again: back). A long list renders its first rows and more on scrolling (useGrowingList).
 // Rows come as compact arrays (sent once, instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
 // rating, matches, last played, rank last week, rating change since last week]. `clubs`: the clubs in the table with a
-// page, short name → [slug, logo].
+// page, short name → [slug, logo]. Players and clubs link to their page on the list's discipline (`pool`).
 import { useMemo, useState } from "react";
 import { Search } from "@/components/SVG";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
@@ -16,6 +16,7 @@ import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
 import { useI18n } from "@/messages/client";
+import type { Pool } from "@/types";
 import { logoSrc } from "@/utils/clubs";
 import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
@@ -23,7 +24,7 @@ import { sortByChange, sortByDesc } from "@/utils/sort";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, string, (number | null)?, (number | null)?];
 
-export default function RankingTable({ rows, clubs, summary }: { rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
+export default function RankingTable({ pool, rows, clubs, summary }: { pool: Pool; rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
   const { date, num, t } = useI18n();
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
@@ -76,14 +77,14 @@ export default function RankingTable({ rows, clubs, summary }: { rows: RankingRo
                   <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{rank ?? EMPTY}</td>
                   <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
                   <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                    <Link href={playerHref(id)} prefetch={false} className="hover:text-blue-600">{name}</Link>
+                    <Link href={playerHref(id, pool)} prefetch={false} className="hover:text-blue-600">{name}</Link>
                     <span className="block text-sm text-gray-600 sm:hidden">{club}</span>
                     {!rank && <span className="block text-sm text-gray-500">{t("rankings.table.lastPlayed", { month: date(lastPlayed, "monthYear") })}</span>}
                   </td>
                   <td className="py-3 px-4 text-gray-700 hidden sm:table-cell">
                     {club &&
                       (entry ? (
-                        <Link href={clubHref(entry[0])} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
+                        <Link href={clubHref(entry[0], pool)} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           {entry[1] && <img src={logoSrc(entry[1], 5)} alt="" loading="lazy" className="w-5 h-5 object-contain shrink-0" />}
                           <span>{club}</span>

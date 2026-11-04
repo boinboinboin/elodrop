@@ -25,7 +25,7 @@ import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@
 import { clubRule } from "@/utils/clubs";
 import { logoSrc } from "@/utils/clubs";
 import { EMPTY, seasonLabel } from "@/utils/format";
-import { clubHref } from "@/utils/hrefs";
+import { clubHref, DISCIPLINE_PARAM } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
@@ -114,7 +114,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
       <Section>
         <Tabs
           label={t("clubs.club.disciplines")}
-          param="discipline"
+          param={DISCIPLINE_PARAM}
           sticky
           tabs={POOL_KEYS.map((pool, i) => ({
             id: pool,
@@ -242,6 +242,7 @@ async function Discipline({ pool, entry, history, names, file, players }: { pool
             )}
           </p>
           <ClubPlayers
+            pool={pool}
             rows={players.map((p): ClubPlayerRow => [p.id, p.name, p.rank, p.rating, p.ratingChange, p.matches, p.gender])}
             mixed={pool === "mixedDoubles"}
           />

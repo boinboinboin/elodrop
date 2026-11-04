@@ -2,20 +2,21 @@
 
 // A club's ranked players in one discipline, in rank order or by matches played (a click on the Matches
 // header, and again to go back), as in the rankings table. Rows come as compact arrays: [id, name, rank,
-// rating, rating change since last week, matches, gender].
+// rating, rating change since last week, matches, gender]. Each player links to their page on this discipline.
 import { useState } from "react";
 import { WeekChange } from "@/components/rankings/RankMovement";
 import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
 import { ROW } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
+import type { Pool } from "@/types";
 import { playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
 
 export type ClubPlayerRow = [number, string, number | null, number, number | null | undefined, number, string | null | undefined];
 
 /** `mixed`: mark each player as a man or a woman (the mixed doubles list ranks them together) */
-export default function ClubPlayers({ rows, mixed }: { rows: ClubPlayerRow[]; mixed: boolean }) {
+export default function ClubPlayers({ pool, rows, mixed }: { pool: Pool; rows: ClubPlayerRow[]; mixed: boolean }) {
   const { num, t } = useI18n();
   const [byMatches, setByMatches] = useState(false);
   // Most matches first; equal ones keep their rank order (the rows' order)
@@ -39,7 +40,7 @@ export default function ClubPlayers({ rows, mixed }: { rows: ClubPlayerRow[]; mi
             <tr key={id} className={`${ROW} hover:bg-gray-50`}>
               <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{rank}</td>
               <td className="py-3 px-4">
-                <Link href={playerHref(id)} className="hover:text-blue-600">{name}</Link>
+                <Link href={playerHref(id, pool)} className="hover:text-blue-600">{name}</Link>
                 {mixed && <span className="text-sm text-gray-600"> {t(gender === "K" ? "clubs.club.woman" : "clubs.club.man")}</span>}
               </td>
               <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>

@@ -60,6 +60,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
         <p>{t("rankings.noRatings")}</p>
       ) : (
         <RankingTable
+          pool={pool}
           rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
           clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
           summary={
@@ -106,6 +107,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
         <p>{t("rankings.noRatings")}</p>
       ) : (
         <RankingTable
+          pool={pool}
           rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
           clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
           summary={t("rankings.junior.summary", { count: num(players.length), year: bornFrom ?? "" })}

@@ -40,7 +40,7 @@ export async function RankingsGlimpse() {
           player ? (
             <li key={rankingHref(list.pool, list.gender)} className={`${ROW} py-1.5 flex items-baseline justify-between gap-3`}>
               <span className="min-w-0">
-                <Link href={playerHref(player.id)} className="font-semibold hover:text-blue-600">{player.name}</Link>
+                <Link href={playerHref(player.id, list.pool)} className="font-semibold hover:text-blue-600">{player.name}</Link>
                 <Link href={rankingHref(list.pool, list.gender)} className="block text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
               </span>
               <span className="text-xl font-semibold tabular-nums">{Math.round(player.rating)}</span>
@@ -110,7 +110,7 @@ export async function UpsetsGlimpse() {
     side.map((p, i) => (
       <span key={p.id}>
         {i > 0 && " / "}
-        <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>
+        <Link href={playerHref(p.id, upset.pool)} className="hover:text-blue-600">{p.name}</Link>
       </span>
     ));
   return (
@@ -186,7 +186,7 @@ export async function HeadToHeadGlimpse() {
         <span>{Math.round(b.rating)}</span>
       </div>
       <p className="mt-4">
-        <Link href={headToHeadHref(a.id, b.id)} className={TEXT_LINK}>{t("home.headToHead.pair", { a: a.name, b: b.name })} <ArrowRight /></Link>
+        <Link href={headToHeadHref(a.id, b.id, "men")} className={TEXT_LINK}>{t("home.headToHead.pair", { a: a.name, b: b.name })} <ArrowRight /></Link>
       </p>
     </>
   );

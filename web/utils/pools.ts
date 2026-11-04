@@ -10,5 +10,8 @@ export const DOUBLES_POOLS: Pool[] = ["mensDoubles", "womensDoubles", "mixedDoub
 /** Singles: one player per side (the others are pairs) */
 export const isSingles = (pool: Pool) => pool === "men" || pool === "women";
 
+/** The discipline of an Eliteserien lineup slot's type ("MS" for MS1 and MS2; pipeline/eliteserien.mjs SLOTS) */
+export const SLOT_POOLS: Record<string, Pool> = { MS: "men", WS: "women", MD: "mensDoubles", WD: "womensDoubles", XD: "mixedDoubles" };
+
 /** The doubles pool each kind of pair plays in */
 export const KIND_POOLS: Record<PairKind, Pool> = { men: "mensDoubles", women: "womensDoubles", mixed: "mixedDoubles" };

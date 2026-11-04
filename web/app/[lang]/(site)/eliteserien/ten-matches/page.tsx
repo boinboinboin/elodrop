@@ -17,6 +17,7 @@ import { logoSrc } from "@/utils/clubs";
 import { EMPTY, toneClass } from "@/utils/format";
 import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
+import { SLOT_POOLS } from "@/utils/pools";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -275,7 +276,7 @@ async function Content() {
                                   const p = players.get(String(key));
                                   return (
                                     <span key={String(key)}>
-                                      {p?.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p?.name}
+                                      {p?.id ? <Link href={playerHref(p.id, SLOT_POOLS[s.type])} className="hover:text-blue-600">{p.name}</Link> : p?.name}
                                       {i < l.players.length - 1 && <span className="text-gray-500"> + </span>}
                                     </span>
                                   );

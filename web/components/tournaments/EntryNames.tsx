@@ -1,10 +1,11 @@
 // An entry's players with their club logos and ratings; ≈ marks a rating estimated for someone
 // without one in this discipline. With `ratingBelow`, phones show each rating on its own line under
 // the name and club (narrow boxes), wider screens beside the name. `changes`: each player's rating
-// gained or lost (in the tournament's week), shown after their rating.
+// gained or lost (in the tournament's week), shown after their rating. `pool`: the event's discipline, which the
+// players' pages open on.
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
-import type { ClubEntry, Entry } from "@/types";
+import type { ClubEntry, Entry, Pool } from "@/types";
 import { logoSrc } from "@/utils/clubs";
 import { toneClass } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
@@ -14,11 +15,13 @@ export default async function EntryNames({
   clubs,
   ratingBelow = false,
   changes,
+  pool,
 }: {
   e: Pick<Entry, "players">;
   clubs: Record<string, ClubEntry>;
   ratingBelow?: boolean;
   changes?: (number | null)[] | null;
+  pool?: Pool;
 }) {
   const { signed, t } = await getI18n();
   return (
@@ -44,7 +47,7 @@ export default async function EntryNames({
                 </span>
               )}
               <span className="min-w-0">
-                {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
+                {p.id ? <Link href={playerHref(p.id, pool)} className="hover:text-blue-600">{p.name}</Link> : p.name}
                 <span className={`ml-1.5 text-sm text-gray-500 tabular-nums whitespace-nowrap ${ratingBelow ? "max-sm:hidden" : ""}`} title={rating.title}>
                   {rating.text}
                   {changed}

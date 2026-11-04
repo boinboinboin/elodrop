@@ -5,7 +5,8 @@
 // (a click on its header: the biggest gain first, again: the biggest loss first, again: back), as the rankings table.
 // Rows come as compact arrays: [id, name, club, rank, score, matches in the three disciplines, [rank, rating] in each of
 // `pools` (rank null: an inactive rating; null: none counted), rank last week, score change since last week]. `clubs`:
-// the clubs in the table with a page, short name → [slug, logo].
+// the clubs in the table with a page, short name → [slug, logo]. A discipline's rating links to the player's page on
+// that discipline.
 import { useMemo, useState } from "react";
 import { Search } from "@/components/SVG";
 import PoolName from "@/components/format/PoolName";
@@ -101,17 +102,18 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                   <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap"><WeekChange change={change} what="score" /></td>
                   {ratings.map((entry, i) => (
                     <td key={pools[i]} className="py-3 px-4 text-right tabular-nums hidden lg:table-cell">
+                      {/* The rating counted links to the player's page on that discipline */}
                       {entry ? (
                         entry[0] === null ? (
-                          <span className="text-gray-500" title={t("rankings.combined.inactiveTitle")}>
+                          <Link href={playerHref(id, pools[i])} prefetch={false} className="block text-gray-500 hover:text-blue-600" title={t("rankings.combined.inactiveTitle")}>
                             {entry[1]}
                             <span className="block text-sm">{t("rankings.combined.inactive")}</span>
-                          </span>
+                          </Link>
                         ) : (
-                          <>
+                          <Link href={playerHref(id, pools[i])} prefetch={false} className="block hover:text-blue-600">
                             {entry[1]}
                             <span className="block text-sm text-gray-600">{t("common.rankValue", { rank: entry[0] })}</span>
-                          </>
+                          </Link>
                         )
                       ) : (
                         <span className="text-gray-400" title={t("rankings.combined.notRanked")}>{EMPTY}</span>

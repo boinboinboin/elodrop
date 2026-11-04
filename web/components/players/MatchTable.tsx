@@ -8,7 +8,8 @@
 // a draw-luck page (`tournamentLinks`: badmintonportalen id → Cup2000 id, from the match key
 // "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`). With `more`,
 // `matches` are only the newest and "show all" loads the rest from `more.url` (the player page).
-// Each opponent and partner is shown with the club they played for at the time.
+// Each opponent and partner is shown with the club they played for at the time, and links to their page on the
+// match's discipline.
 import { useState } from "react";
 import Link from "@/components/ui/Link";
 import { BUTTON, ROW } from "@/components/ui/styles";
@@ -129,7 +130,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                   <td className="py-2 pr-2 sm:pr-4 break-words">
                     {m.opponents.map((o, i) => (
                       <span key={o.id}>
-                        <Link href={playerHref(o.id)} className="hover:text-blue-600">{o.name}</Link>{" "}
+                        <Link href={playerHref(o.id, m.pool ?? pool)} className="hover:text-blue-600">{o.name}</Link>{" "}
                         <span className="text-sm text-gray-500 tabular-nums">{o.rating}</span>
                         <PlayedFor club={o.club} />
                         {i < m.opponents.length - 1 && <span className="text-gray-500"> / </span>}
@@ -137,7 +138,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                     ))}
                     {m.partner && (
                       <span className="block text-sm text-gray-600">
-                        {t("players.matches.with")} <Link href={playerHref(m.partner.id)} className="hover:text-blue-600">{m.partner.name}</Link>{" "}
+                        {t("players.matches.with")} <Link href={playerHref(m.partner.id, m.pool ?? pool)} className="hover:text-blue-600">{m.partner.name}</Link>{" "}
                         <span className="text-gray-500 tabular-nums">{m.partner.rating}</span>
                         <PlayedFor club={m.partner.club} />
                       </span>

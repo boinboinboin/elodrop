@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.7 (2026-11-04)
+
+- Links keep the discipline you're looking at. A player in the mixed doubles ranking opens on their mixed doubles tab, and a club in the women's singles club ranking opens on its women's singles tab. The same goes for a club's players, the counted players in the club rankings, a player's opponents and partners, rivals (on the discipline you met in most), team matches, upsets, tournament events, Eliteserien lineups and the home page. Head to head links open on the match's discipline too.
+- In the combined rankings, each discipline's rating links to the player's page on that discipline.
+
 ## v1.24.6 (2026-11-04)
 
 - Breadcrumbs are separated by › instead of /, which seasons use ("25/26").

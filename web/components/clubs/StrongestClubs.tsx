@@ -1,7 +1,8 @@
 // Strongest clubs in one pool, or combined over all five: the average rating of each club's best
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
 // /clubs/strongest/<pool>. The table can be sorted by ranked players and by the strength (combined: score)
-// gained or lost since last week (components/ui/SortableTable.tsx).
+// gained or lost since last week (components/ui/SortableTable.tsx). In one discipline, the clubs and the players
+// counted link to their pages on that discipline.
 import { ClubLogo } from "@/components/clubs/Team";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -26,6 +27,8 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
   const i18n = await getI18n();
   const { pools, signed, t } = i18n;
   const combined = pool === "combined";
+  // The discipline the club and player links open on (none for the combined list)
+  const tab = pool === "combined" ? undefined : pool;
   const [file, entries] = await Promise.all([getClubsFile(), getClubMap()]);
   const clubs = (file?.clubs[pool] ?? []) as (ClubStanding | CombinedClubStanding)[];
   const rule = combined ? null : (file?.clubStrength[pool] ?? null);
@@ -85,7 +88,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                       <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                         <span className="flex items-center gap-3">
                           <ClubLogo name={club.club} clubs={entries} size={8} />
-                          {entry ? <Link href={clubHref(entry.slug)} className="hover:text-blue-600">{club.club}</Link> : club.club}
+                          {entry ? <Link href={clubHref(entry.slug, tab)} className="hover:text-blue-600">{club.club}</Link> : club.club}
                         </span>
                       </td>
                       <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">
@@ -111,7 +114,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                             <span key={i} className="block">
                               {slot.map((p, j) => (
                                 <span key={p.id}>
-                                  <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>{" "}
+                                  <Link href={playerHref(p.id, tab)} className="hover:text-blue-600">{p.name}</Link>{" "}
                                   <span className="text-sm text-gray-500 tabular-nums">{Math.round(p.rating)}</span>
                                   {j < slot.length - 1 && <span className="text-gray-500"> + </span>}
                                 </span>

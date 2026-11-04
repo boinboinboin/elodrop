@@ -26,7 +26,7 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
           <ul className={s === 0 ? "mt-2 text-lg" : ""}>
             {side.map((p) => (
               <li key={p.id}>
-                <Link href={playerHref(p.id)} className={`${s === 0 ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>{" "}
+                <Link href={playerHref(p.id, upset.pool)} className={`${s === 0 ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>{" "}
                 <span className="text-sm text-gray-500 tabular-nums" title={t("upsets.card.ratingBefore")}>{p.rating}</span>
                 {p.change !== undefined && (
                   <span className={`text-sm font-semibold tabular-nums ${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>
@@ -35,7 +35,7 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
                 )}
                 {p.club && (
                   <span className="block text-sm text-gray-600">
-                    <Team name={p.club} clubs={clubs} size={4} />
+                    <Team name={p.club} clubs={clubs} size={4} pool={upset.pool} />
                   </span>
                 )}
               </li>
@@ -49,13 +49,13 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
         {upset.winners.length === 1 && (
           <>
             {" · "}
-            <Link href={headToHeadHref(upset.winners[0].id, upset.losers[0].id)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
+            <Link href={headToHeadHref(upset.winners[0].id, upset.losers[0].id, upset.pool)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
           </>
         )}
         {upset.winners.length === 2 && upset.losers.length === 2 && (
           <>
             {" · "}
-            <Link href={doublesHeadToHeadHref(ids(upset.winners), ids(upset.losers))} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
+            <Link href={doublesHeadToHeadHref(ids(upset.winners), ids(upset.losers), upset.pool)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
           </>
         )}
       </p>

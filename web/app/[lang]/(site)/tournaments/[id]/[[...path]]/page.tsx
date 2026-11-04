@@ -210,7 +210,7 @@ async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string
                         {/* Numbered: in two columns the order (along each row) isn't obvious */}
                         <span aria-hidden="true" className="w-5 shrink-0 text-right text-gray-500 tabular-nums">{i + 1}</span>
                         <div className="flex-1 min-w-0">
-                          <EntryNames e={e} clubs={clubs} />
+                          <EntryNames e={e} clubs={clubs} pool={tour.events[e.eventIndex]?.pool} />
                           <Link href={eventHref(tour.cup2000Id, tour.events[e.eventIndex])} className="block text-sm text-gray-600 hover:text-blue-600">
                             {e.eventLabel}{list.kind === "luck" && e.group ? ` · ${t("tournaments.summary.inGroup", { group: e.group })}` : ""}
                           </Link>
@@ -528,7 +528,7 @@ async function EntryRow({
     <tr className={`${ROW} align-top`}>
       {columns.numbered && <td className="py-2 pl-2 sm:pl-4 pr-0 text-right tabular-nums font-semibold">{standing}</td>}
       <td className="py-2 px-2 sm:px-4">
-        <EntryNames e={e} clubs={clubs} />
+        <EntryNames e={e} clubs={clubs} pool={event.pool} />
         {seed > 0 && (
           <Badge className="mt-1 mr-1">
             <span title={e.points ? t("tournaments.entry.rankingPoints", { points: num(e.points) }) : t("tournaments.entry.seededByRating")}>{t("tournaments.entry.seed", { seed })}</span>

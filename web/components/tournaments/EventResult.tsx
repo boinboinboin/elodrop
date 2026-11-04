@@ -33,7 +33,7 @@ export default async function EventResult({ event, winner, clubs }: { event: Tou
       <div className="bg-white p-4 min-w-0">
         <p className="text-sm text-gray-600 mb-2">{winnerLabel}</p>
         <div className="max-sm:[overflow-wrap:anywhere]">
-          <EntryNames e={winner} clubs={clubs} ratingBelow changes={event.winnerRatingChange} />
+          <EntryNames e={winner} clubs={clubs} ratingBelow changes={event.winnerRatingChange} pool={event.pool} />
         </div>
         {margin && <p className="mt-2">{margin}</p>}
         <p className="text-sm text-gray-600 mt-2">{t("tournaments.result.chanceBefore", { chance: pct(winner.actual.win) })}</p>
@@ -51,7 +51,7 @@ export default async function EventResult({ event, winner, clubs }: { event: Tou
                 <tr key={row.label} className={`align-top ${row.won ? "" : "border-t border-gray-200"}`}>
                   <th scope="row" className="py-2 pr-3 text-left font-normal max-sm:[overflow-wrap:anywhere]">
                     <span className="block text-xs text-gray-500 mb-0.5">{row.label}</span>
-                    <EntryNames e={row.entry} clubs={clubs} ratingBelow />
+                    <EntryNames e={row.entry} clubs={clubs} ratingBelow pool={event.pool} />
                   </th>
                   {final.walkover ? (
                     <td className={`py-2 text-right text-sm text-gray-600 whitespace-nowrap ${row.won ? "align-bottom" : "align-top"}`}>{row.won && t("tournaments.result.walkover")}</td>
@@ -87,7 +87,7 @@ export async function EventFavourite({ event, favourite, topRated, clubs }: { ev
       <div className="bg-white p-4 min-w-0">
         <p className="text-sm text-gray-600 mb-2">{t(singles ? "tournaments.result.favourite" : "tournaments.result.favourites")}</p>
         <div className="max-sm:[overflow-wrap:anywhere]">
-          <EntryNames e={favourite} clubs={clubs} ratingBelow />
+          <EntryNames e={favourite} clubs={clubs} ratingBelow pool={event.pool} />
         </div>
         <p className="mt-2">{chance}</p>
         {topRated !== favourite && <p className="text-sm text-gray-600 mt-2">{t("tournaments.result.favouriteOverTop", { name: topRated.players.map((p) => p.name).join(" / ") })}</p>}
