@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.9 (2026-11-04)
+
+- Links are prefetched when you point at, tab to or touch them, not as soon as they scroll into view, so pages with hundreds of player links no longer make the server render pages nobody opens.
+- A push to `main` that changes only the pipeline no longer deploys the site.
+
 ## v1.24.8 (2026-11-04)
 
 - Changes in the Studio refresh only the pages that show them, instead of the whole site: approving a tournament refreshes just its own pages, a hall (or a club's home halls) the tournament and team match pages. This cuts Vercel's ISR writes for a publish from thousands to tens. The Sanity webhook needs the projection given in README.md to tell home halls apart from other club changes.
