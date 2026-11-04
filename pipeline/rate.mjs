@@ -492,7 +492,7 @@ export function computeRatings(
       // seedRating(pool, side, level, players) can override the start rating (experiments)
       const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? classStart(level, pool, side));
       const week = weekStart(day);
-      p = { id: side.id, pool, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], log: [], clubs: [], returning: 0 };
+      p = { id: side.id, pool, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], weeklyExact: [], weeklyMatches: [], log: [], clubs: [], returning: 0 };
       players[pool].set(side.id, p);
     }
     p.name = side.name;
@@ -512,12 +512,15 @@ export function computeRatings(
     return p;
   }
 
-  // Record the rating at the end of every week before `week` that hasn't been recorded yet.
+  // Record the rating at the end of every week before `week` that hasn't been recorded yet: rounded
+  // (the history), and exact with the matches played so far (to rank by, as the current ranking)
   function closeWeeks(p, week) {
     if (!keepWeekly) return;
     for (; p.nextWeek < week; p.nextWeek = addDays(p.nextWeek, 7)) {
       applyInactivity(p, addDays(p.nextWeek, 7));
       p.weekly.push(Math.round(p.rating));
+      p.weeklyExact.push(p.rating);
+      p.weeklyMatches.push(p.matches);
     }
   }
 
@@ -714,6 +717,10 @@ export function computeRatings(
   return { players, calibration, returns, upsets, leagueGames };
 }
 
+// Ranking order: the exact rating (not the rounded one shown), then the most matches played, then the
+// name (Norwegian order), then the id, so players with the same rating keep their order from week to week
+const byRanking = (a, b) => b.rating - a.rating || b.matches - a.matches || a.name.localeCompare(b.name, "nb") || a.id - b.id;
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const games = collectGames();
   const { players, calibration, returns, upsets, leagueGames } = computeRatings(games);
@@ -759,11 +766,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const genderOf = (id) => genders.get(id) ?? inferred.get(id) ?? null;
   // Fields only used while rating
-  const INTERNAL = new Set(["weekly", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool"]);
+  const INTERNAL = new Set(["weekly", "weeklyExact", "weeklyMatches", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool"]);
 
   // Rankings only include active players (R.isActive) of the pool's gender (R.rankedIn); others get rank null.
   for (const [pool, map] of Object.entries(players)) {
-    const list = [...map.values()].sort((a, b) => b.rating - a.rating);
+    const list = [...map.values()].sort(byRanking);
     // Mixed doubles ranks men and women separately: every side has one of each, so results
     // can't tell how men's ratings compare to women's. Players of unknown gender get no rank there.
     const separate = pool === "mixedDoubles";
@@ -903,7 +910,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         }
         // After the last recorded week the rating stays the same within the active window.
         const rating = p.weekly[w - offset] ?? p.weekly.at(-1) ?? p.rating;
-        activeByWeek[w].push({ p, rating, gender });
+        // To rank by: the exact rating and the matches played by then (as the current ranking)
+        const order = { id: p.id, name: p.name, rating: p.weeklyExact[w - offset] ?? p.weeklyExact.at(-1) ?? p.rating, matches: p.weeklyMatches[w - offset] ?? p.weeklyMatches.at(-1) ?? p.matches };
+        activeByWeek[w].push({ p, rating, gender, order });
         while (p.clubs[club + 1]?.[0] <= w - offset) club++;
         const name = p.clubs[club]?.[1];
         if (!name) continue;
@@ -912,8 +921,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         byWeek[w].set(name, members);
       }
     }
-    // Weekly national rank: active players by their rating at the end of the week, as the rankings
-    // (mixed doubles: men and women separately). The current week is the ranking itself.
+    // Weekly national rank: active players by their rating at the end of the week, in the same order
+    // as the rankings (byRanking; mixed doubles: men and women separately). The current week is the ranking itself.
     const separate = pool === "mixedDoubles";
     rankCounts[pool] = separate ? { M: Array(weekCount).fill(0), K: Array(weekCount).fill(0) } : Array(weekCount).fill(0);
     const currentRank = new Map(ratings[pool].map((r) => [r.id, r]));
@@ -921,7 +930,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (w === weekCount - 1) return;
       const groups = separate ? Object.entries(Object.groupBy(list.filter((x) => x.gender), (x) => x.gender)) : [[null, list]];
       for (const [gender, members] of groups) {
-        members.sort((a, b) => b.rating - a.rating);
+        members.sort((a, b) => byRanking(a.order, b.order));
         members.forEach(({ p }, i) => ((p.ranks ??= [])[w - weekIndex(p.firstWeek)] = i + 1));
         if (gender) rankCounts[pool][gender][w] = members.length;
         else rankCounts[pool][w] = members.length;
@@ -1082,7 +1091,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const counts = {};
     return [...map.values()]
       .filter((p) => birthYears[p.id] >= bornFrom && R.isActive(p.lastPlayed, day) && R.rankedIn(pool, genderOf(p.id)))
-      .sort((a, b) => b.rating - a.rating)
+      .sort(byRanking)
       .map((p) => {
         const key = pool === "mixedDoubles" ? genderOf(p.id) : "all";
         return { p, rank: (counts[key] = (counts[key] ?? 0) + 1) };

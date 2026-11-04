@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.4 (2026-11-04)
+
+- Players on the same rating no longer swap places from week to week, showing a move up or down that didn't happen. Last week's ranks were worked out from ratings rounded to whole points, so players on the same rounded rating were put in no particular order. All rankings (also the weekly rank history and the junior rankings) now order players by their exact rating, then by the most matches played, then by name.
+
 ## v1.24.3 (2026-11-04)
 
 - The combined rankings (all players and juniors) and the combined club ranking show the score gained or lost since last week beside each score, and can be sorted by it like the other rankings: a click on the ± header sorts by the biggest gain, again by the biggest loss, again back to rank order.
