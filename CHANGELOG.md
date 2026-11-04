@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.8 (2026-11-04)
+
+- Changes in the Studio refresh only the pages that show them, instead of the whole site: approving a tournament refreshes just its own pages, a hall (or a club's home halls) the tournament and team match pages. Only a club's name, slug or logo still refreshes nearly every page. This cuts Vercel's ISR writes for a publish from thousands to tens. The Sanity webhook needs the projection given in README.md to tell home halls apart from other club changes.
+
 ## v1.24.7 (2026-11-04)
 
 - Links keep the discipline you're looking at. A player in the mixed doubles ranking opens on their mixed doubles tab, and a club in the women's singles club ranking opens on its women's singles tab. The same goes for a club's players, the counted players in the club rankings, a player's opponents and partners, rivals (on the discipline you met in most), team matches, upsets, tournament events, Eliteserien lineups and the home page. Head to head links open on the match's discipline too.

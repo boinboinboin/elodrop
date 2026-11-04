@@ -511,7 +511,6 @@ export interface ClubEntry {
   website: string | null;
   nbfClubId: number | null;
   logo: string | null;
-  homeVenues: Venue[];
 }
 
 /** A hall (CMS, sanity/schemas/venue.ts): its name, the other spellings the results use, and its address */

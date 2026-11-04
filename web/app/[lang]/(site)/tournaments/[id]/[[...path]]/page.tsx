@@ -24,7 +24,7 @@ import ShareButtons from "@/components/ui/ShareButtons";
 import { Stat } from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
 import { ROW } from "@/components/ui/styles";
-import { getApprovedTournaments, getClubMap } from "@/data/sanity";
+import { getApprovedTournament, getClubHomeVenues, getClubMap } from "@/data/sanity";
 import { getTournament, getTournamentsIndex } from "@/data/tournaments";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
@@ -93,16 +93,15 @@ async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[..
   const { id: param, path = [] } = await params;
   const id = parseId(param);
   if (id === null) notFound();
-  const [tour, clubs, approved] = await Promise.all([getTournament(id), getClubMap(), getApprovedTournaments()]);
+  const [tour, clubs, checked] = await Promise.all([getTournament(id), getClubMap(), getApprovedTournament(id)]);
   if (!tour) notFound();
   const shown = pickView(tour, path);
   if (!shown) notFound();
   const { view } = shown;
   // The organiser's club and the hall, for the structured data: as approved in the Studio, else the
   // club recognised from Cup2000's organiser and its first home hall
-  const checked = approved[tour.cup2000Id];
   const organiser = checked ? (checked.organiser ? (clubs[checked.organiser] ?? null) : null) : clubByOrganiser(tour.organiser, clubs);
-  const location = placeOf(checked ? checked.venue : (organiser?.homeVenues[0] ?? null));
+  const location = placeOf(checked ? checked.venue : organiser ? ((await getClubHomeVenues())[organiser.title]?.[0] ?? null) : null);
   const organizer = organizationOf(organiser, tour.organiser, href);
   // The hall shown on the page: only once approved, as the guess can be wrong. The hall and its
   // address ("Mossehallen, Nesparken 10, 1530 Moss"), linking to it on Google Maps

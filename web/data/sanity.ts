@@ -1,13 +1,18 @@
-// Club content: short name, full name, region, website, NBF id, logo and home halls, and the halls. From
-// Sanity once it is set up (NEXT_PUBLIC_SANITY_PROJECT_ID), else from content/clubs.json (exported
-// from the old Craft site, also the source for importing into Sanity: scripts/import-clubs.mts),
-// which has no halls.
+// Club content: short name, full name, region, website, NBF id and logo; the clubs' home halls; the halls; and the
+// tournaments checked in the Studio. From Sanity once it is set up (NEXT_PUBLIC_SANITY_PROJECT_ID), else the clubs from
+// content/clubs.json (exported from the old Craft site, also the source for importing into Sanity:
+// scripts/import-clubs.mts), which has no halls or tournaments.
+//
+// Cache tags: every entry has `sanity` (all of it) and the tags of what it reads, so a change in the Studio refreshes
+// only the pages using it (app/api/revalidate picks the tag from the Sanity webhook's changed document). Clubs (names,
+// logos) are on nearly every page; halls (with the clubs' home halls) only on tournament and team match pages; a
+// tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited.
 import { cacheLife, cacheTag } from "next/cache";
 import clubsJson from "@/content/clubs.json";
 import type { ClubEntry, Venue } from "@/types";
+import { CLUBS_TAG, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG } from "./sanityTags";
 
-const fromJson = (): ClubEntry[] =>
-  (clubsJson as Omit<ClubEntry, "homeVenues">[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null, homeVenues: [] }));
+const fromJson = (): ClubEntry[] => (clubsJson as ClubEntry[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null }));
 
 interface SanityLogo {
   url: string;
@@ -55,28 +60,44 @@ async function query<T>(projectId: string, groq: string): Promise<T> {
 }
 
 async function fromSanity(projectId: string): Promise<ClubEntry[]> {
-  // homeVenues: also the single home hall (homeVenue) clubs had before, until scripts/import-venues.mts
-  // has moved it (a reference to a deleted venue comes back null)
-  const result = await query<(Omit<ClubEntry, "logo" | "homeVenues"> & { logo: SanityLogo | null; homeVenues: (Venue | null)[] | null })[]>(
+  const result = await query<(Omit<ClubEntry, "logo"> & { logo: SanityLogo | null })[]>(
     projectId,
-    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop }), "homeVenues": coalesce(homeVenues[]->{ ${VENUE_FIELDS} }, [homeVenue->{ ${VENUE_FIELDS} }]) }`,
+    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop }) }`,
   );
-  return result.map((c) => ({ ...c, logo: logoUrl(c.logo), homeVenues: (c.homeVenues ?? []).filter((v): v is Venue => v !== null) }));
+  return result.map((c) => ({ ...c, logo: logoUrl(c.logo) }));
 }
 
-/** Every club entry, by title */
+/** Every club entry, by title (without their home halls: getClubHomeVenues, so a home hall added doesn't refresh every page) */
 export async function getClubEntries(): Promise<ClubEntry[]> {
   "use cache";
-  cacheTag("sanity");
+  cacheTag(SANITY_TAG, CLUBS_TAG);
   cacheLife("days");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   return projectId ? fromSanity(projectId) : fromJson();
 }
 
+/**
+ * Each club's home halls, by its short name, the first being its tournaments' usual hall (none without Sanity). Also the
+ * single home hall (homeVenue) clubs had before, until scripts/import-venues.mts has moved it (a reference to a deleted
+ * hall comes back null)
+ */
+export async function getClubHomeVenues(): Promise<Record<string, Venue[]>> {
+  "use cache";
+  cacheTag(SANITY_TAG, CLUBS_TAG, VENUES_TAG);
+  cacheLife("days");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  if (!projectId) return {};
+  const result = await query<{ title: string | null; homeVenues: (Venue | null)[] | null }[]>(
+    projectId,
+    `*[_type == "club"]{ title, "homeVenues": coalesce(homeVenues[]->{ ${VENUE_FIELDS} }, [homeVenue->{ ${VENUE_FIELDS} }]) }`,
+  );
+  return Object.fromEntries(result.filter((c) => c.title).map((c) => [c.title, (c.homeVenues ?? []).filter((v): v is Venue => v !== null)]));
+}
+
 /** Every hall (none without Sanity) */
 export async function getVenues(): Promise<Venue[]> {
   "use cache";
-  cacheTag("sanity");
+  cacheTag(SANITY_TAG, VENUES_TAG);
   cacheLife("days");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   return projectId ? query<Venue[]>(projectId, `*[_type == "venue"] | order(name asc) { ${VENUE_FIELDS} }`) : [];
@@ -88,18 +109,21 @@ export interface TournamentPlace {
   venue: Venue | null;
 }
 
-/** The approved tournaments' organiser and hall, by Cup2000 id (none without Sanity) */
-export async function getApprovedTournaments(): Promise<Record<number, TournamentPlace>> {
+/**
+ * A tournament's organiser and hall, by its Cup2000 id, once approved (else null; null without Sanity). Only its own
+ * pages read it, so approving one refreshes just those; also the organiser's name (a club) and the hall's address
+ */
+export async function getApprovedTournament(cup2000Id: number): Promise<TournamentPlace | null> {
   "use cache";
-  cacheTag("sanity");
+  cacheTag(SANITY_TAG, TOURNAMENTS_TAG, tournamentTag(cup2000Id), CLUBS_TAG, VENUES_TAG);
   cacheLife("days");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-  if (!projectId) return {};
-  const result = await query<(TournamentPlace & { cup2000Id: number })[]>(
+  if (!projectId || !Number.isInteger(cup2000Id)) return null;
+  const result = await query<TournamentPlace | null>(
     projectId,
-    `*[_type == "tournament" && approved == true]{ cup2000Id, "organiser": organiser->title, "venue": venue->{ ${VENUE_FIELDS} } }`,
+    `*[_type == "tournament" && cup2000Id == ${cup2000Id} && approved == true][0]{ "organiser": organiser->title, "venue": venue->{ ${VENUE_FIELDS} } }`,
   );
-  return Object.fromEntries(result.map(({ cup2000Id, ...place }) => [cup2000Id, { organiser: place.organiser ?? null, venue: place.venue ?? null }]));
+  return result ? { organiser: result.organiser ?? null, venue: result.venue ?? null } : null;
 }
 
 /** Club entries keyed by short name (the name the ratings use) */
