@@ -32,13 +32,26 @@ function logoUrl(logo: SanityLogo | null): string | null {
 // A hall's fields, in the club query and the halls' own
 const VENUE_FIELDS = "name, aliases, streetAddress, postalCode, town";
 
-/** A GROQ query's result from the Sanity project's CDN */
+/**
+ * A query result with its text cleaned: no spaces at the ends, single spaces between words, and
+ * empty text as null (left out of lists), so a stray space typed in the Studio changes nothing (a
+ * club's short name is matched exactly against the results). The Studio warns about them too
+ * (sanity/schemas/spacing.ts).
+ */
+function clean(value: unknown): unknown {
+  if (typeof value === "string") return value.replace(/\s+/g, " ").trim() || null;
+  if (Array.isArray(value)) return value.map(clean).filter((v, i) => v !== null || value[i] === null);
+  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, clean(v)]));
+  return value;
+}
+
+/** A GROQ query's result from the Sanity project's CDN, its text cleaned */
 async function query<T>(projectId: string, groq: string): Promise<T> {
   const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
   const url = `https://${projectId}.apicdn.sanity.io/v2025-02-19/data/query/${dataset}?query=${encodeURIComponent(groq)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Sanity query failed: ${res.status}`);
-  return (await res.json()).result as T;
+  return clean((await res.json()).result) as T;
 }
 
 async function fromSanity(projectId: string): Promise<ClubEntry[]> {

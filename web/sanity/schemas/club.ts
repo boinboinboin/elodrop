@@ -4,6 +4,7 @@
 // structured data gives (not team matches': a team match is played where its weekend's teams gather,
 // whichever is the home team, so only its own hall counts).
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { tidySlug, tidyText } from "./spacing";
 import { tournament } from "./tournament";
 import { venue } from "./venue";
 
@@ -12,10 +13,10 @@ export const club = defineType({
   title: "Club",
   type: "document",
   fields: [
-    defineField({ name: "title", title: "Short name", type: "string", description: "As in the results, e.g. Kristiansand", validation: (rule) => rule.required() }),
-    defineField({ name: "slug", type: "slug", options: { source: "title" }, validation: (rule) => rule.required() }),
-    defineField({ name: "fullName", title: "Full name", type: "string" }),
-    defineField({ name: "region", title: "Region (krets)", type: "string" }),
+    defineField({ name: "title", title: "Short name", type: "string", description: "As in the results, e.g. Kristiansand", validation: (rule) => [rule.required(), tidyText(rule)] }),
+    defineField({ name: "slug", type: "slug", options: { source: "title" }, validation: (rule) => [rule.required(), tidySlug(rule)] }),
+    defineField({ name: "fullName", title: "Full name", type: "string", validation: tidyText }),
+    defineField({ name: "region", title: "Region (krets)", type: "string", validation: tidyText }),
     defineField({ name: "website", type: "url" }),
     defineField({ name: "nbfClubId", title: "NBF club id", type: "number", description: "badmintonportalen's club id" }),
     // hotspot: the crop tool, to trim a logo's margins (scripts/trim-logos.mts sets the crop to the

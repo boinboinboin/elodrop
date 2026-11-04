@@ -14,6 +14,7 @@ Every change merged into `main` gets an entry here, newest first.
 - An approved tournament's page shows its hall and address under the dates, with a map pin, linking to it on Google Maps.
 - Links that leave elodrop (badmintonportalen, Cup2000, club websites, the maps, the code on GitHub) have an arrow-out icon after them.
 - Link underlines sit a little further below the text.
+- Fixed: extra spaces typed in the Studio (at the start or end of a field, or two in a row) no longer reach the site, so a club's short name with one still links the club to its ratings (Oslofjorden Badmintonkrets had a double space). The Studio warns about such spaces in the clubs' and halls' fields.
 - Clubs can have several home halls in Sanity ("Home halls"); the first is the default hall for its tournaments.
 - Search engines: a team match's hall is only the one badmintonportalen gives for it. When none is given, the home team's club's home hall is no longer used, since team matches are played where the teams gather that weekend, not at the home team's hall.
 - `import-venues` moves each club's old single home hall to its home halls.
