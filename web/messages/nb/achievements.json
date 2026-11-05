@@ -3,7 +3,7 @@
     "title": "Prestasjoner"
   },
   "title": "Prestasjoner",
-  "intro": "Spillere får prestasjoner for det de har gjort på banen: tre øvelser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2013 teller.",
+  "intro": "Spillere får prestasjoner for det de har gjort på banen: tre klasser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2013 teller.",
   "players": {
     "one": "{count} spiller",
     "other": "{count} spillere"
@@ -16,6 +16,8 @@
   "latest": "Sist tatt av",
   "handGiven": "Gitt for hånd",
   "none": "Ingen prestasjoner ennå.",
+  "nextLevel": "Neste nivå",
+  "previousLevel": "Forrige nivå",
   "byLevel": "Etter nivå",
   "top": "Høyest"
 }

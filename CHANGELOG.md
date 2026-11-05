@@ -12,6 +12,8 @@ Every change merged into `main` gets an entry here, newest first.
 
 - Achievements are called "prestasjoner" in Norwegian (were "bragder").
 - An achievement can be left off the achievements page with a switch in the Studio; players who have it still show it on their pages.
+- On the achievements page, an achievement with levels shows their art stacked like a pile of medals: step through the levels with the arrows, a click on the pile or a level in its list.
+- "Klasse" instead of "øvelse" for a discipline in the Norwegian text about achievements.
 
 ## v1.25.0 (2026-11-05)
 

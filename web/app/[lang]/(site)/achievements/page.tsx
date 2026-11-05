@@ -1,9 +1,11 @@
 // The badges players can earn (sanity/schemas/badge.ts): each with its art, how it's earned, how many
 // players have it and what share of everyone with a rating that is, and the latest to earn it
 // (achievements.json, pipeline/achievements.mjs), behind a disclosure; the rarest first. A milestone
-// is counted by its levels in the Studio (the players' numbers at or above each), with its highest
-// numbers instead of the latest. A badge switched off in the Studio (`listed`) is left out. Linked from the menu and footer, and from the badges on player pages.
+// is counted by its levels in the Studio (the players' numbers at or above each), its levels' art
+// stacked to step through (components/achievements/LevelShowcase.tsx), with its highest numbers instead
+// of the latest. A badge switched off in the Studio (`listed`) is left out. Linked from the menu and footer, and from the badges on player pages.
 import type { Metadata } from "next";
+import LevelShowcase from "@/components/achievements/LevelShowcase";
 import { AwardLine, fillBadgeText, levelView } from "@/components/players/Achievements";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
@@ -98,39 +100,44 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
   const title = fillBadgeText(badge.title, atLevel(badge, lowest), num);
   // The latest to earn it, with when and where, or a milestone's highest numbers (none for a hand-given badge)
   const latest = milestone ? (lowest !== undefined ? (own?.top ?? []).filter((a) => (a.value ?? 0) >= lowest) : []) : (own?.latest ?? []);
+  // The title, how it's earned and how many have it (a milestone's levels are listed by LevelShowcase)
+  const text = (
+    <>
+      <h2 className="text-2xl">{title}</h2>
+      {about && <p className="text-gray-700 mt-1">{about}</p>}
+      <p className="mt-3">
+        <span className="text-xl font-mono">{plural("achievements.players", count, { count: num(count) })}</span>
+        {total > 0 && <span className="text-gray-600"> · {t("achievements.share", { share: shareText, total: num(total) })}</span>}
+      </p>
+      {own && !milestone && <p className="text-sm text-gray-600">{plural("achievements.times", own.awards, { count: num(own.awards) })}</p>}
+    </>
+  );
   return (
     <>
       <div className="flex gap-4 md:gap-6 bg-white px-4 md:px-6 pt-4 md:pt-6">
-        {badge.art ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={badge.art} alt="" width={96} height={96} className="w-16 h-16 md:w-24 md:h-24 object-contain shrink-0" />
-        ) : (
-          <span aria-hidden="true" className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-gray-200" />
-        )}
-        <div className="min-w-0">
-          <h2 className="text-2xl">{title}</h2>
-          {about && <p className="text-gray-700 mt-1">{about}</p>}
-          <p className="mt-3">
-            <span className="text-xl font-mono">{plural("achievements.players", count, { count: num(count) })}</span>
-            {total > 0 && <span className="text-gray-600"> · {t("achievements.share", { share: shareText, total: num(total) })}</span>}
-          </p>
-          {own && !milestone && <p className="text-sm text-gray-600">{plural("achievements.times", own.awards, { count: num(own.awards) })}</p>}
-          {levels.length > 0 && (
-            <ul className="mt-3 space-y-1.5" aria-label={t("achievements.byLevel")}>
-              {levels.map(({ level, players }) => {
+        {levels.length > 0 ? (
+          // A milestone: its levels' art stacked, to step through, and the list of levels beside it
+          <LevelShowcase
+            levels={levels
+              .map(({ level, players }) => {
                 const view = levelView(badge, level);
-                return (
-                  <li key={level} className="flex items-center gap-2 text-sm">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    {view.art ? <img src={view.art} alt="" className="w-6 h-6 object-contain shrink-0" /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
-                    <span>{fillBadgeText(view.title, atLevel(badge, level), num)}</span>
-                    <span className="font-mono text-gray-600">· {plural("achievements.players", players, { count: num(players) })}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
+                return { level, title: fillBadgeText(view.title, atLevel(badge, level), num), art: view.art, players: plural("achievements.players", players, { count: num(players) }) };
+              })
+              .reverse()}
+          >
+            {text}
+          </LevelShowcase>
+        ) : (
+          <>
+            {badge.art ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={badge.art} alt="" width={96} height={96} className="w-16 h-16 md:w-24 md:h-24 object-contain shrink-0" />
+            ) : (
+              <span aria-hidden="true" className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-gray-200" />
+            )}
+            <div className="min-w-0">{text}</div>
+          </>
+        )}
       </div>
       {/* The second row: the latest (closed at first), or for a hand-given badge a line as tall as its summary */}
       <div className="self-start bg-white px-4 md:px-6 pt-5 pb-4 md:pb-6 mb-6">
