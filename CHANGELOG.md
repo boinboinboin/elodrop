@@ -8,6 +8,17 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.25.0 (2026-11-05)
+
+- Players earn achievements ("bragder" in Norwegian). They show as small badges under the player's name; clicking one opens them all, with their art, what they're for and where they were earned:
+  - **Oooh baby a triple!**: won singles, doubles and mixed doubles at the same tournament.
+  - **National Champion**: won an event at the senior national championships (NM). One badge, with the years won ("2015–2019, 2021").
+  - **Breaking the barrier**: won the week's biggest upset.
+  - One given by hand, for the site's creator.
+- A new Achievements page (in the menu, and linked from a player's achievements) lists every achievement, how many players have earned it and what share of all rated players that is, and the latest to earn it.
+- Sections that fold open (the tables by season, "show all", the explanations) now slide open and closed smoothly instead of jumping, in Chrome and Edge (other browsers open them at once as before, or fade them in). Not with reduced motion.
+- Achievements cover every result since 2013. Their titles, descriptions and art are edited in the Studio (Badges), in Norwegian and English, and new ones given by hand need no change to the site.
+
 ## v1.24.11 (2026-11-05)
 
 - Pages show their content straight away instead of a loading text first. Most pages used to paint "Laster …" and swap the content in a moment later, which delayed it on phones and made the footer jump. This covers the rankings, Eliteserien, the tournaments, players, clubs, team matches, upsets and the front page's cards. On a slow phone the content now shows about 0.7 seconds sooner.

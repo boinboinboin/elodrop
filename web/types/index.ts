@@ -149,8 +149,49 @@ export interface Player {
   /** The closest rivals in singles and in doubles (men's, women's and mixed together; missing in older exports) */
   singlesRivals?: Rival[];
   doublesRivals?: Rival[];
+  /** The badges they have earned, newest first (pipeline/achievements.mjs; missing in older exports) */
+  achievements?: Achievement[];
   /** In page order: the player's own gender's disciplines first */
   pools: Partial<Record<Pool, PlayerPool>>;
+}
+
+/** A badge a player earned (pipeline/achievements.mjs): `badge` is the rule's key, matched to the badge in Sanity */
+export interface Achievement {
+  badge: string;
+  /** The day it was earned: a tournament's last day, or the upset's day */
+  date: string;
+  /** The tournament (badmintonportalen id and name) */
+  tournamentId?: number | null;
+  tournament?: string;
+  /** The events won (triple, national champion) */
+  events?: { className: string; pool: Pool }[];
+  /** A national championship's year */
+  year?: number;
+  /** The upset's week (its Monday), discipline, event ("Bygdø Høsttreff 2026 (SEN B)") and the winners' chance before it */
+  week?: string;
+  pool?: Pool;
+  event?: string;
+  winChance?: number;
+}
+
+/** A badge's text and art from Sanity (data/sanity.ts getBadges), in the page's language */
+export interface Badge {
+  id: string;
+  /** The pipeline's rule that gives it (Achievement.badge); null: given by hand to `players` */
+  key: string | null;
+  title: string;
+  description: string | null;
+  /** How it's earned in general, for the badges page (null: use the description) */
+  about: string | null;
+  art: string | null;
+  players: number[];
+}
+
+/** The badges page's numbers (achievements.json): per rule's key, how many players have earned it, out of `players` */
+export interface AchievementStats {
+  /** Every player with a rating */
+  players: number;
+  badges: Record<string, { players: number; awards: number; latest: (Achievement & { id: number; name: string; club: string | null })[] }>;
 }
 
 export interface ClubTopPlayer {

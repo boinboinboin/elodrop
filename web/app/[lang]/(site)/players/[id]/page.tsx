@@ -1,4 +1,4 @@
-// One player: club, rating and ranking history in every discipline (with tables by season), their
+// One player: club, their badges, rating and ranking history in every discipline (with tables by season), their
 // biggest rivals (over all disciplines, in singles and in doubles), and per discipline their rating,
 // rank, peak, matches, rating history, match list and highlights (biggest wins and losses, rating
 // gains and drops).
@@ -9,6 +9,7 @@ import { ArrowRight } from "@/components/SVG";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import Achievements from "@/components/players/Achievements";
 import MatchTable from "@/components/players/MatchTable";
 import SeasonTable from "@/components/players/SeasonTable";
 import { WeekChange } from "@/components/rankings/RankMovement";
@@ -24,7 +25,7 @@ import { TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
-import { getClubMap } from "@/data/sanity";
+import { getBadges, getClubMap } from "@/data/sanity";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
@@ -75,7 +76,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   const { t, href } = i18n;
   const id = parseId((await params).id);
   if (id === null) notFound();
-  const [player, clubs, meta] = await Promise.all([getPlayer(id), getClubMap(), getMeta()]);
+  const [player, clubs, meta, badges] = await Promise.all([getPlayer(id), getClubMap(), getMeta(), getBadges(i18n.lang)]);
   if (!player) notFound();
   const club = player.club ? clubs[player.club] : null;
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
@@ -112,6 +113,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           )}
           <ShareButtons path={playerHref(player.id)} image={`${playerHref(player.id)}/preview.png`} title={player.name} kind="player" />
         </div>
+        <Achievements player={player} badges={badges} links={links} />
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>

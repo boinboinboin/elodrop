@@ -26,6 +26,13 @@
     "scoreWithDraws": "{wins}–{losses}–{draws}",
     "other": "{matches}, {score}, margin {margin} · <link>head to head</link>"
   },
+  "achievements": {
+    "title": "Achievements",
+    "more": "{count} more",
+    "winChance": "won with a {chance} chance",
+    "all": "All achievements",
+    "close": "Close the achievements"
+  },
   "history": {
     "title": "History",
     "rating": "Rating",

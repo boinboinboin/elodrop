@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "title": "Achievements"
+  },
+  "title": "Achievements",
+  "intro": "Players earn achievements for what they have done on court: winning three disciplines at one tournament, national titles and the week's biggest upsets. Every result since 2013 counts.",
+  "players": {
+    "one": "{count} player",
+    "other": "{count} players"
+  },
+  "share": "{share} of all {total} rated players",
+  "times": {
+    "one": "earned once",
+    "other": "earned {count} times"
+  },
+  "latest": "Latest to earn it",
+  "handGiven": "Given by hand",
+  "none": "No achievements yet."
+}

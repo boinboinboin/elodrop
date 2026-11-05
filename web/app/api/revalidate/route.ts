@@ -7,6 +7,7 @@
 //   document, so only the pages using it refresh (the tags in data/sanityTags.ts, used by data/sanity.ts):
 //     a tournament                     → its own pages
 //     a hall, or only a club's home halls (the Studio's Publish adds the hall there) → the pages with halls
+//     a badge                          → the player pages
 //     anything else about a club (name, slug, logo) → nothing now: the club list is on nearly every page, so
 //       it waits for the next full nightly run, which refreshes every page anyway and the club list with it
 //       (.github/workflows/pipeline.yml, ?tag=sanity:clubs), instead of writing every page again
@@ -16,7 +17,7 @@
 //   Drafts are skipped (the webhook should leave them out anyway: the Studio saves one every few seconds).
 //   Without a body, ?tag=sanity refreshes all of Sanity's content.
 import { revalidateTag } from "next/cache";
-import { SANITY_TAG, TOURNAMENTS_TAG, tournamentTag, VENUES_TAG } from "@/data/sanityTags";
+import { BADGES_TAG, SANITY_TAG, TOURNAMENTS_TAG, tournamentTag, VENUES_TAG } from "@/data/sanityTags";
 
 const isTag = (tag: string) => tag === "elo-data" || tag === SANITY_TAG || /^(elo-data|sanity):[a-z0-9:-]+$/.test(tag);
 
@@ -36,6 +37,8 @@ function sanityTags(body: SanityChange | null): string[] | null {
       return [typeof body.cup2000Id === "number" ? tournamentTag(body.cup2000Id) : TOURNAMENTS_TAG];
     case "venue":
       return [VENUES_TAG];
+    case "badge":
+      return [BADGES_TAG];
     case "club":
       // Only false when the projection says so: a whole document (no projection) waits for the night too
       return body.clubChanged === false ? [VENUES_TAG] : [];

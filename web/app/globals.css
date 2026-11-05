@@ -173,6 +173,29 @@ body {
   @apply bg-stone-100 text-gray-900 antialiased;
 }
 
+/* Disclosures (<details>, components/ui/Disclosure.tsx) open and close by sliding their content's
+   height and fading it, instead of jumping. Sliding to the content's height needs interpolate-size
+   (Chrome, Edge): without it they only fade; without ::details-content, or with reduced motion,
+   they open at once as before. */
+@media (prefers-reduced-motion: no-preference) {
+  details {
+    interpolate-size: allow-keywords;
+  }
+  details::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow-y: clip;
+    transition:
+      block-size 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      content-visibility 0.3s allow-discrete;
+  }
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
 /* The header logo (components/layout/Logo.tsx), on a page load: the line draws itself (its path has
    pathLength 1 and stroke-dasharray 1), then the cork drops in at the dip */
 @theme {

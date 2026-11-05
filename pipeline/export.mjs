@@ -17,9 +17,12 @@
 //   players/<id>.json             one player (with their birth year): per pool their rating, weekly history (with the
 //                                 number of ranked players each week) and match log, with only the
 //                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`),
-//                                 and their rivals over all disciplines, in singles and in doubles
+//                                 and their rivals over all disciplines, in singles and in doubles, and
+//                                 the badges they have earned (achievements.mjs)
 //   matches/<id>.json             one player's every match per pool, newest first (for "show all"
 //                                 and head to head)
+//   achievements.json             per badge: how many players have earned it (out of `players`, everyone with a
+//                                 rating), how many times, and the newest awards (achievements.mjs)
 //   search-index.json             [id, name, club, ranked, matches, lastPlayed] for the name search (and the sitemap's dates)
 //   upsets/index.json             years, and the newest week's upsets
 //   upsets/<year>.json            that year's weeks and their biggest upsets
@@ -34,6 +37,7 @@
 //   manifest.json                 every file with its size and hash (written last)
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { achievements, achievementStats } from "./achievements.mjs";
 import { rankedIn } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -114,6 +118,8 @@ const optional = (file) => (existsSync(`${DATA}/${file}`) ? read(file) : {});
 const birthYears = optional("birth-years.json");
 // A player page shows this many matches per pool; the rest are loaded when asked for
 const RECENT_MATCHES = 20;
+// The badges each player has earned, newest first (achievements.mjs)
+const awards = achievements();
 for (const [id, entries] of byPlayer) {
   const history = optional(`history/${id}.json`);
   const matches = optional(`matches/${id}.json`);
@@ -128,9 +134,14 @@ for (const [id, entries] of byPlayer) {
   }
   const first = Object.values(pools)[0];
   // No generatedAt here: a file whose content hasn't changed isn't uploaded again (R2 counts writes)
-  write(`players/${id}.json`, { id, name: first.name, club: first.club, birthYear: birthYears[id] ?? null, rivals: matches.rivals ?? [], singlesRivals: matches.singlesRivals ?? [], doublesRivals: matches.doublesRivals ?? [], pools });
+  write(`players/${id}.json`, { id, name: first.name, club: first.club, birthYear: birthYears[id] ?? null, rivals: matches.rivals ?? [], singlesRivals: matches.singlesRivals ?? [], doublesRivals: matches.doublesRivals ?? [], achievements: awards.get(id) ?? [], pools });
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
+
+// The achievements page: per badge how many players have earned it, out of every player with a rating, and the newest
+// awards
+const named = new Map([...byPlayer].map(([id, entries]) => [id, { name: Object.values(entries)[0].name, club: Object.values(entries)[0].club }]));
+write("achievements.json", achievementStats(awards, named));
 
 // Name search: every player once, with whether they are ranked anywhere, their matches and the day
 // of their last match (for the sitemap: when their page last changed with a result)

@@ -7,7 +7,7 @@ export default function Disclosure({ summary, className = "", children }: { summ
   return (
     <details className={`group ${className}`}>
       <summary className="inline-flex items-center gap-1 cursor-pointer text-gray-700 hover:text-black list-none [&::-webkit-details-marker]:hidden">
-        <ChevronRight className="transition-transform duration-200 group-open:rotate-90" />
+        <ChevronRight className="transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-open:rotate-90" />
         {summary}
       </summary>
       {children}

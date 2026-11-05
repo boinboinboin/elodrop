@@ -1,5 +1,5 @@
 // The Studio's lists: the tournaments first (the ones needing a look, the ones not approved yet, and
-// all of them), then the clubs and the halls.
+// all of them), then the clubs and the halls, then the players' badges.
 import type { StructureResolver } from "sanity/structure";
 import { NEEDS_ATTENTION } from "./schemas/tournament";
 
@@ -24,4 +24,6 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
       S.documentTypeListItem("club").title("Clubs"),
       S.documentTypeListItem("venue").title("Venues"),
+      S.divider(),
+      S.documentTypeListItem("badge").title("Badges"),
     ]);

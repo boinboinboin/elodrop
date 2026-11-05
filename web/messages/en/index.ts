@@ -1,4 +1,5 @@
 // English: one file per area of the site (messages/i18n.ts reads them)
+import achievements from "./achievements.json";
 import clubs from "./clubs.json";
 import common from "./common.json";
 import eliteserien from "./eliteserien.json";
@@ -14,4 +15,4 @@ import tournaments from "./tournaments.json";
 import upsets from "./upsets.json";
 import whatsNew from "./whats-new.json";
 
-export const en = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, howItWorks, whatsNew, seo };
+export const en = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, achievements, howItWorks, whatsNew, seo };

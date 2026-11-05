@@ -10,8 +10,9 @@
 // clubs' tag is left for the full nightly run (which refreshes every page anyway), not the webhook.
 import { cacheLife, cacheTag } from "next/cache";
 import clubsJson from "@/content/clubs.json";
-import type { ClubEntry, Venue } from "@/types";
-import { CLUBS_TAG, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG } from "./sanityTags";
+import type { Language } from "@/messages/i18n";
+import type { Badge, ClubEntry, Venue } from "@/types";
+import { BADGES_TAG, CLUBS_TAG, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG } from "./sanityTags";
 
 const fromJson = (): ClubEntry[] => (clubsJson as ClubEntry[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null }));
 
@@ -125,6 +126,31 @@ export async function getApprovedTournament(cup2000Id: number): Promise<Tourname
     `*[_type == "tournament" && cup2000Id == ${cup2000Id} && approved == true][0]{ "organiser": organiser->title, "venue": venue->{ ${VENUE_FIELDS} } }`,
   );
   return result ? { organiser: result.organiser ?? null, venue: result.venue ?? null } : null;
+}
+
+/**
+ * The players' badges (sanity/schemas/badge.ts): each with its rule's key (pipeline/achievements.mjs; null: given by
+ * hand to `players`), its text in the page's language (else the other's) and its art, cropped as set in the Studio
+ * (none without Sanity). Only the player pages read them
+ */
+export async function getBadges(lang: Language): Promise<Badge[]> {
+  "use cache";
+  cacheTag(SANITY_TAG, BADGES_TAG);
+  cacheLife("days");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  if (!projectId) return [];
+  const result = await query<{ id: string; key: string | null; title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null }[]>(
+    projectId,
+    `*[_type == "badge" && !(_id in path("drafts.**"))] | order(title asc) { "id": _id, key, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": select(defined(art.asset) => { "url": art.asset->url, "width": art.asset->metadata.dimensions.width, "height": art.asset->metadata.dimensions.height, "crop": art.crop }) }`,
+  );
+  const en = lang === "en";
+  return result.flatMap((b) => {
+    const title = (en ? b.titleEn || b.title : b.title || b.titleEn) ?? null;
+    if (!title) return [];
+    const description = (en ? b.descriptionEn || b.description : b.description || b.descriptionEn) ?? null;
+    const about = (en ? b.aboutEn || b.about : b.about || b.aboutEn) ?? null;
+    return [{ id: b.id, key: b.key ?? null, title, description, about, art: logoUrl(b.art), players: b.players ?? [] }];
+  });
 }
 
 /** Club entries keyed by short name (the name the ratings use) */

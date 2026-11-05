@@ -26,6 +26,13 @@
     "scoreWithDraws": "{wins}–{losses}–{draws}",
     "other": "{matches}, {score}, margin {margin} · <link>H2H</link>"
   },
+  "achievements": {
+    "title": "Bragder",
+    "more": "{count} til",
+    "winChance": "vant med {chance} sjanse",
+    "all": "Alle bragder",
+    "close": "Lukk bragdene"
+  },
   "history": {
     "title": "Historikk",
     "rating": "Rating",

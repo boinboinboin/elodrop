@@ -1,6 +1,7 @@
 // Norsk (bokmål): the same files as messages/en, translated. Typed as the English messages, so a
 // missing or extra key doesn't build.
 import type { Messages } from "../i18n";
+import achievements from "./achievements.json";
 import clubs from "./clubs.json";
 import common from "./common.json";
 import eliteserien from "./eliteserien.json";
@@ -16,4 +17,4 @@ import tournaments from "./tournaments.json";
 import upsets from "./upsets.json";
 import whatsNew from "./whats-new.json";
 
-export const nb: Messages = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, howItWorks, whatsNew, seo };
+export const nb: Messages = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, achievements, howItWorks, whatsNew, seo };

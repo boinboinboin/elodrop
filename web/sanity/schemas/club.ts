@@ -4,6 +4,7 @@
 // structured data gives (not team matches': a team match is played where its weekend's teams gather,
 // whichever is the home team, so only its own hall counts).
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { badge } from "./badge";
 import { tidySlug, tidyText } from "./spacing";
 import { tournament } from "./tournament";
 import { venue } from "./venue";
@@ -35,4 +36,4 @@ export const club = defineType({
   preview: { select: { title: "title", subtitle: "fullName", media: "logo" } },
 });
 
-export const schemaTypes = [tournament, club, venue];
+export const schemaTypes = [tournament, club, venue, badge];

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "title": "Bragder"
+  },
+  "title": "Bragder",
+  "intro": "Spillere får bragder for det de har gjort på banen: tre øvelser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2013 teller.",
+  "players": {
+    "one": "{count} spiller",
+    "other": "{count} spillere"
+  },
+  "share": "{share} av alle {total} spillere med rating",
+  "times": {
+    "one": "tatt én gang",
+    "other": "tatt {count} ganger"
+  },
+  "latest": "Sist tatt av",
+  "handGiven": "Gitt for hånd",
+  "none": "Ingen bragder ennå."
+}

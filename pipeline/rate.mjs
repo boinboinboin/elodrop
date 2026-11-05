@@ -236,6 +236,29 @@ function correct(m, source) {
   return { ...m, score: sets.map((x) => x.join("/")).join(","), walkover: false, winner: won1 > won2 ? 1 : won2 > won1 ? 2 : null };
 }
 
+// A badmintonportalen tournament's matches with corrections.txt applied (removed matches left out),
+// keyed as toGame keys them: for other scripts (achievements.mjs, the event winners).
+let correctionsRead = false;
+export function correctedMatches(t) {
+  if (!correctionsRead) {
+    corrections = readCorrections();
+    correctionsRead = true;
+  }
+  const source = `T${t.tournamentId}`;
+  const seen = new Map();
+  return (t.matches ?? []).flatMap((m) => {
+    let key = source;
+    if (m.side1.length && m.side2.length) {
+      const pair = canonical(source, sideIds(m.side1), sideIds(m.side2));
+      const n = (seen.get(pair) ?? 0) + 1;
+      seen.set(pair, n);
+      if (n > 1) key = `${source}.${n}`;
+    }
+    const corrected = correct(m, key);
+    return corrected ? [corrected] : [];
+  });
+}
+
 // Scores to review: impossible for the season's set formats, or extreme blowouts (at most 1 point
 // per set for the loser), which are sometimes no-shows entered as a score.
 const suspicious = [];

@@ -29,6 +29,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   // About the site, in the menu at every width (and the footer), the current version beside What's new
   const ABOUT = [
     { href: "/how-it-works", label: t("layout.nav.howItWorks") },
+    { href: "/achievements", label: t("layout.nav.achievements") },
     { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
   ];
   return (

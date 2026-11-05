@@ -11,3 +11,5 @@ export const VENUES_TAG = "sanity:venues";
 export const TOURNAMENTS_TAG = "sanity:tournaments";
 /** One tournament checked in the Studio, by its Cup2000 id: its own pages */
 export const tournamentTag = (cup2000Id: number) => `${TOURNAMENTS_TAG}:${cup2000Id}`;
+/** The players' badges (title, description, art, the players given one by hand): the player pages */
+export const BADGES_TAG = "sanity:badges";

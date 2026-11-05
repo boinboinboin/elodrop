@@ -33,6 +33,7 @@
     "headToHead": "Any two Norwegian badminton players head to head: their matches against each other and together, and their chances if they met now.",
     "doublesHeadToHead": "Any two Norwegian badminton pairs head to head: their chances against each other now, from the players' Elo ratings.",
     "whatsNew": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes.",
+    "achievements": "The achievements players earn on elodrop, what each is for and how many players have it: triple winners, national champions and the week's biggest upsets.",
     "teamMatchesDivision": "{division} {season}: every team match, round by round, and a power ranking of the teams by the players who played for them.",
     "headToHeadPair": "{a} and {b} head to head in badminton: their matches against each other and together, and their chances if they met now.",
     "doublesHeadToHeadPair": "The pairs {a} and {b} head to head in badminton: their matches against each other and their chances now, from the players' Elo ratings."
