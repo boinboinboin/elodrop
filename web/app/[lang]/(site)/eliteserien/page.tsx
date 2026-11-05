@@ -1,13 +1,11 @@
 // Eliteserien team strengths (pipeline/eliteserien.mjs): the predicted table, head-to-head chances
 // between the teams, and each team's strongest lineup and players.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getEliteserien } from "@/data/eliteserien";
@@ -33,16 +31,8 @@ const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-z0-9æ�
 /** A season in review's URL part as its name: "2024-25" → "2024/25" */
 const seasonName = (season: string) => season.replace("-", "/");
 
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
 export default async function EliteserienPage() {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("eliteserien.loading")} section />}>
-      <Content />
-    </Suspense>
-  );
-}
-
-async function Content() {
   const { t, rich, blocks, num, pct, chance } = await getI18n();
   const [data, clubs, meta] = await Promise.all([getEliteserien(), getClubMap(), getMeta()]);
   const teams: Loose[] = data?.teams ?? [];

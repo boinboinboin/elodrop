@@ -8,6 +8,16 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.24.11 (2026-11-05)
+
+- Pages show their content straight away instead of a loading text first. Most pages used to paint "Laster …" and swap the content in a moment later, which delayed it on phones and made the footer jump. This covers the rankings, Eliteserien, the tournaments, players, clubs, team matches, upsets and the front page's cards. On a slow phone the content now shows about 0.7 seconds sooner.
+- An address that doesn't exist (a player, club or ranking list) now answers "not found" (404) to search engines too, not just on the page.
+- The page's styles come with the page itself, so it can paint without waiting for a separate stylesheet.
+- The strongest clubs lists are much lighter to load: the table's rows are sent once, as data, instead of twice. Screen readers no longer read each club's name twice (its logo's and its own).
+- The text no longer jumps when the site's fonts arrive. A page shows its fonts from the start, or, on the odd first visit where they're late, keeps the fallback font until the next page.
+- Links and buttons that were too small or too close to tap reliably have more room: the leaders on the front page, the dots under the upsets carousel, and the players' clubs in the upset cards and the Eliteserien season reviews.
+- Team match pages tell search engines when the match ends (the event data's end date, which Google asks of sports events): 2 hours after the start from the 2026/27 season, when sets went to 15 points, and 3 hours after it in earlier seasons, when they went to 21. A match whose start time isn't known ends the day it's played.
+
 ## v1.24.10 (2026-11-04)
 
 - On the team match pages, the second dropdown now picks a division, listed under its region (the national ones first), instead of a weekend. Each region's heading stays at the top of the list while you scroll through its divisions.

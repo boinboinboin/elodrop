@@ -2,13 +2,12 @@
 // team strengths before each round against what actually happened.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW } from "@/components/ui/styles";
 import { getEliteserienReview } from "@/data/eliteserien";
@@ -40,13 +39,9 @@ const DISCIPLINE_POOLS: Record<string, Pool> = { MensSingles: "men", WomensSingl
 const seasonName = (season: string) => season.replace("-", "/");
 const strong = (text: ReactNode) => <strong className="font-semibold">{text}</strong>;
 
-export default async function ReviewPage(props: PageProps<"/[lang]/eliteserien/[season]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("eliteserien.review.loading")} section />}>
-      <Content params={props.params} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function ReviewPage(props: PageProps<"/[lang]/eliteserien/[season]">) {
+  return <Content params={props.params} />;
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]">, "params">) {
@@ -272,7 +267,8 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                     <tr key={p.id} className={ROW}>
                       <td className="py-2 pr-4">
                         <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>
-                        <span className="block text-sm text-gray-600"><Team name={p.team} clubs={clubs} size={4} /></span>
+                        {/* A little room between the player's link and the club's, to tap either */}
+                        <span className="block mt-0.5 text-sm text-gray-600"><Team name={p.team} clubs={clubs} size={4} /></span>
                       </td>
                       <td className="py-2 pr-4 text-right tabular-nums">{t("eliteserien.review.players.wonOf", { won: p.won, games: p.games })}</td>
                       <td className="py-2 pr-4 text-right tabular-nums">{num(p.expected, 1)}</td>

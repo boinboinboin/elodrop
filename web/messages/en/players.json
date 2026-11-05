@@ -3,7 +3,6 @@
     "title": "Player",
     "page": "{name}: badminton player"
   },
-  "loading": "Loading player…",
   "born": "Born {year}",
   "compare": "Compare head to head with another player",
   "disciplines": "Disciplines",

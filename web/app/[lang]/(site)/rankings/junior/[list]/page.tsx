@@ -1,8 +1,6 @@
 // A junior ranking (U19) other than men's singles (utils/rankings.ts): /rankings/junior/women, /rankings/junior/mixedDoubles-women, ...
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { JuniorRankingsFor } from "@/components/rankings/Rankings";
-import Loading from "@/components/ui/Loading";
 import { getI18n } from "@/messages/server";
 import { pageMetadata } from "@/utils/metadata";
 import { juniorRankingHref, RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
@@ -18,11 +16,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/rankings/j
   return pageMetadata(i18n, { title: t("seo.juniorListTitle", { list: name }), description: t("seo.descriptions.junior", { list: name }), path: juniorRankingHref(list.pool, list.gender) });
 }
 
-export default async function JuniorRankingPage(props: PageProps<"/[lang]/rankings/junior/[list]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("rankings.loading")} />}>
-      <JuniorRankingsFor params={props.params} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function JuniorRankingPage(props: PageProps<"/[lang]/rankings/junior/[list]">) {
+  return <JuniorRankingsFor params={props.params} />;
 }

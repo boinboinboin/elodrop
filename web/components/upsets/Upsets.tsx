@@ -3,12 +3,10 @@
 // (app/(site)/upsets/[period]); each is a static page.
 import { getISOWeek, parseISO } from "date-fns";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PlayerLine from "@/components/players/PlayerLine";
 import Carousel from "@/components/ui/Carousel";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import { WeekArrows, YearLinks } from "@/components/ui/PeriodNav";
 import Section from "@/components/ui/Section";
 import { ROW } from "@/components/ui/styles";
@@ -32,9 +30,8 @@ export default async function Upsets({ period }: { period: Promise<string | null
         <p className="text-2xl max-w-3xl mt-2">{t("upsets.intro")}</p>
         <div className="max-w-3xl mt-4 space-y-3 text-gray-700">{blocks("upsets.explanation")}</div>
       </Section>
-      <Suspense fallback={<Loading label={t("upsets.loading")} />}>
-        <Content period={period} />
-      </Suspense>
+      {/* No Suspense around the content: it is then part of the first paint, not a loading text swapped for it */}
+      <Content period={period} />
     </>
   );
 }

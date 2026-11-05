@@ -1,23 +1,18 @@
 // Strongest clubs in one pool, or combined over all five: the average rating of each club's best
 // ranked players (pipeline/rate.mjs). Each list is its own static page: /clubs (combined) and
-// /clubs/strongest/<pool>. The table can be sorted by ranked players and by the strength (combined: score)
-// gained or lost since last week (components/ui/SortableTable.tsx). In one discipline, the clubs and the players
-// counted link to their pages on that discipline.
-import { ClubLogo } from "@/components/clubs/Team";
+// /clubs/strongest/<pool>. The table (components/clubs/ClubTable.tsx) can be sorted by ranked players and by the
+// strength (combined: score) gained or lost since last week. In one discipline, the clubs and the players counted
+// link to their pages on that discipline.
+import ClubTable, { type ClubRow, type TopPlayer } from "@/components/clubs/ClubTable";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
-import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
-import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
-import SortableTable from "@/components/ui/SortableTable";
-import { ROW } from "@/components/ui/styles";
 import { getClubsFile } from "@/data/clubs";
 import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { CombinedClubStanding, ClubStanding, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
-import { clubHref, playerHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 
@@ -25,10 +20,8 @@ const TABS: (Pool | "combined")[] = ["combined", ...POOL_KEYS];
 
 export default async function StrongestClubs({ pool }: { pool: Pool | "combined" }) {
   const i18n = await getI18n();
-  const { pools, signed, t } = i18n;
+  const { pools, t } = i18n;
   const combined = pool === "combined";
-  // The discipline the club and player links open on (none for the combined list)
-  const tab = pool === "combined" ? undefined : pool;
   const [file, entries] = await Promise.all([getClubsFile(), getClubMap()]);
   const clubs = (file?.clubs[pool] ?? []) as (ClubStanding | CombinedClubStanding)[];
   const rule = combined ? null : (file?.clubStrength[pool] ?? null);
@@ -53,81 +46,15 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
         ) : (
           <div className="bg-white overflow-x-clip">
             {/* clip, not auto: a scrolling box would keep the sticky header from sticking to the page (narrow screens hide the wide columns) */}
-            <SortableTable
-              head={
-                <>
-                  <th scope="col" className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 font-normal text-right w-10 sm:w-16">{t("common.table.rank")}</th>
-                  <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"><span className="sr-only">{t("common.table.sinceLastWeek")}</span></th>
-                  <th scope="col" className="py-3 px-1.5 sm:px-4 font-normal">{t("common.table.club")}</th>
-                  <th scope="col" className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 font-normal text-right">{t(combined ? "clubs.strongest.score" : "clubs.strongest.strength")}</th>
-                </>
-              }
-              changeClassName="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14"
-              headAfter={
-                combined ? (
-                  POOL_KEYS.map((key) => (
-                    <th key={key} scope="col" className="py-3 px-4 font-normal text-right hidden lg:table-cell">{pools[key]}</th>
-                  ))
-                ) : (
-                  <th scope="col" className="py-3 px-4 font-normal hidden md:table-cell">{t(rule?.pairs ? "clubs.strongest.bestPairs" : "clubs.strongest.bestPlayers")}</th>
-                )
-              }
-              sortLabel={t("clubs.strongest.rankedPlayers")}
-              sortTitle={t("clubs.strongest.sortByRankedPlayers")}
-              sortClassName="py-3 px-4 font-normal text-right hidden sm:table-cell"
-              rows={clubs.map((club) => {
-                  const entry = entries[club.club];
-                  return {
-                    key: club.club,
-                    value: club.players,
-                    change: "pools" in club ? club.scoreChange : club.strengthChange,
-                    row: (
-                      <tr key={club.club} className={`${ROW} hover:bg-gray-50 align-top`}>
-                      <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{club.rank}</td>
-                      <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={club.rank} previous={club.previousRank} /></td>
-                      <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                        <span className="flex items-center gap-3">
-                          <ClubLogo name={club.club} clubs={entries} size={8} />
-                          {entry ? <Link href={clubHref(entry.slug, tab)} className="hover:text-blue-600">{club.club}</Link> : club.club}
-                        </span>
-                      </td>
-                      <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">
-                        {"score" in club ? signed(club.score, 2, "") : Math.round(club.strength)}
-                      </td>
-                      <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap">
-                        {"pools" in club ? <WeekChange change={club.scoreChange} what="score" /> : <WeekChange change={club.strengthChange} what="strength" />}
-                      </td>
-                      {"pools" in club ? (
-                        POOL_KEYS.map((key) => {
-                          const c = club.pools[key];
-                          return (
-                            <td key={key} className="py-3 px-4 text-right tabular-nums hidden lg:table-cell">
-                              {c && Math.round(c.strength)}
-                              {c && <Link href={strongestClubsHref(key)} className="block text-sm text-gray-600 hover:text-blue-600">{t("common.rankValue", { rank: c.rank })}</Link>}
-                            </td>
-                          );
-                        })
-                      ) : (
-                        <td className="py-3 px-4 hidden md:table-cell">
-                          {/* The players or pairs counted, best first */}
-                          {club.top.map((slot, i) => (
-                            <span key={i} className="block">
-                              {slot.map((p, j) => (
-                                <span key={p.id}>
-                                  <Link href={playerHref(p.id, tab)} className="hover:text-blue-600">{p.name}</Link>{" "}
-                                  <span className="text-sm text-gray-500 tabular-nums">{Math.round(p.rating)}</span>
-                                  {j < slot.length - 1 && <span className="text-gray-500"> + </span>}
-                                </span>
-                              ))}
-                            </span>
-                          ))}
-                        </td>
-                      )}
-                      <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{club.players}</td>
-                    </tr>
-                  ),
-                  };
-              })}
+            <ClubTable
+              pool={pool}
+              pairs={!!rule?.pairs}
+              rows={clubs.map((club): ClubRow =>
+                "pools" in club
+                  ? [club.club, club.rank, club.previousRank, club.score, club.scoreChange, club.players, POOL_KEYS.map((key) => (club.pools[key] ? [Math.round(club.pools[key].strength), club.pools[key].rank] : null))]
+                  : [club.club, club.rank, club.previousRank, Math.round(club.strength), club.strengthChange, club.players, club.top.map((slot) => slot.map((p): TopPlayer => [p.id, p.name, Math.round(p.rating)]))],
+              )}
+              clubs={Object.fromEntries(clubs.filter((club) => entries[club.club]).map((club) => [club.club, [entries[club.club].slug, entries[club.club].logo ?? null]]))}
             />
           </div>
         )}

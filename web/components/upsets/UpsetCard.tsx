@@ -33,8 +33,9 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
                     {" "}{signed(p.change, 1)}
                   </span>
                 )}
+                {/* A little room above and below the club's link: the player links next to it stay far enough apart to tap */}
                 {p.club && (
-                  <span className="block text-sm text-gray-600">
+                  <span className="block pt-0.5 pb-1 text-sm text-gray-600">
                     <Team name={p.club} clubs={clubs} size={4} pool={upset.pool} />
                   </span>
                 )}

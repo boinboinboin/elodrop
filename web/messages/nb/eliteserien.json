@@ -1,6 +1,5 @@
 {
   "title": "Eliteserien",
-  "loading": "Laster Eliteserien…",
   "heading": "Eliteserien {season}",
   "intro": "Hvor sterke de åtte lagene er, ut fra spillernes ratinger.",
   "earlierSeasons": "Tidligere sesonger oppsummert, predikert mot faktiske resultater:",
@@ -46,7 +45,6 @@
   },
   "review": {
     "title": "Eliteserien {season} oppsummert",
-    "loading": "Laster sesongen…",
     "seasons": "Sesonger",
     "intro": "Lagstyrkene før hver runde mot det som faktisk skjedde.",
     "howItWorks": "Før hver runde regnes hvert lags beste oppstilling ut som for denne sesongen, med spillernes ratinger fra uken før og den offisielle rankingen fra dagen før. Hver lagkamp får så tre resultater:\n\n- <strong>Potensial:</strong> det forventede resultatet hvis begge lagene stiller med sin beste oppstilling.\n- <strong>Forventet med oppstillingene som faktisk ble brukt:</strong> fra hver kamps seierssjanse rett før den.\n- <strong>Faktisk resultat.</strong>\n\nWalkover og kamper som ikke ble spilt, er utelatt, unntatt i sluttspillet (se under).",
@@ -121,7 +119,6 @@
   "tenMatches": {
     "title": "Hva om en lagkamp hadde 10 kamper?",
     "heading": "Hva om en lagkamp hadde 10 kamper i stedet for 8?",
-    "loading": "Laster 10-kampertesten…",
     "intro": "Eliteserien {season} med en 3. herresingle og en 2. herredouble i hver lagkamp: de samme lagene, spillerne og reglene, mot dagens 8 kamper.",
     "disclaimer": {
       "title": "En test, ikke den ekte ligaen",

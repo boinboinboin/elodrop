@@ -38,10 +38,11 @@ export async function RankingsGlimpse() {
       <ul>
         {leaders.map(({ list, player }) =>
           player ? (
-            <li key={rankingHref(list.pool, list.gender)} className={`${ROW} py-1.5 flex items-baseline justify-between gap-3`}>
+            <li key={rankingHref(list.pool, list.gender)} className={`${ROW} py-1 flex items-baseline justify-between gap-3`}>
+              {/* Two links on top of each other: each at least 24px tall, a size a finger can tap */}
               <span className="min-w-0">
-                <Link href={playerHref(player.id, list.pool)} className="font-semibold hover:text-blue-600">{player.name}</Link>
-                <Link href={rankingHref(list.pool, list.gender)} className="block text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
+                <Link href={playerHref(player.id, list.pool)} className="inline-block font-semibold hover:text-blue-600">{player.name}</Link>
+                <Link href={rankingHref(list.pool, list.gender)} className="block w-fit py-0.5 text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
               </span>
               <span className="text-xl font-semibold tabular-nums">{Math.round(player.rating)}</span>
             </li>

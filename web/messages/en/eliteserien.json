@@ -1,6 +1,5 @@
 {
   "title": "Eliteserien",
-  "loading": "Loading Eliteserien…",
   "heading": "Eliteserien {season}",
   "intro": "How strong the eight teams are, from their players' ratings.",
   "earlierSeasons": "Earlier seasons in review, predicted against actual results:",
@@ -46,7 +45,6 @@
   },
   "review": {
     "title": "Eliteserien {season} in review",
-    "loading": "Loading season…",
     "seasons": "Seasons",
     "intro": "The team strengths before each round against what actually happened.",
     "howItWorks": "Before each round, every team's best lineup is worked out as for this season, with the players' ratings from the week before and the official ranking from the day before. Each tie then has three results:\n\n- <strong>Potential:</strong> the expected result if both teams field their best lineup.\n- <strong>Expected with the lineups actually played:</strong> from each match's win chance right before it.\n- <strong>Actual result.</strong>\n\nWalkovers and matches not played are left out, except in the play-offs (see below).",
@@ -121,7 +119,6 @@
   "tenMatches": {
     "title": "What if a tie were 10 matches?",
     "heading": "What if a tie were 10 matches instead of 8?",
-    "loading": "Loading the 10-match test…",
     "intro": "Eliteserien {season} with a 3rd men's singles and a 2nd men's doubles in every tie: the same teams, players and rules, against today's 8 matches.",
     "disclaimer": {
       "title": "A test, not the real league",

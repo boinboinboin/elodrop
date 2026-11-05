@@ -1,9 +1,7 @@
 // The junior rankings (U19), men's singles (the other lists are at /rankings/junior/<list>).
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { JuniorRankings } from "@/components/rankings/Rankings";
-import Loading from "@/components/ui/Loading";
 import { getI18n } from "@/messages/server";
 import { pageMetadata } from "@/utils/metadata";
 import { juniorRankingHref, RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
@@ -18,11 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function JuniorRankingsPage() {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("rankings.loading")} section />}>
-      <JuniorRankings list={RANKING_LISTS.men} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function JuniorRankingsPage() {
+  return <JuniorRankings list={RANKING_LISTS.men} />;
 }

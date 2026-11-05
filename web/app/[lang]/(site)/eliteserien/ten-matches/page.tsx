@@ -1,12 +1,10 @@
 // What if an Eliteserien tie were 10 matches (pipeline/eliteserien-ten-matches.mjs): this season's
 // teams with a 3rd men's singles and a 2nd men's doubles, against today's 8 matches.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getEliteserienTenMatches } from "@/data/eliteserien";
@@ -34,13 +32,9 @@ async function Change({ value, decimals = 1 }: { value: number; decimals?: numbe
   return <span className={value === 0 ? "text-gray-500" : toneClass(value)}>{signed(value, decimals)}</span>;
 }
 
-export default async function TenMatchesPage() {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("eliteserien.tenMatches.loading")} section />}>
-      <Content />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function TenMatchesPage() {
+  return <Content />;
 }
 
 async function Content() {

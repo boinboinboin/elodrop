@@ -3,7 +3,6 @@
     "title": "Spiller",
     "page": "{name}: badmintonspiller"
   },
-  "loading": "Laster spiller…",
   "born": "Født {year}",
   "compare": "Head to head mot en annen spiller",
   "disciplines": "Disipliner",

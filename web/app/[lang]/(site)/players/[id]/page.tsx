@@ -4,7 +4,7 @@
 // gains and drops).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { ArrowRight } from "@/components/SVG";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
@@ -16,7 +16,6 @@ import JsonLd from "@/components/seo/JsonLd";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import StatCard from "@/components/ui/StatCard";
@@ -66,13 +65,9 @@ function playerDescription({ t, num }: I18n, player: Player): string {
   return t("seo.descriptions.player", { name: player.name, club, ratings, since });
 }
 
-export default async function PlayerPage(props: PageProps<"/[lang]/players/[id]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("players.loading")} section />}>
-      <PlayerContent params={props.params} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function PlayerPage(props: PageProps<"/[lang]/players/[id]">) {
+  return <PlayerContent params={props.params} />;
 }
 
 async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">, "params">) {

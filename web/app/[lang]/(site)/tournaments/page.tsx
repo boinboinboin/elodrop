@@ -1,11 +1,9 @@
 // Tournaments with a published draw and draw luck (pipeline/upcoming.mjs): upcoming ones, played
 // ones by month, and how the predictions turned out over the season.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PredictionStats, { luckFit } from "@/components/tournaments/PredictionStats";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getTournamentsIndex } from "@/data/tournaments";
 import { getI18n } from "@/messages/server";
@@ -29,9 +27,8 @@ export default async function TournamentsPage() {
         <p className="text-2xl max-w-3xl mt-2">{t("tournaments.list.intro")}</p>
         <p className="max-w-3xl mt-4 text-gray-700">{t("tournaments.list.about")}</p>
       </Section>
-      <Suspense fallback={<Loading label={t("tournaments.list.loading")} />}>
-        <Content />
-      </Suspense>
+      {/* No Suspense around the list: it is then part of the first paint, not a loading text swapped for it */}
+      <Content />
     </>
   );
 }

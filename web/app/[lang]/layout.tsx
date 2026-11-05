@@ -12,16 +12,20 @@ import { THEME_SCRIPT } from "@/utils/theme";
 import "../globals.css";
 
 // Redaction (SIL Open Font License, app/fonts/redaction/OFL.txt) is self-hosted: it is newer than
-// next/font/google's font list. The files are Google Fonts' latin subset, which has æ, ø and å
+// next/font/google's font list. The files are Google Fonts' latin subset, which has æ, ø and å.
+// Both fonts load with font-display: optional: the text never changes font after the first paint (a swap
+// reflowed it and moved what's below, a layout shift). They're preloaded, so they're usually there in time; when
+// not, that page stays in the fallback font and the next one has them from the cache.
 const redaction = localFont({
   variable: "--font-redaction",
+  display: "optional",
   src: [
     { path: "../fonts/redaction/Redaction-Regular.woff2", weight: "400", style: "normal" },
     { path: "../fonts/redaction/Redaction-Italic.woff2", weight: "400", style: "italic" },
     { path: "../fonts/redaction/Redaction-Bold.woff2", weight: "700", style: "normal" },
   ],
 });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "optional" });
 
 // Both languages are built: Norwegian ("nb", served at the site's root by the rewrites in
 // next.config.ts) and English ("/en")

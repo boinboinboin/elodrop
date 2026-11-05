@@ -4,7 +4,7 @@
 // is a static page, rendered on its first visit and cached until the next data update.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { MapPin } from "@/components/SVG";
@@ -17,7 +17,6 @@ import Card from "@/components/ui/Card";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
-import Loading from "@/components/ui/Loading";
 import ScrollRow from "@/components/ui/ScrollRow";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
@@ -78,16 +77,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/tournament
   });
 }
 
-export default async function TournamentPage(props: PageProps<"/[lang]/tournaments/[id]/[[...path]]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("tournaments.page.loading")} section />}>
-      <Content params={props.params} />
-    </Suspense>
-  );
-}
-
-async function Content({ params }: Pick<PageProps<"/[lang]/tournaments/[id]/[[...path]]">, "params">) {
+export default async function TournamentPage({ params }: PageProps<"/[lang]/tournaments/[id]/[[...path]]">) {
   const i18n = await getI18n();
   const { t, rich, dateRange, href } = i18n;
   const { id: param, path = [] } = await params;

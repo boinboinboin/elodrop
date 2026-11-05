@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // The stylesheet (Tailwind, ~11 KB compressed) in the page's <head> instead of a request the first paint waits
+    // for (PageSpeed: "render-blocking requests"). Client-side navigations still load it as a file.
+    inlineCss: true,
+  },
   // The types are checked by TypeScript 7 (`tsc`) in the build script, before `next build`; Next.js
   // itself would check them again with the TypeScript 6 API (the `typescript` package)
   typescript: { ignoreBuildErrors: true },

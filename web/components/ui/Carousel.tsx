@@ -36,18 +36,21 @@ export default function Carousel({ slides, label }: { slides: ReactNode[]; label
           ))}
         </div>
       </div>
-      <div className="mt-4 flex items-center justify-between gap-4">
-        <div className="flex gap-2" role="group" aria-label={t("common.carousel.positions")}>
+      <div className="mt-4 flex items-center justify-between gap-2">
+        {/* Each dot is a 24px button (a size a finger can tap) around the small dot that shows */}
+        <div className="flex -mx-1.5" role="group" aria-label={t("common.carousel.positions")}>
           {count > 1 &&
             Array.from({ length: count }, (_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => api?.scrollTo(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 cursor-pointer ${i === current ? "bg-black" : "bg-gray-300 hover:bg-gray-500"}`}
+                className="group w-6 h-6 flex items-center justify-center cursor-pointer"
                 aria-label={t("common.carousel.position", { position: i + 1, count })}
                 aria-current={i === current ? "true" : undefined}
-              />
+              >
+                <span aria-hidden="true" className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${i === current ? "bg-black" : "bg-gray-300 group-hover:bg-gray-500"}`} />
+              </button>
             ))}
         </div>
         <div className="flex gap-2">

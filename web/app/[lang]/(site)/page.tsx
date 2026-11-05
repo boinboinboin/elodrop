@@ -2,7 +2,6 @@
 // (components/home). The rankings, the front page until this one, are at /rankings.
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { ArrowRight } from "@/components/SVG";
 import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
 import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
@@ -59,9 +58,7 @@ export default async function Home() {
           <Link href="/rankings" className={`${BUTTON} inline-flex items-center gap-2 px-5 py-3 text-lg`}>
             {t("home.toRankings")} <ArrowRight />
           </Link>
-          <Suspense fallback={null}>
-            <PlayersRated />
-          </Suspense>
+          <PlayersRated />
           <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorksLink")}</Link>
           {/* The site's preview image and sharing, at the end of the row */}
           <div className="ml-auto">

@@ -19,7 +19,6 @@
   "noneOfAge": "No team matches in this age group yet.",
   "intro": "Every league team match, division by division: the results, each match, the upsets and how strong each team was.",
   "explanation": "A team's strength is the lineup it played. Each match's win chance is from the players' ratings right before it, and together they give the team's chance of winning the team match.\n\n- A <strong>team match</strong> is an upset when the winner had less than a 30% chance.\n- A <strong>match</strong> is an upset by the same rules as the biggest upsets: between settled players.",
-  "loading": "Loading team matches…",
   "none": "No team matches yet: run the pipeline.",
   "season": "Season",
   "count": {
@@ -34,7 +33,6 @@
   },
   "matches": "Matches",
   "match": {
-    "loading": "Loading the team match…",
     "chances": "Chances before",
     "chancesTitle": "With the lineups played: from each match's win chance, from the players' ratings right before it",
     "draw": "Draw",

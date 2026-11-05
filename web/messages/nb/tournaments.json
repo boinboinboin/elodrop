@@ -7,7 +7,6 @@
     "title": "Turneringstrekninger",
     "intro": "Hvem som fikk heldig eller uheldig trekning i kommende turneringer, ut fra spillernes ratinger.",
     "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er ferdigspilt, viser siden hvordan prediksjonene gikk.",
-    "loading": "Laster turneringer…",
     "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen. Hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet.\n\n«Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere, omtrent en runde mer.",
     "correlation": "Flaks forklarer bare en liten del av et resultat (korrelasjon {correlation}): mesteparten er hvordan kampene går.",
     "upcoming": "Kommende",
@@ -37,7 +36,6 @@
     "overEntries": "over {count} deltakere (1 = som predikert)"
   },
   "page": {
-    "loading": "Laster turnering…",
     "cup2000": "Trekning og resultater på Cup2000",
     "portalen": "badmintonportalen turnering {id}",
     "cancelled": "<strong>Ikke spilt.</strong> {reason}. Trekningen og flaksen er som de ble publisert.",

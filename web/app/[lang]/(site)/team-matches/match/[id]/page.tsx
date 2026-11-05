@@ -3,7 +3,6 @@
 // whether it was an upset.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import Team, { breakable } from "@/components/clubs/Team";
 import ChanceBar from "@/components/head-to-head/ChanceBar";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -11,7 +10,6 @@ import PlayerLine from "@/components/players/PlayerLine";
 import JsonLd from "@/components/seo/JsonLd";
 import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import Swatch from "@/components/ui/Swatch";
@@ -34,6 +32,20 @@ export async function generateStaticParams() {
 /** The title's and description's values: the teams, day, division and score */
 const descriptionValues = (tie: TeamMatch, date: (day: string) => string) => ({ home: tie.home, away: tie.away, date: date(tie.day), division: tie.division, score: `${tie.score[0]}–${tie.score[1]}` });
 
+/** The first season with sets to 15 points (2026/27; before, to 21) */
+const FIFTEEN_POINTS_FROM = 2026;
+/** How long a team match lasts, for its end time: about 2 hours with sets to 15 points, 3 hours with sets to 21 */
+const hoursLong = (season: number) => (season >= FIFTEEN_POINTS_FROM ? 2 : 3);
+
+/** A start time ("2025-11-15T12:00", Norwegian time, no offset) `hours` later, in the same form (past midnight: the next day) */
+function hoursAfter(time: string, hours: number): string {
+  const [day, clock] = time.split("T");
+  const [h, m] = clock.split(":").map(Number);
+  const end = new Date(`${day}T00:00Z`);
+  end.setUTCMinutes(h * 60 + m + hours * 60);
+  return end.toISOString().slice(0, 16);
+}
+
 /**
  * The team match as a schema.org SportsEvent: the two teams, the hall (the venue in Sanity with its
  * name, else just the name given; none when it isn't given: the home team's hall says nothing about
@@ -46,6 +58,7 @@ async function EventData({ tie, clubs }: { tie: TeamMatch; clubs: Record<string,
   const location = placeOf(findVenue(tie.venue, venues), tie.venue);
   const organizer = organizationOf(host, tie.organiser ?? tie.homeClub, href);
   const team = (name: string) => ({ "@type": "SportsTeam", name, sport: "Badminton" });
+  const timed = tie.time.length > 10 && !tie.time.endsWith("00:00");
   return (
     <JsonLd
       data={{
@@ -55,8 +68,11 @@ async function EventData({ tie, clubs }: { tie: TeamMatch; clubs: Record<string,
         url: absoluteUrl(href(teamMatchHref(tie.matchId))),
         description: t("seo.descriptions.teamMatch", descriptionValues(tie, date)),
         image: absoluteUrl(href(`${teamMatchHref(tie.matchId)}/preview.png`)),
-        // The day, with the start time when known ("2025-11-15T12:00", Norwegian time)
-        startDate: tie.time.length > 10 && !tie.time.endsWith("00:00") ? tie.time : tie.day,
+        // The day, with the start time when known ("2025-11-15T12:00", Norwegian time), and the end: 2 or 3 hours later
+        // (hoursLong), or with only the day known, that day
+        ...(timed
+          ? { startDate: tie.time, endDate: hoursAfter(tie.time, hoursLong(tie.season)) }
+          : { startDate: tie.day, endDate: tie.day }),
         eventStatus: "https://schema.org/EventScheduled",
         homeTeam: team(tie.home),
         awayTeam: team(tie.away),
@@ -79,13 +95,9 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/team-match
   return pageMetadata(i18n, { title: t("teamMatches.metadata.match", values), description: t("seo.descriptions.teamMatch", values), path: teamMatchHref(tie.matchId), image: { url: `${teamMatchHref(tie.matchId)}/preview.png`, alt: t("seo.imageAlt.teamMatch") } });
 }
 
-export default async function TeamMatchPage(props: PageProps<"/[lang]/team-matches/match/[id]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("teamMatches.match.loading")} section />}>
-      <Content params={props.params} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function TeamMatchPage(props: PageProps<"/[lang]/team-matches/match/[id]">) {
+  return <Content params={props.params} />;
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[id]">, "params">) {

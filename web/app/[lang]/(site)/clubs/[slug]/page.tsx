@@ -2,7 +2,6 @@
 // ranked players.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import ClubPlayers, { type ClubPlayerRow } from "@/components/clubs/ClubPlayers";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
@@ -13,7 +12,6 @@ import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import Tabs from "@/components/ui/Tabs";
@@ -46,13 +44,9 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/clubs/[slu
   return pageMetadata(i18n, { title: t("clubs.metadata.clubPage", { name: club.title }), description: t("seo.descriptions.club", { name: club.title, details: details ? ` (${details})` : "" }), path: clubHref(club.slug), image: { url: `${clubHref(club.slug)}/preview.png`, alt: t("seo.imageAlt.club") } });
 }
 
-export default async function ClubPage(props: PageProps<"/[lang]/clubs/[slug]">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("clubs.loading")} section />}>
-      <Content params={props.params} />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function ClubPage(props: PageProps<"/[lang]/clubs/[slug]">) {
+  return <Content params={props.params} />;
 }
 
 async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "params">) {

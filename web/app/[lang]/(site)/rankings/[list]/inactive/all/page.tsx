@@ -1,8 +1,6 @@
 // A ranking list with every player who has ever played in it, inactive ones included (no rank).
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { RankingsFor } from "@/components/rankings/Rankings";
-import Loading from "@/components/ui/Loading";
 import { getI18n } from "@/messages/server";
 import { pageMetadata } from "@/utils/metadata";
 import { RANKING_LISTS, rankingHref, rankingListTitle } from "@/utils/rankings";
@@ -19,11 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/rankings/[
   return pageMetadata(i18n, { title: t("rankings.metadata.everyPlayer", { list: name }), description: t("seo.descriptions.rankingsInactive", { list: name }), path: `${rankingHref(list.pool, list.gender, true)}/all`, index: false });
 }
 
-export default async function AllPlayersRankingPage(props: PageProps<"/[lang]/rankings/[list]/inactive/all">) {
-  const { t } = await getI18n();
-  return (
-    <Suspense fallback={<Loading label={t("rankings.loading")} />}>
-      <RankingsFor params={props.params} showInactive allInactive />
-    </Suspense>
-  );
+// No Suspense around the content: it is then part of the first paint, not a loading text swapped for it
+export default function AllPlayersRankingPage(props: PageProps<"/[lang]/rankings/[list]/inactive/all">) {
+  return <RankingsFor params={props.params} showInactive allInactive />;
 }

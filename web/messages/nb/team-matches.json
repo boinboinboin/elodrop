@@ -19,7 +19,6 @@
   "noneOfAge": "Ingen lagkamper i denne aldersgruppen ennå.",
   "intro": "Alle lagkamper i seriene, divisjon for divisjon: resultatene, hver kamp, overraskelsene og hvor sterke lagene var.",
   "explanation": "Et lags styrke er oppstillingen det stilte med. Hver kamps seierssjanse er regnet ut fra spillernes ratinger rett før den, og sammen gir de lagets sjanse til å vinne lagkampen.\n\n- En <strong>lagkamp</strong> er en overraskelse når vinneren hadde under 30 % sjanse.\n- En <strong>kamp</strong> er en overraskelse etter de samme reglene som de største overraskelsene: mellom etablerte spillere.",
-  "loading": "Laster lagkamper…",
   "none": "Ingen lagkamper ennå: kjør pipelinen.",
   "season": "Sesong",
   "count": {
@@ -34,7 +33,6 @@
   },
   "matches": "Kamper",
   "match": {
-    "loading": "Laster lagkampen…",
     "chances": "Sjansene før",
     "chancesTitle": "Med oppstillingene som ble brukt: fra hver kamps seierssjanse, ut fra spillernes ratinger rett før den",
     "draw": "Uavgjort",

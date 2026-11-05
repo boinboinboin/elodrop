@@ -8,14 +8,12 @@
 // juniors', with a toggle between them (to the same season or weekend where the other has it).
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { ArrowRight } from "@/components/SVG";
 import Pickers from "@/components/team-matches/Pickers";
 import TieRow from "@/components/team-matches/TieRow";
 import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
-import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
 import { getClubMap } from "@/data/sanity";
 import { getTeamMatchesIndex, getTeamMatchWeek, isJuniorAgeGroup, NATIONAL, seasonWeeks } from "@/data/teamMatches";
@@ -41,9 +39,8 @@ export default async function TeamMatches({ period, junior = false }: { period: 
         <p className="text-2xl max-w-3xl mt-2">{t("teamMatches.intro")}</p>
         <div className="max-w-3xl mt-4 space-y-3 text-gray-700 [&_strong]:font-semibold">{blocks("teamMatches.explanation")}</div>
       </Section>
-      <Suspense fallback={<Loading label={t("teamMatches.loading")} />}>
-        <Content period={period} junior={junior} />
-      </Suspense>
+      {/* No Suspense around the content: it is then part of the first paint, not a loading text swapped for it */}
+      <Content period={period} junior={junior} />
     </>
   );
 }
