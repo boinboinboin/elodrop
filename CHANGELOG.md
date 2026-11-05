@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.25.1 (2026-11-05)
+
+- Achievements are called "prestasjoner" in Norwegian (were "bragder").
+- An achievement can be left off the achievements page with a switch in the Studio; players who have it still show it on their pages.
+
 ## v1.25.0 (2026-11-05)
 
 - Players earn achievements ("bragder" in Norwegian). They show as small badges under the player's name. Clicking one opens it in full, with how many players hold it, and the player's others below it, the rarest first, each with its art, what it's for and where it was earned:

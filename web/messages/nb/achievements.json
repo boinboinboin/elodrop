@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "title": "Bragder"
+    "title": "Prestasjoner"
   },
-  "title": "Bragder",
-  "intro": "Spillere får bragder for det de har gjort på banen: tre øvelser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2013 teller.",
+  "title": "Prestasjoner",
+  "intro": "Spillere får prestasjoner for det de har gjort på banen: tre øvelser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2013 teller.",
   "players": {
     "one": "{count} spiller",
     "other": "{count} spillere"
@@ -15,7 +15,7 @@
   },
   "latest": "Sist tatt av",
   "handGiven": "Gitt for hånd",
-  "none": "Ingen bragder ennå.",
+  "none": "Ingen prestasjoner ennå.",
   "byLevel": "Etter nivå",
   "top": "Høyest"
 }

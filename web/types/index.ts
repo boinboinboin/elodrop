@@ -194,6 +194,8 @@ export interface Badge {
   about: string | null;
   art: string | null;
   players: number[];
+  /** On the achievements page (the Studio's toggle); players' pages show it either way */
+  listed: boolean;
   /** A milestone's levels with their own title, description or art (null: the badge's), lowest first */
   levels: BadgeLevel[];
 }

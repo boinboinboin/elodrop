@@ -5,7 +5,8 @@
 // In the text, {year} is the year earned (a national championship's; a player's years, when several)
 // and {tournament} the tournament; {level} a milestone's level (500 matches) and {value} the player's
 // own number (562 matches). `about` says how it's earned in general, for the achievements page
-// (/achievements), where there is none of those.
+// (/achievements), where there is none of those. `listed` (on by default) takes it off that page alone:
+// players still have it on their pages (unpublish it to hide it everywhere).
 // A milestone (MILESTONES) is given by its levels, set here alone: each level's number is the
 // threshold (500: 500 matches or more), and a player gets the highest they have reached, with its own
 // title, description and art where it has them (else the badge's). Without levels nobody gets it.
@@ -38,6 +39,13 @@ export const badge = defineType({
   title: "Badge",
   type: "document",
   fields: [
+    defineField({
+      name: "listed",
+      title: "Show on the achievements page",
+      type: "boolean",
+      initialValue: true,
+      description: "Off: left out of the achievements page (/achievements); players who have it still show it on their pages. To hide it everywhere, unpublish it.",
+    }),
     defineField({
       name: "key",
       title: "Earned by",
@@ -97,5 +105,8 @@ export const badge = defineType({
   ],
   validation: (rule) => rule.custom((doc) => (doc?.title || doc?.titleEn ? true : "Give it a title")),
   orderings: [{ title: "Title", name: "title", by: [{ field: "title", direction: "asc" }] }],
-  preview: { select: { title: "title", titleEn: "titleEn", key: "key", media: "art" }, prepare: ({ title, titleEn, key, media }) => ({ title: title || titleEn, subtitle: key ? `Rule: ${key}` : "Given by hand", media }) },
+  preview: {
+    select: { title: "title", titleEn: "titleEn", key: "key", listed: "listed", media: "art" },
+    prepare: ({ title, titleEn, key, listed, media }) => ({ title: title || titleEn, subtitle: `${key ? `Rule: ${key}` : "Given by hand"}${listed === false ? " · not on the achievements page" : ""}`, media }),
+  },
 });

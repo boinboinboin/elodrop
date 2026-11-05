@@ -27,11 +27,11 @@
     "other": "{matches}, {score}, margin {margin} · <link>H2H</link>"
   },
   "achievements": {
-    "title": "Bragder",
+    "title": "Prestasjoner",
     "more": "{count} til",
     "winChance": "vant med {chance} sjanse",
-    "all": "Alle bragder",
-    "close": "Lukk bragdene",
+    "all": "Alle prestasjoner",
+    "close": "Lukk prestasjonene",
     "streak": "{count} seire på rad",
     "values": {
       "ironPlayer": "{count} ratede kamper",

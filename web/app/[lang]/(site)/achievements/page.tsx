@@ -2,7 +2,7 @@
 // players have it and what share of everyone with a rating that is, and the latest to earn it
 // (achievements.json, pipeline/achievements.mjs), behind a disclosure; the rarest first. A milestone
 // is counted by its levels in the Studio (the players' numbers at or above each), with its highest
-// numbers instead of the latest. Linked from the menu and footer, and from the badges on player pages.
+// numbers instead of the latest. A badge switched off in the Studio (`listed`) is left out. Linked from the menu and footer, and from the badges on player pages.
 import type { Metadata } from "next";
 import { AwardLine, fillBadgeText, levelView } from "@/components/players/Achievements";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -49,10 +49,10 @@ const atLevel = (badge: Badge, level: number | undefined): Achievement[] => (lev
 export default async function AchievementsPage() {
   const { t, lang } = await getI18n();
   const [badges, stats, meta] = await Promise.all([getBadges(lang), getAchievementStats(), getMeta()]);
-  // The rarest first (fewest players), hand-given ones too; not a badge whose rule the data doesn't have
-  // (one left in the Studio after its rule was removed)
+  // The rarest first (fewest players), hand-given ones too; not one taken off this page in the Studio, nor
+  // one whose rule the data doesn't have (left in the Studio after its rule was removed)
   const sorted = badges
-    .filter((b) => !b.key || !stats || b.key in stats.badges)
+    .filter((b) => b.listed && (!b.key || !stats || b.key in stats.badges))
     .sort((a, b) => holders(a, stats) - holders(b, stats) || a.title.localeCompare(b.title));
 
   return (
