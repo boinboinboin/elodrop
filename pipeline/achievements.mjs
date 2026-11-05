@@ -3,13 +3,17 @@
 // Studio (web/sanity/schemas/badge.ts), which gives the badge its title, description and art; a
 // badge given by hand (the creator's) has no rule here, only player ids in the Studio.
 //
-// A new rule: a function here returning its awards, its key in the Studio's list of rules
-// (BADGE_RULES in web/sanity/schemas/badge.ts), and the badge itself in the Studio.
+// Two kinds of rule: RULES over all the results at once (tournaments, upsets, team matches), and
+// PLAYER_RULES over one player's matches at a time (milestones: a number per player, whose levels are
+// set in the Studio). A new rule: a function in either, its key in the Studio's list of rules
+// (BADGE_RULES, and MILESTONES for a milestone, in web/sanity/schemas/badge.ts), and the badge itself
+// in the Studio.
 //
 // Usage: import { achievements } from "./achievements.mjs" (export.mjs), or
 //        node achievements.mjs   prints how many of each badge, and the senior NMs found
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { correctedMatches } from "./rate.mjs";
+import { leagueLevel } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const POOLS = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
@@ -178,6 +182,61 @@ export const RULES = {
     }
     return awards;
   },
+
+  // Won your own match as an upset (between settled players: rate.mjs) for a team that won the team
+  // match as an upset (under 30% chance: team-matches.mjs), in senior Eliteserien, 1. or 2. divisjon
+  // (their qualifications too), from 2015/16 (the seasons before are the ratings' warm-up). Once per team match
+  teamMatchHero({ teamMatches }) {
+    const awards = [];
+    for (const t of teamMatches) {
+      if (!t.upset || t.day < SETTLED_FROM || t.ageGroup !== "SEN" || leagueLevel("SEN", t.division ?? "", "").tier > 2) continue;
+      const won = new Map(); // player id -> the first upset they won in it (winChance: the home side's chance)
+      for (const g of t.games ?? []) {
+        if (!g.upset || g.winner !== t.winner) continue;
+        for (const p of g.winner === 1 ? g.side1 : g.side2) if (p.id && !won.has(p.id)) won.set(p.id, g);
+      }
+      for (const [id, g] of won) awards.push([id, { date: t.day, matchId: t.matchId, event: `${t.home} vs ${t.away}`, pool: g.pool ?? null, winChance: g.winChance == null ? null : g.winner === 1 ? g.winChance : 1 - g.winChance }]);
+    }
+    return awards;
+  },
+};
+
+// The first day of the seasons whose ratings have settled (2013/14 and 2014/15 are the warm-up:
+// pipeline/README.md, Match data; CALIBRATION_FROM in rate.mjs)
+const SETTLED_FROM = "2015-07-01";
+
+// Rules over one player's matches (data/matches/<id>.json, rate.mjs), the milestones: each gets
+// { byPool: { pool: matches oldest first }, all: every match oldest first } and returns the player's
+// number (`value`) with the day it was last raised (`date`), or null for none. The levels are set in the
+// site's Studio (a badge's levels: their numbers are the thresholds), so a level is added there alone;
+// every player with a number gets the award, and the site shows it from the badge's lowest level up
+export const PLAYER_RULES = {
+  // The longest run of wins in one discipline, ever (a loss or a draw ends it; walkovers aren't rated),
+  // with its discipline and first and last day (dated by its last match). Several as long: the newest
+  winStreak({ byPool }) {
+    let best = null;
+    for (const [pool, matches] of Object.entries(byPool)) {
+      let run = null;
+      for (const m of matches) {
+        if (m.result !== 1) {
+          run = null;
+          continue;
+        }
+        run = run ? { ...run, value: run.value + 1, to: m.day } : { pool, value: 1, from: m.day, to: m.day };
+        if (!best || run.value > best.value || (run.value === best.value && run.to > best.to)) best = run;
+      }
+    }
+    return best && { date: best.to, ...best };
+  },
+  // Rated matches played, all disciplines together
+  ironPlayer({ all }) {
+    return all.length ? { value: all.length, date: all.at(-1).day } : null;
+  },
+  // Matches won in three sets
+  threeSetThriller({ all }) {
+    const won = all.filter((m) => m.result === 1 && (m.score ?? "").split(",").length === 3);
+    return won.length ? { value: won.length, date: won.at(-1).day } : null;
+  },
 };
 
 /** The results the rules use: every tournament on badmintonportalen with its event winners, and the weekly upsets */
@@ -189,29 +248,53 @@ export function readResults() {
     .map((t) => ({ t, winners: eventWinners(t) }));
   const upsetsFile = `${DIR}data/upsets.json`;
   const upsets = existsSync(upsetsFile) ? JSON.parse(readFileSync(upsetsFile, "utf8")) : null;
-  return { tournaments, upsets };
+  const teamDir = `${DIR}data/team-matches`;
+  const teamMatches = (existsSync(teamDir) ? readdirSync(teamDir) : []).filter((f) => /^\d+\.json$/.test(f)).map((f) => JSON.parse(readFileSync(`${teamDir}/${f}`, "utf8")));
+  return { tournaments, upsets, teamMatches };
+}
+
+/** Each player's matches (data/matches), one at a time: [id, { byPool, all }], oldest first */
+function* playerMatches() {
+  const dir = `${DIR}data/matches`;
+  for (const f of existsSync(dir) ? readdirSync(dir) : []) {
+    if (!f.endsWith(".json")) continue;
+    const file = JSON.parse(readFileSync(`${dir}/${f}`, "utf8"));
+    const byPool = {};
+    for (const [pool, log] of Object.entries(file)) if (Array.isArray(log?.all)) byPool[pool] = [...log.all].reverse();
+    const all = Object.values(byPool)
+      .flat()
+      .sort((a, b) => a.day.localeCompare(b.day));
+    yield [Number(f.replace(".json", "")), { byPool, all }];
+  }
 }
 
 /** Every player's awards, by player id, newest first: { badge, date, ... } */
 export function achievements(results = readResults()) {
   const byPlayer = new Map();
-  for (const [badge, rule] of Object.entries(RULES)) {
-    for (const [id, award] of rule(results)) {
-      if (!byPlayer.has(id)) byPlayer.set(id, []);
-      byPlayer.get(id).push({ badge, ...award });
+  const add = (id, badge, award) => {
+    if (!byPlayer.has(id)) byPlayer.set(id, []);
+    byPlayer.get(id).push({ badge, ...award });
+  };
+  for (const [badge, rule] of Object.entries(RULES)) for (const [id, award] of rule(results)) add(id, badge, award);
+  for (const [id, player] of playerMatches()) {
+    for (const [badge, rule] of Object.entries(PLAYER_RULES)) {
+      const award = rule(player);
+      if (award) add(id, badge, award);
     }
   }
   for (const list of byPlayer.values()) list.sort((a, b) => b.date.localeCompare(a.date) || a.badge.localeCompare(b.badge));
   return byPlayer;
 }
 
-/** How many awards a badge's "latest" list has (the achievements page) */
+/** How many awards a badge's "latest" list has, or a milestone's "top" (the achievements page) */
 const LATEST = 5;
 
 /**
  * Per badge, for the achievements page: how many players have earned it and how many times, and the
- * newest awards (one per player), with the player's name and club. `players`: id → { name, club } of
- * every player with a rating (the share's base)
+ * newest awards (one per player), with the player's name and club. A milestone instead: how many
+ * players have each number (`values`: [value, players], highest first, so the site can count them per
+ * level from the Studio) and the highest numbers (`top`). `players`: id → { name, club } of every
+ * player with a rating (the share's base)
  */
 export function achievementStats(awards, players) {
   const badges = {};
@@ -223,9 +306,22 @@ export function achievementStats(awards, players) {
       badges[badge].players++;
       badges[badge].awards += own.length;
       badges[badge].latest.push({ id, name: player.name, club: player.club ?? null, ...own[0] });
+      // A milestone: one award per player, with its number
+      if (own[0].value !== undefined) {
+        badges[badge].milestone = true;
+        badges[badge].counts ??= new Map();
+        badges[badge].counts.set(own[0].value, (badges[badge].counts.get(own[0].value) ?? 0) + 1);
+      }
     }
   }
-  for (const b of Object.values(badges)) b.latest = b.latest.sort((x, y) => y.date.localeCompare(x.date) || x.id - y.id).slice(0, LATEST);
+  for (const b of Object.values(badges)) {
+    if (b.milestone) {
+      b.values = [...b.counts].sort(([x], [y]) => y - x);
+      delete b.counts;
+      b.top = b.latest.sort((x, y) => y.value - x.value || y.date.localeCompare(x.date)).slice(0, LATEST);
+      delete b.latest;
+    } else b.latest = b.latest.sort((x, y) => y.date.localeCompare(x.date) || x.id - y.id).slice(0, LATEST);
+  }
   return { players: players.size, badges };
 }
 

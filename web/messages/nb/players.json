@@ -31,7 +31,13 @@
     "more": "{count} til",
     "winChance": "vant med {chance} sjanse",
     "all": "Alle bragder",
-    "close": "Lukk bragdene"
+    "close": "Lukk bragdene",
+    "streak": "{count} seire på rad",
+    "values": {
+      "ironPlayer": "{count} ratede kamper",
+      "threeSetThriller": "{count} kamper vunnet i tre sett"
+    },
+    "rarity": "Tatt av {rarity}"
   },
   "history": {
     "title": "Historikk",

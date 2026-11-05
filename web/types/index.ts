@@ -167,7 +167,16 @@ export interface Achievement {
   events?: { className: string; pool: Pool }[];
   /** A national championship's year */
   year?: number;
-  /** The upset's week (its Monday), discipline, event ("Bygdø Høsttreff 2026 (SEN B)") and the winners' chance before it */
+  /** A milestone's number (562 matches; a win streak's length): its level comes from the badge's levels in the Studio */
+  value?: number;
+  /** The level a milestone's number reaches, by the badge's levels (set on the site, not in the data) */
+  level?: number;
+  /** A win streak's first and last match's days */
+  from?: string;
+  to?: string;
+  /** A team match (its badmintonportalen match id) */
+  matchId?: number;
+  /** The upset's week (its Monday), discipline, event ("Bygdø Høsttreff 2026 (SEN B)", or a team match's "Home vs Away") and the winners' chance before it */
   week?: string;
   pool?: Pool;
   event?: string;
@@ -185,14 +194,38 @@ export interface Badge {
   about: string | null;
   art: string | null;
   players: number[];
+  /** A milestone's levels with their own title, description or art (null: the badge's), lowest first */
+  levels: BadgeLevel[];
+}
+
+export interface BadgeLevel {
+  level: number;
+  title: string | null;
+  description: string | null;
+  art: string | null;
 }
 
 /** The badges page's numbers (achievements.json): per rule's key, how many players have earned it, out of `players` */
 export interface AchievementStats {
   /** Every player with a rating */
   players: number;
-  badges: Record<string, { players: number; awards: number; latest: (Achievement & { id: number; name: string; club: string | null })[] }>;
+  badges: Record<
+    string,
+    {
+      /** Players with an award (a milestone: with a number, at any level) */
+      players: number;
+      awards: number;
+      latest?: AchievementHolder[];
+      /** A milestone: how many players have each number, [value, players], highest first */
+      milestone?: boolean;
+      values?: [number, number][];
+      /** A milestone: the highest numbers */
+      top?: AchievementHolder[];
+    }
+  >;
 }
+
+export type AchievementHolder = Achievement & { id: number; name: string; club: string | null };
 
 export interface ClubTopPlayer {
   id: number;

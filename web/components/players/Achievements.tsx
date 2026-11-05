@@ -3,14 +3,18 @@
 // (sanity/schemas/badge.ts). Shown as a row of small badges under the player's name; clicking one
 // opens a box with them all in full (BadgeStrip). One card per badge: earned more than once, it
 // says how many times and where (the newest few, the rest behind a disclosure), and {year} in its
-// text is the player's years (a national championship's: "2015–2019, 2021"). A badge the Studio
-// doesn't have isn't shown.
+// text is the player's years (a national championship's: "2015–2019, 2021"). A milestone (the
+// player's number: matches played, the longest win streak) is shown at the highest of the badge's
+// levels in the Studio it reaches ({level}; {value} is the number), with that level's own title,
+// description and art (levelView); below the lowest level, or with no levels, not at all. A badge
+// the Studio doesn't have isn't shown.
 import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getI18n } from "@/messages/server";
-import type { Achievement, Badge, Player } from "@/types";
-import { tournamentHref, upsetsHref } from "@/utils/hrefs";
+import type { MessageKey } from "@/messages/i18n";
+import type { Achievement, AchievementStats, Badge, Player } from "@/types";
+import { teamMatchHref, tournamentHref, upsetsHref } from "@/utils/hrefs";
 import { eventHref } from "@/utils/tournament";
 import BadgeStrip from "./BadgeStrip";
 
@@ -35,14 +39,40 @@ export function yearRanges(years: number[]): string {
   return ranges.map(([a, b]) => (a === b ? String(a) : `${a}–${b}`)).join(", ");
 }
 
-/** {year} (the awards' years) and {tournament} (the newest's) filled in; without awards, taken out */
-export const fillBadgeText = (text: string, awards: Achievement[]) =>
+/** {year} (the awards' years), {tournament} (the newest's), {level} and {value} (a milestone's, as `format` writes numbers) filled in; without awards, taken out */
+export const fillBadgeText = (text: string, awards: Achievement[], format: (n: number) => string = String) =>
   text
     .replace(/\{year\}/g, yearRanges(awards.flatMap((a) => (a.year ? [a.year] : []))))
     .replace(/\{tournament\}/g, awards[0]?.tournament ?? "")
+    .replace(/\{level\}/g, awards[0]?.level !== undefined ? format(awards[0].level) : "")
+    .replace(/\{value\}/g, awards[0]?.value !== undefined ? format(awards[0].value) : "")
     .replace(/\s+([.,!?])/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
+
+/**
+ * A badge as shown at a level: the title, description and art of its highest level at or below it
+ * (from the Studio's levels), the badge's own where that level leaves them empty or has none
+ */
+export function levelView(badge: Badge, level: number | undefined) {
+  const own = level === undefined ? undefined : badge.levels.filter((l) => l.level <= level).at(-1);
+  return { title: own?.title ?? badge.title, description: own?.description ?? badge.description, art: own?.art ?? badge.art };
+}
+
+/** The level a milestone's number reaches: the highest of the badge's levels at or below it (undefined: below them all) */
+export const levelReached = (badge: Badge, value: number) => badge.levels.filter((l) => l.level <= value).at(-1)?.level;
+
+/**
+ * How many players have a badge: a hand-given one's players, a milestone's at `level` or higher (by
+ * their numbers), else everyone with the award (achievements.json). Null without the numbers
+ */
+export function badgeHolders(badge: Badge, stats: AchievementStats | null, level?: number): number | null {
+  if (!badge.key) return badge.players.length;
+  const own = stats?.badges[badge.key];
+  if (!own) return null;
+  if (!own.milestone) return own.players;
+  return level === undefined ? null : (own.values ?? []).filter(([value]) => value >= level).reduce((n, [, players]) => n + players, 0);
+}
 
 /** The player's badges: hand-given first, then by the newest award */
 function badgeCards(player: Player, badges: Badge[]): BadgeCard[] {
@@ -52,35 +82,51 @@ function badgeCards(player: Player, badges: Badge[]): BadgeCard[] {
   for (const award of player.achievements ?? []) {
     const badge = byKey.get(award.badge);
     if (!badge) continue;
+    // A milestone counts from the badge's lowest level
+    const level = award.value !== undefined ? levelReached(badge, award.value) : undefined;
+    if (award.value !== undefined && level === undefined) continue;
     if (!earned.has(badge.id)) earned.set(badge.id, { badge, awards: [] });
-    earned.get(badge.id)!.awards.push(award);
+    earned.get(badge.id)!.awards.push(level !== undefined ? { ...award, level } : award);
   }
   return [...cards, ...[...earned.values()].sort((a, b) => b.awards[0].date.localeCompare(a.awards[0].date))];
 }
 
 /** The row of small badges and the box they open, or nothing for a player without badges */
-export default async function Achievements({ player, badges, links }: { player: Player; badges: Badge[]; links: Record<string, number> }) {
+export default async function Achievements({ player, badges, stats, links }: { player: Player; badges: Badge[]; stats: AchievementStats | null; links: Record<string, number> }) {
+  const { t, plural, num, pct } = await getI18n();
   const cards = badgeCards(player, badges);
   if (!cards.length) return null;
   return (
     <BadgeStrip
-      items={cards.map(({ badge, awards }) => ({
-        id: badge.id,
-        title: fillBadgeText(badge.title, awards),
-        art: badge.art,
-        count: awards.length,
-        details: <BadgeDetails badge={badge} awards={awards} links={links} />,
-      }))}
+      items={cards.map(({ badge, awards }) => {
+        const view = levelView(badge, awards[0]?.level);
+        // How rare it is (at the player's level, for a milestone): "Held by 28 players (0.2%)"
+        const holders = badgeHolders(badge, stats, awards[0]?.level);
+        const share = holders !== null && stats?.players ? holders / stats.players : null;
+        const rarity =
+          holders === null
+            ? null
+            : `${plural("achievements.players", holders, { count: num(holders) })}${share !== null ? ` (${share > 0 && share < 0.001 ? `<${pct(0.001, 1)}` : pct(share, 1)})` : ""}`;
+        return {
+          id: badge.id,
+          holders,
+          rarity: rarity && t("players.achievements.rarity", { rarity }),
+          title: fillBadgeText(view.title, awards, num),
+          art: view.art,
+          count: awards.length,
+          details: <BadgeDetails description={view.description} awards={awards} links={links} />,
+        };
+      })}
     />
   );
 }
 
-async function BadgeDetails({ badge, awards, links }: { badge: Badge; awards: Achievement[]; links: Record<string, number> }) {
-  const { t } = await getI18n();
+async function BadgeDetails({ description, awards, links }: { description: string | null; awards: Achievement[]; links: Record<string, number> }) {
+  const { t, num } = await getI18n();
   const rest = awards.slice(SHOWN);
   return (
     <>
-      {badge.description && <p className="text-sm text-gray-700 mt-1">{fillBadgeText(badge.description, awards)}</p>}
+      {description && <p className="text-sm text-gray-700 mt-1">{fillBadgeText(description, awards, num)}</p>}
       {awards.length > 0 && (
         <ul className="text-sm text-gray-600 mt-2 space-y-1">
           {awards.slice(0, SHOWN).map((a, i) => (
@@ -101,9 +147,44 @@ async function BadgeDetails({ badge, awards, links }: { badge: Badge; awards: Ac
   );
 }
 
-/** Where and when: the tournament (its page or event page when it has one) and the events won, or the week's upsets */
+/** A milestone's number, by its rule ("562 rated matches"); a win streak's has its own line */
+const VALUE_TEXT: Record<string, MessageKey> = {
+  ironPlayer: "players.achievements.values.ironPlayer",
+  threeSetThriller: "players.achievements.values.threeSetThriller",
+};
+
+/** Where and when: the tournament (its page or event page when it has one) and the events won, the week's upsets, the team match, or a milestone's day and discipline */
 export async function AwardLine({ award: a, links, as: Tag = "li" }: { award: Achievement; links: Record<string, number>; as?: "li" | "span" }) {
-  const { t, date, chance, pools } = await getI18n();
+  const { t, date, dateRange, chance, pools, num } = await getI18n();
+  if (a.value !== undefined && a.from) {
+    return (
+      <Tag>
+        {a.pool && `${pools[a.pool]} · `}
+        {dateRange(a.from, a.to ?? a.from)} · {t("players.achievements.streak", { count: num(a.value) })}
+      </Tag>
+    );
+  }
+  if (a.value !== undefined) {
+    const text = VALUE_TEXT[a.badge];
+    return <Tag>{text ? t(text, { count: num(a.value) }) : num(a.value)}</Tag>;
+  }
+  if (a.matchId) {
+    return (
+      <Tag>
+        {date(a.date)} · <Link href={teamMatchHref(a.matchId)} className={TEXT_LINK}>{a.event}</Link>
+        {a.pool && ` · ${pools[a.pool]}`}
+        {a.winChance != null && ` · ${t("players.achievements.winChance", { chance: chance(a.winChance) })}`}
+      </Tag>
+    );
+  }
+  if (!a.week && !a.tournament) {
+    return (
+      <Tag>
+        {date(a.date)}
+        {a.pool && ` · ${pools[a.pool]}`}
+      </Tag>
+    );
+  }
   if (a.week) {
     return (
       <Tag>

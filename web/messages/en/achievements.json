@@ -15,5 +15,7 @@
   },
   "latest": "Latest to earn it",
   "handGiven": "Given by hand",
-  "none": "No achievements yet."
+  "none": "No achievements yet.",
+  "byLevel": "By level",
+  "top": "Highest"
 }

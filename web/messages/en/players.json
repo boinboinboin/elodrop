@@ -31,7 +31,13 @@
     "more": "{count} more",
     "winChance": "won with a {chance} chance",
     "all": "All achievements",
-    "close": "Close the achievements"
+    "close": "Close the achievements",
+    "streak": "{count} wins in a row",
+    "values": {
+      "ironPlayer": "{count} rated matches",
+      "threeSetThriller": "{count} matches won in three sets"
+    },
+    "rarity": "Held by {rarity}"
   },
   "history": {
     "title": "History",

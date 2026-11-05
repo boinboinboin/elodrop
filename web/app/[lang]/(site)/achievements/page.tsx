@@ -1,9 +1,10 @@
 // The badges players can earn (sanity/schemas/badge.ts): each with its art, how it's earned, how many
 // players have it and what share of everyone with a rating that is, and the latest to earn it
-// (achievements.json, pipeline/achievements.mjs), behind a disclosure; the rarest first. Linked from
-// the menu and footer, and from the badges on player pages.
+// (achievements.json, pipeline/achievements.mjs), behind a disclosure; the rarest first. A milestone
+// is counted by its levels in the Studio (the players' numbers at or above each), with its highest
+// numbers instead of the latest. Linked from the menu and footer, and from the badges on player pages.
 import type { Metadata } from "next";
-import { fillBadgeText, AwardLine } from "@/components/players/Achievements";
+import { AwardLine, fillBadgeText, levelView } from "@/components/players/Achievements";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
@@ -12,7 +13,7 @@ import { getAchievementStats } from "@/data/achievements";
 import { getMeta } from "@/data/meta";
 import { getBadges } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
-import type { AchievementStats, Badge } from "@/types";
+import type { Achievement, AchievementStats, Badge } from "@/types";
 import { playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
@@ -22,14 +23,37 @@ export async function generateMetadata(): Promise<Metadata> {
   return pageMetadata(i18n, { title: t("achievements.metadata.title"), description: t("seo.descriptions.achievements"), path: "/achievements" });
 }
 
-/** A badge's holders: from the results for a rule's badge, the ids given in the Studio for a hand-given one */
-const holders = (badge: Badge, stats: AchievementStats | null) => (badge.key ? (stats?.badges[badge.key]?.players ?? 0) : badge.players.length);
+/**
+ * A milestone's levels from the Studio, highest first, with the players whose highest it is (their number
+ * at or above it, below the next); none for a badge that isn't a milestone
+ */
+function levelCounts(badge: Badge, stats: AchievementStats | null) {
+  const values = (badge.key && stats?.badges[badge.key]?.values) || null;
+  if (!values) return [];
+  const levels = badge.levels.map((l) => l.level);
+  return levels
+    .map((level, i) => ({ level, players: values.filter(([value]) => value >= level && (i + 1 === levels.length || value < levels[i + 1])).reduce((n, [, players]) => n + players, 0) }))
+    .reverse();
+}
+
+/** A badge's holders: a milestone's at any of its levels, from the results for another rule's badge, the ids given in the Studio for a hand-given one */
+function holders(badge: Badge, stats: AchievementStats | null) {
+  if (!badge.key) return badge.players.length;
+  const own = stats?.badges[badge.key];
+  return own?.milestone ? levelCounts(badge, stats).reduce((n, l) => n + l.players, 0) : (own?.players ?? 0);
+}
+
+/** An award of a level (or none), to fill a badge's text with */
+const atLevel = (badge: Badge, level: number | undefined): Achievement[] => (level !== undefined ? [{ badge: badge.key ?? "", date: "", level }] : []);
 
 export default async function AchievementsPage() {
   const { t, lang } = await getI18n();
   const [badges, stats, meta] = await Promise.all([getBadges(lang), getAchievementStats(), getMeta()]);
-  // The rarest first (fewest players), hand-given ones too
-  const sorted = [...badges].sort((a, b) => holders(a, stats) - holders(b, stats) || a.title.localeCompare(b.title));
+  // The rarest first (fewest players), hand-given ones too; not a badge whose rule the data doesn't have
+  // (one left in the Studio after its rule was removed)
+  const sorted = badges
+    .filter((b) => !b.key || !stats || b.key in stats.badges)
+    .sort((a, b) => holders(a, stats) - holders(b, stats) || a.title.localeCompare(b.title));
 
   return (
     <>
@@ -66,8 +90,14 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
   const shareText = share > 0 && share < 0.001 ? `<${pct(0.001, 1)}` : pct(share, 1);
   const own = badge.key ? stats?.badges[badge.key] : undefined;
   const about = badge.about ?? (badge.description ? fillBadgeText(badge.description, []) : null);
-  // The latest to earn it, with when and where (none for a hand-given badge)
-  const latest = own?.latest ?? [];
+  // A milestone's levels, highest first, with the players whose highest it is; its title at the lowest
+  // level, what it takes to earn it ("Iron player: 500 matches")
+  const milestone = !!own?.milestone;
+  const levels = levelCounts(badge, stats);
+  const lowest = levels.at(-1)?.level;
+  const title = fillBadgeText(badge.title, atLevel(badge, lowest), num);
+  // The latest to earn it, with when and where, or a milestone's highest numbers (none for a hand-given badge)
+  const latest = milestone ? (lowest !== undefined ? (own?.top ?? []).filter((a) => (a.value ?? 0) >= lowest) : []) : (own?.latest ?? []);
   return (
     <>
       <div className="flex gap-4 md:gap-6 bg-white px-4 md:px-6 pt-4 md:pt-6">
@@ -78,19 +108,34 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
           <span aria-hidden="true" className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-gray-200" />
         )}
         <div className="min-w-0">
-          <h2 className="text-2xl">{fillBadgeText(badge.title, [])}</h2>
+          <h2 className="text-2xl">{title}</h2>
           {about && <p className="text-gray-700 mt-1">{about}</p>}
           <p className="mt-3">
             <span className="text-xl font-mono">{plural("achievements.players", count, { count: num(count) })}</span>
             {total > 0 && <span className="text-gray-600"> · {t("achievements.share", { share: shareText, total: num(total) })}</span>}
           </p>
-          {own && <p className="text-sm text-gray-600">{plural("achievements.times", own.awards, { count: num(own.awards) })}</p>}
+          {own && !milestone && <p className="text-sm text-gray-600">{plural("achievements.times", own.awards, { count: num(own.awards) })}</p>}
+          {levels.length > 0 && (
+            <ul className="mt-3 space-y-1.5" aria-label={t("achievements.byLevel")}>
+              {levels.map(({ level, players }) => {
+                const view = levelView(badge, level);
+                return (
+                  <li key={level} className="flex items-center gap-2 text-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {view.art ? <img src={view.art} alt="" className="w-6 h-6 object-contain shrink-0" /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
+                    <span>{fillBadgeText(view.title, atLevel(badge, level), num)}</span>
+                    <span className="font-mono text-gray-600">· {plural("achievements.players", players, { count: num(players) })}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
       {/* The second row: the latest (closed at first), or for a hand-given badge a line as tall as its summary */}
       <div className="self-start bg-white px-4 md:px-6 pt-5 pb-4 md:pb-6 mb-6">
         {latest.length > 0 ? (
-          <Disclosure summary={t("achievements.latest")}>
+          <Disclosure summary={t(milestone ? "achievements.top" : "achievements.latest")}>
             <ul className="space-y-1 mt-2">
               {latest.map((a) => (
                 <li key={a.id}>

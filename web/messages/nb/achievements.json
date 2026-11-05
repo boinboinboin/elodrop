@@ -15,5 +15,7 @@
   },
   "latest": "Sist tatt av",
   "handGiven": "Gitt for hånd",
-  "none": "Ingen bragder ennå."
+  "none": "Ingen bragder ennå.",
+  "byLevel": "Etter nivå",
+  "top": "Høyest"
 }

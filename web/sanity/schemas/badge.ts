@@ -3,8 +3,12 @@
 // names; a badge without a key is given by hand to the players whose ids are listed (the creator's
 // badge). The text is in both of the site's languages, each falling back to the other when empty.
 // In the text, {year} is the year earned (a national championship's; a player's years, when several)
-// and {tournament} the tournament. `about` says how it's earned in general, for the badges page
-// (/achievements), where there is no year or tournament.
+// and {tournament} the tournament; {level} a milestone's level (500 matches) and {value} the player's
+// own number (562 matches). `about` says how it's earned in general, for the achievements page
+// (/achievements), where there is none of those.
+// A milestone (MILESTONES) is given by its levels, set here alone: each level's number is the
+// threshold (500: 500 matches or more), and a player gets the highest they have reached, with its own
+// title, description and art where it has them (else the badge's). Without levels nobody gets it.
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { tidyText } from "./spacing";
 
@@ -13,9 +17,21 @@ export const BADGE_RULES = [
   { title: "Triple: won singles, doubles and mixed at one tournament", value: "triple" },
   { title: "National champion: won an event at the senior NM", value: "nationalChampion" },
   { title: "Upset of the week: won the week's biggest upset", value: "upsetOfTheWeek" },
+  { title: "Team match hero: won an upset in a team match won as an upset (Eliteserien, 1. and 2. div)", value: "teamMatchHero" },
+  { title: "Win streak: matches won in a row in one discipline", value: "winStreak" },
+  { title: "Iron player: rated matches played", value: "ironPlayer" },
+  { title: "Three-set thriller: matches won in three sets", value: "threeSetThriller" },
 ];
 
-const PLACEHOLDERS = "{year}: the year earned (national champion); {tournament}: the tournament";
+/** The rules that give a number per player (PLAYER_RULES in pipeline/achievements.mjs), whose levels are set here */
+export const MILESTONES: Record<string, string> = {
+  winStreak: "wins in a row (the longest streak)",
+  ironPlayer: "rated matches played",
+  threeSetThriller: "matches won in three sets",
+};
+const isMilestone = (key: unknown) => typeof key === "string" && key in MILESTONES;
+
+const PLACEHOLDERS = "{year}: the year earned (national champion); {tournament}: the tournament; {level}: the level reached, {value}: the player's own number (milestones)";
 
 export const badge = defineType({
   name: "badge",
@@ -36,6 +52,40 @@ export const badge = defineType({
     defineField({ name: "about", title: "How it's earned (Norwegian)", type: "text", rows: 3, description: "On the badges page, about the badge in general (no {year} there). Empty: the description" }),
     defineField({ name: "aboutEn", title: "How it's earned (English)", type: "text", rows: 3, description: "Empty: the Norwegian text" }),
     defineField({ name: "art", type: "image", options: { hotspot: true }, description: "Square, at least 256 × 256 pixels; SVG or PNG" }),
+    defineField({
+      name: "levels",
+      title: "Levels",
+      type: "array",
+      description: "The levels: each one's number is the threshold (500: 500 or more), and a player gets the highest they have reached. A level's title, description and art replace the badge's (empty: the badge's). Without levels nobody gets it.",
+      hidden: ({ document }) => !isMilestone(document?.key),
+      of: [
+        defineArrayMember({
+          type: "object",
+          name: "badgeLevel",
+          fields: [
+            defineField({
+              name: "level",
+              type: "number",
+              description: "The threshold: wins in a row, matches played, or matches won in three sets",
+              validation: (rule) => [rule.required(), rule.integer().positive()],
+            }),
+            defineField({ name: "title", title: "Title (Norwegian)", type: "string", validation: tidyText }),
+            defineField({ name: "titleEn", title: "Title (English)", type: "string", validation: tidyText }),
+            defineField({ name: "description", title: "Description (Norwegian)", type: "text", rows: 2 }),
+            defineField({ name: "descriptionEn", title: "Description (English)", type: "text", rows: 2 }),
+            defineField({ name: "art", type: "image", options: { hotspot: true } }),
+          ],
+          preview: { select: { level: "level", title: "title", titleEn: "titleEn", media: "art" }, prepare: ({ level, title, titleEn, media }) => ({ title: `Level ${level ?? "?"}`, subtitle: title || titleEn, media }) },
+        }),
+      ],
+      validation: (rule) => [
+        rule.custom((levels: { level?: number }[] | undefined) => {
+          const seen = (levels ?? []).map((l) => l.level).filter((l) => l !== undefined);
+          return new Set(seen).size === seen.length ? true : "Each level once";
+        }),
+        rule.custom((levels: unknown[] | undefined, { document }) => (isMilestone(document?.key) && !levels?.length ? "Without levels nobody gets this badge" : true)).warning(),
+      ],
+    }),
     defineField({
       name: "players",
       title: "Given to",

@@ -139,17 +139,23 @@ export async function getBadges(lang: Language): Promise<Badge[]> {
   cacheLife("days");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   if (!projectId) return [];
-  const result = await query<{ id: string; key: string | null; title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null }[]>(
+  type Text = { title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null };
+  type Row = Text & { id: string; key: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null; levels: (Text & { level: number | null; art: SanityLogo | null })[] | null };
+  const art = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop })`;
+  const result = await query<Row[]>(
     projectId,
-    `*[_type == "badge" && !(_id in path("drafts.**"))] | order(title asc) { "id": _id, key, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": select(defined(art.asset) => { "url": art.asset->url, "width": art.asset->metadata.dimensions.width, "height": art.asset->metadata.dimensions.height, "crop": art.crop }) }`,
+    `*[_type == "badge" && !(_id in path("drafts.**"))] | order(title asc) { "id": _id, key, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${art("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${art("art")} } }`,
   );
-  const en = lang === "en";
+  // The page's language, else the other's
+  const pick = (no: string | null, en: string | null) => (lang === "en" ? en || no : no || en) ?? null;
   return result.flatMap((b) => {
-    const title = (en ? b.titleEn || b.title : b.title || b.titleEn) ?? null;
+    const title = pick(b.title, b.titleEn);
     if (!title) return [];
-    const description = (en ? b.descriptionEn || b.description : b.description || b.descriptionEn) ?? null;
-    const about = (en ? b.aboutEn || b.about : b.about || b.aboutEn) ?? null;
-    return [{ id: b.id, key: b.key ?? null, title, description, about, art: logoUrl(b.art), players: b.players ?? [] }];
+    const levels = (b.levels ?? [])
+      .filter((l): l is typeof l & { level: number } => typeof l.level === "number")
+      .map((l) => ({ level: l.level, title: pick(l.title, l.titleEn), description: pick(l.description, l.descriptionEn), art: logoUrl(l.art) }))
+      .sort((x, y) => x.level - y.level);
+    return [{ id: b.id, key: b.key ?? null, title, description: pick(b.description, b.descriptionEn), about: pick(b.about, b.aboutEn), art: logoUrl(b.art), players: b.players ?? [], levels }];
   });
 }
 

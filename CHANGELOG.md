@@ -10,14 +10,18 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.25.0 (2026-11-05)
 
-- Players earn achievements ("bragder" in Norwegian). They show as small badges under the player's name; clicking one opens them all, with their art, what they're for and where they were earned:
+- Players earn achievements ("bragder" in Norwegian). They show as small badges under the player's name. Clicking one opens it in full, with how many players hold it, and the player's others below it, the rarest first, each with its art, what it's for and where it was earned:
   - **Oooh baby a triple!**: won singles, doubles and mixed doubles at the same tournament.
   - **National Champion**: won an event at the senior national championships (NM). One badge, with the years won ("2015–2019, 2021").
   - **Breaking the barrier**: won the week's biggest upset.
+  - **Team match hero**: won your match as the underdog for a team that won its team match as the underdog, in Eliteserien, 1. or 2. divisjon, from 2015/16.
+  - **On fire**: 20 or 30 matches won in a row in one discipline: the longest streak ever, with its discipline and the dates it ran.
+  - **Iron player**: 500 or 1,000 rated matches.
+  - **Three-set thriller**: 50 or 100 matches won in three sets.
   - One given by hand, for the site's creator.
-- A new Achievements page (in the menu, and linked from a player's achievements) lists every achievement, how many players have earned it and what share of all rated players that is, and the latest to earn it.
+- A new Achievements page (in the menu, and linked from a player's achievements) lists every achievement, the rarest first: how many players have earned it and what share of all rated players that is, how many reached each level, and the latest to earn it.
 - Sections that fold open (the tables by season, "show all", the explanations) now slide open and closed smoothly instead of jumping, in Chrome and Edge (other browsers open them at once as before, or fade them in). Not with reduced motion.
-- Achievements cover every result since 2013. Their titles, descriptions and art are edited in the Studio (Badges), in Norwegian and English, and new ones given by hand need no change to the site.
+- Achievements cover every result since 2013. Their titles, descriptions and art are edited in the Studio (Badges), in Norwegian and English, with their own for each level if wanted. A milestone's levels are set in the Studio too (a new level, say 2,000 matches, is just a new entry there), and new achievements given by hand need no change to the site.
 
 ## v1.24.11 (2026-11-05)
 
