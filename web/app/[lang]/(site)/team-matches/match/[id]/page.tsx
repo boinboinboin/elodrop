@@ -24,6 +24,10 @@ import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { clubByOrganiser, findVenue, organizationOf, placeOf } from "@/utils/structuredData";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // Team matches are rendered on their first visit and then cached
 export async function generateStaticParams() {
   return [{ id: "0" }];

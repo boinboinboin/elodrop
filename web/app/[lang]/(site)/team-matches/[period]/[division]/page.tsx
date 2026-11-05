@@ -7,6 +7,10 @@ import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamDivisionHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // The newest season's divisions are prerendered; the others are rendered on their first visit and
 // then cached. A week's page (the parent's other addresses) has no divisions: a placeholder.
 export async function generateStaticParams({ params }: { params: { period: string } }) {

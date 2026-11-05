@@ -7,6 +7,10 @@ import { pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS, isPool } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 export const generateStaticParams = async () => POOL_KEYS.map((pool) => ({ pool }));
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/clubs/strongest/[pool]">): Promise<Metadata> {

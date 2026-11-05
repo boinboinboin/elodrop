@@ -28,6 +28,10 @@ import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // A few clubs are prerendered at build; the rest are rendered on their first visit and then served
 // from the cache until the data or the club content changes (ISR).
 export async function generateStaticParams() {

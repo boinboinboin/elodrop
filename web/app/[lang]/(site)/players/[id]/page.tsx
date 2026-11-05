@@ -38,6 +38,10 @@ import { parseId } from "@/utils/parse";
 import { POOL_KEYS } from "@/utils/pools";
 import { rankingHref } from "@/utils/rankings";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // The best ten men are prerendered at build; every other player page is rendered on its first visit
 // and then served from the cache until the next data update (ISR), instead of on every request.
 export async function generateStaticParams() {

@@ -8,6 +8,10 @@ import { addDays } from "@/utils/format";
 import { upsetsHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // Every year is prerendered; weeks are rendered on their first visit and then cached
 export async function generateStaticParams() {
   const years = (await getUpsetsIndex())?.years ?? [];

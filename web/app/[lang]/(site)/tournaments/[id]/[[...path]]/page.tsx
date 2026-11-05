@@ -53,6 +53,10 @@ import {
 
 const strong = (text: ReactNode) => <strong className="font-semibold">{text}</strong>;
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // Every tournament's first event is prerendered; the other events and the summaries on their first visit
 export async function generateStaticParams() {
   const tournaments = (await getTournamentsIndex())?.tournaments ?? [];

@@ -18,6 +18,10 @@ import type { Loose, Pool } from "@/types";
 import { eliteserienHref, playerHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // Every season in review is prerendered (and refreshed with the data)
 export async function generateStaticParams() {
   const seasons = (await getMeta())?.eliteserien.seasons ?? [];

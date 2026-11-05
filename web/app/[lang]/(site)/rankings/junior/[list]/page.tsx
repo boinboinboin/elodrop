@@ -5,6 +5,10 @@ import { getI18n } from "@/messages/server";
 import { pageMetadata } from "@/utils/metadata";
 import { juniorRankingHref, RANKING_LISTS, rankingListTitle } from "@/utils/rankings";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 export const generateStaticParams = async () => Object.keys(RANKING_LISTS).map((list) => ({ list }));
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/rankings/junior/[list]">): Promise<Metadata> {

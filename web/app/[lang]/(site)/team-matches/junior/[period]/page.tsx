@@ -3,6 +3,10 @@
 import type { Metadata } from "next";
 import TeamMatches, { teamMatchesMetadata, teamMatchesSeasonParams } from "@/components/team-matches/TeamMatches";
 
+// Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
+// purpose (no loading text first); without this, dev warns that the navigation isn't instant
+export const instant = false;
+
 // Every season with junior team matches is prerendered; weeks are rendered on their first visit and then cached
 export const generateStaticParams = () => teamMatchesSeasonParams(true);
 
