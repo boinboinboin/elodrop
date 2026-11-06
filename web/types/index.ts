@@ -337,7 +337,7 @@ export interface TeamMatchGame {
   pool: Pool | null;
   side1: TeamMatchPlayer[];
   side2: TeamMatchPlayer[];
-  /** 1 home, 2 away, 0 not played */
+  /** 1 home, 2 away, 0 not played or a draw (with a score: 1-1 in sets, in leagues that play two sets) */
   winner: 0 | 1 | 2;
   /** "21/12,18/21,21/15" */
   score: string | null;

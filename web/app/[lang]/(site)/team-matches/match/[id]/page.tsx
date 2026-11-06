@@ -214,7 +214,14 @@ async function GameRow({ g, clubs, label, chanceTitle }: { g: TeamMatchGame; clu
       {/* The top line: the discipline, the upset label in the middle and the head to head link */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mb-2">
         <abbr className="font-mono text-xs text-gray-600 no-underline justify-self-start" title={name}>{code}</abbr>
-        {g.upset ? <span title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span> : <span />}
+        {g.upset ? (
+          <span title={t("teamMatches.match.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span>
+        ) : !g.winner && g.score && !g.walkover ? (
+          // A draw: a score and no winner (1-1 in sets, in leagues that play two sets)
+          <Badge>{t("teamMatches.match.draw")}</Badge>
+        ) : (
+          <span />
+        )}
         <span className="justify-self-end"><HeadToHead g={g} /></span>
       </div>
       {/* The middle has a fixed width, so every match's chance bar is as long */}
@@ -249,7 +256,8 @@ async function GameRow({ g, clubs, label, chanceTitle }: { g: TeamMatchGame; clu
 async function Score({ g }: { g: TeamMatchGame }) {
   const { t } = await getI18n();
   if (g.walkover) return <p className="text-sm text-gray-600">{t("teamMatches.match.walkover")}</p>;
-  if (!g.winner || !g.score) return <p className="text-sm text-gray-600">{t("teamMatches.match.notPlayed")}</p>;
+  if (!g.score) return <p className="text-sm text-gray-600">{t("teamMatches.match.notPlayed")}</p>;
+  // A draw (a score and no winner) shows its sets too, with the draw label along the top
   return (
     <p className="tabular-nums leading-snug md:flex md:justify-center md:gap-3">
       {g.score.split(",").map((set, i) => <span key={i} className="block whitespace-nowrap">{set.replace("/", "–")}</span>)}

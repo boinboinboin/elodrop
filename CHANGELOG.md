@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.26.2 (2026-11-06)
+
+- A drawn match in a team match (1-1 in sets, in leagues that play two sets) shows its score, with a "Draw" label where upsets have theirs, instead of "Not played". Its rating changes were already counted and shown.
+
 ## v1.26.1 (2026-11-06)
 
 - Team matches outside Eliteserien decided by a golden set now show it, and their win chance counts it, as Eliteserien's do (e.g. Norborg–Trondheim in the 2024/25 play-off of 1. divisjon Midt-Norge). A few team matches change whether they count as upsets.
