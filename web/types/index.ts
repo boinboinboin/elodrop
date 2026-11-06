@@ -342,8 +342,11 @@ export interface TeamMatchGame {
   /** "21/12,18/21,21/15" */
   score: string | null;
   walkover: boolean;
-  /** The home side's chance of winning, from the ratings right before (null: not rated) */
+  /** The home side's chance of winning, from the ratings right before (null: no chance, a side not known
+   * or a player without a rating there yet); also for a match not played (a walkover, no result) */
   winChance: number | null;
+  /** Whether it was rated (false: not played, its chance only; missing in older data) */
+  rated?: boolean;
   upset: boolean;
 }
 
@@ -380,7 +383,9 @@ export interface TeamMatchSummary {
 export interface TeamMatch extends TeamMatchSummary {
   week: string;
   games: TeamMatchGame[];
-  goldenSet: { pool: Pool | null; side1: { id: number; name: string }[]; side2: { id: number; name: string }[]; winner: 1 | 2; score: string } | null;
+  /** The golden set (a play-off tie at 4-4): not rated; its players' ratings before it and the home side's
+   * chance of winning the set (null: a player without a rating there yet; missing in older data) */
+  goldenSet: { pool: Pool | null; side1: TeamMatchPlayer[]; side2: TeamMatchPlayer[]; winner: 1 | 2; score: string; winChance?: number | null } | null;
 }
 
 export interface TeamMatchWeek {

@@ -1,5 +1,5 @@
 // Fetch singles and doubles games from team matches (league play) on badmintonportalen.no.
-// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--list-groups] [--all] [--venues] [--standings]
+// Usage: node fetch-league.mjs [--refetch] [--dry-run] [--season 2024] [--limit 5] [--list-groups] [--all] [--venues] [--standings] [--golden]
 //
 // GetLeagueStanding is one method with "subpages":
 //   1: leagues for season + age group + region -> groups
@@ -17,6 +17,9 @@
 // the groups saved before they were fetched (one request per group; their games are kept).
 // Each group has its official standings (`standings`, subpage 2), fetched with it; --standings adds
 // them to the groups saved before they were (one request per group).
+// A tie decided by a golden set has it (`goldenSet`); --golden adds it to the ties saved before golden
+// sets were fetched: the ones whose games are level but whose score isn't (one request per tie;
+// `goldenSet: null` when the page has none, so it isn't asked again).
 // The season's list of groups (180 requests: every region and age group) is kept in
 // data/cache/league-groups-<season>.json and listed again with --list-groups (weekly) or if missing.
 import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
@@ -225,6 +228,29 @@ async function addVenues(group) {
 // --standings: a saved group with its official standings added
 const addStandings = async (group) => ({ ...group, standings: await listStandings(group) });
 
+// --golden: a tie saved before golden sets were fetched that was decided by one: its games are
+// level but its score isn't (the golden set counts in the score)
+function missesGolden(t) {
+  if (!t.games?.length || "goldenSet" in t) return false;
+  const [home, away] = (t.score.match(/(\d+)\s*-\s*(\d+)/) ?? []).slice(1).map(Number);
+  const won = (side) => t.games.filter((g) => g.winner === side).length;
+  return home !== away && won(1) === won(2);
+}
+// A saved group with these ties' golden sets added (their games as saved)
+async function addGolden(group) {
+  const ties = [];
+  for (const t of group.ties) {
+    if (!missesGolden(t)) {
+      ties.push(t);
+      continue;
+    }
+    const tie = { ...t };
+    await fetchGames(group, tie);
+    ties.push({ ...t, goldenSet: tie.goldenSet ?? null });
+  }
+  return { ...group, ties };
+}
+
 /** A group's played ties with their games and its standings; `previous` is the saved file of a group still being played */
 async function fetchGroup(g, previous) {
   const ties = await listTies(g);
@@ -276,7 +302,8 @@ const due = (group) => !group.schedule || group.schedule.some((t) => !t.time || 
 // needed for --venues and --standings, which only go through the saved groups
 const venues = process.argv.includes("--venues");
 const standingsOnly = process.argv.includes("--standings");
-const filling = venues || standingsOnly;
+const golden = process.argv.includes("--golden");
+const filling = venues || standingsOnly || golden;
 await mkdir(CACHE, { recursive: true });
 const groups = new Map();
 for (const season of filling ? [] : seasons) {
@@ -299,19 +326,23 @@ for (const season of filling ? [] : seasons) {
 const all = process.argv.includes("--all");
 const open = [...groups.values()].filter((g) => !done.has(fileKey(g)));
 // --venues: instead, the saved groups of these seasons with a tie saved before halls were fetched;
-// --standings: the ones saved before standings were
+// --standings: the ones saved before standings were; --golden: the ones with a tie missing its golden set
 const pending = venues
   ? [...saved.values()].filter((g) => seasons.includes(g.season) && g.ties.some((t) => !("venue" in t)))
   : standingsOnly
     ? [...saved.values()].filter((g) => seasons.includes(g.season) && !g.standings)
-    : open.filter((g) => all || !saved.has(fileKey(g)) || due(saved.get(fileKey(g))));
+    : golden
+      ? [...saved.values()].filter((g) => seasons.includes(g.season) && g.ties.some(missesGolden))
+      : open.filter((g) => all || !saved.has(fileKey(g)) || due(saved.get(fileKey(g))));
 const todo = pending.slice(0, process.argv.includes("--limit") ? +arg("--limit") : undefined);
 console.error(
   venues
     ? `${todo.length} saved groups without halls to fetch them for`
     : standingsOnly
       ? `${todo.length} saved groups without standings to fetch them for`
-      : `${groups.size} groups: ${groups.size - open.length} complete, ${open.length - pending.length} with no ties due, ${todo.length} to fetch`
+      : golden
+        ? `${todo.length} saved groups with a tie missing its golden set`
+        : `${groups.size} groups: ${groups.size - open.length} complete, ${open.length - pending.length} with no ties due, ${todo.length} to fetch`
 );
 if (process.argv.includes("--dry-run")) process.exit(0);
 
@@ -334,6 +365,14 @@ async function worker() {
         const group = await addStandings(g);
         await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(group));
         console.error(`${label}: standings of ${group.standings.length} teams`);
+        continue;
+      }
+      if (golden) {
+        const checked = g.ties.filter(missesGolden).map((t) => t.matchId);
+        const group = await addGolden(g);
+        await writeFile(`${OUT}/${fileKey(g)}.json`, JSON.stringify(group));
+        const found = group.ties.filter((t) => checked.includes(t.matchId) && t.goldenSet).length;
+        console.error(`${label}: golden sets for ${found} of ${checked.length} ties`);
         continue;
       }
       const { group, fetched, unplayed } = await fetchGroup(g, saved.get(fileKey(g)));

@@ -329,7 +329,12 @@ function suspiciousReport(review) {
   return lines.join("\n") + "\n";
 }
 
-// One rateable game: both sides complete (one player in singles, two in doubles), all with ids.
+// Both sides complete (one player in singles, two in doubles), all with ids
+const complete = (pool, sides) => sides.every((side) => side.length === (DOUBLES.has(pool) ? 2 : 1) && side.every((p) => p.id));
+
+// One rateable game: both sides complete, all with ids. With meta.previews, a league match not played
+// (a walkover, no result) whose sides are complete is returned as a preview instead (`preview: true`):
+// not rated, only its chance from the ratings before it (computeRatings' `previews`).
 function toGame(original, meta) {
   const pool = POOLS[original.discipline];
   if (!pool) return null;
@@ -347,24 +352,24 @@ function toGame(original, meta) {
   }
   if (m === original) checkScore(m, meta);
   const sets = R.parseSets(m.score ?? "");
+  const preview = () => (meta.previews && complete(pool, [m.side1, m.side2]) ? { preview: true, pool, side1: m.side1, side2: m.side2, key: matchKey(meta.keySource ?? meta.source, m.side1, m.side2), ...meta } : null);
   if (R.isWalkover(m, sets, meta.day)) {
     skipped.walkover++;
-    return null;
+    return preview();
   }
   if (!m.side1.length || !m.side2.length) {
     skipped.bye++;
     return null;
   }
-  const size = DOUBLES.has(pool) ? 2 : 1;
   const sides = [m.side1, m.side2];
-  if (sides.some((side) => side.length !== size || side.some((p) => !p.id))) {
+  if (!complete(pool, sides)) {
     skipped.noPlayer++;
     return null;
   }
   const s = R.result(m, sets);
   if (s === null) {
     skipped.unplayed++;
-    return null;
+    return preview();
   }
   // Cross-region: every player's region is known and the two sides share none.
   const [r1, r2] = sides.map((side) => side.map((p) => regionOf(p.club)));
@@ -395,26 +400,40 @@ export function collectGames() {
       if (g) games.push(g);
     });
   }
+  leaguePreviews.length = 0;
   for (const group of readDir("league")) {
     for (const tie of group.ties) {
-      tie.games.forEach((m, i) => {
-        const g = toGame(m, {
-          day: tie.time.slice(0, 10),
-          source: `L${tie.matchId}`,
-          order: i,
-          home: 1, // side 1 is the home team in every league tie
-          level: R.leagueLevel(group.ageGroup, group.division, m.game),
-          event: `${group.division} ${group.group} (${m.game})`,
-        });
-        if (g) games.push(g);
+      const meta = (game, order) => ({
+        day: tie.time.slice(0, 10),
+        source: `L${tie.matchId}`,
+        order,
+        home: 1, // side 1 is the home team in every league tie
+        level: R.leagueLevel(group.ageGroup, group.division, game),
+        event: `${group.division} ${group.group} (${game})`,
       });
+      tie.games.forEach((m, i) => {
+        const g = toGame(m, { ...meta(m.game, i), previews: true });
+        if (g?.preview) leaguePreviews.push(g);
+        else if (g) games.push(g);
+      });
+      // The golden set (play-off ties at 4-4): one set, not rated; previewed after the tie's matches
+      const golden = tie.goldenSet;
+      const pool = golden && POOLS[golden.discipline];
+      if (pool && complete(pool, [golden.side1, golden.side2])) {
+        leaguePreviews.push({ preview: true, golden: true, pool, side1: golden.side1, side2: golden.side2, ...meta(golden.game, tie.games.length) });
+      }
     }
   }
+  leaguePreviews.sort(byPlayingOrder);
   for (const c of corrections.values()) {
     if (!c.used) console.warn(`corrections.txt line ${c.line}: no such match: "${c.text}"`);
   }
-  return games.sort((x, y) => x.day.localeCompare(y.day) || x.source.localeCompare(y.source) || x.order - y.order);
+  return games.sort(byPlayingOrder);
 }
+const byPlayingOrder = (x, y) => x.day.localeCompare(y.day) || x.source.localeCompare(y.source) || x.order - y.order;
+// League matches not played whose sides are known, and golden sets (after collectGames, in playing
+// order): for computeRatings' `previews`
+export const leaguePreviews = [];
 
 // Day arithmetic on ISO dates
 const DAY_MS = 86_400_000;
@@ -438,7 +457,8 @@ const RETURN_MATCHES = 5;
 // (null: off), homeAdvantage(game) (rating points added to side 1, the home team in league ties),
 // afterMatch(player, game, players) (after each match's update) and ratingPeriod(game) (a key: games
 // with the same key are rated from the ratings before the first and updated together). inactivity.floor
-// may be a function of the pool.
+// may be a function of the pool. previews (leaguePreviews): league matches not rated, given their
+// chance from the ratings at that point in data/league-games.json without changing any rating.
 export function computeRatings(
   games,
   inactivity = R.INACTIVITY,
@@ -464,6 +484,7 @@ export function computeRatings(
     homeAdvantage,
     afterMatch,
     ratingPeriod,
+    previews = [],
   } = {}
 ) {
   const players = Object.fromEntries(Object.values(POOLS).map((pool) => [pool, new Map()]));
@@ -479,17 +500,21 @@ export function computeRatings(
   // (by the rules for the weekly upsets)
   const leagueGames = new Map();
 
-  // Not playing penalty for the time between the end of the grace period and `day`.
-  function applyInactivity(p, day) {
-    if (!inactivity.halfLifeDays || !p.lastPlayed) return;
+  // The rating with the not playing penalty for the time between the end of the grace period and
+  // `day` (null: no penalty to apply up to then)
+  function penalized(p, day) {
+    if (!inactivity.halfLifeDays || !p.lastPlayed) return null;
     let from = addDays(p.lastPlayed, inactivity.graceDays);
     if (p.penalizedUntil > from) from = p.penalizedUntil;
-    if (day <= from) return;
+    if (day <= from) return null;
     const floor = typeof inactivity.floor === "function" ? inactivity.floor(p.pool) : inactivity.floor;
-    if (p.rating > floor) {
-      const factor = 0.5 ** (R.penaltyDays(from, day) / inactivity.halfLifeDays);
-      p.rating = floor + (p.rating - floor) * factor;
-    }
+    if (p.rating <= floor) return p.rating;
+    return floor + (p.rating - floor) * 0.5 ** (R.penaltyDays(from, day) / inactivity.halfLifeDays);
+  }
+  function applyInactivity(p, day) {
+    const rating = penalized(p, day);
+    if (rating === null) return;
+    p.rating = rating;
     p.penalizedUntil = day;
   }
 
@@ -707,13 +732,36 @@ export function computeRatings(
     pending.length = 0;
   };
 
+  // A league match not rated (previews): each side's chance from the players' ratings at that point
+  // (with the not playing penalty up to its day), changing nothing. A golden set is one set, so its
+  // chance is a set's (R.setChance), not a match's. No chance when a player has no rating there yet.
+  function preview(g) {
+    if (!keepWeekly) return;
+    const sides = [g.side1, g.side2].map((side) => side.map((pl) => {
+      const p = players[g.pool].get(pl.id);
+      return p && { id: p.id, rating: penalized(p, g.day) ?? p.rating };
+    }));
+    const known = sides.flat().every(Boolean);
+    const ea = known ? expectedScore(R.sideRating(sides[0].map((p) => p.rating)) + (homeAdvantage?.(g) ?? 0), R.sideRating(sides[1].map((p) => p.rating)), g.pool) : null;
+    const matchId = Number(g.source.slice(1));
+    if (!leagueGames.has(matchId)) leagueGames.set(matchId, {});
+    leagueGames.get(matchId)[g.golden ? "golden" : g.order] = {
+      preview: true,
+      winChance: ea === null ? null : Math.round((g.golden ? R.setChance(ea) : ea) * 1000) / 1000,
+      ...Object.fromEntries(sides.map((side, i) => [`side${i + 1}`, side.filter(Boolean).map((p) => ({ id: p.id, rating: Math.round(p.rating) }))])),
+    };
+  }
+
+  let next = 0;
   for (const g of games) {
+    for (; next < previews.length && byPlayingOrder(previews[next], g) < 0; next++) preview(previews[next]);
     if (ratingPeriod && ratingPeriod(g) !== period) {
       flush();
       period = ratingPeriod(g);
     }
     rate(g);
   }
+  for (; next < previews.length; next++) preview(previews[next]);
   flush();
 
   const today = new Date().toISOString().slice(0, 10);
@@ -746,7 +794,7 @@ const byRanking = (a, b) => b.rating - a.rating || b.matches - a.matches || a.na
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const games = collectGames();
-  const { players, calibration, returns, upsets, leagueGames } = computeRatings(games);
+  const { players, calibration, returns, upsets, leagueGames } = computeRatings(games, undefined, { previews: leaguePreviews });
 
   const today = new Date().toISOString().slice(0, 10);
   const round = (x) => Math.round(x * 10) / 10;

@@ -7,7 +7,7 @@
   "breadcrumb": "Overraskelser",
   "title": "Største overraskelser",
   "intro": "Kampene som ble vunnet med lavest sjanse, uke for uke.",
-  "explanation": "Seierssjansen er regnet ut fra ratingene rett før kampen. Bare kamper mellom etablerte spillere teller. Begge må ha:\n\n- spilt minst 10 kamper\n- en rating som er sikker innenfor ±250 i single eller ±180 i double\n\nEn junior i rask utvikling som slår en favoritt, telles derfor ikke som en overraskelse. Walkover og uavgjort er utelatt.",
+  "explanation": "Seierssjansen er regnet ut fra ratingene rett før kampen. Bare kamper mellom etablerte spillere teller. Begge må ha:\n\n- spilt minst 10 kamper\n- en rating som er sikker innenfor ±250 i single eller ±180 i double: vi er omtrent 95 % sikre på at det virkelige nivået er så nær ratingen. Usikkerheten øker mens en spiller ikke spiller, så etter en lang pause kan en rating havne utenfor\n\nEn junior i rask utvikling som slår en favoritt, telles derfor ikke som en overraskelse. Walkover og uavgjort er utelatt.",
   "none": "Ingen overraskelser regnet ut ennå: kjør pipelinen.",
   "weekOf": "Uke {week}",
   "carousel": "De største overraskelsene, uke {week}",

@@ -8,6 +8,14 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.26.1 (2026-11-06)
+
+- Team matches outside Eliteserien decided by a golden set now show it, and their win chance counts it, as Eliteserien's do (e.g. Norborg–Trondheim in the 2024/25 play-off of 1. divisjon Midt-Norge). A few team matches change whether they count as upsets.
+- A team match's golden set shows its players' ratings and each side's chance of winning it. Because it's a single set, the chance is closer to even than a whole match's would be. The team match's win chance now uses this chance for the golden set.
+- Matches in a team match that weren't played (walkovers, no result) show each side's chance from the ratings when both sides are known. They still don't count towards the team match's chance or expected score.
+- The biggest upsets page explains what a rating "certain to within ±250" means, and that the uncertainty grows while a player isn't playing.
+- `fetch-league.mjs --golden` adds the golden sets of ties saved before they were fetched, one request per tie; the nightly run does it once.
+
 ## v1.26.0 (2026-11-06)
 
 - A division's page shows each group's official standings, from badmintonportalen, above its power ranking. Each team shows its place, team matches played, won, drawn and lost, matches and sets won and lost, and table points. badmintonportalen's dashed line, which usually marks the places going through to the playoffs, is kept. Eliteserien's knockout playoffs show their final places.

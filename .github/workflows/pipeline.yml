@@ -125,6 +125,11 @@ jobs:
       - name: Add standings to saved league groups
         run: node fetch-league.mjs --standings
 
+      # The golden sets of ties saved before they were fetched (games level, score not): those ties
+      # once (one request each), then nothing (a tie fetched from then on brings its golden set)
+      - name: Add golden sets to saved league ties
+        run: node fetch-league.mjs --golden
+
       # New players and club changes, and the clubs and their regions (about a minute): weekly
       - name: Fetch the player register and clubs
         if: steps.mode.outputs.weekly == 'true'

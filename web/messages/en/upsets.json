@@ -7,7 +7,7 @@
   "breadcrumb": "Upsets",
   "title": "Biggest upsets",
   "intro": "The matches won with the lowest chance of winning, week by week.",
-  "explanation": "The win chance is from the ratings right before the match. Only matches between settled players count. Every player must have:\n\n- played at least 10 matches\n- a rating certain to within ±250 in singles or ±180 in doubles\n\nSo a junior improving fast who beats a favourite isn't counted as an upset. Walkovers and draws are left out.",
+  "explanation": "The win chance is from the ratings right before the match. Only matches between settled players count. Every player must have:\n\n- played at least 10 matches\n- a rating certain to within ±250 in singles or ±180 in doubles: we're about 95% sure their true level is that close to their rating. The uncertainty grows while a player isn't playing, so after a long break a rating can fall outside it\n\nSo a junior improving fast who beats a favourite isn't counted as an upset. Walkovers and draws are left out.",
   "none": "No upsets calculated yet: run the pipeline.",
   "weekOf": "Week of {week}",
   "carousel": "The biggest upsets, week of {week}",

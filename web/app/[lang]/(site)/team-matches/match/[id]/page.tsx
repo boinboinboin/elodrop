@@ -112,8 +112,9 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
   // The start time, when known ("12:00"; some only have the day)
   const time = tie.time.length > 10 ? tie.time.slice(11, 16) : null;
   const names: [string, string] = [tie.home, tie.away];
-  // The expected score with the lineups played: the rated matches' chances plus the walkovers
-  const rated = tie.games.filter((g) => g.winChance != null);
+  // The expected score with the lineups played: the rated matches' chances plus the walkovers (matches
+  // not played have a chance too, but count for neither side)
+  const rated = tie.games.filter((g) => g.winChance != null && (g.rated ?? true));
   const walkovers = [1, 2].map((side) => tie.games.filter((g) => g.walkover && g.winner === side).length);
   const expectedHome = rated.reduce((sum, g) => sum + (g.winChance ?? 0), 0) + walkovers[0];
   const expectedAway = rated.length - (expectedHome - walkovers[0]) + walkovers[1];
@@ -183,8 +184,9 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
             {tie.games.map((g, i) => <GameRow key={i} g={g} clubs={clubs} />)}
             {golden && (
               <GameRow
-                g={{ game: "", pool: golden.pool, side1: golden.side1, side2: golden.side2, winner: golden.winner, score: golden.score, walkover: false, winChance: null, upset: false }}
+                g={{ game: "", pool: golden.pool, side1: golden.side1, side2: golden.side2, winner: golden.winner, score: golden.score, walkover: false, winChance: golden.winChance ?? null, rated: false, upset: false }}
                 label={t("teamMatches.match.goldenSet")}
+                chanceTitle={t("teamMatches.match.goldenChanceTitle")}
                 clubs={clubs}
               />
             )}
@@ -202,7 +204,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
  * head to head link on the right along the top, then the home side on the left, the away side on the right (the winners bold)
  * and between them the sets (side by side from md up) and the sides' chances as a bar
  */
-async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<string, ClubEntry>; label?: string }) {
+async function GameRow({ g, clubs, label, chanceTitle }: { g: TeamMatchGame; clubs: Record<string, ClubEntry>; label?: string; chanceTitle?: string }) {
   const { t, pct, pools, poolCodes } = await getI18n();
   const n = g.game.match(/^(\d+)\./)?.[1] ?? "";
   const name = label ?? (g.pool ? `${pools[g.pool]} ${n}` : g.game);
@@ -223,7 +225,7 @@ async function GameRow({ g, clubs, label }: { g: TeamMatchGame; clubs: Record<st
         <div className="text-center">
           <Score g={g} />
           {g.winChance != null && (
-            <div className="mt-1.5" title={t("teamMatches.match.chanceTitle")}>
+            <div className="mt-1.5" title={chanceTitle ?? t("teamMatches.match.chanceTitle")}>
               <div className="flex h-1.5 gap-0.5" role="img" aria-label={`${pct(g.winChance)} – ${pct(1 - g.winChance)}`}>
                 <div className="rounded-l" style={{ width: `${(g.winChance * 100).toFixed(1)}%`, background: SIDE_COLORS[0] }} />
                 <div className="rounded-r flex-1" style={{ background: SIDE_COLORS[1] }} />

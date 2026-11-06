@@ -239,6 +239,18 @@ export const ratingMultiplier = (r, pool) => 1 + 2 / (1 + 2 ** ((r - P0) / (90 *
 export const scaleOf = (pool) => (DOUBLES_POOLS.has(pool) ? (SCALE * DOUBLES_UNIT) / 2 : SCALE);
 export const expectedScore = (ra, rb, pool) => 1 / (1 + 10 ** ((rb - ra) / scaleOf(pool)));
 
+// The chance of winning one set (a golden set) for a side with chance m of winning the match (best of
+// three, sets independent): the set chance p with p²(3 − 2p) = m, found by bisection. 70% → 64%.
+export function setChance(m) {
+  let [lo, hi] = [0, 1];
+  for (let i = 0; i < 40; i++) {
+    const p = (lo + hi) / 2;
+    if (p * p * (3 - 2 * p) < m) lo = p;
+    else hi = p;
+  }
+  return (lo + hi) / 2;
+}
+
 // Rating uncertainty (Glicko-1 rating deviation, RD). Shown as rating ± 2·RD; in singles it doesn't
 // affect how ratings change (in doubles it splits a side's change). New players start at RD_MAX; matches shrink RD, time without
 // playing grows it back to RD_MAX over about RD_RETURN_DAYS (from an RD of 40).

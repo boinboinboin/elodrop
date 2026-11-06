@@ -66,33 +66,42 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
     if (!Number.isFinite(homeWon) || !Number.isFinite(awayWon)) continue;
     const [home, away] = [teamName(tie.home), teamName(tie.away)];
     const ratedGames = rated[tie.matchId] ?? {};
+    // A side's players with their ratings before and the changes (r: the match in league-games.json;
+    // a match not played or a golden set has ratings but no changes)
+    const side = (r, players, n) => players.map((p) => {
+      const info = r?.[`side${n}`]?.find((x) => x.id === p.id);
+      return { id: p.id, name: p.name, ...(info && { rating: info.rating }), ...(info?.change != null && { change: info.change }) };
+    });
     const games = tie.games.map((g, i) => {
       const r = ratedGames[i];
-      const side = (players, n) => players.map((p) => {
-        const info = r?.[`side${n}`].find((x) => x.id === p.id);
-        return { id: p.id, name: p.name, ...(info && { rating: info.rating, change: info.change }) };
-      });
       return {
         game: g.game,
         pool: POOL_OF[g.discipline] ?? null,
-        side1: side(g.side1, 1),
-        side2: side(g.side2, 2),
+        side1: side(r, g.side1, 1),
+        side2: side(r, g.side2, 2),
         winner: g.winner ?? 0,
         score: g.score ?? null,
         walkover: !!g.walkover,
+        // The home side's chance from the ratings right before; for a match not played (a walkover,
+        // no result) whose sides are known too, though it isn't rated (`rated: false`)
         winChance: r?.winChance ?? null,
+        rated: !!r && !r.preview,
         upset: r?.upset ?? false,
       };
     });
     // The tie's odds with the lineups played: rated matches with their win chances, walkovers as
     // certain wins for the side given them; a draw settled by a golden set, when one was played,
-    // with the chance of that discipline's first match
+    // with the golden set's chance (one set, from its players' ratings; when one has none yet, the set
+    // chance of that discipline's first rated match)
     const walkovers = [1, 2].map((side) => games.filter((g) => g.walkover && g.winner === side).length);
-    const chances = games.filter((g) => g.winChance != null).map((g) => g.winChance);
+    const chances = games.filter((g) => g.rated).map((g) => g.winChance);
     let odds = chances.length ? playedOdds(chances, walkovers) : null;
+    const goldenRated = ratedGames.golden;
+    const goldenChance = tie.goldenSet
+      ? (goldenRated?.winChance ?? R.setChance(games.find((g) => g.pool === POOL_OF[tie.goldenSet.discipline] && g.rated)?.winChance ?? 0.5))
+      : null;
     if (odds && tie.goldenSet) {
-      const chance = games.find((g) => g.pool === POOL_OF[tie.goldenSet.discipline] && g.winChance != null)?.winChance ?? 0.5;
-      odds = { ...odds, win: odds.win + odds.draw * chance, loss: odds.loss + odds.draw * (1 - chance), draw: 0 };
+      odds = { ...odds, win: odds.win + odds.draw * goldenChance, loss: odds.loss + odds.draw * (1 - goldenChance), draw: 0 };
     }
     const winner = homeWon > awayWon ? 1 : homeWon < awayWon ? 2 : (tie.goldenSet?.winner ?? 0);
     const upset = !!odds && ((winner === 1 && odds.win < TIE_UPSET) || (winner === 2 && odds.loss < TIE_UPSET));
@@ -122,7 +131,15 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
       upsets: games.filter((g) => g.upset).length,
     };
     const goldenSet = tie.goldenSet
-      ? { pool: POOL_OF[tie.goldenSet.discipline] ?? null, side1: tie.goldenSet.side1.map(({ id, name }) => ({ id, name })), side2: tie.goldenSet.side2.map(({ id, name }) => ({ id, name })), winner: tie.goldenSet.winner, score: tie.goldenSet.score }
+      ? {
+          pool: POOL_OF[tie.goldenSet.discipline] ?? null,
+          side1: side(goldenRated, tie.goldenSet.side1, 1),
+          side2: side(goldenRated, tie.goldenSet.side2, 2),
+          winner: tie.goldenSet.winner,
+          score: tie.goldenSet.score,
+          // The home side's chance of winning the set (null: a player has no rating there yet)
+          winChance: goldenRated?.winChance ?? null,
+        }
       : null;
     ties.push({ summary, games, goldenSet, rank, week: monday(day) });
     played.push({ group, tie, home, away });
