@@ -30,7 +30,7 @@
 //   team-matches/index.json       seasons with their divisions and weeks, and the newest week's team matches (team-matches.mjs)
 //   team-matches/weeks/<Monday>.json  that week's team matches
 //   team-matches/<matchId>.json   one team match with its individual matches
-//   team-matches/divisions/<season>/<slug>.json  one division: its groups' team matches and power rankings
+//   team-matches/divisions/<season>/<slug>.json  one division: its groups' team matches, standings and power rankings
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
 //   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)

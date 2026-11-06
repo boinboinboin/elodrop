@@ -48,6 +48,26 @@
     "expected": "Expected score with the lineups played: {home}–{away}",
     "goldenSet": "Golden set"
   },
+  "standings": {
+    "title": "Standings",
+    "intro": "The official table, from badmintonportalen.",
+    "introPlayoff": "The final places, from badmintonportalen.",
+    "team": "Team",
+    "played": "P",
+    "playedTitle": "Team matches played",
+    "won": "W",
+    "wonTitle": "Won",
+    "drawn": "D",
+    "drawnTitle": "Drawn",
+    "lost": "L",
+    "lostTitle": "Lost",
+    "matches": "Matches",
+    "matchesTitle": "Matches won and lost",
+    "sets": "Sets",
+    "setsTitle": "Sets won and lost",
+    "points": "Pts",
+    "pointsTitle": "Table points"
+  },
   "power": {
     "title": "Power ranking",
     "intro": "Matches won per team match, of {matches}: expected from the players who played for each team, and what actually happened.",

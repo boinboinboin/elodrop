@@ -10,7 +10,7 @@
 //   weeks/<Monday>.json that week's ties (summaries), Eliteserien first, then by level, and its season
 //   <matchId>.json      one tie: its summary, individual matches and golden set
 //   divisions/<season>/<slug>.json  one division (or series) in a season: its groups, each with
-//                       its team matches and its power ranking (the teams by the strength of the
+//                       its team matches, its official standings and its power ranking (the teams by the strength of the
 //                       players who played for them that season, their best lineup)
 //   venues.json         every hall team matches were played in (badmintonportalen's free text), most
 //                       used first, with the clubs hosting there: for the site's venues in Sanity
@@ -181,8 +181,23 @@ const seasons = [...Map.groupBy(weeks, (week) => byWeek.get(week)[0].summary.sea
     seniorWeeks: weekList(list, (t) => !isJunior(t)),
     juniorWeeks: weekList(list, isJunior),
   }));
+// A group's official standings (fetch-league.mjs), the teams named and with their clubs as in the
+// team matches; null when not fetched yet or before its first tie (every place 0). The standings
+// add to some names ("Asker 1 1", "Haugerud 1 Regnbue", "Grimstad Kr.Sand"): such a team is the
+// team match name it starts with, when just one does
+function standingsOf(group) {
+  if (!group.standings?.some((row) => row.place > 0)) return null;
+  const names = [...new Set(group.ties.flatMap((t) => [teamName(t.home), teamName(t.away)]))];
+  return group.standings.map(({ team, ...row }) => {
+    let name = teamName(team);
+    const starts = names.filter((n) => name.startsWith(`${n} `));
+    if (!names.includes(name) && starts.length === 1) name = starts[0];
+    return { ...row, team: name, club: name.includes("/") ? null : clubOf(name) };
+  });
+}
+
 // Divisions: each season's divisions (Eliteserien first, then by level, juniors after), each with
-// its groups in order, every group's team matches by time and its power ranking
+// its groups in order, every group's team matches by time, its official standings and its power ranking
 const weekly = read(`${DIR}data/ratings-weekly.json`).pools;
 const current = read(`${DIR}data/ratings.json`).pools;
 for (const s of seasons) {
@@ -198,6 +213,7 @@ for (const s of seasons) {
           const ids = new Set(l.map((p) => p.tie.matchId));
           return {
             group: name,
+            standings: standingsOf(l[0].group),
             power: power.get(`${group.ageGroup}|${group.division}|${name}`) ?? null,
             ties: ties.filter((t) => ids.has(t.summary.matchId)).map((t) => t.summary).sort((a, b) => a.time.localeCompare(b.time) || a.matchId - b.matchId),
           };

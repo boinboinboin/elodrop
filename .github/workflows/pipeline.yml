@@ -120,6 +120,11 @@ jobs:
       - name: Add halls to saved league ties
         run: node fetch-league.mjs --venues
 
+      # The official standings of groups saved before they were fetched: every saved group once (one
+      # request each), then nothing (a group fetched from then on brings its standings)
+      - name: Add standings to saved league groups
+        run: node fetch-league.mjs --standings
+
       # New players and club changes, and the clubs and their regions (about a minute): weekly
       - name: Fetch the player register and clubs
         if: steps.mode.outputs.weekly == 'true'

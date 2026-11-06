@@ -1,12 +1,13 @@
 // One division in a season (/team-matches/2025-26/eliteserien-2025-2026; pipeline/team-matches.mjs):
-// each of its groups (the regular season, the playoffs) with its power ranking and its team matches,
-// round by round. The season and division dropdowns (components/team-matches/Pickers.tsx) lead to
+// each of its groups (the regular season, the playoffs) with its official standings, its power
+// ranking and its team matches, round by round. The season and division dropdowns (components/team-matches/Pickers.tsx) lead to
 // the season's other divisions.
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Pickers from "@/components/team-matches/Pickers";
 import PowerRanking from "@/components/team-matches/PowerRanking";
+import Standings from "@/components/team-matches/Standings";
 import TieRow from "@/components/team-matches/TieRow";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
@@ -71,7 +72,11 @@ async function Content({ params }: { params: Promise<{ period: string; division:
         return (
           <Section key={group.group} title={division.groups.length > 1 ? group.group : undefined}>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
-              {group.power ? <PowerRanking power={group.power} clubs={clubs} /> : <div />}
+              {/* The standings, then the power ranking to compare them with */}
+              <div className="grid gap-8">
+                {group.standings && <Standings standings={group.standings} clubs={clubs} />}
+                {group.power && <PowerRanking power={group.power} clubs={clubs} />}
+              </div>
               <div className="grid gap-6">
                 {[...rounds].map(([day, list]) => (
                   <div key={day}>
