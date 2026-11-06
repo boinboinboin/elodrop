@@ -3,12 +3,12 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import ThemeScript from "@/components/layout/ThemeScript";
 import { LanguageProvider } from "@/messages/client";
 import { isLanguage, LANGUAGES } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import { SITE_URL } from "@/utils/hrefs";
 import { ACCENT } from "@/utils/logo";
-import { THEME_SCRIPT } from "@/utils/theme";
 import "../globals.css";
 
 // Redaction (SIL Open Font License, app/fonts/redaction/OFL.txt) is self-hosted: it is newer than
@@ -55,8 +55,8 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
     // The theme attribute is set by THEME_SCRIPT before React hydrates, so it may differ from the server's
     <html lang={lang} className={`${redaction.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* The saved colour theme, before the page paints (utils/theme.ts) */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        {/* The saved colour theme, before the page paints (utils/theme.ts, components/layout/ThemeScript.tsx) */}
+        <ThemeScript />
       </head>
       <body className="min-h-screen flex flex-col">
         {/* Type-safe URL query state (nuqs) for client components */}
