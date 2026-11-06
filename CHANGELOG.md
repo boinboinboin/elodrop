@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.26.0 (2026-11-06)
+
+- A division's page shows each group's official standings, from badmintonportalen, above its power ranking. Each team shows its place, team matches played, won, drawn and lost, matches and sets won and lost, and table points. badmintonportalen's dashed line, which usually marks the places going through to the playoffs, is kept. Eliteserien's knockout playoffs show their final places.
+- The pipeline fetches each league group's standings with its team matches; `fetch-league.mjs --standings` adds them to groups saved before, one request per group.
+
 ## v1.25.2 (2026-11-06)
 
 - On a phone, the achievements page lists an achievement's levels with the level's name and how many players have it on separate lines.

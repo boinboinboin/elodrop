@@ -48,6 +48,26 @@
     "expected": "Forventet resultat med oppstillingene som ble brukt: {home}–{away}",
     "goldenSet": "Gullsett"
   },
+  "standings": {
+    "title": "Tabell",
+    "intro": "Den offisielle tabellen, fra badmintonportalen.",
+    "introPlayoff": "Plasseringene, fra badmintonportalen.",
+    "team": "Lag",
+    "played": "S",
+    "playedTitle": "Lagkamper spilt",
+    "won": "V",
+    "wonTitle": "Vunnet",
+    "drawn": "U",
+    "drawnTitle": "Uavgjort",
+    "lost": "T",
+    "lostTitle": "Tapt",
+    "matches": "Kamper",
+    "matchesTitle": "Kamper vunnet og tapt",
+    "sets": "Sett",
+    "setsTitle": "Sett vunnet og tapt",
+    "points": "P",
+    "pointsTitle": "Tabellpoeng"
+  },
   "power": {
     "title": "Styrkerangering",
     "intro": "Kamper vunnet per lagkamp, av {matches}: forventet ut fra spillerne som spilte for hvert lag, og hva som faktisk skjedde.",

@@ -410,14 +410,37 @@ export interface TeamPowerRanking {
   }[];
 }
 
-/** One division (or series) in a season: its groups, each with its team matches in order and its power ranking */
+/**
+ * A team in a group's official standings (badmintonportalen's, pipeline/fetch-league.mjs). A knockout
+ * playoff (Eliteserien's) has only the places: no numbers.
+ */
+export interface TeamStandingsRow {
+  place: number;
+  team: string;
+  club: string | null;
+  played?: number;
+  won?: number;
+  drawn?: number;
+  lost?: number;
+  /** Matches, sets and points won and lost */
+  matches?: [number, number];
+  sets?: [number, number];
+  rallies?: [number, number];
+  /** Table points (Eliteserien: 4-0, 3-1 or 2-2 per team match; a playoff's: by place) */
+  points?: number;
+  /** A dashed line under it: the places going through to the playoffs, or a split into top and bottom groups */
+  line?: true;
+}
+
+/** One division (or series) in a season: its groups, each with its team matches in order, its official standings and its power ranking */
 export interface TeamDivision {
   season: number;
   slug: string;
   ageGroup: string;
   region: string;
   division: string;
-  groups: { group: string; power: TeamPowerRanking | null; ties: TeamMatchSummary[] }[];
+  /** standings: missing in data from before they were fetched, null before the group's first team match */
+  groups: { group: string; standings?: TeamStandingsRow[] | null; power: TeamPowerRanking | null; ties: TeamMatchSummary[] }[];
 }
 
 /** A division in the index: its address and how many groups, teams and team matches it has */
