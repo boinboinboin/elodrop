@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.25.2 (2026-11-06)
+
+- On a phone, the achievements page lists an achievement's levels with the level's name and how many players have it on separate lines.
+
 ## v1.25.1 (2026-11-05)
 
 - Achievements are called "prestasjoner" in Norwegian (were "bragder").

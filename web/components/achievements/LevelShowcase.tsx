@@ -78,7 +78,7 @@ export default function LevelShowcase({ levels, children }: { levels: ShowcaseLe
       <div className="min-w-0">
         {children}
         {/* The levels, highest first, the one shown marked */}
-        <ul className="mt-3 space-y-0.5" aria-label={t("achievements.byLevel")}>
+        <ul className="mt-3 space-y-1.5 md:space-y-0.5"aria-label={t("achievements.byLevel")}>
           {levels
             .map((l, i) => ({ ...l, i }))
             .reverse()
@@ -92,8 +92,14 @@ export default function LevelShowcase({ levels, children }: { levels: ShowcaseLe
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {l.art ? <img src={l.art} alt="" className="w-6 h-6 object-contain shrink-0" /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
-                  <span className={l.i === current ? "underline decoration-1" : ""}>{l.title}</span>
-                  <span className="font-mono">· {l.players}</span>
+                  {/* The title and the number of players: on two lines on a phone, one from md up */}
+                  <span className="flex flex-col md:flex-row md:gap-2">
+                    <span className={l.i === current ? "underline decoration-1" : ""}>{l.title}</span>
+                    <span className="font-mono">
+                      <span className="hidden md:inline">· </span>
+                      {l.players}
+                    </span>
+                  </span>
                 </button>
               </li>
             ))}
