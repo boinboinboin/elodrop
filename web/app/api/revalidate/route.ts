@@ -1,4 +1,6 @@
-// Marks cached data stale, so the pages using it refresh as they are visited (each one an ISR write).
+// Expires cached data, so the pages using it are built again as they are visited (each one an ISR write).
+// Expired, not just stale ({ expire: 0 }, not "max"): the first visit after an update waits for the fresh
+// page instead of getting the old one while it is rebuilt in the background.
 // POST with "Authorization: Bearer <secret>" (or ?secret=).
 //
 // - The pipeline, after it uploads new data: ?tag=elo-data (everything), or ?tag=elo-data:<area>
@@ -63,6 +65,6 @@ export async function POST(request: Request) {
   const tag = url.searchParams.get("tag") ?? "elo-data";
   if (!fromSanity && !isTag(tag)) return Response.json({ revalidated: false, error: `Unknown tag ${tag}` }, { status: 400 });
   const tags = fromSanity ?? [tag];
-  for (const t of tags) revalidateTag(t, "max");
+  for (const t of tags) revalidateTag(t, { expire: 0 });
   return Response.json({ revalidated: true, tags, at: new Date().toISOString() });
 }

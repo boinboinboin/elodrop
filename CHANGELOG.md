@@ -11,6 +11,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.26.3 (2026-11-08)
 
 - Player pages show each discipline's best rank, and the month it was first reached, under the peak rating.
+- Pages show new results on the first visit after an update: before, the first visit could show the old page and only a refresh showed the new one.
 - Peak ratings and best ranks leave out the 2013/14 and 2014/15 seasons, the ratings' warm-up, when ratings hadn't settled and far fewer players were ranked. Peak ratings are lower for some players who played then.
 
 ## v1.26.2 (2026-11-06)
