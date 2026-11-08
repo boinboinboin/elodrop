@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.26.3 (2026-11-08)
+
+- Player pages show each discipline's best rank, and the month it was first reached, under the peak rating.
+- Peak ratings and best ranks leave out the 2013/14 and 2014/15 seasons, the ratings' warm-up, when ratings hadn't settled and far fewer players were ranked. Peak ratings are lower for some players who played then.
+
 ## v1.26.2 (2026-11-06)
 
 - A drawn match in a team match (1-1 in sets, in leagues that play two sets) shows its score, with a "Draw" label where upsets have theirs, instead of "Not played". Its rating changes were already counted and shown.

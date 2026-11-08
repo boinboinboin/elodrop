@@ -18,7 +18,7 @@ const DIR = new URL(".", import.meta.url).pathname;
 const POOLS = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
 const DOUBLES = new Set(["mensDoubles", "womensDoubles", "mixedDoubles"]);
 // Calibration stats skip the warm-up seasons and players with too few matches.
-const CALIBRATION_FROM = "2015-07-01";
+const CALIBRATION_FROM = R.SETTLED_FROM;
 const CALIBRATION_MIN_MATCHES = 10;
 // Per player and pool: this many last matches, and biggest wins and losses (by win chance before the match).
 const BIGGEST_MATCHES = 5;
@@ -694,6 +694,13 @@ export function computeRatings(
     }
     for (const side of perSide) {
       side.players.forEach((p, j) => {
+        // The peak rating leaves out the warm-up seasons: at a player's first match from R.SETTLED_FROM
+        // it starts again from the rating they carried in. Players who only played in the warm-up keep
+        // their peak from then.
+        if (!p.peakSettled && g.day >= R.SETTLED_FROM) {
+          p.peakSettled = true;
+          p.peak = p.rating;
+        }
         if (ratingPeriod) pending.push([p, g.pool, side.changes[j]]);
         else p.rating = Math.max(minRating(g.pool), p.rating + side.changes[j]);
         p.peak = Math.max(p.peak, p.rating);
@@ -837,7 +844,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const genderOf = (id) => genders.get(id) ?? inferred.get(id) ?? null;
   // Fields only used while rating
-  const INTERNAL = new Set(["weekly", "weeklyExact", "weeklyMatches", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool"]);
+  const INTERNAL = new Set(["weekly", "weeklyExact", "weeklyMatches", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool", "peakSettled"]);
 
   // Rankings only include active players (R.isActive) of the pool's gender (R.rankedIn); others get rank null.
   for (const [pool, map] of Object.entries(players)) {
@@ -1311,10 +1318,21 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     }
     return [...seasons.values()];
   }
+  // `peakRank`: the best rank, and the Monday of the first week it was reached, among the weeks ending
+  // from R.SETTLED_FROM (the warm-up seasons left out); missing when never ranked since
+  function peakRank(history) {
+    let best = null;
+    (history.ranks ?? []).forEach((rank, i) => {
+      if (rank === null || addDays(history.from, i * 7 + 6) < R.SETTLED_FROM || (best && best.rank <= rank)) return;
+      best = { rank, week: addDays(history.from, i * 7) };
+    });
+    return best;
+  }
   const byPlayer = new Map();
   for (const [pool, series] of Object.entries(weekly)) {
     for (const [id, history] of Object.entries(series)) {
-      byPlayer.set(id, { ...byPlayer.get(id), [pool]: { ...history, seasons: seasonTable(pool, id, history) } });
+      const peak = peakRank(history);
+      byPlayer.set(id, { ...byPlayer.get(id), [pool]: { ...history, seasons: seasonTable(pool, id, history), ...(peak && { peakRank: peak }) } });
     }
   }
   mkdirSync(`${DIR}data/history`, { recursive: true });

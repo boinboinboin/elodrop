@@ -367,7 +367,19 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
             </dd>
           </div>
         )}
-        <StatCard label={t("players.discipline.peak")}>{Math.round(p.peak)}</StatCard>
+        {/* Peak rating and best rank, both from 2015/16 (the ratings' warm-up seasons left out) */}
+        <StatCard
+          label={t("players.discipline.peak")}
+          detail={
+            history?.peakRank &&
+            t(mixed ? (p.gender === "K" ? "players.discipline.peakRankAmongWomen" : "players.discipline.peakRankAmongMen") : "players.discipline.peakRank", {
+              rank: t("common.rankValue", { rank: history.peakRank.rank }),
+              date: date(addDays(history.peakRank.week, 6), "monthYear"),
+            })
+          }
+        >
+          {Math.round(p.peak)}
+        </StatCard>
         <StatCard
           label={t("players.discipline.matches")}
           detail={p.draws ? t("players.discipline.recordWithDraws", { wins: p.wins, draws: p.draws, losses: p.losses }) : t("players.discipline.record", { wins: p.wins, losses: p.losses })}

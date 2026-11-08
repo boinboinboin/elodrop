@@ -26,6 +26,10 @@ export const minRatingOf = (pool) => P0 - (DOUBLES_POOLS.has(pool) ? 375 * DOUBL
 // Bump when the ratings move to a new scale: tournament draw analyses locked on another scale are
 // analysed again (upcoming.mjs), so they don't mix ratings from two scales.
 export const RATING_SCALE = 6;
+// The first day of the seasons whose ratings have settled: 2013/14 and 2014/15 are the warm-up
+// (README.md, Match data). Calibration, the team match hero badge and the peak rating and rank count
+// from here.
+export const SETTLED_FROM = "2015-07-01";
 export const KAPPA = 59; // base K-factor
 // Doubles: base K-factor for a side, and how its rating change is shared between the partners:
 // "rd" by each partner's uncertainty (RD²), so a new player takes most of it; "equal" half each.

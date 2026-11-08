@@ -82,6 +82,8 @@ export interface History {
   ranks?: (number | null)[];
   rankCounts?: number[];
   seasons?: SeasonRow[];
+  /** The best rank, and the Monday of the first week it was reached, from 2015/16 (the warm-up seasons left out); missing when never ranked since, and in older exports */
+  peakRank?: { rank: number; week: string };
 }
 
 export interface Match {

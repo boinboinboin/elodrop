@@ -331,6 +331,10 @@ At the top of a player's page, one chart shows their national rank at the end of
 
 The ranks are in `data/history/<id>.json` (`ranks`, alongside `ratings`). Both run on past the last week played while the player is still active, with the rating it ended on, so a discipline's graph ends when the player goes inactive in it (a rating above 1850 runs on to the current week, as it keeps [decaying](#not-playing-penalty)) and the number of ranked players per week in `data/rank-counts.json`. Each history also has `seasons`, the rating, club, rank and number of ranked players at the end of each season, precomputed by `rate.mjs` for the tables on the player page.
 
+### Peak rating and best rank
+
+Each discipline on a player's page shows their peak rating and, under it, their best rank with the month they first reached it. Both leave out the warm-up seasons, 2013/2014 and 2014/2015 (see [Match data](#match-data)): back then the ratings hadn't settled and far fewer players were ranked (about 450 in men's singles in July 2014, against about 1,440 a year later), so an early rank says little, and about 15% of players' best ranks were in the warm-up. The peak rating is the highest rating after a match from 1 July 2015 (`SETTLED_FROM` in `rules.mjs`), counting the rating a player carried into that season; a player who only played in the warm-up keeps their peak from then. The best rank is the lowest weekly rank (as in [Ranking history](#ranking-history)) in the weeks ending from 1 July 2015, the first week if reached more than once (`peakRank` in `data/history/<id>.json`: `rank` and the week's Monday); players ranked only in the warm-up have none. A player who was already at their best when the warm-up ended shows July 2015.
+
 ### Club history
 
 The rating graph is coloured by the club the player played for at the time: the club of their last tournament, if it was within the last 12 months, otherwise the club of their last league team.

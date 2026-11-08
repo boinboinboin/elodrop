@@ -13,7 +13,7 @@
 //        node achievements.mjs   prints how many of each badge, and the senior NMs found
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { correctedMatches } from "./rate.mjs";
-import { leagueLevel } from "./rules.mjs";
+import { leagueLevel, SETTLED_FROM } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const POOLS = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
@@ -200,10 +200,6 @@ export const RULES = {
     return awards;
   },
 };
-
-// The first day of the seasons whose ratings have settled (2013/14 and 2014/15 are the warm-up:
-// pipeline/README.md, Match data; CALIBRATION_FROM in rate.mjs)
-const SETTLED_FROM = "2015-07-01";
 
 // Rules over one player's matches (data/matches/<id>.json, rate.mjs), the milestones: each gets
 // { byPool: { pool: matches oldest first }, all: every match oldest first } and returns the player's
