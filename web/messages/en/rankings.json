@@ -42,7 +42,7 @@
   "heading": "Rankings",
   "pageHeading": "Norwegian badminton rankings",
   "intro": "Every player's rating in each discipline. Ranked players have played in the last 12 months; the arrows show the change since last week.",
-  "classes": "The colour at the start of each row is the player's class: E for elite, A, B, C or D, each in its own colour. It comes from the rating, not from ranking points: each class starts about one standard deviation above the next. E is from {e}, A from {a}, B from {b} and C from {c}, in every discipline; D is everyone below. The cut-offs are set at the start of each season. <link>How the classes work</link>",
+  "classes": "The list is divided by class: E for elite, A, B, C and D. A player's class comes from their rating, not from ranking points: each class starts about one standard deviation above the next. E is from {e}, A from {a}, B from {b} and C from {c}, in every discipline; D is everyone below. The cut-offs are set at the start of each season. <link>How the classes work</link>",
   "junior": {
     "heading": "Norwegian junior badminton rankings (U19)",
     "crumb": "Juniors (U19)",

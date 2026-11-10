@@ -33,10 +33,9 @@ input[type="search"]::-webkit-search-decoration {
 
 /* Always emitted (static): they're read from code (utils/chart.ts, utils/logo.ts), not by a class */
 @theme static {
-  /* The rating classes (utils/classes.ts; the rankings' row edges and dividers): the charts' first five colours, in
-     order, so every theme follows. One shade per class (a light-to-dark ramp) was too hard to tell apart in a 4px
-     stripe; these are validated as apart in every pair, also with colour blindness, and ≥ 3:1 on white (below). The
-     class is never colour alone: the legend, the dividers and text for screen readers say it too */
+  /* The rating classes (utils/classes.ts): the mark in each class's header in the rankings and a club's players
+     (components/rankings/ClassGroups.tsx). The charts' first five colours, in order, so every theme follows: apart in
+     every pair, also with colour blindness, and ≥ 3:1 on white (below). The header names the class too */
   --color-class-e: var(--color-chart-1);
   --color-class-a: var(--color-chart-2);
   --color-class-b: var(--color-chart-3);
@@ -176,27 +175,6 @@ input[type="search"]::-webkit-search-decoration {
 }
 @utility h1 {
   @apply text-heading-1-mobile xl:text-heading-1-desktop font-normal tracking-tight;
-}
-
-/* The rankings' rows (components/rankings/RankingTable.tsx): a stripe at the left edge in the colour of the row's class
-   (data-class), drawn as the first cell's background so no column moves (an inset shadow isn't drawn on table cells
-   in every browser when the borders are collapsed). The colours are the --color-class-* tokens above */
-@utility class-edges {
-  & > tr[data-class="E"] > td:first-child {
-    background-image: linear-gradient(to right, var(--color-class-e) 4px, transparent 4px);
-  }
-  & > tr[data-class="A"] > td:first-child {
-    background-image: linear-gradient(to right, var(--color-class-a) 4px, transparent 4px);
-  }
-  & > tr[data-class="B"] > td:first-child {
-    background-image: linear-gradient(to right, var(--color-class-b) 4px, transparent 4px);
-  }
-  & > tr[data-class="C"] > td:first-child {
-    background-image: linear-gradient(to right, var(--color-class-c) 4px, transparent 4px);
-  }
-  & > tr[data-class="D"] > td:first-child {
-    background-image: linear-gradient(to right, var(--color-class-d) 4px, transparent 4px);
-  }
 }
 
 /* A player's match table (components/players/MatchTable.tsx): what every row and cell had in its own classes, set

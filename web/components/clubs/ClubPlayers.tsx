@@ -1,9 +1,11 @@
 "use client";
 
 // A club's ranked players in one discipline, in rank order or by matches played (a click on the Matches
-// header, and again to go back), as in the rankings table. Rows come as compact arrays: [id, name, rank,
-// rating, rating change since last week, matches, gender]. Each player links to their page on this discipline.
+// header, and again to go back), as in the rankings table: in rank order grouped by rating class under headers
+// (components/rankings/ClassGroups.tsx). Rows come as compact arrays: [id, name, rank, rating, rating change
+// since last week, matches, gender]. Each player links to their page on this discipline.
 import { useState } from "react";
+import { ClassHeader, classGroups } from "@/components/rankings/ClassGroups";
 import { WeekChange } from "@/components/rankings/RankMovement";
 import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
@@ -15,12 +17,16 @@ import { sortByDesc } from "@/utils/sort";
 
 export type ClubPlayerRow = [number, string, number | null, number, number | null | undefined, number, string | null | undefined];
 
+/** The table's columns, for a class header across them all */
+const COLUMNS = 5;
+
 /** `mixed`: mark each player as a man or a woman (the mixed doubles list ranks them together) */
 export default function ClubPlayers({ pool, rows, mixed }: { pool: Pool; rows: ClubPlayerRow[]; mixed: boolean }) {
   const { num, t } = useI18n();
   const [byMatches, setByMatches] = useState(false);
   // Most matches first; equal ones keep their rank order (the rows' order)
   const shown = byMatches ? sortByDesc(rows, (row) => row[5]) : rows;
+  const groups = classGroups(shown, (row) => row[3], !byMatches);
   return (
     <div className="bg-white overflow-x-auto">
       <table className="w-full text-left" data-sorted={byMatches ? "matches" : undefined}>
@@ -35,20 +41,23 @@ export default function ClubPlayers({ pool, rows, mixed }: { pool: Pool; rows: C
             </th>
           </tr>
         </thead>
-        <tbody>
-          {shown.map(([id, name, rank, rating, change, matches, gender]) => (
-            <tr key={id} className={`${ROW} hover:bg-gray-50`}>
-              <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{rank}</td>
-              <td className="py-3 px-4">
-                <Link href={playerHref(id, pool)} className="hover:text-blue-600">{name}</Link>
-                {mixed && <span className="text-sm text-gray-600"> {t(gender === "K" ? "clubs.club.woman" : "clubs.club.man")}</span>}
-              </td>
-              <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
-              <td className="py-3 pr-4 whitespace-nowrap"><WeekChange change={change} /></td>
-              <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{num(matches)}</td>
-            </tr>
-          ))}
-        </tbody>
+        {groups.map((group) => (
+          <tbody key={group.cls ?? "all"}>
+            {group.cls && <ClassHeader cls={group.cls} columns={COLUMNS} />}
+            {group.rows.map(([id, name, rank, rating, change, matches, gender]) => (
+              <tr key={id} className={`${ROW} hover:bg-gray-50`}>
+                <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{rank}</td>
+                <td className="py-3 px-4">
+                  <Link href={playerHref(id, pool)} className="hover:text-blue-600">{name}</Link>
+                  {mixed && <span className="text-sm text-gray-600"> {t(gender === "K" ? "clubs.club.woman" : "clubs.club.man")}</span>}
+                </td>
+                <td className="py-3 pl-4 pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
+                <td className="py-3 pr-4 whitespace-nowrap"><WeekChange change={change} /></td>
+                <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden sm:table-cell">{num(matches)}</td>
+              </tr>
+            ))}
+          </tbody>
+        ))}
       </table>
     </div>
   );

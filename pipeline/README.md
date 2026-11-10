@@ -357,7 +357,7 @@ Tried before:
 - **Cut-offs per discipline**, from each discipline's own mean and standard deviation: the same rating could be E in men's doubles and A in mixed doubles (E from 1750 there and 1850 in mixed), though players play at about the same level in both.
 - **Matching the classes players enter** (SEN E/A/B/C/D tournaments): far too wide a top class, as many players play up.
 
-The cut-offs are worked out once a season, at its start, with `node class-cutoffs.mjs` (after `export.mjs`), and copied into `web/utils/classes.ts`. They stay fixed through the season, so a player's class only changes with their own rating, not when others improve. The class is by the rating as shown (rounded), on the player page under each discipline's rating and in the ranking lists (a coloured edge on each row, and the list divided where each class starts in rating order), whose lead explains it. Junior rankings have no classes, as their ratings are on their own scale.
+The cut-offs are worked out once a season, at its start, with `node class-cutoffs.mjs` (after `export.mjs`), and copied into `web/utils/classes.ts`. They stay fixed through the season, so a player's class only changes with their own rating, not when others improve. The class is by the rating as shown (rounded), on the player page under each discipline's rating and in the ranking lists and a club's players (divided where each class starts, in rating order), whose lead explains it. Junior rankings have no classes, as their ratings are on their own scale.
 
 ### Club history
 

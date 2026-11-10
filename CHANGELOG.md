@@ -10,8 +10,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.27.5 (2026-11-10)
 
-- The rankings show each player's class as a coloured edge on their row, a colour per class (the charts' colours), on phones and computers alike, instead of the class column and the badge under the rating. A legend above the table says which colour is which.
-- In rating order, the rankings are divided where each class starts, with the class's ratings ("Class A · 1,450–1,799").
+- The rankings and a club's players are divided by class: in rating order, each class starts with a header with its ratings ("Class A · 1,450–1,799"). In the rankings it stays in view under the table's header while its players scroll past. It replaces the class column and the badge under the rating on phones.
 
 ## v1.27.4 (2026-11-10)
 
