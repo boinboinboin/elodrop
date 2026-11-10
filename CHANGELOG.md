@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.3 (2026-11-10)
+
+- Switching a list with its buttons (the discipline, men or women, all players or juniors on the rankings, the discipline on the club rankings, the "show inactive players" box, the season and division pickers on the team match pages) keeps the page where it was, instead of jumping back to the top.
+- The footer says "© 2026 elodrop. All rights reserved.", the years running on from the launch with each new year's release, and that the club logos belong to the clubs and some achievement badges are, for now, drawn parodies of memes.
+
 ## v1.28.2 (2026-11-10)
 
 - Eliteserien on mobile: the Teams tab no longer makes the whole page scroll sideways. The head-to-head table scrolls in its own box again, as it did before the new page.

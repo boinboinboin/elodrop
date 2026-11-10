@@ -10,7 +10,7 @@ import UpdatedAt from "@/components/layout/UpdatedAt";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
-import { getReleases } from "@/utils/changelog";
+import { copyrightYears, getReleases } from "@/utils/changelog";
 
 const FOOTER_LINK = "underline hover:text-black";
 const VERSION = getReleases()[0]?.version;
@@ -78,6 +78,10 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             })}
           </p>
           <UpdatedAt />
+          {/* The copyright, and what on the site is someone else's or not the site's own yet */}
+          <p className="w-full">
+            {t("layout.footer.rights", { years: copyrightYears(), site: t("layout.siteName") })} {t("layout.footer.others")}
+          </p>
         </div>
       </footer>
       {/* Vercel Web Analytics (page views) and Speed Insights (real visitors' load times, Core Web

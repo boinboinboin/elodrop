@@ -1,5 +1,6 @@
 // A row of links between related pages (disciplines, views, weeks), as outlined buttons, the
-// current one filled black (aria-current="page")
+// current one filled black (aria-current="page"). The next page opens where the visitor is, not at
+// its top (scroll={false}): it's the same page in another version, and the buttons stay under the pointer.
 import type { ReactNode } from "react";
 import Link from "@/components/ui/Link";
 import { toggleClass } from "./styles";
@@ -30,7 +31,7 @@ export default function LinkTabs({
   return (
     <nav className={className} aria-label={label}>
       {tabs.map((tab) => (
-        <Link key={tab.key} href={tab.href} prefetch={prefetch} className={toggleClass(tab.key === current, size)} aria-current={tab.key === current ? "page" : undefined}>
+        <Link key={tab.key} href={tab.href} prefetch={prefetch} scroll={false} className={toggleClass(tab.key === current, size)} aria-current={tab.key === current ? "page" : undefined}>
           {tab.label}
         </Link>
       ))}

@@ -43,6 +43,15 @@ export function getReleases(): Release[] {
   return releases;
 }
 
+/** The site's launch year (v1.0.0), the first of the copyright's years */
+export const LAUNCH_YEAR = 2026;
+
+/** The copyright's years: from the launch to the latest release ("2026", "2026–2027"); it moves on with each deploy, without reading the clock */
+export function copyrightYears(): string {
+  const latest = Number(getReleases()[0]?.date.slice(0, 4)) || LAUNCH_YEAR;
+  return latest > LAUNCH_YEAR ? `${LAUNCH_YEAR}–${latest}` : String(LAUNCH_YEAR);
+}
+
 /** A big feature (a new X: v1.13.0), rather than an improvement or fix (v1.13.1) */
 export const isFeature = (r: Release) => r.y === 0;
 

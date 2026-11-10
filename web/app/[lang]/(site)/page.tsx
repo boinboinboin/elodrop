@@ -14,6 +14,7 @@ import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getI18n } from "@/messages/server";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
+import { LAUNCH_YEAR } from "@/utils/changelog";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 
 // Each card's colour: the first five chart colours, which are apart in every pair, and head to head
@@ -49,6 +50,8 @@ export default async function Home() {
           description: t("layout.description"),
           inLanguage: lang,
           publisher: { "@type": "Organization", name: t("layout.siteName"), url: absoluteUrl(href("/")), logo: absoluteUrl("/apple-icon.png") },
+          copyrightHolder: { "@type": "Organization", name: t("layout.siteName") },
+          copyrightYear: LAUNCH_YEAR,
         }}
       />
       <Section>

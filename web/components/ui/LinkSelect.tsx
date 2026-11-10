@@ -2,10 +2,11 @@
 // A dropdown of related pages (a season, a division), where a row of links would be too many: a button
 // styled as the site's buttons (outlined, filled black on hover) showing the current page, opening a
 // list of links in the style of the header's menu (the current one bold, with a check). Like the menu
-// it closes on a link (the next page), Escape (focus back on the button) or a press outside it. Options
-// with a group (a division's region) are listed under its heading, which sticks to the list's top
-// while its options scroll by; each group's options are next to each other. With `onSelect` the options
-// are buttons picking a value on the page instead (a team to show), and close the list.
+// it closes on a link (the next page, opened where the visitor is, as in LinkTabs), Escape (focus
+// back on the button) or a press outside it. Options with a group (a division's region) are listed
+// under its heading, which sticks to the list's top while its options scroll by; each group's options
+// With `onSelect` the options are buttons picking a value on the
+// page instead (a team to show), and close the list.
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { CaretDown, Check } from "@/components/SVG";
@@ -96,7 +97,7 @@ export default function LinkSelect({
             {content}
           </button>
         ) : (
-          <Link href={o.href ?? ""} onClick={() => setOpen(false)} className={className} aria-current={o.key === current ? "page" : undefined}>
+          <Link href={o.href ?? ""} scroll={false} onClick={() => setOpen(false)} className={className} aria-current={o.key === current ? "page" : undefined}>
             {content}
           </Link>
         )}

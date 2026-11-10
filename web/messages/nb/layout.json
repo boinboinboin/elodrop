@@ -20,7 +20,9 @@
   "footer": {
     "sources": "Resultater fra {portalen} og {cup2000}.",
     "updated": "Oppdatert {time}",
-    "version": "v{version}"
+    "version": "v{version}",
+    "rights": "© {years} {site}. Alle rettigheter reservert.",
+    "others": "Klubblogoene tilhører klubbene. Noen av prestasjonsmerkene er foreløpig tegnede parodier på memer."
   },
   "menu": {
     "button": "Meny",

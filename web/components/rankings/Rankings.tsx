@@ -49,6 +49,8 @@ export default async function Rankings({ list, showInactive, allInactive = false
         <DisciplineTabs current={listTabs(pool, gender)} showInactive={showInactive} />
         <Link
           href={rankingHref(pool, gender, !showInactive)}
+          // The list with or without inactive players, where the visitor is (as the tabs, LinkTabs)
+          scroll={false}
           className="flex items-center gap-2 select-none"
           role="checkbox"
           aria-checked={showInactive}

@@ -20,7 +20,9 @@
   "footer": {
     "sources": "Results from {portalen} and {cup2000}.",
     "updated": "Updated {time}",
-    "version": "v{version}"
+    "version": "v{version}",
+    "rights": "© {years} {site}. All rights reserved.",
+    "others": "Club logos belong to their clubs. Some of the achievement badges are, for now, drawn parodies of memes."
   },
   "menu": {
     "button": "Menu",
