@@ -34,12 +34,15 @@
     "search": "Søk etter spiller eller klubb",
     "sortByMatches": "Sorter etter kamper, flest først",
     "lastPlayed": "Sist spilt {month}",
-    "noneFound": "Ingen spillere passer med søket ditt."
+    "noneFound": "Ingen spillere passer med søket ditt.",
+    "classFrom": "Klasse {class} · {from}+",
+    "classRange": "Klasse {class} · {from}–{to}",
+    "classBelow": "Klasse {class} · under {to}"
   },
   "heading": "Rangeringer",
   "pageHeading": "Norsk badmintonrangering",
   "intro": "Hver spillers rating i hver disiplin. Rangerte spillere har spilt de siste 12 månedene; pilene viser endringen siden forrige uke.",
-  "classes": "Klassen (E for elite, A, B, C og D) kommer fra ratingen, ikke fra rankingpoeng: hver klasse starter omtrent ett standardavvik over den neste. E er fra {e}, A fra {a}, B fra {b} og C fra {c}, i alle disipliner; D er alle under. Grensene settes ved starten av hver sesong. <link>Slik fungerer klassene</link>",
+  "classes": "Fargen først i hver rad er spillerens klasse: E for elite, A, B, C eller D, hver i sin farge. Den kommer fra ratingen, ikke fra rankingpoeng: hver klasse starter omtrent ett standardavvik over den neste. E er fra {e}, A fra {a}, B fra {b} og C fra {c}, i alle disipliner; D er alle under. Grensene settes ved starten av hver sesong. <link>Slik fungerer klassene</link>",
   "junior": {
     "heading": "Norsk juniorrangering i badminton (U19)",
     "crumb": "Junior (U19)",

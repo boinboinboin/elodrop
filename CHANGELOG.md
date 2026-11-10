@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.5 (2026-11-10)
+
+- The rankings show each player's class as a coloured edge on their row, a colour per class (the charts' colours), on phones and computers alike, instead of the class column and the badge under the rating. A legend above the table says which colour is which.
+- In rating order, the rankings are divided where each class starts, with the class's ratings ("Class A · 1,450–1,799").
+
 ## v1.27.4 (2026-11-10)
 
 - Player pages are about a third lighter: the matches of the other disciplines, and the highlights after "Biggest wins", load when their tab is opened instead of coming with the page, and each match row's markup is a third smaller (same look). A player page is stored again whenever the player's data changes, so this cuts what each of those writes costs.
