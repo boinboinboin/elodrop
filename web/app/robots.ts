@@ -27,6 +27,13 @@ const AI_CRAWLERS = [
   "meta-externalagent",
   "meta-externalfetcher",
   "FacebookBot",
+  // Exa (an AI search engine for AI tools): 81,000 requests in a week in November 2026, a sweep of the
+  // sitemap after each refresh, every page it opened an ISR write; and fetching for its users
+  "ExaSearchBot",
+  "ExaBot",
+  "ExaUser",
+  // Amazon's crawler for its assistants' answers (Alexa, Rufus): 16,000 requests that week
+  "Amzn-SearchBot",
   // Perplexity, Mistral, Cohere, DuckDuckGo's assistant, You.com
   "PerplexityBot",
   "Perplexity-User",

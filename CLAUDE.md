@@ -15,6 +15,16 @@ Every change merged into `main` adds an entry at the top of `CHANGELOG.md`, in t
 
 The PR check (`.github/workflows/changelog.yml`) fails when a PR into `main` doesn't touch `CHANGELOG.md`.
 
+## Cost
+
+Keep the site as cheap to run as possible (Vercel ISR writes and functions, R2 writes) without taking away functionality, and say so when a change would raise the cost. A page is written to Vercel's cache (an ISR write, counted by size) when it's visited after being made stale, and crawlers visit nearly every page, so what costs is how many pages each refresh reaches (see `README.md`, "How it fits together"):
+
+- The pipeline refreshes only the data files it uploaded (one cache tag per file, `web/data/load.ts`; `pipeline/refresh-site.mjs`). Don't refresh everything, and don't add time-based `cacheLife` to data reads.
+- Pages that exist by the thousand (players, team matches) must not read a file that changes with every run (`meta.json`, `achievements.json`): load that in the browser from a cached API route (as `/api/updated`, `/api/achievement-stats`), or put what the page needs in its own file.
+- Sanity content on thousands of pages (clubs, badges, halls) is refreshed by the nightly run when it changed (`pipeline/sanity-revisions.mjs`), not by the webhook.
+- Before adding a page type, a sitemap entry or a large component, weigh how many pages, how often they change and how big they are.
+- Ask the owner before trading freshness for cost: a refresh expires pages at once (`{ expire: 0 }`), so the first visit after an update is fresh.
+
 ## Git
 
 - Never commit or push without the owner's explicit permission; work on a feature branch from an up-to-date `origin/main`, and check the current branch right before committing (the owner often merges, pulls and deletes branches in between).

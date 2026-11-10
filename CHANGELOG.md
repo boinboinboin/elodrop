@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.2 (2026-11-10)
+
+- Exa's and Amazon's AI search crawlers (ExaSearchBot, ExaUser, Amzn-SearchBot) are now asked to stay away, like the other AI crawlers. Exa alone opened about 81,000 pages in a week, each one rebuilt and stored again in the site's cache. Search engines (Google, Bing) and link previews are unaffected.
+
 ## v1.27.1 (2026-11-10)
 
 - After each nightly update, only the pages whose data changed are rebuilt: the pages of players who played or moved, the rankings, the season's tournaments and so on. Old team matches, finished tournaments and the pages of players whose numbers didn't change stay as they are. Before, every update rebuilt every page as it was next visited, and search engines visit nearly all of them, which made the site's cache writes many times what was needed.
