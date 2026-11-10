@@ -4,7 +4,8 @@
 // list of links in the style of the header's menu (the current one bold, with a check). Like the menu
 // it closes on a link (the next page), Escape (focus back on the button) or a press outside it. Options
 // with a group (a division's region) are listed under its heading, which sticks to the list's top
-// while its options scroll by; each group's options are next to each other.
+// while its options scroll by; each group's options are next to each other. With `onSelect` the options
+// are buttons picking a value on the page instead (a team to show), and close the list.
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { CaretDown, Check } from "@/components/SVG";
@@ -13,14 +14,27 @@ import { BUTTON } from "@/components/ui/styles";
 
 export interface LinkOption {
   key: string;
-  /** The page's path without the language ("/team-matches/2025-26") */
-  href: string;
+  /** The page's path without the language ("/team-matches/2025-26"); not with `onSelect` */
+  href?: string;
   label: string;
   /** The heading it's listed under ("National", a region), its group's options next to each other */
   group?: string;
 }
 
-export default function LinkSelect({ label, options, current, className = "" }: { label: string; options: LinkOption[]; current: string; className?: string }) {
+export default function LinkSelect({
+  label,
+  options,
+  current,
+  onSelect,
+  className = "",
+}: {
+  label: string;
+  options: LinkOption[];
+  current: string;
+  /** Options pick a value (their key) instead of linking to a page */
+  onSelect?: (key: string) => void;
+  className?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [openedAt, setOpenedAt] = useState<string | null>(null);
   const pathname = usePathname();
@@ -58,19 +72,37 @@ export default function LinkSelect({ label, options, current, className = "" }: 
     return runs;
   }, []);
   // An option; under a heading, scrolled into view below it (the heading's height)
-  const item = (o: LinkOption, grouped: boolean) => (
-    <li key={o.key} className="border-b border-gray-100 last:border-0">
-      <Link
-        href={o.href}
-        onClick={() => setOpen(false)}
-        className={`flex items-center justify-between gap-4 px-4 py-2 whitespace-nowrap transition-colors duration-200 hover:bg-gray-50 ${grouped ? "scroll-mt-9" : ""} ${o.key === current ? "font-semibold" : "text-gray-700 hover:text-black"}`}
-        aria-current={o.key === current ? "page" : undefined}
-      >
+  const item = (o: LinkOption, grouped: boolean) => {
+    const className = `w-full flex items-center justify-between gap-4 px-4 py-2 text-left whitespace-nowrap transition-colors duration-200 hover:bg-gray-50 cursor-pointer ${grouped ? "scroll-mt-9" : ""} ${o.key === current ? "font-semibold" : "text-gray-700 hover:text-black"}`;
+    const content = (
+      <>
         {o.label}
         {o.key === current && <Check className="w-4 h-4" />}
-      </Link>
-    </li>
-  );
+      </>
+    );
+    return (
+      <li key={o.key} className="border-b border-gray-100 last:border-0">
+        {onSelect ? (
+          <button
+            type="button"
+            onClick={() => {
+              onSelect(o.key);
+              setOpen(false);
+              button.current?.focus();
+            }}
+            className={className}
+            aria-current={o.key === current ? "true" : undefined}
+          >
+            {content}
+          </button>
+        ) : (
+          <Link href={o.href ?? ""} onClick={() => setOpen(false)} className={className} aria-current={o.key === current ? "page" : undefined}>
+            {content}
+          </Link>
+        )}
+      </li>
+    );
+  };
 
   return (
     <div ref={root} className={`relative ${className}`}>

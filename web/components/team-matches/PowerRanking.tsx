@@ -28,7 +28,7 @@ export default async function PowerRanking({ power, clubs }: { power: TeamPowerR
           </thead>
           <tbody>
             {power.teams.map((team) => (
-              <tr key={team.team} className={ROW}>
+              <tr key={team.team} data-team={team.team} className={ROW}>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-600">{team.rank}</td>
                 <td className="py-2 pr-4"><Team name={team.team} club={team.club} clubs={clubs} size={5} /></td>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums">{num(team.expected, 2)}</td>

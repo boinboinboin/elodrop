@@ -1,6 +1,8 @@
 // The team match pages' dropdowns (components/team-matches/TeamMatches.tsx, Division.tsx): a season,
 // then one of its divisions, listed by region (the national ones first), or all of them (the season's
-// page). Senior or junior: each lists only the age's seasons and divisions.
+// page). Senior or junior: each lists only the age's seasons and divisions. `children`: more dropdowns in
+// the row (a division's teams).
+import type { ReactNode } from "react";
 import LinkSelect from "@/components/ui/LinkSelect";
 import { isJuniorAgeGroup, NATIONAL, seasonWeeks } from "@/data/teamMatches";
 import { getI18n } from "@/messages/server";
@@ -11,7 +13,19 @@ import { seasonSlug, teamDivisionHref, teamMatchesHref } from "@/utils/hrefs";
 type Season = TeamMatchesIndex["seasons"][number];
 
 /** The seasons and the season's divisions; division: the current one's slug, or null on the season's (or a weekend's) page */
-export default async function Pickers({ seasons, season, division, junior }: { seasons: Season[]; season: Season; division: string | null; junior: boolean }) {
+export default async function Pickers({
+  seasons,
+  season,
+  division,
+  junior,
+  children,
+}: {
+  seasons: Season[];
+  season: Season;
+  division: string | null;
+  junior: boolean;
+  children?: ReactNode;
+}) {
   const { t } = await getI18n();
   // In the data's order (Eliteserien first, then by level), grouped by region so the national one leads
   const divisions = [...Map.groupBy(season.divisions?.filter((d) => isJuniorAgeGroup(d.ageGroup) === junior) ?? [], (d) => d.region).values()].flat();
@@ -43,6 +57,7 @@ export default async function Pickers({ seasons, season, division, junior }: { s
           className="w-full sm:w-80"
         />
       )}
+      {children}
     </div>
   );
 }

@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.7 (2026-11-10)
+
+- The team match pages can show one team's team matches. On a division's page, a team dropdown next to the season and division narrows its rounds to that team's matches and marks the team in the standings and the power ranking. The team is kept in the address (`?team=…`), so a link opens it. The weekend pages have a search for a team or club, as in the rankings, narrowing the weekend's list as you type. Both filter what the page already has, so they cost nothing extra to serve.
+
 ## v1.27.6 (2026-11-10)
 
 - Club pages have the rankings' "Show inactive players": each discipline's list can also show the club's players who haven't played in the last 12 months, in grey with the month they last played, in rating order among the ranked ones. Also for a discipline with no ranked players. It's kept in the address (`?inactive=true`) for every discipline at once, so a link can open it. The inactive players load when it's switched on, so the page itself stays as light as before.

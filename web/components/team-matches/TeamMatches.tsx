@@ -5,12 +5,14 @@
 // and group (app/(site)/team-matches/[period]). A dropdown picks the season and one of its divisions
 // (components/team-matches/Pickers.tsx). Each team match links to its own page. Senior and
 // junior (U13 to U19) team matches are apart: the same pages under /team-matches/junior have the
-// juniors', with a toggle between them (to the same season or weekend where the other has it).
+// juniors', with a toggle between them (to the same season or weekend where the other has it). A search
+// for a team or club narrows the weekend's team matches (components/team-matches/TeamFilter.tsx).
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { ArrowRight } from "@/components/SVG";
 import Pickers from "@/components/team-matches/Pickers";
+import { TieSearch } from "@/components/team-matches/TeamFilter";
 import TieRow from "@/components/team-matches/TieRow";
 import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
@@ -142,19 +144,19 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
         {!byWeek && !!divisions?.length && <Divisions season={season.season} divisions={divisions} />}
       </Section>
       <Section>
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-6">
-          <h2 className="text-3xl">
-            {!byWeek && <span className="block text-base text-gray-600 mb-1">{t("teamMatches.latestWeekend")}</span>}
-            {dateRange(week.from, week.to, true)}
-          </h2>
-          <p className="text-gray-600">{plural("teamMatches.count", week.ties)}</p>
-        </div>
-        <div className="grid gap-8">
-          {[...groups].map(([name, ties]) => (
-            <div key={name}>
-              {/* The group's heading links to its division: all its team matches and its power ranking. It
-                  sticks to the top of the page while scrolling through the group's team matches, on the
-                  page's background, until the next group's pushes it off */}
+        <h2 className="text-3xl mb-4">
+          {!byWeek && <span className="block text-base text-gray-600 mb-1">{t("teamMatches.latestWeekend")}</span>}
+          {dateRange(week.from, week.to, true)}
+        </h2>
+        <TieSearch
+          summary={plural("teamMatches.count", week.ties)}
+          className="grid gap-8"
+          sections={[...groups].map(([name, ties]) => ({
+            key: name,
+            // The group's heading links to its division: all its team matches and its power ranking. It
+            // sticks to the top of the page while scrolling through the group's team matches, on the
+            // page's background, until the next group's pushes it off
+            heading: (
               <h3 className="sticky top-0 z-10 -mx-4 px-4 py-2 mb-2 bg-stone-100 border-b border-gray-300 text-xl">
                 {ties[0].divisionSlug ? (
                   <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="inline-flex items-center gap-1 hover:text-blue-600">
@@ -164,12 +166,15 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
                   name
                 )}
               </h3>
-              <ul className="grid gap-2">
-                {ties.map((tie) => <TieRow key={tie.matchId} tie={tie} clubs={clubs} />)}
-              </ul>
-            </div>
-          ))}
-        </div>
+            ),
+            ties: ties.map((tie) => ({
+              id: tie.matchId,
+              teams: [tie.home, tie.away],
+              search: [tie.home, tie.away, tie.homeClub, tie.awayClub].filter(Boolean).join(" "),
+              node: <TieRow tie={tie} clubs={clubs} />,
+            })),
+          }))}
+        />
       </Section>
     </>
   );

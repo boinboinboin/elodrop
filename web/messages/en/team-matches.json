@@ -87,6 +87,14 @@
   },
   "latestWeekend": "Latest weekend",
   "allDivisions": "All divisions",
+  "filter": {
+    "label": "Team",
+    "all": "All teams",
+    "none": "No team matches for {team} here.",
+    "search": "Search team or club",
+    "found": "{found} of {total} team matches",
+    "noneFound": "No team matches fit your search."
+  },
   "divisions": {
     "title": "Divisions {season}",
     "intro": "Each division's page has all its team matches, round by round, and its power ranking: the teams by the players who played for them.",

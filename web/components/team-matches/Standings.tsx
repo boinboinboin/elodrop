@@ -47,7 +47,7 @@ export default async function Standings({ standings, clubs }: { standings: TeamS
           </thead>
           <tbody>
             {standings.map((row, i) => (
-              <tr key={row.team} className={line(i) ? "border-b border-dashed border-gray-400" : ROW}>
+              <tr key={row.team} data-team={row.team} className={line(i) ? "border-b border-dashed border-gray-400" : ROW}>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-600">{row.place || EMPTY}</td>
                 <td className="py-2 pr-4"><Team name={row.team} club={row.club} clubs={clubs} size={5} /></td>
                 {table && (

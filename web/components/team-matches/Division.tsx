@@ -1,13 +1,14 @@
 // One division in a season (/team-matches/2025-26/eliteserien-2025-2026; pipeline/team-matches.mjs):
 // each of its groups (the regular season, the playoffs) with its official standings, its power
 // ranking and its team matches, round by round. The season and division dropdowns (components/team-matches/Pickers.tsx) lead to
-// the season's other divisions.
+// the season's other divisions; the team dropdown (TeamFilter.tsx) shows one team's team matches and marks it in the tables.
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Pickers from "@/components/team-matches/Pickers";
 import PowerRanking from "@/components/team-matches/PowerRanking";
 import Standings from "@/components/team-matches/Standings";
+import { TeamSelect, TeamTies } from "@/components/team-matches/TeamFilter";
 import TieRow from "@/components/team-matches/TieRow";
 import Loading from "@/components/ui/Loading";
 import Section from "@/components/ui/Section";
@@ -42,6 +43,10 @@ async function Content({ params }: { params: Promise<{ period: string; division:
   const ties = division.groups.reduce((n, g) => n + g.ties.length, 0);
   const junior = isJuniorAgeGroup(division.ageGroup);
   const seasonEntry = index?.seasons.find((s) => s.season === season);
+  // The division's teams, in its groups' standings, power rankings and team matches, by name
+  const teams = [
+    ...new Set(division.groups.flatMap((g) => [...(g.standings ?? []).map((row) => row.team), ...(g.power?.teams ?? []).map((row) => row.team), ...g.ties.flatMap((tie) => [tie.home, tie.away])])),
+  ].sort((a, b) => a.localeCompare(b, "nb"));
 
   return (
     <>
@@ -62,7 +67,9 @@ async function Content({ params }: { params: Promise<{ period: string; division:
         <p className="text-gray-600 mt-2">{plural("teamMatches.count", ties)}</p>
         {index && seasonEntry && (
           <div className="mt-8">
-            <Pickers seasons={index.seasons} season={seasonEntry} division={slug} junior={junior} />
+            <Pickers seasons={index.seasons} season={seasonEntry} division={slug} junior={junior}>
+              {teams.length > 1 && <TeamSelect teams={teams} highlight className="w-full sm:w-64" />}
+            </Pickers>
           </div>
         )}
       </Section>
@@ -77,16 +84,15 @@ async function Content({ params }: { params: Promise<{ period: string; division:
                 {group.standings && <Standings standings={group.standings} clubs={clubs} />}
                 {group.power && <PowerRanking power={group.power} clubs={clubs} />}
               </div>
-              <div className="grid gap-6">
-                {[...rounds].map(([day, list]) => (
-                  <div key={day}>
-                    <h3 className="text-lg mb-2">{date(day)}</h3>
-                    <ul className="grid gap-2">
-                      {list.map((tie) => <TieRow key={tie.matchId} tie={tie} clubs={clubs} />)}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+              <TeamTies
+                teams={teams}
+                className="grid gap-6"
+                sections={[...rounds].map(([day, list]) => ({
+                  key: day,
+                  heading: <h3 className="text-lg mb-2">{date(day)}</h3>,
+                  ties: list.map((tie) => ({ id: tie.matchId, teams: [tie.home, tie.away], node: <TieRow tie={tie} clubs={clubs} /> })),
+                }))}
+              />
             </div>
           </Section>
         );

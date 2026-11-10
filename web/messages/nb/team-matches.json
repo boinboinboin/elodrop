@@ -87,6 +87,14 @@
   },
   "latestWeekend": "Siste helg",
   "allDivisions": "Alle divisjoner",
+  "filter": {
+    "label": "Lag",
+    "all": "Alle lag",
+    "none": "Ingen lagkamper for {team} her.",
+    "search": "Søk etter lag eller klubb",
+    "found": "{found} av {total} lagkamper",
+    "noneFound": "Ingen lagkamper passer med søket ditt."
+  },
   "divisions": {
     "title": "Divisjoner {season}",
     "intro": "Hver divisjons side har alle lagkampene, runde for runde, og en styrkerangering: lagene etter spillerne som spilte for dem.",
