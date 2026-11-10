@@ -503,7 +503,7 @@ Every page has a search bar for players (as in the head-to-head search), clubs b
 
 ## Eliteserien
 
-The Eliteserien page (`/eliteserien`) estimates how strong the eight teams in the top league are. `node eliteserien.mjs`, run after `rate.mjs`, writes `data/eliteserien.json`.
+The Eliteserien page (`/eliteserien`) follows the season in the top league: how strong the eight teams are, the table so far and a forecast of the rest. `node eliteserien.mjs`, run after `rate.mjs`, writes `data/eliteserien.json`.
 
 **Teams.** The players on each team are in `pipeline/eliteserien-2026-27.txt`, from Norges Badmintonforbund's list (<https://www.badminton.no/siteassets/spillere-i-eliteserien-2026-27.pdf>), one per line with their player id: `M|K <id> <name> [| loan <home club>]`. Players on loan from another club play for the team and count for it; they are marked on the page. The ids were matched by name (the list often shortens names: "Amund Huus" is Amund Rikheim Huus) and checked by hand; players without rated matches have `-`. Edit the file when the list changes and run the script again.
 
@@ -518,6 +518,27 @@ The Eliteserien page (`/eliteserien`) estimates how strong the eight teams in th
 **Table points.** The league table counts points per tie: 4-0 for winning 6-2 or better, 3-1 for 5-3 and 2-2 for 4-4 (this reproduces the official 2025/2026 table exactly). The match win chances give the chance of every result from 8-0 to 0-8, and so each team's expected table points per tie. The predicted table ranks teams by their expected table points from the regular season, one tie against each other team (28 at most).
 
 Real lineups vary (injuries, tactics, players' availability), so the chances are for each team at full strength.
+
+**When it runs.** The Eliteserien steps (this, the 10-match test and the seasons in review) run in a full rebuild only when the Eliteserien ties, the Eliteserien scripts and team lists, or the rating model changed (`fingerprint.mjs`, `eliteserien`); otherwise their files are kept from the last run (raw bucket) and the page isn't refreshed. With the nightly runs that's after each day played: Saturday's ties by Sunday morning, Sunday's by Monday.
+
+### This season so far and its forecast
+
+`eliteserien.mjs` also writes the season so far and a forecast of the rest into `data/eliteserien.json` (`eliteserien-forecast.mjs`), from the league data (`data/league`, the Eliteserien groups with their schedules):
+
+- **Teams as they play.** As in the seasons in review: players who play for a team without being on its list are added, and players listed for one team who play for another are moved (`eliteserien-season.mjs`, shared with the review).
+- **The table** from the ties played: table points as above; teams level on points are ranked by match difference, then set difference, then rally difference.
+- **Rounds** are the schedule's days in runs a week or more apart: Lillerunden, Storrunden and the play-offs (Sluttspill, the play-off groups' days).
+- **The forecast** plays the rest of the season 20,000 times (a seeded random generator, so the same data gives the same forecast). Each regular-season tie still to play is drawn from the chance of every result from 8-0 to 0-8 between the teams' best lineups now; simulated ties have no sets, so teams still level after match difference are ranked by their real set and rally differences so far, then by chance. Then the play-offs: 1–4 and 5–8, semi-finals 1 v 4 and 2 v 3 (5 v 8, 6 v 7), a final and a match for 3rd (5th, 7th), each tie won with P(5+ of 8) + P(4-4) × P(golden set), as in the review. Ties already played keep their results. Per team: expected points after the regular season, the chance of each place after it and after the play-offs, of the top 4, the final, the title, 7th (the qualification against 1. divisjon teams) and 8th (relegated).
+- **Who may play in the play-offs.** A player who played no match for the team in the regular season (Lillerunden and Storrunden) may not play in the play-offs. While a team has regular-season ties left, all its players count, as any of them may still play; after its last one, its play-off lineup is the best of those who played (filled with players at the lowest rating among ranked players when too few are left). Each player has `played` and a status: eligible, must play (no match yet, ties left) or not eligible.
+- **Next up**: the next day's ties (the regular season's, or the play-offs' once their teams are known) with each side's chances and expected score, and what's at stake: of each team's title, top-4, 7th and 8th chances, the one that changes most between winning and losing the tie (from the simulations with each result).
+- **Later**: the ties after the next day, from badmintonportalen's schedule, with each side's chances.
+- **The play-off picture**: each place's most likely teams, then the real pairings with their chances, then the results.
+- **Results** by day, with the chances the forecast gave right before (with the night before's ratings); an upset is a tie won by a team with less than a 30% chance then.
+- **Players of the season**: matches won against the sum of their win chances right before each (match logs), and the 10 biggest upsets (matches won with the smallest chance).
+- **Chances over time.** A snapshot after every tie played (and one before the season): each team's title, top-4, 7th and 8th chances and expected points, and the next ties' chances, in `data/eliteserien-forecast-2026-27.json`. Each run adds the ties played since the last one, one at a time in the order they were played (time, then match id), with the ratings of that night, so a day's ties all have the same lineups; a result registered late, before ties already in, has the snapshots from it on done again. The results' chances before each tie are from the snapshot right before it.
+- **Before the season, kept.** While no tie has been played, the whole output is also written to `data/eliteserien-preseason-2026-27.json`; from the first tie on it's left as it is, for comparing later (as the seasons in review). If it's missing then, it's rebuilt from the ratings before the first round. Both files are kept in the raw bucket.
+
+`node eliteserien.mjs --season 2025-26 --until 2026-01-24` runs the forecast on an earlier season (its ties as the schedule; current ratings) as it stood after a day, written to `test-runs/eliteserien-test.json`, to check the rules against what happened.
 
 ### What if a tie were 10 matches
 

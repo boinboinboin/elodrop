@@ -1,27 +1,43 @@
 {
   "title": "Eliteserien",
   "heading": "Eliteserien {season}",
-  "intro": "How strong the eight teams are, from their players' ratings.",
+  "intro": "The table, how strong the eight teams are from their players' ratings, and the chances of how the season ends.",
   "earlierSeasons": "Earlier seasons in review, predicted against actual results:",
   "howItWorks": {
     "tie": "A tie is 8 matches: 2 men's singles, 2 women's singles, 1 men's doubles, 1 women's doubles and 2 mixed doubles. A player plays at most 2 of them.\n\nEach team is assumed to field the lineup that gives it the most expected match wins against an average Eliteserien opponent. As the rules require, the first singles player has more official ranking points than the second, and the first mixed pair more combined mixed doubles points than the second{ranking}.\n\nWin chances use the same formula as the ratings, match against match. A tie is won with 5 matches and drawn at 4-4. Table points per tie are as in the league:\n\n- 4-0 for winning 6-2 or better\n- 3-1 for 5-3\n- 2-2 for 4-4",
     "rankingPeriod": " (ranking {period})",
-    "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, including players on loan from other clubs. Players without a doubles or mixed rating are counted as starting doubles from their singles rating (marked ≈)."
+    "teams": "Teams are from <link>Norges Badmintonforbund's list</link>, including players on loan from other clubs. Players without a doubles or mixed rating are counted as starting doubles from their singles rating (marked ≈).",
+    "forecast": "The rest of the season is played {sims} times. Each tie still to play is drawn from the chances of every result between the two teams' best lineups now, and the table points add up as in the league. Teams level on points are ranked by match difference, then set difference, then rally difference.\n\nThen the play-offs: 1st to 4th play for the title and 5th to 8th for the places below, semi-finals 1st v 4th and 2nd v 3rd, then a final and a match for 3rd (5th, 7th). A play-off tie at 4–4 is decided by a golden set, taken to be in the discipline where the teams are closest. 8th is relegated, and 7th plays the qualification against 1. divisjon teams.\n\nA player who has played no match for the team in Lillerunden or Storrunden may not play in the play-offs, so after its last regular-season tie a team's play-off lineup is the best of those who have played.\n\nChances are for each team at full strength, while real lineups vary. The forecast is updated each night after a day of play, with the results and the players' new ratings."
   },
   "noData": "No team strengths yet: run pipeline/eliteserien.mjs after rate.mjs.",
   "table": {
-    "title": "Predicted table",
-    "intro": "The regular season, with one tie against each other team, by expected table points.",
+    "title": "Table and forecast",
+    "intro": "The table so far, with the chances from playing the rest of the season {sims} times with each team's best lineup now.",
+    "introBefore": "No tie played yet: the teams in order of the points they're expected to get, with the chances from playing the season {sims} times with each team's best lineup now.",
     "team": "Team",
-    "tablePoints": "Table points",
-    "tablePointsTitle": "Expected table points from one tie against each of the other seven teams",
-    "matchesPerTie": "Matches won per tie",
-    "matchesPerTieTitle": "Average over ties against the other seven teams",
-    "winsTie": "Wins tie",
-    "draw": "Draw",
-    "losesTie": "Loses tie",
-    "ofEight": "of 8",
-    "note": "Expected values: table points add up over the seven ties (28 at most), the other columns are averages per tie."
+    "played": "P",
+    "playedTitle": "Ties played",
+    "record": "W-D-L",
+    "recordTitle": "Ties won, drawn and lost",
+    "matches": "Matches",
+    "matchesTitle": "Matches won–lost",
+    "points": "Pts",
+    "pointsTitle": "Table points",
+    "expectedPoints": "Expected",
+    "expectedPointsTitle": "Expected table points after the regular season",
+    "top4": "Top 4",
+    "top4Title": "Chance of finishing the regular season in the top 4, the play-offs for the title",
+    "champion": "Title",
+    "championTitle": "Chance of winning the title in the play-offs",
+    "qualification": "7th",
+    "qualificationTitle": "Chance of finishing 7th: plays the qualification against 1. divisjon teams",
+    "relegated": "8th",
+    "relegatedTitle": "Chance of finishing 8th: relegated",
+    "preseason": "Before",
+    "preseasonTitle": "Place in the table predicted before the season",
+    "change": "{change} since {date}",
+    "note": "The chances are for each team at full strength: real lineups vary.",
+    "ofEight": "of 8"
   },
   "headToHead": {
     "title": "Head to head",
@@ -29,7 +45,7 @@
     "cellTitle": "{a} against {b}: expected {matches} in matches, {points} in table points; wins {win}, draws {draw}, loses {loss}"
   },
   "team": {
-    "summary": "{points} expected table points · {matches} matches won per tie · wins {win} of ties",
+    "summary": "{points} expected table points over a season · {matches} matches won per tie · wins {win} of ties",
     "lineup": "Strongest lineup",
     "lineupSubtitle": "With the chance of winning each match against an average Eliteserien opponent",
     "players": "Players",
@@ -41,7 +57,14 @@
     "loanFrom": "Loan from {club}",
     "noRatedMatches": "No rated matches",
     "estimatedNote": "≈ estimated: no rating in that discipline yet.",
-    "note": "Points: official ranking points in singles / mixed doubles, which decide who plays first singles and first mixed. Men first, then women, by singles rating."
+    "note": "Points: official ranking points in singles / mixed doubles, which decide who plays first singles and first mixed. Men first, then women, by singles rating.",
+    "playoffLineup": "Play-off lineup",
+    "playoffLineupSubtitle": "From the players who may still play in the play-offs",
+    "played": "Played",
+    "playedTitle": "Eliteserien matches this season",
+    "mustPlay": "Must play in {round}",
+    "ineligible": "Not eligible for the play-offs",
+    "eligibilityNote": "Only players who have played a match for the team in Lillerunden or Storrunden may play in the play-offs."
   },
   "review": {
     "title": "Eliteserien {season} in review",
@@ -172,5 +195,110 @@
       "none": "–",
       "added": "Added for the test"
     }
+  },
+  "status": {
+    "before": "Before the season · the first ties on {date}",
+    "after": "After {round}, day {day} ({date}) · {played} of {total} regular-season ties played",
+    "afterPlayoffs": "After the play-offs' day {day} ({date})",
+    "over": "The season is over",
+    "next": "Next: {round}, {date}",
+    "updated": "Updated each night after a day of play.",
+    "realTable": "The official table and every tie: <link>Eliteserien on the team match pages</link>."
+  },
+  "howItWorksTitle": "How it works",
+  "places": {
+    "title": "Where each team finishes",
+    "intro": "The chance of each final place, after the play-offs: 1st to 4th from the play-offs for the title, 5th to 8th from the play-offs below.",
+    "place": "{place}.",
+    "cellTitle": "{team}: {place}. place, {chance}"
+  },
+  "trend": {
+    "title": "Chances over time",
+    "intro": "A team's chances after every tie played, from before the season on: of winning the title, finishing the regular season in the top 4, and finishing 7th or 8th, from 0% at the bottom to 100% at the top. Pick a team; hover or tap the chart for each tie and the chances after it.",
+    "team": "Team",
+    "label": "{team}'s chances over time",
+    "champion": "Title",
+    "top4": "Top 4",
+    "qualification": "7th",
+    "relegated": "8th",
+    "preseason": "Before",
+    "day": "Day {day}",
+    "before": "Before the season",
+    "tip": "Day {day} · {home} – {away} {score}"
+  },
+  "next": {
+    "title": "Next up: {date}",
+    "intro": "Each tie's chances with both teams' best lineups, and what's at stake: the chance that changes most for each team with a win or a loss.",
+    "draw": "Draw",
+    "expected": "Expected {score}",
+    "stake": "{team}: {outcome} {win} with a win, {loss} with a loss",
+    "stakeDraw": "{team}: {outcome} {win} with a win, {draw} with a draw, {loss} with a loss",
+    "outcomes": {
+      "champion": "title chance",
+      "top4": "top-4 chance",
+      "qualification": "chance of 7th",
+      "relegated": "chance of relegation"
+    }
+  },
+  "stages": {
+    "semi1": "Semi-final",
+    "semi2": "Semi-final",
+    "final": "Final",
+    "third": "Match for 3rd",
+    "final58": "Match for 5th",
+    "third58": "Match for 7th"
+  },
+  "playoffs": {
+    "title": "Play-offs",
+    "intro": "1st to 4th play for the title, 5th to 8th for the places below. Only players who have played in Lillerunden or Storrunden may play.",
+    "title14": "For the title",
+    "title58": "For 5th to 8th",
+    "seed": "{place}.",
+    "seedTitle": "{place}. after the regular season: the most likely teams",
+    "winners": "Winners of the semi-finals",
+    "losers": "Losers of the semi-finals",
+    "winChance": "{chance} to win",
+    "titleChances": "Title chances",
+    "relegationChances": "Relegation chances",
+    "seventh": "Winner 7th, loser 8th"
+  },
+  "results": {
+    "title": "Results",
+    "intro": "Each tie with the chance the winner had the night before. An upset is a winner that had less than a 30% chance.",
+    "day": "{round}, {date}",
+    "chanceBefore": "{team} had {chance}",
+    "drawBefore": "A draw had {chance}",
+    "upset": "Upset",
+    "goldenSet": "Golden set"
+  },
+  "players": {
+    "title": "Players of the season",
+    "intro": "Matches won against the expected wins from the players' ratings right before each match, for players with at least {min} matches. Doubles partners share their results.",
+    "above": "Above expectation",
+    "below": "Below expectation",
+    "upsets": "Biggest upsets",
+    "upsetsIntro": "Matches won with the smallest chance.",
+    "against": "against",
+    "upsetChance": "{chance} chance"
+  },
+  "tabs": {
+    "label": "Eliteserien",
+    "table": "Table",
+    "playoffs": "Play-offs",
+    "chances": "Chances",
+    "results": "Results",
+    "players": "Players",
+    "teams": "Teams"
+  },
+  "later": {
+    "title": "Later",
+    "intro": "The ties after that, from badmintonportalen's schedule, with each team's chances with its best lineup now."
+  },
+  "zones": {
+    "champion": "Title",
+    "top4": "Top 4: the play-offs for the title",
+    "qualification": "7th: the qualification",
+    "relegated": "8th: relegated",
+    "edge": "The coloured edge marks the places that go to the play-offs for the title. The title, 7th and 8th are decided in the play-offs."
   }
 }

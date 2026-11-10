@@ -1,12 +1,15 @@
 // Hashes of what a rebuild depends on, so the nightly workflow does only the work that's needed:
 // nothing when nothing new was fetched, just the tournament draws when only they changed, or a full
-// rebuild. Usage: node fingerprint.mjs → "results=<hash>" and "draws=<hash>" lines.
+// rebuild. Usage: node fingerprint.mjs → "results=<hash>", "draws=<hash>" and "eliteserien=<hash>" lines.
 //
 // results: the fetched results (tournaments, team matches, and the matches played so far in
 // tournaments being played, from their draws: cup2000-results.mjs), the official ranking, the
 // player register, clubs and birth years, and the pipeline itself (code, corrections, rosters).
 // draws: the tournament draws from Cup2000 (data/upcoming/raw) and the ranking lists they're seeded
 // by (data/ranking/seeding/<version>, upcoming.mjs).
+// eliteserien: the Eliteserien ties (its groups in data/league) and the Eliteserien scripts, team lists and the
+// rating model they use: the Eliteserien steps (strengths and forecast, the 10-match test, the seasons in review)
+// run only when these changed, not with every other result.
 // Fields that only record when something was fetched (fetchedAt, generatedAt) are left out, so
 // fetching the same data again gives the same hash.
 import { createHash } from "node:crypto";
@@ -35,4 +38,8 @@ const results = fingerprint(
   provisionalTournaments(),
 );
 const draws = fingerprint([...json("upcoming/raw"), ...files(`${DATA}/ranking/seeding`, () => true).flatMap((dir) => files(dir, (f) => f.endsWith(".json")))]);
-console.log(`results=${results}\ndraws=${draws}`);
+const eliteserien = fingerprint(
+  json("league").filter((f) => /^eliteserien \d{4}\//i.test(JSON.parse(readFileSync(f, "utf8")).division ?? "")),
+  files(DIR.replace(/\/$/, ""), (f) => /^eliteserien.*\.(mjs|txt)$|^(rules|rate)\.mjs$/.test(f)),
+);
+console.log(`results=${results}\ndraws=${draws}\neliteserien=${eliteserien}`);

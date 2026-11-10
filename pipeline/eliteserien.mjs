@@ -1,21 +1,28 @@
-// Eliteserien team strengths: each team's best lineup and its chances against the other teams.
+// Eliteserien team strengths: each team's best lineup and its chances against the other teams, and the season so far
+// with a forecast of the rest (eliteserien-forecast.mjs, from the season's ties in data/league).
 // Usage: node eliteserien.mjs   (after rate.mjs; reads data/ratings.json and eliteserien-2026-27.txt)
+//        node eliteserien.mjs --season 2025-26 --until 2026-01-24   (a test: an earlier season as it stood after a day)
 //
 // A tie is 8 matches: 2 men's singles, 2 women's singles, 1 men's doubles, 1 women's doubles and
 // 2 mixed doubles. A player plays at most 2 matches, and at most one in each discipline. The first
 // singles player must have more official ranking points (badmintonportalen) than the second, and
 // the first mixed pair more combined mixed doubles points than the second (on equal points either
 // order is allowed). Reads the points from data/ranking/<season>.json (fetch-ranking.mjs).
-// Writes data/eliteserien.json.
+// Writes data/eliteserien.json, and keeps the forecast's history and the pre-season copy (data/eliteserien-forecast-
+// and eliteserien-preseason-2026-27.json).
 //
 // The model is exported for eliteserien-review.mjs, which runs it on last season with the ratings
 // and ranking points from right before each round.
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+// (The season and forecast modules import this one too: only functions are used across, so the cycle is harmless)
+import { forecastSeason, random } from "./eliteserien-forecast.mjs";
+import { applyPlayed, currentPlayers, loggedGame, seasonTies, sourceAt } from "./eliteserien-season.mjs";
 import * as R from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 export const SEASON = "2026/2027";
-const ROSTER = `${DIR}eliteserien-2026-27.txt`;
+const CURRENT_KEY = "2026-27";
+const ROSTER = `${DIR}eliteserien-${CURRENT_KEY}.txt`;
 export const SOURCE = "https://www.badminton.no/siteassets/spillere-i-eliteserien-2026-27.pdf";
 const MAX_MATCHES = 2;
 export const RANKING = `${DIR}data/ranking/2002026.json`; // official ranking lists for the season
@@ -51,11 +58,11 @@ export function rankingPoints(file) {
   const lists = Object.fromEntries(["men", "women", "mensDoubles", "womensDoubles", "mixedMen", "mixedWomen"].map((list) => [list, new Map((ranking[list] ?? []).map((r) => [r.id, r.points]))]));
   return { period: ranking.period, points: (id, list) => lists[list].get(id) ?? 0 };
 }
-export function currentSource() {
+export function currentSource(rankingFile = RANKING) {
   const { pools } = JSON.parse(readFileSync(`${DIR}data/ratings.json`, "utf8"));
   const byId = Object.fromEntries(Object.entries(pools).map(([pool, list]) => [pool, new Map(list.map((p) => [p.id, p]))]));
   const find = (id) => Object.values(byId).map((m) => m.get(id)).find(Boolean);
-  const { period, points } = rankingPoints(RANKING);
+  const { period, points } = rankingPoints(rankingFile);
   return {
     rating: (id, pool) => byId[pool].get(id)?.rating ?? null,
     name: (id) => find(id)?.name ?? null,
@@ -213,6 +220,7 @@ export function tieOdds(chances) {
   const half = chances.length / 2;
   const sum = (from, to) => dist.slice(from, to).reduce((a, b) => a + b, 0);
   return {
+    dist,
     win: sum(half + 1, dist.length),
     draw: dist[half],
     loss: sum(0, half),
@@ -244,44 +252,95 @@ export function playedOdds(chances, walkovers) {
   });
   return odds;
 }
+const slugify = (text) => text.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// A team's strength from its odds against each other team: averages per tie, and the expected table points
+// over the regular season (one tie against each other team)
+export function strengthOf(oddsByOpponent) {
+  const games = Object.values(oddsByOpponent);
+  const mean = (key) => games.reduce((sum, g) => sum + g[key], 0) / games.length;
+  const round = (x, d = 3) => Math.round(x * 10 ** d) / 10 ** d;
+  return {
+    expected: round(mean("expected"), 2), win: round(mean("win")), draw: round(mean("draw")), loss: round(mean("loss")),
+    points: round(mean("points"), 2), tablePoints: round(mean("points") * games.length, 1),
+  };
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const source = currentSource();
-  const teams = readRoster().map((t) => ({ ...t, players: t.players.map((p) => playerRatings(p, source)) }));
-  const ref = references(teams);
-  for (const t of teams) {
-    t.lineup = bestLineup(t.players.filter((p) => p.gender === "M"), t.players.filter((p) => p.gender === "K"), ref);
-  }
+  const args = process.argv.slice(2);
+  const opt = (name) => (args.includes(name) ? args[args.indexOf(name) + 1] : null);
+  // Test runs: another season's teams and ties (--season 2025-26, its ties as the schedule), or only the ties up to a
+  // day (--until 2026-01-24); written to --out (default test-runs/eliteserien-test.json), keeping no snapshots
+  const KEY = opt("--season") ?? CURRENT_KEY;
+  const UNTIL = opt("--until");
+  const test = KEY !== CURRENT_KEY || !!UNTIL;
+  const year = KEY.slice(0, 4);
+  const seasonLabel = `${year}/${+year + 1}`;
+  const rankingFile = KEY === CURRENT_KEY ? RANKING : `${DIR}data/ranking/200${year}.json`;
+  const outDir = test ? `${DIR}test-runs/` : `${DIR}data/`;
+  if (test) mkdirSync(outDir, { recursive: true });
+  const players0 = currentPlayers();
+  const source = currentSource(rankingFile);
+  const round = (x, d = 3) => Math.round(x * 10 ** d) / 10 ** d;
+
+  // The teams with their players' ratings and best lineups (`from`: a player's first match, for those not on the list)
+  const rosterTeams = () => readRoster(`${DIR}eliteserien-${KEY}.txt`).map((t) => ({ ...t, players: t.players.map((p) => ({ ...p, from: null })) }));
+  const rate = (list, src) => {
+    const teams = list.map((t) => ({ team: t.team, players: t.players.map((p) => ({ ...playerRatings(p, src), added: p.added ?? false, movedFrom: p.movedFrom ?? null })) }));
+    const ref = references(teams);
+    for (const t of teams) t.lineup = bestLineup(t.players.filter((p) => p.gender === "M"), t.players.filter((p) => p.gender === "K"), ref);
+    return { teams, ref };
+  };
+
+  let { groups, ties } = seasonTies(year);
+  // Without a schedule (an earlier season), the ties played are the schedule
+  if (KEY !== CURRENT_KEY) groups = groups.map((g) => ({ ...g, schedule: ties.filter((t) => t.group === g.group).map((t) => ({ matchId: t.matchId, time: t.time, home: t.home, away: t.away })) }));
+  if (UNTIL) ties = ties.filter((t) => t.day <= UNTIL);
+  const rosters = rosterTeams();
+  const changes = applyPlayed(rosters, ties, players0.current);
+  const { teams, ref } = rate(rosters, source);
+  // A game's win chance for side 1 from right before it, from the match logs
+  const chanceOf = (tie, game) => loggedGame(tie, game)?.winChance ?? null;
 
   // Head to head: slot against slot
-  const round = (x, d = 3) => Math.round(x * 10 ** d) / 10 ** d;
   const headToHead = {};
   for (const a of teams) {
     headToHead[a.team] = {};
     for (const b of teams) {
       if (a === b) continue;
       const chances = SLOTS.map((s) => win(a.lineup[s.key].rating, b.lineup[s.key].rating, SLOT_POOL[s.type]));
-      const odds = tieOdds(chances);
+      const { dist, ...odds } = tieOdds(chances);
       headToHead[a.team][b.team] = { ...Object.fromEntries(Object.entries(odds).map(([k, v]) => [k, round(v)])), matches: chances.map((c) => round(c)) };
     }
   }
-  for (const t of teams) {
-    const games = Object.values(headToHead[t.team]);
-    const mean = (key) => games.reduce((sum, g) => sum + g[key], 0) / games.length;
-    // tablePoints: expected table points over the regular season, one tie against each other team
-    t.strength = {
-      expected: round(mean("expected"), 2), win: round(mean("win")), draw: round(mean("draw")), loss: round(mean("loss")),
-      points: round(mean("points"), 2), tablePoints: round(mean("points") * games.length, 1),
-    };
-  }
-  // Predicted table: by expected table points, then expected matches won
+  for (const t of teams) t.strength = strengthOf(headToHead[t.team]);
+  // Strongest first: by expected table points from one tie against each team, then expected matches won
   teams.sort((a, b) => b.strength.tablePoints - a.strength.tablePoints || b.strength.expected - a.strength.expected);
 
-  const playerOut = (p) => ({
+  // The forecast, and the chances over time: a snapshot after every tie played (and one before the season), kept in the
+  // raw bucket. Each run adds the ties played since the last one, one at a time in the order they were played, each with
+  // the ratings of the night (so the day's ties all with the same lineups); a result registered late, before ties
+  // already in, has the snapshots from it on done again
+  const historyFile = `${outDir}eliteserien-forecast-${KEY}.json`;
+  const saved = test || !existsSync(historyFile) ? [] : JSON.parse(readFileSync(historyFile, "utf8"));
+  const run = (played, history) => forecastSeason({ teams, ref, replacement: source.replacement, groups, ties: played, history, chanceOf, rand: random() });
+  // Kept: before the season, and the snapshots of the ties up to the first one not in yet (in the order played)
+  const firstNew = ties.findIndex((t, i) => saved.find((h) => h.key === String(t.matchId))?.played !== i + 1);
+  const keep = new Set(["preseason", ...ties.slice(0, firstNew < 0 ? ties.length : firstNew).map((t) => String(t.matchId))]);
+  let history = saved.filter((h) => keep.has(h.key));
+  if (!history.some((h) => h.key === "preseason") && !ties.length) history.unshift(run([], []).snapshot);
+  for (let k = firstNew < 0 ? ties.length : firstNew; k < ties.length; k++) history.push(run(ties.slice(0, k + 1), history).snapshot);
+  const { forecast, eligibility } = run(ties, history);
+
+  const playerOut = (team, p) => ({
     id: p.id, name: p.name, listName: p.listName, gender: p.gender, club: p.club, loanFrom: p.loanFrom, rated: p.rated,
     singles: Math.round(p.singles), doubles: Math.round(p.doubles), mixed: Math.round(p.mixed), estimated: p.estimated, points: p.points,
+    added: p.added || undefined, movedFrom: p.movedFrom || undefined,
+    eliteserien: eligibility(team, p),
   });
+  const lineupOut = (lineup) => Object.fromEntries(SLOTS.map((s) => [s.key, { rating: Math.round(lineup[s.key].rating), players: lineup[s.key].players.map((p) => p.id ?? p.listName) }]));
   const out = {
-    season: SEASON,
+    season: seasonLabel,
     source: SOURCE,
     rankingPeriod: source.period,
     generatedAt: new Date().toISOString(),
@@ -291,18 +350,58 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       rank: i + 1,
       team: t.team,
       strength: t.strength,
-      lineup: Object.fromEntries(SLOTS.map((s) => [s.key, { rating: Math.round(t.lineup[s.key].rating), players: t.lineup[s.key].players.map((p) => p.id ?? p.listName) }])),
-      players: t.players.map(playerOut).sort((a, b) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles),
+      lineup: lineupOut(t.lineup),
+      // The play-off lineup, when the players who may play there change it
+      playoffLineup: t.playoffLineup && t.playoffLineup !== t.lineup ? lineupOut(t.playoffLineup) : null,
+      players: t.players.map((p) => playerOut(t.team, p)).sort((a, b) => (a.gender === b.gender ? 0 : a.gender === "M" ? -1 : 1) || b.singles - a.singles),
     })),
     headToHead,
+    // The division's page on the team match pages (/team-matches/<season>/<slug>; team-matches.mjs names it the same
+    // way: the first division of its season with that name)
+    division: groups[0] ? { season: +year, slug: slugify(groups[0].division) } : null,
+    changes,
+    forecast,
+    history: history.map(({ next, ...h }) => h),
   };
-  writeFileSync(`${DIR}data/eliteserien.json`, JSON.stringify(out, null, 1));
 
-  console.log(`Eliteserien ${SEASON}: predicted table (expected table points from one tie against each team), expected matches won per tie (of 8) and chance of winning a tie:`);
-  for (const t of out.teams) {
-    const loans = t.players.filter((p) => p.loanFrom).map((p) => `${p.name} (loan from ${p.loanFrom})`);
-    console.log(`${t.rank}. ${t.team.padEnd(13)} ${t.strength.tablePoints.toFixed(1).padStart(4)} points  ${t.strength.expected.toFixed(2)}  win ${Math.round(t.strength.win * 100)}%  draw ${Math.round(t.strength.draw * 100)}%${loans.length ? `  · ${loans.join(", ")}` : ""}`);
+  // Before the season, kept: written while no tie has been played, then left as it is. Missing once ties have
+  // been played (this came after the first round), it's rebuilt from the ratings before the first round
+  const preseasonFile = `${outDir}eliteserien-preseason-${KEY}.json`;
+  if (!test) {
+    if (!ties.length) writeFileSync(preseasonFile, JSON.stringify({ ...out, history: undefined }, null, 1));
+    else if (!existsSync(preseasonFile)) {
+      const first = forecast.rounds[0]?.from ?? ties[0].day;
+      const before = rate(rosterTeams(), sourceAt(first, rankingFile, players0));
+      for (const t of before.teams) {
+        const h = Object.fromEntries(before.teams.filter((b) => b !== t).map((b) => [b.team, tieOdds(SLOTS.map((s) => win(t.lineup[s.key].rating, b.lineup[s.key].rating, SLOT_POOL[s.type])))]));
+        t.strength = strengthOf(h);
+      }
+      before.teams.sort((a, b) => b.strength.tablePoints - a.strength.tablePoints || b.strength.expected - a.strength.expected);
+      const pre = forecastSeason({ ...before, replacement: source.replacement, groups, ties: [], chanceOf, rand: random() });
+      writeFileSync(preseasonFile, JSON.stringify({ season: seasonLabel, rebuilt: `ratings before ${first}`, generatedAt: new Date().toISOString(), teams: before.teams.map((t, i) => ({ rank: i + 1, team: t.team, strength: t.strength, lineup: lineupOut(t.lineup) })), forecast: pre.forecast }, null, 1));
+      if (!history.some((h) => h.key === "preseason")) history.unshift(pre.snapshot);
+      out.history = history.map(({ next, ...h }) => h);
+    }
+    writeFileSync(historyFile, JSON.stringify(history, null, 1));
   }
+  // The table before the season, for comparison
+  const preseason = existsSync(preseasonFile) ? JSON.parse(readFileSync(preseasonFile, "utf8")) : null;
+  out.preseason = preseason && {
+    generatedAt: preseason.generatedAt,
+    rebuilt: preseason.rebuilt ?? null,
+    table: preseason.teams.map((t) => ({ rank: t.rank, team: t.team, tablePoints: t.strength.tablePoints, expected: t.strength.expected })),
+  };
+  const outFile = test ? (opt("--out") ?? `${outDir}eliteserien-test.json`) : `${outDir}eliteserien.json`;
+  writeFileSync(outFile, JSON.stringify(out, null, 1));
+
+  console.log(`Eliteserien ${seasonLabel}: ${ties.length} ties played${forecast.lastDay ? `, the last on ${forecast.lastDay}` : ""}. Table and forecast (expected points, top 4, title, 7th, 8th):`);
+  for (const t of forecast.table) {
+    const pct = (x) => `${Math.round(x * 100)}%`.padStart(4);
+    console.log(`${t.place}. ${t.team.padEnd(13)} ${String(t.points).padStart(2)} pts (${t.played} played)  → ${t.expectedPoints.toFixed(1).padStart(4)}  ${pct(t.top4)} ${pct(t.champion)} ${pct(t.qualification)} ${pct(t.relegated)}`);
+  }
+  if (forecast.next) console.log(`Next: ${forecast.next.day} (${forecast.next.round}), ${forecast.next.ties.map((s) => `${s.home}–${s.away} ${Math.round(s.odds.win * 100)}%`).join(", ")}`);
+  if (changes.length) console.log(`Team changes against the list: ${changes.map((c) => `${c.name} (${c.team}, ${c.change})`).join("; ")}`);
   const unrated = out.teams.flatMap((t) => t.players.filter((p) => !p.rated).map((p) => `${p.listName} (${t.team})`));
   if (unrated.length) console.log(`Without rated matches: ${unrated.join(", ")}`);
+  console.log(`Written: ${outFile.slice(DIR.length)}`);
 }

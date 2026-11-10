@@ -10,7 +10,11 @@
 // A single series with `notes` ([week index, lines], ...) lists those lines in the detail box from
 // that week on (a club's strength: the players counted).
 // `ranks` and `counts` show in the tooltip as "#3 of 89 <rankOf>". With `rank`, the values are
-// ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values.
+// ranks: "#12" on a log scale with #1 at the top. `decimals` and `signed` format the values; with `percent` the
+// values are chances (0 to 1) on a 0–100% scale. With `labels` the values aren't weeks but points in order, named
+// along the bottom by their labels (an empty one isn't shown: "Before", "Day 1", "", "", "Day 2", …) and in the detail
+// box by `tips` (or the labels). With `dots` every value has a dot (few points, each one an event: a tie played). A series' `color` overrides
+// its palette colour (colours with a meaning, such as Eliteserien's outcomes).
 // Hover or focus and use the arrow keys (PageUp/PageDown a year, Home/End) to read values.
 import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -27,6 +31,7 @@ export interface ChartSeries {
   counts?: (number | null)[];
   clubs?: [number, string][];
   notes?: [number, string[]][];
+  color?: string;
 }
 
 interface Props {
@@ -36,13 +41,17 @@ interface Props {
   rankOf?: string;
   decimals?: number;
   signed?: boolean;
+  percent?: boolean;
+  labels?: string[];
+  tips?: string[];
+  dots?: boolean;
   className?: string;
 }
 
 // The detail box's gliding: short, so it keeps up with the pointer
 const GLIDE = { duration: 0.18, ease: "easeOut" } as const;
 
-export default function LineChart({ series: input, label: labelProp, rank = false, rankOf = "", decimals = 0, signed = false, className = "relative h-80" }: Props) {
+export default function LineChart({ series: input, label: labelProp, rank = false, rankOf = "", decimals = 0, signed = false, percent = false, labels, tips, dots = false, className = "relative h-80" }: Props) {
   const i18n = useI18n();
   const { t, dayAt, weekAt } = i18n;
   const label = labelProp ?? t("common.chart.rating");
@@ -65,7 +74,7 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
     const clubColors = new Map<string, string>();
     const series = input.map((s, i) => {
       const offset = Math.round((starts[i] - start) / WEEK);
-      const color = PALETTE[s.slot ?? i];
+      const color = s.color ?? PALETTE[s.slot ?? i];
       // Per point colour: by club period for a single series with clubs
       let colors: string[] | null = null;
       if (input.length === 1 && s.clubs?.length) {
@@ -97,12 +106,12 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
     for (const [w, l] of s.notes ?? []) if (w <= i) lines = l;
     return lines;
   };
-  const fmt = (v: number) => (rank ? `#${formatNumber(i18n, v)}` : formatNumber(i18n, v, decimals, signed));
+  const fmt = (v: number) => (rank ? `#${formatNumber(i18n, v)}` : percent ? i18n.pct(v) : formatNumber(i18n, v, decimals, signed));
 
   const all = series.flatMap((s) => s.values).filter((v): v is number => v !== null);
   const { width, height } = size;
   const ready = width > 0 && height > 0 && all.length > 0;
-  const domain = rank ? logDomain(Math.min(...all), Math.max(...all)) : yDomain(Math.min(...all), Math.max(...all));
+  const domain = rank ? logDomain(Math.min(...all), Math.max(...all)) : percent ? { yMin: 0, yMax: 1, ticks: [0, 0.25, 0.5, 0.75, 1], decimals: 0 } : yDomain(Math.min(...all), Math.max(...all));
   const plot = { left: MARGIN.left, right: width - (series.length === 1 ? MARGIN.right : MARGIN.rightWithoutLabel), top: MARGIN.top, bottom: height - MARGIN.bottom };
   const t0 = time(0);
   const t1 = time(weeks - 1);
@@ -251,7 +260,7 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
   })();
 
   const lastWeek = ends.filter(Boolean).at(-1);
-  const span = { label, from: dayAt(t0), to: dayAt(t1) };
+  const span = { label, from: labels ? labels[0] : dayAt(t0), to: labels ? (labels.at(-1) ?? "") : dayAt(t1) };
   const description =
     series.length > 1
       ? t("common.chart.descriptionSeries", { ...span, series: series.map((s) => s.label).join(", ") })
@@ -289,11 +298,30 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
               <g key={v}>
                 <line x1={plot.left} x2={plot.right} y1={y(v)} y2={y(v)} style={{ stroke: COLORS.grid }} />
                 <text x={plot.left - 8} y={y(v)} textAnchor="end" dominantBaseline="middle" fontSize={12} style={{ fill: COLORS.axis, fontVariantNumeric: "tabular-nums" }}>
-                  {rank ? `#${formatNumber(i18n, v)}` : formatNumber(i18n, v, domain.decimals, signed)}
+                  {rank ? `#${formatNumber(i18n, v)}` : percent ? i18n.pct(v) : formatNumber(i18n, v, domain.decimals, signed)}
                 </text>
               </g>
             ))}
-            {yearTicks(t0, t1, plot.right - plot.left).map((year) => {
+            {labels &&
+              (() => {
+                // The labels given (not the empty ones), as many as fit, thinned evenly
+                const shown = labels.flatMap((text, i) => (text ? [{ text, i }] : []));
+                const step = Math.max(1, Math.ceil(shown.length / Math.max(1, Math.floor((plot.right - plot.left) / 64))));
+                return shown
+                  .filter((_, k) => k % step === 0)
+                  .map(({ text, i }) => {
+                    const px = x(time(i));
+                    return (
+                      <g key={i}>
+                        <line x1={px} x2={px} y1={plot.bottom} y2={plot.bottom + 4} style={{ stroke: COLORS.axis }} />
+                        <text x={px} y={plot.bottom + 18} textAnchor={i === 0 ? "start" : i === labels.length - 1 ? "end" : "middle"} fontSize={12} style={{ fill: COLORS.axis }}>
+                          {text}
+                        </text>
+                      </g>
+                    );
+                  });
+              })()}
+            {!labels && yearTicks(t0, t1, plot.right - plot.left).map((year) => {
               const px = x(Date.UTC(year, 0, 1));
               return (
                 <g key={year}>
@@ -307,6 +335,12 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
             {paths.map((p) => (
               <path key={p.key} d={p.d} fill="none" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" style={{ stroke: p.color }} />
             ))}
+            {dots &&
+              series.flatMap((s, si) =>
+                s.values.map((v, i) =>
+                  v === null ? null : <circle key={`${si}-${i}`} cx={x(time(s.offset + i))} cy={y(v)} r={3} strokeWidth={1.5} style={{ fill: s.colors?.[i] ?? s.color, stroke: COLORS.surface }} />,
+                ),
+              )}
             {ends.map(
               (e, i) =>
                 e && (
@@ -360,7 +394,11 @@ export default function LineChart({ series: input, label: labelProp, rank = fals
               top: Math.max(0, Math.min(tooltip.top - 24, height - tipSize.height)),
             }}
           >
-            <span className="block text-gray-600 mb-1" title={t("common.chart.weekEnding", { day: dayAt(time(active!)) })}>{weekAt(time(active!))}</span>
+            {labels ? (
+              <span className="block text-gray-600 mb-1">{tips?.[active!] ?? labels[active!]}</span>
+            ) : (
+              <span className="block text-gray-600 mb-1" title={t("common.chart.weekEnding", { day: dayAt(time(active!)) })}>{weekAt(time(active!))}</span>
+            )}
             {tooltip.rows.map((r) => (
               <motion.span key={r.key} layout="position" transition={GLIDE} className="flex items-center gap-1.5">
                 <Swatch color={r.color} />

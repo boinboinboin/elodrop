@@ -1,6 +1,6 @@
 # Nightly: fetch new results (tournaments and team matches), tournament draws, the player register,
 # the clubs and the official ranking; then rebuild only what's needed (fingerprint.mjs):
-#   - full: rate, Eliteserien strengths, draw luck, export everything, refresh the pages whose data changed. On
+#   - full: rate, draw luck, export everything, refresh the pages whose data changed. On
 #     the Saturday, Sunday and Monday runs (01:15 UTC, after Friday's, Saturday's and Sunday's
 #     matches; also "since last week" in the rankings), on manual runs, and whenever results, the
 #     ranking, the register or the pipeline itself changed (results registered late, on any day,
@@ -9,6 +9,9 @@
 #   - draws: only new or changed tournament draws: rate (for the ratings before each tournament),
 #     analyse the draws, upload and refresh only the tournament pages.
 #   - none: nothing new: no uploads, and the site keeps its cached pages.
+# A full rebuild runs the Eliteserien steps (team strengths and the season's forecast, the 10-match test, the seasons
+# in review) only when Eliteserien ties or its scripts changed (fingerprint.mjs, "eliteserien"); otherwise their
+# files are kept from the last run (raw bucket), so its page isn't refreshed for nothing.
 # Every night (any of these) also refreshes what changed in the Studio (clubs, badges, halls, tournaments), and
 # everything if the last run's refresh failed.
 # Sundays also rescan the whole season's tournament draws.
@@ -97,6 +100,7 @@ jobs:
             pipeline/data/clubs.json
             pipeline/data/birth-years.json
             pipeline/data/tournaments.json
+            pipeline/data/eliteserien.json
             pipeline/data/eliteserien-*.json
             pipeline/data/build-fingerprint.txt
             pipeline/data/sanity-revisions.json
@@ -167,6 +171,10 @@ jobs:
           else mode=none; fi
           echo "Rebuild: $mode (results $(before results) -> $(now results), draws $(before draws) -> $(now draws))"
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          # The Eliteserien steps: in a full rebuild, when its ties or scripts changed or its file is missing
+          if [ "$mode" = "full" ] && { [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(now eliteserien)" != "$(before eliteserien)" ] || [ ! -f data/eliteserien.json ]; }; then eliteserien=true; else eliteserien=false; fi
+          echo "Eliteserien: $eliteserien"
+          echo "eliteserien=$eliteserien" >> "$GITHUB_OUTPUT"
           # A run that uploaded but didn't finish refreshing the site left this (see "Refresh the site")
           if [ -f data/refresh-pending ]; then echo "Last run's refresh didn't finish: refreshing everything"; echo "pending=true" >> "$GITHUB_OUTPUT"; fi
 
@@ -178,19 +186,20 @@ jobs:
         if: steps.build.outputs.mode == 'full'
         run: node gender-gap.mjs
 
-      - name: Eliteserien team strengths
-        if: steps.build.outputs.mode == 'full'
+      # Team strengths and the season so far with its forecast (after each day played; eliteserien-forecast.mjs)
+      - name: Eliteserien team strengths and forecast
+        if: steps.build.outputs.eliteserien == 'true'
         run: node eliteserien.mjs > /dev/null
 
       # What if a tie were 10 matches: this season's teams in a format with 2 more men's matches
       - name: Eliteserien with 10 matches a tie
-        if: steps.build.outputs.mode == 'full'
+        if: steps.build.outputs.eliteserien == 'true'
         run: node eliteserien-ten-matches.mjs > /dev/null
 
       # The earlier seasons in review, from the ratings at the time: done again with the ratings, so
       # they follow any change in how ratings are calculated
       - name: Eliteserien seasons in review
-        if: steps.build.outputs.mode == 'full'
+        if: steps.build.outputs.eliteserien == 'true'
         run: node eliteserien-review.mjs > /dev/null
 
       # Every league team match with its matches' win chances and upsets, from the ratings

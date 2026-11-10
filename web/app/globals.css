@@ -41,6 +41,13 @@ input[type="search"]::-webkit-search-decoration {
   --color-class-b: var(--color-chart-3);
   --color-class-c: var(--color-chart-4);
   --color-class-d: var(--color-chart-5);
+  /* Eliteserien's outcomes (components/eliteserien): the title (green), the top 4 and its play-offs for the title
+     (blue), 7th and the qualification (yellow), 8th and relegation (red); the same in every theme, as they mean the
+     same. Apart for colour blindness, each always with its name or value too (yellow is under 3:1 on white) */
+  --color-zone-champion: #16a34a;
+  --color-zone-top4: #2563eb;
+  --color-zone-qualification: #ca8a04;
+  --color-zone-relegated: #dc2626;
   /* The logo's cork */
   --color-accent: #f97316;
   /* The court on the 404 page (app/[lang]/(site)/not-found.tsx): Yonex's green mat, the floor

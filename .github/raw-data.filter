@@ -20,5 +20,8 @@
 + /players.json
 + /clubs.json
 + /birth-years.json
+# Eliteserien's files (eliteserien*.mjs): rebuilt only when its ties or scripts change, so kept between runs; and
+# the season's forecast history and pre-season copy, kept for good
++ /eliteserien.json
 + /eliteserien-*.json
 - *

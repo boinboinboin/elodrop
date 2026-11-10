@@ -186,7 +186,8 @@ const eliteserienSeasons = readdirSync(DATA)
   .filter(Boolean)
   .sort()
   .reverse();
-if (existsSync(`${DATA}/eliteserien.json`)) write("eliteserien.json", read("eliteserien.json"));
+// (with the seasons in review, so its page reads no file that changes every run: meta.json)
+if (existsSync(`${DATA}/eliteserien.json`)) write("eliteserien.json", { ...read("eliteserien.json"), reviews: eliteserienSeasons });
 if (existsSync(`${DATA}/eliteserien-ten-matches.json`)) write("eliteserien-ten-matches.json", read("eliteserien-ten-matches.json"));
 for (const season of eliteserienSeasons) write(`eliteserien-${season}.json`, read(`eliteserien-${season}.json`));
 

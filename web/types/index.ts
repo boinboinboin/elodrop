@@ -485,6 +485,101 @@ export interface TeamMatchesIndex {
   latest: TeamMatchWeek | null;
 }
 
+// ---- Eliteserien: the season so far and its forecast (pipeline/eliteserien-forecast.mjs) ----
+
+/** The chances of an outcome: the title, the top 4 (the play-offs for the title), 7th (the qualification) or 8th (relegated) */
+export type EliteserienOutcome = "champion" | "top4" | "qualification" | "relegated";
+
+export interface EliteserienTableRow {
+  place: number;
+  team: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  matches: [number, number];
+  sets: [number, number];
+  rallies: [number, number];
+  points: number;
+  /** Expected points after the regular season */
+  expectedPoints: number;
+  /** Chance of each place, 1st to 8th, after the regular season and after the play-offs */
+  regularPlaces: number[];
+  finalPlaces: number[];
+  top4: number;
+  final: number;
+  champion: number;
+  qualification: number;
+  relegated: number;
+}
+
+export interface EliteserienOdds {
+  win: number;
+  draw: number;
+  loss: number;
+  /** Matches the home team is expected to win, of 8, and its expected table points */
+  expected: number;
+  points: number;
+}
+
+/** One team's stake in a tie: the outcome whose chance changes most, with a win, a draw (not in the play-offs) and a loss */
+export interface EliteserienStake {
+  outcome: EliteserienOutcome;
+  win: number;
+  draw: number | null;
+  loss: number;
+}
+
+export type EliteserienStage = "semi1" | "semi2" | "final" | "third";
+
+export interface EliteserienForecast {
+  sims: number;
+  rounds: { name: string; from: string; to: string; ties: number; played: number }[];
+  lastDay: string | null;
+  lastRound: string | null;
+  regular: { played: number; total: number };
+  /** The real table so far, with the forecast */
+  table: EliteserienTableRow[];
+  next: {
+    day: string;
+    round: string | null;
+    ties: { matchId: number; time: string; home: string; away: string; stage: EliteserienStage | null; bracket: string | null; odds: EliteserienOdds; stakes: { home: EliteserienStake | null; away: EliteserienStake | null } }[];
+  } | null;
+  /** The ties after the next day (badmintonportalen's schedule), with their chances */
+  later: { matchId: number; time: string; round: string | null; home: string; away: string; stage: EliteserienStage | null; bracket: string | null; odds: Omit<EliteserienOdds, "points"> }[];
+  /** 1–4 and 5–8: each seed's most likely teams, and the ties (teams null until known) */
+  playoffs: {
+    name: "1-4" | "5-8";
+    seeds: { seed: number; teams: { team: string; chance: number }[] }[];
+    ties: { stage: EliteserienStage; matchId: number; time: string; home: string | null; away: string | null; score: [number, number] | null; winner: string | null; odds: { win: number; loss: number } | null }[];
+  }[];
+  /** Newest day first */
+  results: {
+    day: string;
+    round: string | null;
+    ties: { matchId: number; time: string; group: string; home: string; away: string; score: [number, number]; winner: 0 | 1 | 2; goldenSet: boolean; before: EliteserienOdds | null; upset: boolean }[];
+  }[];
+  players: { id: number; name: string; team: string; games: number; won: number; expected: number; diff: number }[];
+  upsets: { matchId: number; day: string; game: string; discipline: string; team: string; opponent: string; winners: { id: number; name: string }[]; losers: { id: number; name: string }[]; chance: number; score: string }[];
+}
+
+/** A snapshot of the forecast after a tie played (its match id; "preseason" before the first) */
+export interface EliteserienSnapshot {
+  key: string;
+  /** The tie's day, its round, how many ties had been played, and the tie */
+  day: string | null;
+  round: string | null;
+  played: number;
+  tie: { home: string; away: string; score: [number, number] } | null;
+  teams: Record<string, { champion: number; top4: number; qualification: number; relegated: number; expectedPoints: number }>;
+}
+
+/** A player's regular-season matches for the team, and whether they may play in the play-offs */
+export interface EliteserienEligibility {
+  played: number;
+  status: "eligible" | "mustPlay" | "ineligible";
+}
+
 // ---- Tournament draws (pipeline/upcoming.mjs) ----
 
 export interface Chances {

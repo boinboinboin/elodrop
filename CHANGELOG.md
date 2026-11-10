@@ -8,6 +8,22 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.0 (2026-11-10)
+
+- The Eliteserien page follows the season as it's played, updated each night after a day of play, in tabs (kept in the address):
+  - **Table**: the table so far, with a forecast of the rest from playing the season 20,000 times with each team's best lineup now: expected points and the chances of the top 4, the title, 7th (qualification) and 8th (relegation), with the change since the day before. Then the next day's ties with their chances and what's at stake for each team, and the ties after them from badmintonportalen's schedule;
+  - **Play-offs**: the most likely pairings, then the real ones and their results;
+  - **Chances**: a team's chances after every tie on the site's chart (pick the team; the detail box names each tie, the days along the bottom), and the chance of each final place;
+  - **Results**: with the chance the winner had the night before, and the upsets;
+  - **Players**: the season's players against expectation, and the biggest upsets;
+  - **Teams**: head to head, and each team's lineups and players.
+- The outcomes have their own colours throughout: green for the title, blue for the top 4 (also the edge of places 1–4 in the table), yellow for 7th and red for 8th.
+- The site's line chart can show points by name (days instead of weeks) and chances from 0% to 100%.
+- The forecast follows the play-off rule: a player who played no match for the team in Lillerunden or Storrunden can't play in the play-offs. Each team's players show their Eliteserien matches and who still has to play, and a team's play-off lineup is shown when the rule changes it.
+- The page links to the official table on the team match pages, and its how-it-works is folded at the bottom.
+- The forecast before the season is kept, to compare with how it ends.
+- The Eliteserien pipeline steps run only when new Eliteserien results (or its scripts) come in, so the page is refreshed only then.
+
 ## v1.27.7 (2026-11-10)
 
 - The team match pages can show one team's team matches. On a division's page, a team dropdown next to the season and division narrows its rounds to that team's matches and marks the team in the standings and the power ranking. The team is kept in the address (`?team=…`), so a link opens it. The weekend pages have a search for a team or club, as in the rankings, narrowing the weekend's list as you type. Both filter what the page already has, so they cost nothing extra to serve.

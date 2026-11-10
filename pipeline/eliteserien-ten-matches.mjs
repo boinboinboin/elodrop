@@ -136,7 +136,8 @@ function format(teams, slots, lineupKey) {
     for (const b of teams) {
       if (a === b) continue;
       const chances = slots.map((s) => win(a[lineupKey][s.key].rating, b[lineupKey][s.key].rating, SLOT_POOL[s.type]));
-      headToHead[a.team][b.team] = { ...Object.fromEntries(Object.entries(tieOdds(chances)).map(([k, v]) => [k, round(v)])), matches: chances.map((c) => round(c)) };
+      const { dist, ...odds } = tieOdds(chances);
+      headToHead[a.team][b.team] = { ...Object.fromEntries(Object.entries(odds).map(([k, v]) => [k, round(v)])), matches: chances.map((c) => round(c)) };
     }
   }
   const strength = {};

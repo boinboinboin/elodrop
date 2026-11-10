@@ -17,7 +17,7 @@
     "clubsPool": "De sterkeste badmintonklubbene i Norge i {pool}, ut fra de beste spillernes Elo-ratinger.",
     "tournaments": "Kommende og nylige norske badmintonturneringer: hvem som fikk heldig eller uheldig trekning, ut fra spillernes Elo-ratinger.",
     "tournament": "{name}{dates}: trekningen i hver klasse, hver spillers sjanser og hvor heldig trekningen var, ut fra Elo-ratingene.",
-    "eliteserien": "Eliteserien {season}, Norges øverste badmintonliga: hvor sterke de åtte lagene er, den predikerte tabellen og hvert lags beste oppstilling, ut fra spillernes Elo-ratinger.",
+    "eliteserien": "Eliteserien {season}, Norges øverste badmintonliga: tabellen, hvert lags sjanser for tittel, sluttspill og nedrykk etter hver spilledag, og hvor sterke de åtte lagene er, ut fra spillernes Elo-ratinger.",
     "eliteserienSeason": "Eliteserien {season} oppsummert: lagstyrkene før hver runde mot det som faktisk skjedde, lagkampene og hvem som slo potensialet sitt.",
     "tenMatches": "Hva om en lagkamp i Eliteserien hadde 10 kamper i stedet for 8? Den predikerte tabellen, head to head og oppstillinger i begge formatene.",
     "upsets": "De største overraskelsene i norsk badminton: kampene som ble vunnet med lavest sjanse, uke for uke.",

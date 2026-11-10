@@ -1,27 +1,43 @@
 {
   "title": "Eliteserien",
   "heading": "Eliteserien {season}",
-  "intro": "Hvor sterke de åtte lagene er, ut fra spillernes ratinger.",
+  "intro": "Tabellen, hvor sterke de åtte lagene er ut fra spillernes ratinger, og sjansene for hvordan sesongen ender.",
   "earlierSeasons": "Tidligere sesonger oppsummert, predikert mot faktiske resultater:",
   "howItWorks": {
     "tie": "En lagkamp er 8 kamper: 2 herresingle, 2 damesingle, 1 herredouble, 1 damedouble og 2 mixdouble. En spiller spiller høyst 2 av dem.\n\nHvert lag antas å stille med oppstillingen som gir flest forventede kampseiere mot en gjennomsnittlig Eliteserien-motstander. Slik reglene krever, har første singlespiller flere offisielle rankingpoeng enn andre, og første mixpar flere samlede mixdoublepoeng enn andre{ranking}.\n\nSeierssjansene bruker samme formel som ratingene, kamp for kamp. En lagkamp vinnes med 5 kamper og er uavgjort ved 4-4. Tabellpoeng per lagkamp er som i ligaen:\n\n- 4-0 for å vinne 6-2 eller bedre\n- 3-1 for 5-3\n- 2-2 for 4-4",
     "rankingPeriod": " (rankingen {period})",
-    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, inkludert spillere utlånt fra andre klubber. Spillere uten double- eller mixrating regnes som at de starter i double fra singleratingen sin (merket ≈)."
+    "teams": "Lagene er fra <link>Norges Badmintonforbunds liste</link>, inkludert spillere utlånt fra andre klubber. Spillere uten double- eller mixrating regnes som at de starter i double fra singleratingen sin (merket ≈).",
+    "forecast": "Resten av sesongen spilles {sims} ganger. Hver lagkamp som gjenstår trekkes fra sjansene for hvert resultat mellom de to lagenes sterkeste oppstillinger nå, og tabellpoengene legges sammen som i serien. Lag med like mange poeng rangeres etter kampdifferanse, så settdifferanse, så ballforskjell.\n\nSå sluttspillet: 1. til 4. spiller om tittelen og 5. til 8. om plassene under, semifinaler 1. mot 4. og 2. mot 3., så en finale og en kamp om 3. plass (5., 7.). En lagkamp i sluttspillet som ender 4–4 avgjøres av et gyllent sett, antatt spilt i disiplinen der lagene er jevnest. 8. plass rykker ned, og 7. plass spiller kvalifisering mot lag fra 1. divisjon.\n\nEn spiller som ikke har spilt en eneste kamp for laget i Lillerunden eller Storrunden, kan ikke spille i sluttspillet. Etter lagets siste lagkamp i grunnspillet er sluttspilloppstillingen derfor den sterkeste av dem som har spilt.\n\nSjansene gjelder hvert lag med full styrke, mens de virkelige oppstillingene varierer. Prognosen oppdateres hver natt etter en spilledag, med resultatene og spillernes nye ratinger."
   },
   "noData": "Ingen lagstyrker ennå: kjør pipeline/eliteserien.mjs etter rate.mjs.",
   "table": {
-    "title": "Predikert tabell",
-    "intro": "Grunnserien, med én lagkamp mot hvert av de andre lagene, etter forventede tabellpoeng.",
+    "title": "Tabell og prognose",
+    "intro": "Tabellen så langt, med sjansene fra å spille resten av sesongen {sims} ganger med hvert lags sterkeste oppstilling nå.",
+    "introBefore": "Ingen lagkamper er spilt ennå: lagene i rekkefølge etter poengene de ventes å få, med sjansene fra å spille sesongen {sims} ganger med hvert lags sterkeste oppstilling nå.",
     "team": "Lag",
-    "tablePoints": "Tabellpoeng",
-    "tablePointsTitle": "Forventede tabellpoeng fra én lagkamp mot hvert av de andre sju lagene",
-    "matchesPerTie": "Kamper vunnet per lagkamp",
-    "matchesPerTieTitle": "Snitt over lagkamper mot de andre sju lagene",
-    "winsTie": "Vinner lagkampen",
-    "draw": "Uavgjort",
-    "losesTie": "Taper lagkampen",
-    "ofEight": "av 8",
-    "note": "Forventede verdier: tabellpoengene summeres over de sju lagkampene (28 som mest), de andre kolonnene er snitt per lagkamp."
+    "played": "K",
+    "playedTitle": "Lagkamper spilt",
+    "record": "V-U-T",
+    "recordTitle": "Lagkamper vunnet, uavgjort og tapt",
+    "matches": "Kamper",
+    "matchesTitle": "Kamper vunnet–tapt",
+    "points": "P",
+    "pointsTitle": "Tabellpoeng",
+    "expectedPoints": "Forventet",
+    "expectedPointsTitle": "Forventede tabellpoeng etter grunnspillet",
+    "top4": "Topp 4",
+    "top4Title": "Sjansen til å ende grunnspillet blant de fire beste, som spiller om tittelen",
+    "champion": "Tittel",
+    "championTitle": "Sjansen til å vinne tittelen i sluttspillet",
+    "qualification": "7.",
+    "qualificationTitle": "Sjansen til å ende på 7. plass: spiller kvalifisering mot lag fra 1. divisjon",
+    "relegated": "8.",
+    "relegatedTitle": "Sjansen til å ende på 8. plass: rykker ned",
+    "preseason": "Før",
+    "preseasonTitle": "Plassen i tabellen spådd før sesongen",
+    "change": "{change} siden {date}",
+    "note": "Sjansene gjelder hvert lag med full styrke: de virkelige oppstillingene varierer.",
+    "ofEight": "av 8"
   },
   "headToHead": {
     "title": "Head to head",
@@ -29,7 +45,7 @@
     "cellTitle": "{a} mot {b}: forventet {matches} i kamper, {points} i tabellpoeng; vinner {win}, uavgjort {draw}, taper {loss}"
   },
   "team": {
-    "summary": "{points} forventede tabellpoeng · {matches} kamper vunnet per lagkamp · vinner {win} av lagkampene",
+    "summary": "{points} forventede tabellpoeng over en sesong · {matches} kamper vunnet per lagkamp · vinner {win} av lagkampene",
     "lineup": "Sterkeste oppstilling",
     "lineupSubtitle": "Med sjansen til å vinne hver kamp mot en gjennomsnittlig Eliteserien-motstander",
     "players": "Spillere",
@@ -41,7 +57,14 @@
     "loanFrom": "Utlån fra {club}",
     "noRatedMatches": "Ingen ratede kamper",
     "estimatedNote": "≈ anslått: ingen rating i den disiplinen ennå.",
-    "note": "Poeng: offisielle rankingpoeng i single / mixdouble, som avgjør hvem som spiller første single og første mix. Herrer først, så damer, etter singlerating."
+    "note": "Poeng: offisielle rankingpoeng i single / mixdouble, som avgjør hvem som spiller første single og første mix. Herrer først, så damer, etter singlerating.",
+    "playoffLineup": "Oppstilling i sluttspillet",
+    "playoffLineupSubtitle": "Av spillerne som fortsatt kan spille i sluttspillet",
+    "played": "Spilt",
+    "playedTitle": "Eliteserien-kamper denne sesongen",
+    "mustPlay": "Må spille i {round}",
+    "ineligible": "Kan ikke spille i sluttspillet",
+    "eligibilityNote": "Bare spillere som har spilt en kamp for laget i Lillerunden eller Storrunden, kan spille i sluttspillet."
   },
   "review": {
     "title": "Eliteserien {season} oppsummert",
@@ -172,5 +195,110 @@
       "none": "–",
       "added": "Lagt til for testen"
     }
+  },
+  "status": {
+    "before": "Før sesongen · de første lagkampene {date}",
+    "after": "Etter {round}, dag {day} ({date}) · {played} av {total} lagkamper i grunnspillet spilt",
+    "afterPlayoffs": "Etter sluttspillets dag {day} ({date})",
+    "over": "Sesongen er ferdig",
+    "next": "Neste: {round}, {date}",
+    "updated": "Oppdateres hver natt etter en spilledag.",
+    "realTable": "Den offisielle tabellen og alle lagkampene: <link>Eliteserien på lagkampsidene</link>."
+  },
+  "howItWorksTitle": "Slik fungerer det",
+  "places": {
+    "title": "Hvor lagene ender",
+    "intro": "Sjansen for hver sluttplassering etter sluttspillet: 1. til 4. fra sluttspillet om tittelen, 5. til 8. fra sluttspillet under.",
+    "place": "{place}.",
+    "cellTitle": "{team}: {place}. plass, {chance}"
+  },
+  "trend": {
+    "title": "Sjansene over tid",
+    "intro": "Et lags sjanser etter hver lagkamp, fra før sesongen: for å vinne tittelen, ende grunnspillet blant de fire beste, og ende på 7. eller 8. plass, fra 0 % nederst til 100 % øverst. Velg et lag; hold musen over eller trykk på grafen for hver lagkamp og sjansene etter den.",
+    "team": "Lag",
+    "label": "Sjansene til {team} over tid",
+    "champion": "Tittel",
+    "top4": "Topp 4",
+    "qualification": "7.",
+    "relegated": "8.",
+    "preseason": "Før",
+    "day": "Dag {day}",
+    "before": "Før sesongen",
+    "tip": "Dag {day} · {home} – {away} {score}"
+  },
+  "next": {
+    "title": "Neste: {date}",
+    "intro": "Sjansene i hver lagkamp med begge lagenes sterkeste oppstilling, og hva som står på spill: sjansen som endrer seg mest for hvert lag ved seier eller tap.",
+    "draw": "Uavgjort",
+    "expected": "Forventet {score}",
+    "stake": "{team}: {outcome} {win} ved seier, {loss} ved tap",
+    "stakeDraw": "{team}: {outcome} {win} ved seier, {draw} ved uavgjort, {loss} ved tap",
+    "outcomes": {
+      "champion": "tittelsjanse",
+      "top4": "sjanse for topp 4",
+      "qualification": "sjanse for 7. plass",
+      "relegated": "nedrykkssjanse"
+    }
+  },
+  "stages": {
+    "semi1": "Semifinale",
+    "semi2": "Semifinale",
+    "final": "Finale",
+    "third": "Kamp om 3. plass",
+    "final58": "Kamp om 5. plass",
+    "third58": "Kamp om 7. plass"
+  },
+  "playoffs": {
+    "title": "Sluttspill",
+    "intro": "1. til 4. spiller om tittelen, 5. til 8. om plassene under. Bare spillere som har spilt i Lillerunden eller Storrunden, kan spille.",
+    "title14": "Om tittelen",
+    "title58": "Om 5. til 8. plass",
+    "seed": "{place}.",
+    "seedTitle": "{place}. etter grunnspillet: de mest sannsynlige lagene",
+    "winners": "Vinnerne av semifinalene",
+    "losers": "Taperne av semifinalene",
+    "winChance": "{chance} for å vinne",
+    "titleChances": "Tittelsjanser",
+    "relegationChances": "Nedrykkssjanser",
+    "seventh": "Vinneren 7., taperen 8."
+  },
+  "results": {
+    "title": "Resultater",
+    "intro": "Hver lagkamp med sjansen vinneren hadde kvelden før. En overraskelse er en vinner som hadde under 30 % sjanse.",
+    "day": "{round}, {date}",
+    "chanceBefore": "{team} hadde {chance}",
+    "drawBefore": "Uavgjort hadde {chance}",
+    "upset": "Overraskelse",
+    "goldenSet": "Gyllent sett"
+  },
+  "players": {
+    "title": "Sesongens spillere",
+    "intro": "Kamper vunnet mot forventede seiere fra spillernes ratinger rett før hver kamp, for spillere med minst {min} kamper. Doublemakkere deler resultatene sine.",
+    "above": "Over forventning",
+    "below": "Under forventning",
+    "upsets": "Største overraskelser",
+    "upsetsIntro": "Kamper vunnet med minst sjanse.",
+    "against": "mot",
+    "upsetChance": "{chance} sjanse"
+  },
+  "tabs": {
+    "label": "Eliteserien",
+    "table": "Tabell",
+    "playoffs": "Sluttspill",
+    "chances": "Sjanser",
+    "results": "Resultater",
+    "players": "Spillere",
+    "teams": "Lag"
+  },
+  "later": {
+    "title": "Senere",
+    "intro": "Lagkampene etter det, fra badmintonportalens terminliste, med hvert lags sjanser med sterkeste oppstilling nå."
+  },
+  "zones": {
+    "champion": "Tittel",
+    "top4": "Topp 4: sluttspillet om tittelen",
+    "qualification": "7.: kvalifisering",
+    "relegated": "8.: nedrykk",
+    "edge": "Den fargede kanten viser plassene som går til sluttspillet om tittelen. Tittelen, 7. og 8. plass avgjøres i sluttspillet."
   }
 }

@@ -17,7 +17,7 @@
     "clubsPool": "The strongest badminton clubs in Norway in {pool}, from their best players' Elo ratings.",
     "tournaments": "Upcoming and recent Norwegian badminton tournaments: who got a lucky or unlucky draw, from the players' Elo ratings.",
     "tournament": "{name}{dates}: every event's draw, each player's chances and how lucky their draw was, from their Elo ratings.",
-    "eliteserien": "Eliteserien {season}, Norway's top badminton league: how strong the eight teams are, the predicted table and every team's best lineup, from the players' Elo ratings.",
+    "eliteserien": "Eliteserien {season}, Norway's top badminton league: the table, each team's chances of the title, the play-offs and relegation after every day played, and how strong the eight teams are, from the players' Elo ratings.",
     "eliteserienSeason": "Eliteserien {season} in review: the team strengths before each round against what actually happened, the ties, and who beat their potential.",
     "tenMatches": "What if an Eliteserien badminton tie were 10 matches instead of 8? The predicted table, head to head and lineups in both formats.",
     "upsets": "The biggest upsets in Norwegian badminton: the matches won with the lowest chance of winning, week by week.",
