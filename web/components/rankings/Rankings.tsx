@@ -17,14 +17,16 @@ import { getCombinedRankings, getJuniorRankings, getRankings } from "@/data/rank
 import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Gender, Pool } from "@/types";
+import { CLASS_CUTOFFS } from "@/utils/classes";
 import { combinedRankingHref, DISCIPLINES, disciplineHref, juniorRankingHref, listTabs, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
 
 const GENDERS: Gender[] = ["M", "K"];
 const INACTIVE_SHOWN = 500;
 
 export default async function Rankings({ list, showInactive, allInactive = false }: { list: RankingList; showInactive: boolean; allInactive?: boolean }) {
-  const { num, t } = await getI18n();
+  const { num, t, rich } = await getI18n();
   const { pool, gender } = list;
+  const [e, a, b, c] = CLASS_CUTOFFS.map((cutoff) => num(cutoff));
   const [everyone, clubs] = await Promise.all([getRankings(pool, showInactive, gender), getClubMap()]);
   // In rating order: every ranked player, and the best inactive ones unless all are asked for
   const inactive = everyone.filter((p) => p.rank === null).length;
@@ -36,7 +38,11 @@ export default async function Rankings({ list, showInactive, allInactive = false
     <Section>
       <Breadcrumbs trail={[{ label: t("rankings.heading") }]} />
       <h1 className="h1 mt-4">{t("rankings.pageHeading")}</h1>
-      <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.intro")}</p>
+      <p className="text-2xl max-w-3xl mt-2">{t("rankings.intro")}</p>
+      {/* How the class column's classes are set (utils/classes.ts), with this discipline's cut-offs */}
+      <p className="text-lg text-gray-700 max-w-3xl mt-3 mb-8">
+        {rich("rankings.classes", { link: (text) => <Link href="/how-it-works#rankings" className={TEXT_LINK}>{text}</Link> }, { e, a, b, c })}
+      </p>
       <AgeTabs junior={false} all={rankingHref(pool, gender)} juniors={juniorRankingHref(pool, gender)} />
       <GenderTabs current={listTabs(pool, gender)} showInactive={showInactive} />
       <div className="flex flex-wrap items-end justify-between gap-6 mb-6">
@@ -61,6 +67,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
       ) : (
         <RankingTable
           pool={pool}
+          classes
           rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
           clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
           summary={

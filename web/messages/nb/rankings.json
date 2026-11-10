@@ -39,6 +39,7 @@
   "heading": "Rangeringer",
   "pageHeading": "Norsk badmintonrangering",
   "intro": "Hver spillers rating i hver disiplin. Rangerte spillere har spilt de siste 12 månedene; pilene viser endringen siden forrige uke.",
+  "classes": "Klassen (E for elite, A, B, C og D) kommer fra ratingen, ikke fra rankingpoeng: hver klasse starter omtrent ett standardavvik over den neste. E er fra {e}, A fra {a}, B fra {b} og C fra {c}, i alle disipliner; D er alle under. Grensene settes ved starten av hver sesong. <link>Slik fungerer klassene</link>",
   "junior": {
     "heading": "Norsk juniorrangering i badminton (U19)",
     "crumb": "Junior (U19)",

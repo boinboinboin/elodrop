@@ -5,11 +5,13 @@
 // again: the biggest loss first, again: back). A long list renders its first rows and more on scrolling (useGrowingList).
 // Rows come as compact arrays (sent once, instead of as server-rendered markup and its copy in the page payload): [id, name, club, rank,
 // rating, matches, last played, rank last week, rating change since last week]. `clubs`: the clubs in the table with a
-// page, short name → [slug, logo]. Players and clubs link to their page on the list's discipline (`pool`).
+// page, short name → [slug, logo]. Players and clubs link to their page on the list's discipline (`pool`). `classes`: a
+// column with each rating's class (utils/classes.ts), for the senior lists (the junior ratings are on their own scale).
 import { useMemo, useState } from "react";
 import { Search } from "@/components/SVG";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
+import Badge from "@/components/ui/Badge";
 import ClearButton from "@/components/ui/ClearButton";
 import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
@@ -17,6 +19,7 @@ import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
 import { useI18n } from "@/messages/client";
 import type { Pool } from "@/types";
+import { classOf } from "@/utils/classes";
 import { logoSrc } from "@/utils/clubs";
 import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
@@ -24,7 +27,19 @@ import { sortByChange, sortByDesc } from "@/utils/sort";
 
 export type RankingRow = [number, string, string | null, number | null, number, number, string, (number | null)?, (number | null)?];
 
-export default function RankingTable({ pool, rows, clubs, summary }: { pool: Pool; rows: RankingRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
+export default function RankingTable({
+  pool,
+  rows,
+  clubs,
+  summary,
+  classes = false,
+}: {
+  pool: Pool;
+  rows: RankingRow[];
+  clubs: Record<string, [string, string | null]>;
+  summary: string;
+  classes?: boolean;
+}) {
   const { date, num, t } = useI18n();
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
@@ -64,6 +79,7 @@ export default function RankingTable({ pool, rows, clubs, summary }: { pool: Poo
               <th scope="col" className="py-3 pr-2 sm:pr-4 font-normal w-11 sm:w-14" aria-sort={byChange === "gain" ? "descending" : byChange === "loss" ? "ascending" : "none"}>
                 <ChangeSortButton order={byChange} onClick={() => { setByChange(nextChangeOrder(byChange)); setByMatches(false); }} />
               </th>
+              {classes && <th scope="col" className="py-3 px-2 font-normal text-center hidden sm:table-cell">{t("common.table.class")}</th>}
               <th scope="col" className="py-3 px-4 font-normal text-right hidden md:table-cell" aria-sort={byMatches ? "descending" : "none"}>
                 <SortButton active={byMatches} onClick={() => { setByMatches(!byMatches); setByChange(null); }} label={t("common.table.matches")} sortTitle={t("rankings.table.sortByMatches")} />
               </th>
@@ -96,6 +112,11 @@ export default function RankingTable({ pool, rows, clubs, summary }: { pool: Poo
                   {/* The rating right-aligned, the change since last week in its own column after it, so ratings line up */}
                   <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
                   <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap">{rank !== null && <WeekChange change={change} />}</td>
+                  {classes && (
+                    <td className="py-3 px-2 text-center hidden sm:table-cell">
+                      <ClassBadge ratingClass={classOf(rating)} />
+                    </td>
+                  )}
                   <td className="py-3 px-4 text-right text-gray-700 tabular-nums hidden md:table-cell">{num(matches)}</td>
                 </tr>
               );
@@ -106,5 +127,15 @@ export default function RankingTable({ pool, rows, clubs, summary }: { pool: Poo
       </div>
       {terms.length > 0 && shown.length === 0 && <p className="text-gray-600 mt-4">{t("rankings.table.noneFound")}</p>}
     </>
+  );
+}
+
+/** A rating's class letter ("Class B" on hover) */
+function ClassBadge({ ratingClass }: { ratingClass: ReturnType<typeof classOf> }) {
+  const { t } = useI18n();
+  return (
+    <Badge>
+      <abbr title={t("common.ratingClass", { class: ratingClass })} className="no-underline">{ratingClass}</abbr>
+    </Badge>
   );
 }

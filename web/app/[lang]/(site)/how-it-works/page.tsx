@@ -19,6 +19,7 @@ import type { en } from "@/messages/en";
 import type { MessageKey } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import { PALETTE } from "@/utils/chart";
+import { CLASS_CUTOFFS, CLASSES } from "@/utils/classes";
 import { repoHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 
@@ -61,7 +62,7 @@ const FAQ: Record<FaqPart, MessageKey[]> = {
   start: ["howItWorks.start.p1", "howItWorks.start.p2"],
   counts: ["howItWorks.counts.intro", "howItWorks.counts.level", "howItWorks.counts.junior", "howItWorks.counts.margin", "howItWorks.counts.region", "howItWorks.counts.rating"],
   doubles: ["howItWorks.doubles.p1", "howItWorks.doubles.p2", "howItWorks.doubles.p3"],
-  rankings: ["howItWorks.rankings.p1", "howItWorks.rankings.p2", "howItWorks.rankings.p3"],
+  rankings: ["howItWorks.rankings.p1", "howItWorks.rankings.p2", "howItWorks.rankings.p3", "howItWorks.rankings.p4"],
   tested: ["howItWorks.tested.p1", "howItWorks.tested.p2"],
   data: ["howItWorks.data.p1", "howItWorks.data.p2"],
 };
@@ -237,9 +238,31 @@ export default async function HowItWorksPage() {
               <P k="howItWorks.rankings.p1" />
               <P k="howItWorks.rankings.p2" />
               <P k="howItWorks.rankings.p3" />
+              <P k="howItWorks.rankings.p4" />
+              {/* The rating classes' cut-offs (utils/classes.ts), the same in every discipline: D has no floor */}
+              <table className="w-full max-w-xs text-sm">
+                <caption className="text-left text-gray-600 pb-2">{t("howItWorks.rankings.classesCaption")}</caption>
+                <thead className="text-gray-600 border-b border-gray-200">
+                  <tr>
+                    <th scope="col" className="py-2 pr-3 text-left font-normal">{t("common.table.class")}</th>
+                    <th scope="col" className="py-2 pl-3 text-right font-normal">{t("howItWorks.rankings.classesFrom")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {CLASSES.map((c, i) => (
+                    <tr key={c} className={ROW}>
+                      <th scope="row" className="py-2 pr-3 text-left font-mono font-normal">{c}</th>
+                      <td className="py-2 pl-3 text-right tabular-nums">
+                        {i < CLASS_CUTOFFS.length ? num(CLASS_CUTOFFS[i]) : t("howItWorks.rankings.classesBelow", { rating: num(CLASS_CUTOFFS[CLASS_CUTOFFS.length - 1]) })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
               <Nerdy color={color("rankings")}>
                 <p>{t("howItWorks.rankings.nerd1")}</p>
                 <p>{t("howItWorks.rankings.nerd2")}</p>
+                <p>{t("howItWorks.rankings.nerd3")}</p>
               </Nerdy>
             </Part>
 

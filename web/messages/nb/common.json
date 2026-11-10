@@ -75,8 +75,10 @@
     "matches": "Kamper",
     "season": "Sesong",
     "sinceLastWeek": "Siden forrige uke",
-    "changeSinceLastWeek": "Endring siden forrige uke"
+    "changeSinceLastWeek": "Endring siden forrige uke",
+    "class": "Klasse"
   },
+  "ratingClass": "Klasse {class}",
   "notRanked": "Ikke rangert",
   "rankValue": "#{rank}",
   "matches": {

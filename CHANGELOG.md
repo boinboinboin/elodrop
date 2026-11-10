@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.0 (2026-11-10)
+
+- Every rating now has a class, as in the official senior classes: E (elite), A, B, C or D. It's from the rating, not ranking points, so it shows the class you play like. Player pages show it under each discipline's rating, and the rankings have a class column.
+- Each class starts about one standard deviation above the next, with the same cut-offs in every discipline (E from 1800, A 1450, B 1125, C 775), so a rating means the same class everywhere: E is roughly the top 2% of active players, A the next 6%, B 17%, C 39% and D the rest. The rankings page explains it under the heading, as does "How does elodrop work?". The cut-offs are set at the start of each season, so your class only changes with your own rating.
+- `node class-cutoffs.mjs` works out the cut-offs from the latest ratings.
+
 ## v1.26.3 (2026-11-08)
 
 - Player pages show each discipline's best rank, and the month it was first reached, under the peak rating.

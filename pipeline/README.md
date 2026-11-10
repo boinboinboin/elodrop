@@ -335,6 +335,30 @@ The ranks are in `data/history/<id>.json` (`ranks`, alongside `ratings`). Both r
 
 Each discipline on a player's page shows their peak rating and, under it, their best rank with the month they first reached it. Both leave out the warm-up seasons, 2013/2014 and 2014/2015 (see [Match data](#match-data)): back then the ratings hadn't settled and far fewer players were ranked (about 450 in men's singles in July 2014, against about 1,440 a year later), so an early rank says little, and about 15% of players' best ranks were in the warm-up. The peak rating is the highest rating after a match from 1 July 2015 (`SETTLED_FROM` in `rules.mjs`), counting the rating a player carried into that season; a player who only played in the warm-up keeps their peak from then. The best rank is the lowest weekly rank (as in [Ranking history](#ranking-history)) in the weeks ending from 1 July 2015, the first week if reached more than once (`peakRank` in `data/history/<id>.json`: `rank` and the week's Monday); players ranked only in the warm-up have none. A player who was already at their best when the warm-up ended shows July 2015.
 
+### Rating classes
+
+Every senior rating has a class, named after the official senior classes: E (elite), A, B, C and D. Officially the class comes from ranking points (E from 500, A from 150, B from 50, C from 20, D from 1), which depend on how much a player plays; here it comes from the rating.
+
+The classes start at the mean rating of the active players (played in the last 12 months) plus 2.5, 1.5 and 0.5 standard deviations (E, A, B) and minus 0.5 (C), rounded to 25; D is everything below. The cut-offs are the same in every discipline, so a rating means the same class everywhere. The mean and standard deviation are over the five disciplines, each counting equally, so mixed doubles (men and women in one list) doesn't count twice. For 2026/2027 (from the ratings of November 2026; mean 950, standard deviation 339):
+
+| Class | Rating from |
+| ----- | ----------: |
+| E     |        1800 |
+| A     |        1450 |
+| B     |        1125 |
+| C     |         775 |
+| D     |  below 775  |
+
+The disciplines' ratings spread alike (mean 936–975, standard deviation 323–348), and skewed, with a long tail at the top (skewness 1.0–1.2), so the classes come out as a pyramid of about the same shape in each: E 2–3% of the active players, A 5–7%, B 14–18%, C 37–40% and D 34–39%. In men's singles that is 33 players in E (12 in the official E), 103 in A, 312 in B, 674 in C and 604 in D. Mixed doubles has a few more in the top classes (54 in E): its field has fewer beginners (the 831 men's doubles players who don't play mixed average 830) and its list has both the best men and the best women, while its ratings aren't higher (the same players are rated 24 points lower in mixed than in men's doubles, 10 lower than in women's doubles).
+
+Tried before:
+
+- **Cut-offs matching the official classes' sizes** (in men's singles the official E ends at #12, A at #63, B at #207, C at #391): 72% of the active players in D, most of them juniors, as on the official list.
+- **Cut-offs per discipline**, from each discipline's own mean and standard deviation: the same rating could be E in men's doubles and A in mixed doubles (E from 1750 there and 1850 in mixed), though players play at about the same level in both.
+- **Matching the classes players enter** (SEN E/A/B/C/D tournaments): far too wide a top class, as many players play up.
+
+The cut-offs are worked out once a season, at its start, with `node class-cutoffs.mjs` (after `export.mjs`), and copied into `web/utils/classes.ts`. They stay fixed through the season, so a player's class only changes with their own rating, not when others improve. The class is by the rating as shown (rounded), on the player page under each discipline's rating and in the ranking lists, whose lead explains it. Junior rankings have no classes, as their ratings are on their own scale.
+
 ### Club history
 
 The rating graph is coloured by the club the player played for at the time: the club of their last tournament, if it was within the last 12 months, otherwise the club of their last league team.

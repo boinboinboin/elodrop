@@ -31,6 +31,7 @@ import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
 import { logoSrc } from "@/utils/clubs";
+import { classOf } from "@/utils/classes";
 import { addDays, EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, DISCIPLINE_PARAM, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
@@ -345,13 +346,15 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
   const history = p.history;
   const log = p.matchLog;
   const highlights = HIGHLIGHTS.filter((key) => (log?.[key] ?? []).length > 0);
+  // The rating's class (E, A, B, C or D): utils/classes.ts
+  const ratingClass = classOf(p.rating);
   // Why an active player has no rank: their gender isn't the discipline's, or it's unknown
   const unranked = pool === "men" || pool === "mensDoubles" ? "players.discipline.menOnly" : mixed ? "players.discipline.genderUnknown" : "players.discipline.womenOnly";
   return (
     <div>
       <h2 className="text-3xl mb-6">{pools[pool]}</h2>
       <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <StatCard label={t("players.discipline.rating")}>
+        <StatCard label={t("players.discipline.rating")} detail={t("common.ratingClass", { class: ratingClass })}>
           {Math.round(p.rating)} {p.rank !== null && <span className="text-base font-normal"><WeekChange change={p.ratingChange} /></span>}
         </StatCard>
         {p.rank ? (

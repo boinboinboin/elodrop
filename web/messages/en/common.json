@@ -75,8 +75,10 @@
     "matches": "Matches",
     "season": "Season",
     "sinceLastWeek": "Since last week",
-    "changeSinceLastWeek": "Change since last week"
+    "changeSinceLastWeek": "Change since last week",
+    "class": "Class"
   },
+  "ratingClass": "Class {class}",
   "notRanked": "Not ranked",
   "rankValue": "#{rank}",
   "matches": {
