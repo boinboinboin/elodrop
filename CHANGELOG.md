@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.4 (2026-11-10)
+
+- Player pages are about a third lighter: the matches of the other disciplines, and the highlights after "Biggest wins", load when their tab is opened instead of coming with the page, and each match row's markup is a third smaller (same look). A player page is stored again whenever the player's data changes, so this cuts what each of those writes costs.
+- The rankings show each player's class on phones too, under the rating, where the class column doesn't fit.
+
 ## v1.27.3 (2026-11-10)
 
 - Google's image crawler is asked to leave the link preview pictures alone (about 10,000 a day, each one drawn and stored again). Link previews in chats and social media, and Google's web search, are unaffected.

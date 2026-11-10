@@ -9,8 +9,15 @@
 // make the whole page around it render in the browser only. So the URL-reading part has its own
 // Suspense boundary: the prerendered HTML shows the first tab, and the browser then switches to the
 // one in the URL.
+//
+// Every panel is rendered (hidden ones too), and tells what's in it whether it's shown (useTabShown), so content can
+// wait to load until its tab is opened (components/players/LazyMatchTable.tsx).
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { Suspense, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { createContext, Suspense, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+
+const TabShown = createContext(true);
+/** Whether the tab panel this is in, and every tab panel around that, is the one shown (true outside tabs) */
+export const useTabShown = () => useContext(TabShown);
 
 export interface Tab {
   /** The tab's value in the URL (and, with the Tabs' `id`, its element ids) */
@@ -89,6 +96,8 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
     return () => observer.disconnect();
   }, [sticky]);
   const elementId = (tab: string) => (prefix ? `${prefix}-${tab}` : tab);
+  // Tabs inside a hidden panel are all hidden
+  const shown = useTabShown();
   const select = (i: number, focus = false) => {
     onSelect(i);
     if (focus) buttons.current[i]?.focus();
@@ -134,7 +143,7 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
       </div>
       {tabs.map((t, i) => (
         <div key={t.id} id={elementId(t.id)} role="tabpanel" aria-labelledby={`tab-${elementId(t.id)}`} hidden={i !== index}>
-          {t.content}
+          <TabShown.Provider value={shown && i === index}>{t.content}</TabShown.Provider>
         </div>
       ))}
     </div>

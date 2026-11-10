@@ -9,10 +9,12 @@
 // "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`). With `more`,
 // `matches` are only the newest and "show all" loads the rest from `more.url` (the player page).
 // Each opponent and partner is shown with the club they played for at the time, and links to their page on the
-// match's discipline.
+// match's discipline. The rows' and cells' styling is in a few classes set once (match-rows and the others in
+// app/globals.css), not on every cell: a player page holds up to 25 rows per table, and its size is what storing it
+// costs.
 import { useState } from "react";
 import Link from "@/components/ui/Link";
-import { BUTTON, ROW } from "@/components/ui/styles";
+import { BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
@@ -115,45 +117,43 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
               <th scope="col" className="py-2 font-normal text-right" title={t("players.matches.ratingTitle")}>{t("players.matches.rating")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="match-rows">
             {shown.map(({ m, index }) => {
               const chanceText = chance(m.winChance);
               const href = matchEventHref(m, tournamentLinks, pool);
               return (
-                <tr key={`${m.key ?? m.day}-${index}`} className={`${ROW} align-top`}>
+                <tr key={`${m.key ?? m.day}-${index}`}>
                   {/* Keeping the column narrow: on phones day, month and year each get a line, up to large
                       screens the year gets its own line ("18 Sep" / "2026"), and from there it's one line */}
-                  <td className="py-2 pr-2 sm:pr-4 tabular-nums sm:whitespace-nowrap">
-                    <span className="block sm:inline">{date(m.day, "dayOnly")}</span> <span className="block sm:inline">{date(m.day, "monthShort")}</span>{" "}
-                    <span className="block lg:inline">{m.day.slice(0, 4)}</span>
+                  <td className="match-date">
+                    <span>{date(m.day, "dayOnly")}</span> <span>{date(m.day, "monthShort")}</span> <span>{m.day.slice(0, 4)}</span>
                   </td>
-                  <td className="py-2 pr-2 sm:pr-4 break-words">
+                  <td className="break-words">
                     {m.opponents.map((o, i) => (
                       <span key={o.id}>
-                        <Link href={playerHref(o.id, m.pool ?? pool)} className="hover:text-blue-600">{o.name}</Link>{" "}
-                        <span className="text-sm text-gray-500 tabular-nums">{o.rating}</span>
+                        <Link href={playerHref(o.id, m.pool ?? pool)}>{o.name}</Link> <span className="match-note tabular-nums">{o.rating}</span>
                         <PlayedFor club={o.club} />
                         {i < m.opponents.length - 1 && <span className="text-gray-500"> / </span>}
                       </span>
                     ))}
                     {m.partner && (
                       <span className="block text-sm text-gray-600">
-                        {t("players.matches.with")} <Link href={playerHref(m.partner.id, m.pool ?? pool)} className="hover:text-blue-600">{m.partner.name}</Link>{" "}
+                        {t("players.matches.with")} <Link href={playerHref(m.partner.id, m.pool ?? pool)}>{m.partner.name}</Link>{" "}
                         <span className="text-gray-500 tabular-nums">{m.partner.rating}</span>
                         <PlayedFor club={m.partner.club} />
                       </span>
                     )}
                     {href ? (
-                      <Link href={href} className="block text-sm text-gray-600 underline hover:text-blue-600">{m.event}</Link>
+                      <Link href={href} className="match-event underline">{m.event}</Link>
                     ) : (
-                      <span className="block text-sm text-gray-600">{m.event}</span>
+                      <span className="match-event">{m.event}</span>
                     )}
                     {m.key && (
                       // Match key for pipeline/corrections.txt; one click selects all of it for copying
-                      <code className="hidden sm:block text-xs text-gray-400 select-all" title={t("players.matches.matchKey")}>{m.key}</code>
+                      <code className="match-key" title={t("players.matches.matchKey")}>{m.key}</code>
                     )}
                   </td>
-                  <td className="py-2 pr-2 sm:pr-4 whitespace-nowrap">
+                  <td className="whitespace-nowrap">
                     {m.result === 1 ? (
                       <span className="font-semibold text-green-700">{t("players.matches.won")}</span>
                     ) : m.result === 0 ? (
@@ -165,22 +165,22 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                       <span className="text-sm text-gray-600 tabular-nums" title={t("players.matches.pointMargin")}> {signed(m.margin, 0)}</span>
                     )}
                     {/* On small screens each set goes on its own line */}
-                    <span className="block text-sm text-gray-600 tabular-nums">
+                    <span className="match-score">
                       {m.score.split(", ").map((set, i, all) => (
-                        <span key={i} className="block sm:inline">
+                        <span key={i}>
                           {set}
-                          {i < all.length - 1 && <span className="hidden sm:inline">, </span>}
+                          {i < all.length - 1 && <span>, </span>}
                         </span>
                       ))}
                     </span>
                     {/* Just the number on phones, so it's no wider than a set score */}
-                    <span className="block text-sm text-gray-500 tabular-nums sm:hidden" title={t("players.matches.winChanceTitle")}>
+                    <span className="match-note block tabular-nums sm:hidden" title={t("players.matches.winChanceTitle")}>
                       {chanceText}
                       <span className="sr-only">{t("players.matches.chanceScreenReader")}</span>
                     </span>
                   </td>
-                  <td className="py-2 pr-4 text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
-                  <td className="py-2 text-right tabular-nums whitespace-nowrap">
+                  <td className="text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
+                  <td className="text-right tabular-nums whitespace-nowrap">
                     {Math.round(m.rating + m.change + (m.pull ?? 0))}
                     <span className={`block text-sm ${toneClass(m.change)}`}>{signed(m.change, 1)}</span>
                     {m.pull != null && (
@@ -217,5 +217,5 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
 
 /** The club a player played for in the match */
 function PlayedFor({ club }: { club?: string | null }) {
-  return club ? <span className="text-sm text-gray-500"> · {club}</span> : null;
+  return club ? <span className="match-note"> · {club}</span> : null;
 }

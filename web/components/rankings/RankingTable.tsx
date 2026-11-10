@@ -110,7 +110,15 @@ export default function RankingTable({
                       ))}
                   </td>
                   {/* The rating right-aligned, the change since last week in its own column after it, so ratings line up */}
-                  <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">{Math.round(rating)}</td>
+                  <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">
+                    {Math.round(rating)}
+                    {/* On phones the class column is left out, so the class goes under the rating */}
+                    {classes && (
+                      <span className="block mt-1 sm:hidden">
+                        <ClassBadge ratingClass={classOf(rating)} />
+                      </span>
+                    )}
+                  </td>
                   <td className="py-3 pr-2 sm:pr-4 whitespace-nowrap">{rank !== null && <WeekChange change={change} />}</td>
                   {classes && (
                     <td className="py-3 px-2 text-center hidden sm:table-cell">

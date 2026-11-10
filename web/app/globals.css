@@ -169,6 +169,59 @@ input[type="search"]::-webkit-search-decoration {
   @apply text-heading-1-mobile xl:text-heading-1-desktop font-normal tracking-tight;
 }
 
+/* A player's match table (components/players/MatchTable.tsx): what every row and cell had in its own classes, set
+   once on the table body, so each row's markup is about a fifth smaller. Every player page is stored again whenever
+   the player's data changes, so its size is what each of those writes costs. */
+@utility match-rows {
+  & > tr {
+    @apply border-b border-gray-100 align-top last:border-0;
+  }
+  & td {
+    @apply py-2;
+  }
+  & td:not(:last-child) {
+    @apply pr-2 sm:pr-4;
+  }
+  & a {
+    @apply hover:text-blue-600;
+  }
+}
+/* The date: on phones day, month and year each on a line, up to large screens the year on its own line */
+@utility match-date {
+  @apply tabular-nums sm:whitespace-nowrap;
+  & > span {
+    @apply block;
+  }
+  & > span:nth-child(-n + 2) {
+    @apply sm:inline;
+  }
+  & > span:nth-child(3) {
+    @apply lg:inline;
+  }
+}
+/* The small grey notes: a player's rating and club at the time */
+@utility match-note {
+  @apply text-sm text-gray-500;
+}
+/* The match's tournament or league, under the opponents */
+@utility match-event {
+  @apply block text-sm text-gray-600;
+}
+/* The match key for pipeline/corrections.txt, from small screens up; one click selects it for copying */
+@utility match-key {
+  @apply hidden text-xs text-gray-400 select-all sm:block;
+}
+/* The score: on small screens each set on its own line, else separated by commas */
+@utility match-score {
+  @apply block text-sm text-gray-600 tabular-nums;
+  & > span {
+    @apply block sm:inline;
+  }
+  & > span > span {
+    @apply hidden sm:inline;
+  }
+}
+
 body {
   @apply bg-stone-100 text-gray-900 antialiased;
 }

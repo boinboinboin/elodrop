@@ -10,6 +10,7 @@ import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Achievements from "@/components/players/Achievements";
+import LazyMatchTable from "@/components/players/LazyMatchTable";
 import MatchTable from "@/components/players/MatchTable";
 import SeasonTable from "@/components/players/SeasonTable";
 import { WeekChange } from "@/components/rankings/RankMovement";
@@ -35,6 +36,7 @@ import { addDays, EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, DISCIPLINE_PARAM, headToHeadHref, playerHref } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
+import { HIGHLIGHTS, type Highlight, logVersion, RECENT_MATCHES } from "@/utils/playerLog";
 import { POOL_KEYS } from "@/utils/pools";
 import { rankingHref } from "@/utils/rankings";
 
@@ -138,7 +140,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           label={t("players.disciplines")}
           param={DISCIPLINE_PARAM}
           sticky
-          tabs={pools.map(([pool, p]) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} /> }))}
+          tabs={pools.map(([pool, p], i) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} first={i === 0} /> }))}
         />
       </Section>
     </>
@@ -340,14 +342,20 @@ async function AllDisciplines({ player }: { player: Player }) {
   );
 }
 
-const HIGHLIGHTS = ["biggestWins", "biggestLosses", "biggestGains", "biggestDrops"] as const;
-
-async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number> }) {
+/**
+ * One discipline's tab. Only what shows when the page opens comes with it: the first discipline's newest matches and
+ * its first highlights. The other disciplines' and highlights' tables load when their tab is opened
+ * (LazyMatchTable), as the page is stored again with every change to the player's data, and the match tables were
+ * most of its size.
+ */
+async function Discipline({ pool, p, player, links, first }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number>; first: boolean }) {
   const { t, num, date, pools } = await getI18n();
   const mixed = pool === "mixedDoubles";
   const history = p.history;
   const log = p.matchLog;
   const highlights = HIGHLIGHTS.filter((key) => (log?.[key] ?? []).length > 0);
+  // Where the tables not sent with the page load from, with the lists' version
+  const logUrl = log ? `/api/players/${player.id}/log?pool=${pool}&v=${logVersion(log)}` : "";
   // The rating's class (E, A, B, C or D): utils/classes.ts
   const ratingClass = classOf(p.rating);
   // Why an active player has no rank: their gender isn't the discipline's, or it's unknown
@@ -424,11 +432,14 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
 
       {log && log.all.length > 0 && (
         <div className="grid grid-cols-1 gap-6 mt-6">
-          <MatchTable
+          {/* Only the newest; "show all" loads the rest */}
+          <Matches
+            first={first}
+            url={logUrl}
+            list="recent"
             title={t("players.matches.title")}
-            // Only the newest are sent with the page; "show all" loads the rest
-            matches={log.all.slice(0, 20)}
-            limit={20}
+            matches={log.all.slice(0, RECENT_MATCHES)}
+            limit={RECENT_MATCHES}
             more={{ url: `/api/players/${player.id}/matches?pool=${pool}`, count: log.count ?? log.all.length }}
             pool={pool}
             tournamentLinks={links}
@@ -443,10 +454,22 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
                 id={pool}
                 small
                 className="mb-4"
-                tabs={highlights.map((key) => ({
+                tabs={highlights.map((key, i) => ({
                   id: key,
                   label: t(`players.highlights.${key}.label`),
-                  content: <MatchTable title={t(`players.highlights.${key}.label`)} subtitle={t(`players.highlights.${key}.subtitle`)} matches={log[key]} embedded pool={pool} tournamentLinks={links} />,
+                  content: (
+                    <Matches
+                      first={first && i === 0}
+                      url={logUrl}
+                      list={key}
+                      title={t(`players.highlights.${key}.label`)}
+                      subtitle={t(`players.highlights.${key}.subtitle`)}
+                      matches={log[key]}
+                      embedded
+                      pool={pool}
+                      tournamentLinks={links}
+                    />
+                  ),
                 }))}
               />
             </Card>
@@ -455,4 +478,9 @@ async function Discipline({ pool, p, player, links }: { pool: Pool; p: PlayerPoo
       )}
     </div>
   );
+}
+
+/** A match table: in the page when it shows on opening (`first`), else loaded when its tab is opened */
+function Matches({ first, url, list, matches, ...table }: React.ComponentProps<typeof MatchTable> & { first: boolean; url: string; list: "recent" | Highlight }) {
+  return first ? <MatchTable matches={matches} {...table} /> : <LazyMatchTable url={url} list={list} {...table} />;
 }
