@@ -197,7 +197,8 @@
     }
   },
   "status": {
-    "before": "Før sesongen · de første lagkampene {date}",
+    "before": "Før sesongen",
+    "beforeOn": "Før sesongen · {round} begynner {date}",
     "after": "Etter {round}, dag {day} ({date}) · {played} av {total} lagkamper i grunnspillet spilt",
     "afterPlayoffs": "Etter sluttspillets dag {day} ({date})",
     "over": "Sesongen er ferdig",

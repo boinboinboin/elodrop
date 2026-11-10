@@ -8,6 +8,15 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.2 (2026-11-10)
+
+- Eliteserien on mobile: the Teams tab no longer makes the whole page scroll sideways. The head-to-head table scrolls in its own box again, as it did before the new page.
+- The Chances tab's table of final places scrolls the same way, each chance on one line, instead of breaking "97 %" in two.
+- The later ties on the Table tab are grouped by time under each day (the days in two columns on wide screens), with the chances as a bar between the two teams (the numbers show on hover). Each tie fits on one line on a phone.
+- The next day's ties and the later ones use the same chance bar as the team match pages.
+- The status at the top before the season says just "Before the season", with the first day (in Lillerunden) on the line under it, instead of the date twice.
+- In Norwegian, a percentage never breaks between the number and the "%" anywhere on the site.
+
 ## v1.28.1 (2026-11-10)
 
 - Fixed the nightly refresh of the site failing on the files of the doubles disciplines (`junior/mensDoubles.json` and the like): their names have capitals, which the site refused as not data files. The run's refresh-pending mark makes the next run refresh everything, so the pages left stale catch up then.

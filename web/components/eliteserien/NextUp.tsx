@@ -2,6 +2,7 @@
 // a home win, a draw and an away win as one bar, the expected score, and what's at stake for each team: the chance
 // (title, top 4, 7th or 8th) that changes most between winning and losing it.
 import Team from "@/components/clubs/Team";
+import { SplitBar } from "@/components/head-to-head/ChanceBar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import { getI18n } from "@/messages/server";
@@ -29,7 +30,7 @@ export default async function NextUp({ next, clubs }: { next: Next; clubs: Recor
     );
   };
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       {next.ties.map((tie) => {
         const { odds } = tie;
         return (
@@ -44,11 +45,7 @@ export default async function NextUp({ next, clubs }: { next: Next; clubs: Recor
               <Team name={tie.away} clubs={clubs} size={5} />
             </p>
             {/* The chances as one bar: home win, draw, away win */}
-            <div className="flex h-2 mt-3 gap-0.5" aria-hidden="true">
-              <span className="rounded-l-full" style={{ width: `${odds.win * 100}%`, background: "var(--color-chart-1)" }} />
-              {odds.draw > 0 && <span style={{ width: `${odds.draw * 100}%`, background: "var(--color-gray-300)" }} />}
-              <span className="rounded-r-full" style={{ width: `${odds.loss * 100}%`, background: "var(--color-chart-2)" }} />
-            </div>
+            <SplitBar chance={odds.win} draw={odds.draw} className="mt-3" />
             <p className="flex justify-between gap-2 mt-1 text-sm tabular-nums">
               <span>{tie.home} {chance(odds.win)}</span>
               {odds.draw > 0 && <span className="text-gray-600">{t("eliteserien.next.draw")} {chance(odds.draw)}</span>}

@@ -15,11 +15,11 @@ export default async function Results({ forecast, clubs }: { forecast: Eliteseri
   // A play-off tie's stage, from the picture
   const stages = new Map(forecast.playoffs.flatMap((b) => b.ties.map((tie) => [tie.matchId, t(`eliteserien.stages.${stageKey(tie.stage, b.name)}`)])));
   return (
-    <div className="grid gap-8">
+    <div className="grid grid-cols-1 gap-8">
       {forecast.results.map((day) => (
         <div key={day.day}>
           <h3 className="text-lg mb-2">{day.round ? t("eliteserien.results.day", { round: day.round, date: date(day.day) }) : date(day.day)}</h3>
-          <ul className="grid gap-2 lg:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-2 lg:grid-cols-2">
             {day.ties.map((tie) => {
               const before = tie.before;
               const note = before && (tie.winner === 0 ? t("eliteserien.results.drawBefore", { chance: chance(before.draw) }) : t("eliteserien.results.chanceBefore", { team: tie.winner === 1 ? tie.home : tie.away, chance: chance(tie.winner === 1 ? before.win : before.loss) }));

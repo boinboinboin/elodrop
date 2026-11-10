@@ -33,7 +33,7 @@ export default async function Playoffs({ forecast, clubs }: { forecast: Eliteser
   const side = (team: string | null, won: boolean) => (team ? <Team name={team} clubs={clubs} size={5} className={won ? "font-semibold" : ""} /> : null);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {forecast.playoffs.map((bracket) => {
         const top = bracket.name === "1-4";
         const first = top ? 1 : 5;

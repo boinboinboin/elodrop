@@ -133,8 +133,8 @@ function build(lang: Language) {
     if (!f) numberFormats.set(decimals, (f = new Intl.NumberFormat(locale.intl, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })));
     return f;
   };
-  /** Norwegian puts a space before the percent sign: "37 %" */
-  const percent = (text: string) => (lang === "nb" ? `${text} %` : `${text}%`);
+  /** Norwegian puts a space before the percent sign, a no-break one so it never breaks there: "37 %" */
+  const percent = (text: string) => (lang === "nb" ? `${text}\u00a0%` : `${text}%`);
 
   /** "2 569" / "2,569", or with decimals "1,23" / "1.23" */
   const num = (value: number, decimals = 0): string => numberFormat(decimals).format(value);
