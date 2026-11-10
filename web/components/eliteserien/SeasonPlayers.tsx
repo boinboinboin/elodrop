@@ -30,7 +30,7 @@ export default async function SeasonPlayers({ forecast, clubs }: { forecast: Eli
   return (
     <>
       <p className="text-gray-700 mb-4 max-w-3xl">{t("eliteserien.players.intro", { min })}</p>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {lists.map(({ key, list }) => (
           <Card key={key}>
             <h3 className="text-xl mb-4">{t(`eliteserien.players.${key}`)}</h3>

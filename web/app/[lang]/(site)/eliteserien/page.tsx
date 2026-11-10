@@ -81,7 +81,9 @@ export default async function EliteserienPage() {
     const round = forecast.rounds.find((r) => r.name === forecast.lastRound);
     const day = round && forecast.lastDay ? Math.round((Date.parse(forecast.lastDay) - Date.parse(round.from)) / DAY_MS) + 1 : 0;
     const playoffsOver = forecast.playoffs.every((b) => b.ties.every((tie) => tie.winner));
-    if (!forecast.lastDay) status = t("eliteserien.status.before", { date: date(forecast.rounds[0]?.from ?? "", "dayMonthLong") });
+    // Before the season the next line says when it begins; without it, this line does
+    if (!forecast.lastDay)
+      status = forecast.next ? t("eliteserien.status.before") : t("eliteserien.status.beforeOn", { round: forecast.rounds[0]?.name ?? "", date: date(forecast.rounds[0]?.from ?? "", "dayMonthLong") });
     else if (playoffsOver) status = t("eliteserien.status.over");
     else if (forecast.lastRound === "Sluttspill") status = t("eliteserien.status.afterPlayoffs", { day, date: date(forecast.lastDay, "dayMonth") });
     else status = t("eliteserien.status.after", { round: forecast.lastRound ?? "", day, date: date(forecast.lastDay, "dayMonth"), played: forecast.regular.played, total: forecast.regular.total });
@@ -208,7 +210,7 @@ export default async function EliteserienPage() {
                   id: "teams",
                   label: t("eliteserien.tabs.teams"),
                   content: (
-                    <div className="grid gap-12">
+                    <div className="grid grid-cols-1 gap-12">
           <Part title={t("eliteserien.headToHead.title")}>
             <p className="text-gray-700 mb-4">{t("eliteserien.headToHead.intro")}</p>
             <div className="bg-white overflow-x-auto p-2">
@@ -231,7 +233,7 @@ export default async function EliteserienPage() {
                         return (
                           <td
                             key={b.team}
-                            className="p-2 text-center tabular-nums border-2 border-white text-gray-900"
+                            className="p-2 text-center tabular-nums whitespace-nowrap border-2 border-white text-gray-900"
                             style={{ background: heat(h.win) }}
                             title={t("eliteserien.headToHead.cellTitle", {
                               a: a.team,
@@ -292,7 +294,7 @@ export default async function EliteserienPage() {
                   {t("eliteserien.team.summary", { points: num(team.strength.tablePoints, 1), matches: num(team.strength.expected, 2), win: pct(team.strength.win) })}
                 </p>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                  <div className="grid gap-6 content-start">
+                  <div className="grid grid-cols-1 gap-6 content-start">
                     {lineupCard(team.lineup, t("eliteserien.team.lineup"), t("eliteserien.team.lineupSubtitle"))}
                     {team.playoffLineup && lineupCard(team.playoffLineup, t("eliteserien.team.playoffLineup"), t("eliteserien.team.playoffLineupSubtitle"))}
                   </div>

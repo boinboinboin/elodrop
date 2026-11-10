@@ -197,7 +197,8 @@
     }
   },
   "status": {
-    "before": "Before the season · the first ties on {date}",
+    "before": "Before the season",
+    "beforeOn": "Before the season · {round} begins on {date}",
     "after": "After {round}, day {day} ({date}) · {played} of {total} regular-season ties played",
     "afterPlayoffs": "After the play-offs' day {day} ({date})",
     "over": "The season is over",

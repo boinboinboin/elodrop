@@ -19,7 +19,7 @@ export default async function PlaceChances({ forecast, clubs }: { forecast: Elit
           <tr>
             <th scope="col" className="p-2" />
             {places.map((place) => (
-              <th key={place} scope="col" className="p-2 font-normal text-gray-600 text-center tabular-nums">
+              <th key={place} scope="col" className="p-2 font-normal text-gray-600 text-center tabular-nums whitespace-nowrap">
                 {t("eliteserien.places.place", { place })}
                 {PLACE_ZONES[place - 1] && <span aria-hidden="true" className="block h-0.5 mt-1 rounded-full" style={{ background: zoneColor(PLACE_ZONES[place - 1]!) }} />}
               </th>
@@ -33,7 +33,7 @@ export default async function PlaceChances({ forecast, clubs }: { forecast: Elit
               {row.finalPlaces.map((x, i) => (
                 <td
                   key={i}
-                  className="p-2 text-center tabular-nums border-2 border-white text-gray-900"
+                  className="p-2 text-center tabular-nums whitespace-nowrap border-2 border-white text-gray-900"
                   style={x > 0 ? { background: heat(x) } : undefined}
                   title={t("eliteserien.places.cellTitle", { team: row.team, place: i + 1, chance: outcome(x, chance, pct) })}
                 >
