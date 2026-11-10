@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.1 (2026-11-10)
+
+- Fixed the nightly refresh of the site failing on the files of the doubles disciplines (`junior/mensDoubles.json` and the like): their names have capitals, which the site refused as not data files. The run's refresh-pending mark makes the next run refresh everything, so the pages left stale catch up then.
+
 ## v1.28.0 (2026-11-10)
 
 - The Eliteserien page follows the season as it's played, updated each night after a day of play, in tabs (kept in the address):
