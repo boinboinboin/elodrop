@@ -302,6 +302,8 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
                 <Link
                   key={i}
                   href={eventHref(tour.cup2000Id, e)}
+                  // Another event of the tournament, where the visitor is (as LinkTabs)
+                  scroll={false}
                   className={`shrink-0 px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                   aria-current={i === eventIndex ? "page" : undefined}
                 >

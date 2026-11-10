@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.4 (2026-11-10)
+
+- More buttons keep the page where it was instead of jumping back to the top: a tournament's classes and disciplines, the earlier and later week and the years on the upsets page, and the seasons in Eliteserien's season reviews.
+
 ## v1.28.3 (2026-11-10)
 
 - Switching a list with its buttons (the discipline, men or women, all players or juniors on the rankings, the discipline on the club rankings, the "show inactive players" box, the season and division pickers on the team match pages) keeps the page where it was, instead of jumping back to the top.

@@ -70,7 +70,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
               s === season ? (
                 <span key={s} className="px-3 py-1 border border-black rounded-full" aria-current="page">{seasonName(s)}</span>
               ) : (
-                <Link key={s} href={eliteserienHref(s)} className="px-3 py-1 border border-gray-300 rounded-full text-gray-700 hover:border-black hover:text-black">{seasonName(s)}</Link>
+                <Link key={s} href={eliteserienHref(s)} scroll={false} className="px-3 py-1 border border-gray-300 rounded-full text-gray-700 hover:border-black hover:text-black">{seasonName(s)}</Link>
               ),
             )}
           </nav>
