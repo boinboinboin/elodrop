@@ -1,6 +1,6 @@
 # Nightly: fetch new results (tournaments and team matches), tournament draws, the player register,
 # the clubs and the official ranking; then rebuild only what's needed (fingerprint.mjs):
-#   - full: rate, Eliteserien strengths, draw luck, export everything, refresh the whole site. On
+#   - full: rate, Eliteserien strengths, draw luck, export everything, refresh the pages whose data changed. On
 #     the Saturday, Sunday and Monday runs (01:15 UTC, after Friday's, Saturday's and Sunday's
 #     matches; also "since last week" in the rankings), on manual runs, and whenever results, the
 #     ranking, the register or the pipeline itself changed (results registered late, on any day,
@@ -9,6 +9,8 @@
 #   - draws: only new or changed tournament draws: rate (for the ratings before each tournament),
 #     analyse the draws, upload and refresh only the tournament pages.
 #   - none: nothing new: no uploads, and the site keeps its cached pages.
+# Every night (any of these) also refreshes what changed in the Studio (clubs, badges, halls, tournaments), and
+# everything if the last run's refresh failed.
 # Sundays also rescan the whole season's tournament draws.
 #
 # Secrets: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY (an R2 API token with read and
@@ -97,6 +99,7 @@ jobs:
             pipeline/data/tournaments.json
             pipeline/data/eliteserien-*.json
             pipeline/data/build-fingerprint.txt
+            pipeline/data/sanity-revisions.json
           key: pipeline-raw-${{ github.run_id }}
           restore-keys: pipeline-raw-
 
@@ -164,6 +167,8 @@ jobs:
           else mode=none; fi
           echo "Rebuild: $mode (results $(before results) -> $(now results), draws $(before draws) -> $(now draws))"
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          # A run that uploaded but didn't finish refreshing the site left this (see "Refresh the site")
+          if [ -f data/refresh-pending ]; then echo "Last run's refresh didn't finish: refreshing everything"; echo "pending=true" >> "$GITHUB_OUTPUT"; fi
 
       - name: Rate
         if: steps.build.outputs.mode != 'none'
@@ -207,26 +212,57 @@ jobs:
 
       # --checksum: only files whose content changed are uploaded (R2 counts every write). A draws
       # rebuild uploads only the tournaments, so the day's small changes in every player's rating
-      # history (decay, players dropping out of the ranking) wait for the next full rebuild.
+      # history (decay, players dropping out of the ranking) wait for the next full rebuild. The log
+      # (JSON, one line per file) says which files were uploaded or deleted, for the refresh below.
+      # Kept in the raw bucket until the site is refreshed: if the refresh fails after the upload, the
+      # next run can't tell from its own upload which files changed, so it refreshes everything
+      - name: Mark the refresh as pending
+        if: steps.build.outputs.mode != 'none' && vars.SITE_URL != ''
+        run: touch data/refresh-pending && rclone copyto data/refresh-pending "$RAW/refresh-pending"
+
       - name: Upload the web data
         if: steps.build.outputs.mode != 'none'
         run: |
-          if [ "${{ steps.build.outputs.mode }}" = "full" ]; then rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list
-          else rclone sync export/tournaments "$DATA/tournaments" --checksum --transfers 32 --checkers 32 --fast-list; fi
+          log="--use-json-log -v --log-file sync.log"
+          if [ "${{ steps.build.outputs.mode }}" = "full" ]; then rclone sync export "$DATA" --checksum --transfers 32 --checkers 32 --fast-list $log
+          else rclone sync export/tournaments "$DATA/tournaments" --checksum --transfers 32 --checkers 32 --fast-list $log; fi
 
-      # Fails unless the site answers that it revalidated: a redirect (elodrop.no -> www.elodrop.no)
-      # is followed, keeping the POST and the header (same site), instead of passing silently. A
-      # draws rebuild refreshes only the pages using the tournaments' data. A full one also refreshes
-      # the clubs from Sanity (names, logos): every page is refreshed anyway, so it costs no extra ISR
-      # writes, and the Sanity webhook leaves club changes for this (web/app/api/revalidate/route.ts).
+      # Only the pages reading a file just uploaded or deleted (refresh-site.mjs): every page refreshed
+      # is an ISR write when next visited, and crawlers visit nearly all of them, so old team matches,
+      # finished tournaments and players whose data didn't change stay cached. Without the upload log,
+      # or after a run whose refresh failed (the pending mark), everything; also on a night with
+      # nothing new. Fails unless the site answers that it revalidated (a redirect, elodrop.no ->
+      # www.elodrop.no, is followed with the header kept); the mark then stays for the next run.
       - name: Refresh the site
-        if: steps.build.outputs.mode != 'none' && vars.SITE_URL != ''
+        if: (steps.build.outputs.mode != 'none' || steps.build.outputs.pending == 'true') && vars.SITE_URL != ''
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
         run: |
-          for tag in ${{ steps.build.outputs.mode == 'full' && 'elo-data sanity:clubs' || 'elo-data:tournaments' }}; do
-            answer=$(curl -sS --location --location-trusted -X POST -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" "${{ vars.SITE_URL }}/api/revalidate?tag=$tag")
-            echo "$answer"
-            echo "$answer" | grep -q '"revalidated":true'
-          done
+          if [ "${{ steps.build.outputs.pending }}" = "true" ]; then node refresh-site.mjs --all
+          else node refresh-site.mjs --log sync.log ${{ steps.build.outputs.mode == 'draws' && '--prefix tournaments/' || '' }}; fi
+          rm -f data/refresh-pending
+          rclone deletefile "$RAW/refresh-pending" || echo "Couldn't remove the pending mark: the next run refreshes everything"
+
+      # What changed in the Studio since the last check (sanity-revisions.mjs), every night whatever was
+      # rebuilt, once per change: the clubs (on nearly every page), the badges (every player page) and
+      # the halls (tournament and team match pages), which the Sanity webhook leaves to this
+      # (web/app/api/revalidate/route.ts), and each tournament changed (only its own pages: the webhook
+      # refreshed them at once, so this only matters when its call didn't arrive). The first run only
+      # remembers the state. The state is kept only once the site is refreshed, so a failure is tried
+      # again the next night; Sanity or the site being down doesn't fail the run.
+      - name: Refresh what changed in the Studio
+        if: vars.SITE_URL != '' && vars.SANITY_PROJECT_ID != ''
+        continue-on-error: true
+        env:
+          SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
+          SANITY_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+        run: |
+          tags=$(node sanity-revisions.mjs data/sanity-revisions.json sanity-revisions.json)
+          if [ -n "$tags" ]; then echo "Changed in the Studio: $tags"; node refresh-site.mjs --tags $tags; fi
+          cp sanity-revisions.json data/sanity-revisions.json && rclone copyto data/sanity-revisions.json "$RAW/sanity-revisions.json"
 
       # This season's tournaments to the Studio, for checking their organiser and hall
       # (web/scripts/import-tournaments.mts: plain Node, no packages). Sanity being down doesn't fail

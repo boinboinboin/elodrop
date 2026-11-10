@@ -7,7 +7,8 @@
 // only the pages using it (app/api/revalidate picks the tag from the Sanity webhook's changed document). Clubs (names,
 // logos) are on nearly every page; halls (with the clubs' home halls) only on tournament and team match pages; a
 // tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited, so the
-// clubs' tag is left for the full nightly run (which refreshes every page anyway), not the webhook.
+// clubs', the badges' and the halls' tags are left for the nightly run, which refreshes each only when one of them has
+// changed (pipeline/sanity-revisions.mjs), not the webhook. Cached until a tag is revalidated ("max"), not by time.
 import { cacheLife, cacheTag } from "next/cache";
 import clubsJson from "@/content/clubs.json";
 import type { Language } from "@/messages/i18n";
@@ -73,7 +74,7 @@ async function fromSanity(projectId: string): Promise<ClubEntry[]> {
 export async function getClubEntries(): Promise<ClubEntry[]> {
   "use cache";
   cacheTag(SANITY_TAG, CLUBS_TAG);
-  cacheLife("days");
+  cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   return projectId ? fromSanity(projectId) : fromJson();
 }
@@ -86,7 +87,7 @@ export async function getClubEntries(): Promise<ClubEntry[]> {
 export async function getClubHomeVenues(): Promise<Record<string, Venue[]>> {
   "use cache";
   cacheTag(SANITY_TAG, CLUBS_TAG, VENUES_TAG);
-  cacheLife("days");
+  cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   if (!projectId) return {};
   const result = await query<{ title: string | null; homeVenues: (Venue | null)[] | null }[]>(
@@ -100,7 +101,7 @@ export async function getClubHomeVenues(): Promise<Record<string, Venue[]>> {
 export async function getVenues(): Promise<Venue[]> {
   "use cache";
   cacheTag(SANITY_TAG, VENUES_TAG);
-  cacheLife("days");
+  cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   return projectId ? query<Venue[]>(projectId, `*[_type == "venue"] | order(name asc) { ${VENUE_FIELDS} }`) : [];
 }
@@ -118,7 +119,7 @@ export interface TournamentPlace {
 export async function getApprovedTournament(cup2000Id: number): Promise<TournamentPlace | null> {
   "use cache";
   cacheTag(SANITY_TAG, TOURNAMENTS_TAG, tournamentTag(cup2000Id), CLUBS_TAG, VENUES_TAG);
-  cacheLife("days");
+  cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   if (!projectId || !Number.isInteger(cup2000Id)) return null;
   const result = await query<TournamentPlace | null>(
@@ -136,7 +137,7 @@ export async function getApprovedTournament(cup2000Id: number): Promise<Tourname
 export async function getBadges(lang: Language): Promise<Badge[]> {
   "use cache";
   cacheTag(SANITY_TAG, BADGES_TAG);
-  cacheLife("days");
+  cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
   if (!projectId) return [];
   type Text = { title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null };

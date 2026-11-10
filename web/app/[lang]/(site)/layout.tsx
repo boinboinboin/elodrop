@@ -77,9 +77,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
               cup2000: <ExternalLink href="https://www.cup2000.dk" className={FOOTER_LINK}>Cup2000</ExternalLink>,
             })}
           </p>
-          <Suspense fallback={null}>
-            <UpdatedAt />
-          </Suspense>
+          <UpdatedAt />
         </div>
       </footer>
       {/* Vercel Web Analytics (page views) and Speed Insights (real visitors' load times, Core Web

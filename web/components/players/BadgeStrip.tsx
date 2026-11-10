@@ -5,12 +5,24 @@
 // components/players/Achievements.tsx), with a pointer up to the badge clicked: that badge first, in
 // full across the box with how rare it is, then the others, the rarest first. Clicking another badge
 // puts it first; clicking it again, or the box's close button, closes the box. Closed at first, so
-// the page doesn't move until asked.
+// the page doesn't move until asked. How rare each badge is comes from app/api/achievement-stats, loaded here, so
+// the page doesn't depend on achievements.json (which changes with every run).
 import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, Cross } from "@/components/SVG";
 import Link from "@/components/ui/Link";
 import { ICON_BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
+import { badgeHolders, type RarityOf, type RarityStats } from "@/utils/achievements";
+
+let request: Promise<RarityStats | null> | null = null;
+/** The badges' numbers, one request per visit */
+const loadStats = () =>
+  (request ??= fetch("/api/achievement-stats")
+    .then((res) => (res.ok ? (res.json() as Promise<RarityStats>) : null))
+    .catch(() => {
+      request = null;
+      return null;
+    }));
 
 export interface BadgeStripItem {
   id: string;
@@ -18,10 +30,8 @@ export interface BadgeStripItem {
   art: string | null;
   /** Times earned (0: given by hand) */
   count: number;
-  /** How many players have it (at the player's level), for the order; null: not known */
-  holders: number | null;
-  /** "Held by 28 players (0.2%)" */
-  rarity: string | null;
+  /** What its rarity is counted from (at the player's level, for a milestone) */
+  rarityOf: RarityOf;
   details: ReactNode;
 }
 
@@ -35,8 +45,28 @@ function Art({ src, className }: { src: string | null; className: string }) {
   return src ? <img src={src} alt="" className={`${className} object-contain shrink-0`} /> : <span aria-hidden="true" className={`${className} shrink-0 rounded-full bg-gray-200`} />;
 }
 
-export default function BadgeStrip({ items }: { items: BadgeStripItem[] }) {
-  const { t } = useI18n();
+export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }) {
+  const { t, plural, num, pct } = useI18n();
+  const [stats, setStats] = useState<RarityStats | null>(null);
+  useEffect(() => {
+    let live = true;
+    loadStats().then((value) => live && setStats(value));
+    return () => {
+      live = false;
+    };
+  }, []);
+  // How many players have each one, and "Held by 28 players (0.2%)"
+  const items = given.map((item) => {
+    const holders = badgeHolders(item.rarityOf, stats);
+    const share = holders !== null && stats?.players ? holders / stats.players : null;
+    const rarity =
+      holders === null
+        ? null
+        : t("players.achievements.rarity", {
+            rarity: `${plural("achievements.players", holders, { count: num(holders) })}${share !== null ? ` (${share > 0 && share < 0.001 ? `<${pct(0.001, 1)}` : pct(share, 1)})` : ""}`,
+          });
+    return { ...item, holders, rarity };
+  });
   const [open, setOpen] = useState<string | null>(null);
   const [pointer, setPointer] = useState<number | null>(null);
   const boxId = useId();

@@ -153,6 +153,11 @@ export interface Player {
   doublesRivals?: Rival[];
   /** The badges they have earned, newest first (pipeline/achievements.mjs; missing in older exports) */
   achievements?: Achievement[];
+  /**
+   * badmintonportalen tournament id → Cup2000 id, for the tournaments of their matches and badges that have a page
+   * (missing in exports from before v1.27.1: meta.json's tournamentLinks then)
+   */
+  tournamentLinks?: Record<string, number>;
   /** In page order: the player's own gender's disciplines first */
   pools: Partial<Record<Pool, PlayerPool>>;
 }

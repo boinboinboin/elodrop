@@ -10,6 +10,10 @@
 + /upcoming/*.json
 # The fingerprints of the last rebuild (pipeline/fingerprint.mjs), to see what's new
 + /build-fingerprint.txt
+# The Studio's revisions at the last check (pipeline/sanity-revisions.mjs), to see what changed
++ /sanity-revisions.json
+# Left by a run whose refresh of the site didn't finish: the next one refreshes everything
++ /refresh-pending
 # What the fetch scripts remember to avoid needless requests (league groups, tournament end dates)
 + /cache/**
 + /tournaments.json

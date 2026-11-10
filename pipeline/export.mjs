@@ -120,6 +120,22 @@ const birthYears = optional("birth-years.json");
 const RECENT_MATCHES = 20;
 // The badges each player has earned, newest first (achievements.mjs)
 const awards = achievements();
+// Tournaments with a draw, and their pages: badmintonportalen tournament id -> Cup2000 id
+const tournaments = optional("upcoming.json");
+const tournamentLinks = new Map((tournaments.tournaments ?? []).filter((t) => t.portalenId).map((t) => [String(t.portalenId), t.cup2000Id]));
+/**
+ * The tournament pages a player's matches and badges link to: only their own tournaments, so a tournament page added
+ * changes only its players' files (and only their pages are built again), not every player's
+ */
+function playerTournamentLinks(matches, playerAwards) {
+  const links = {};
+  const add = (id) => {
+    if (id != null && tournamentLinks.has(String(id))) links[id] = tournamentLinks.get(String(id));
+  };
+  for (const pool of Object.keys(POOLS)) for (const m of matches[pool]?.all ?? []) add(m.key?.match(/^T(\d+)/)?.[1]);
+  for (const a of playerAwards) add(a.tournamentId);
+  return Object.fromEntries(Object.entries(links).sort(([a], [b]) => a - b));
+}
 for (const [id, entries] of byPlayer) {
   const history = optional(`history/${id}.json`);
   const matches = optional(`matches/${id}.json`);
@@ -134,7 +150,8 @@ for (const [id, entries] of byPlayer) {
   }
   const first = Object.values(pools)[0];
   // No generatedAt here: a file whose content hasn't changed isn't uploaded again (R2 counts writes)
-  write(`players/${id}.json`, { id, name: first.name, club: first.club, birthYear: birthYears[id] ?? null, rivals: matches.rivals ?? [], singlesRivals: matches.singlesRivals ?? [], doublesRivals: matches.doublesRivals ?? [], achievements: awards.get(id) ?? [], pools });
+  const playerAwards = awards.get(id) ?? [];
+  write(`players/${id}.json`, { id, name: first.name, club: first.club, birthYear: birthYears[id] ?? null, rivals: matches.rivals ?? [], singlesRivals: matches.singlesRivals ?? [], doublesRivals: matches.doublesRivals ?? [], achievements: playerAwards, tournamentLinks: playerTournamentLinks(matches, playerAwards), pools });
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 
@@ -179,7 +196,6 @@ if (existsSync(`${DATA}/team-matches`)) {
 }
 
 // Tournaments with a draw
-const tournaments = optional("upcoming.json");
 write("tournaments/index.json", tournaments);
 if (existsSync(`${DATA}/upcoming`)) {
   for (const f of readdirSync(`${DATA}/upcoming`).filter((f) => f.endsWith(".json"))) write(`tournaments/${f}`, read(`upcoming/${f}`));
@@ -194,8 +210,9 @@ write("meta.json", {
   updatedAt: new Date().toISOString(),
   pools: POOLS,
   eliteserien: { current: optional("eliteserien.json").season ?? null, seasons: eliteserienSeasons },
-  // badmintonportalen tournament id -> Cup2000 id, for linking matches to tournament pages
-  tournamentLinks: Object.fromEntries((tournaments.tournaments ?? []).filter((t) => t.portalenId).map((t) => [t.portalenId, t.cup2000Id])),
+  // badmintonportalen tournament id -> Cup2000 id, for linking matches to tournament pages (the player pages use their
+  // own, in players/<id>.json)
+  tournamentLinks: Object.fromEntries(tournamentLinks),
   players: byPlayer.size,
 });
 

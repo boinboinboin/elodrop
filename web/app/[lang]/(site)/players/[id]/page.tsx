@@ -22,7 +22,6 @@ import ShareButtons from "@/components/ui/ShareButtons";
 import StatCard from "@/components/ui/StatCard";
 import Tabs from "@/components/ui/Tabs";
 import { TEXT_LINK } from "@/components/ui/styles";
-import { getAchievementStats } from "@/data/achievements";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
@@ -82,11 +81,14 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   const { t, href } = i18n;
   const id = parseId((await params).id);
   if (id === null) notFound();
-  const [player, clubs, meta, badges, achievementStats] = await Promise.all([getPlayer(id), getClubMap(), getMeta(), getBadges(i18n.lang), getAchievementStats()]);
+  // Neither meta.json nor achievements.json, which change with every run: the page is built again only when the
+  // player's own data changes (the badges' rarity is loaded in the browser: BadgeStrip)
+  const [player, clubs, badges] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang)]);
   if (!player) notFound();
   const club = player.club ? clubs[player.club] : null;
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
-  const links = meta?.tournamentLinks ?? {};
+  // The player's own tournament links; an export from before they were: everyone's, from meta.json
+  const links = player.tournamentLinks ?? (await getMeta())?.tournamentLinks ?? {};
 
   return (
     <>
@@ -119,7 +121,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           )}
           <ShareButtons path={playerHref(player.id)} image={`${playerHref(player.id)}/preview.png`} title={player.name} kind="player" />
         </div>
-        <Achievements player={player} badges={badges} stats={achievementStats} links={links} />
+        <Achievements player={player} badges={badges} links={links} />
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>

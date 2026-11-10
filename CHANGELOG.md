@@ -8,6 +8,15 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.1 (2026-11-10)
+
+- After each nightly update, only the pages whose data changed are rebuilt: the pages of players who played or moved, the rankings, the season's tournaments and so on. Old team matches, finished tournaments and the pages of players whose numbers didn't change stay as they are. Before, every update rebuilt every page as it was next visited, and search engines visit nearly all of them, which made the site's cache writes many times what was needed.
+- Pages are no longer rebuilt every day by time alone, only when their data changes.
+- The footer's "Updated" time and the badges' "Held by … players" are loaded in the page, so they don't tie every page to data that changes every night.
+- Club, badge and hall changes in the Studio show after the next night's run, which refreshes each kind once if it changed (a badge change used to rebuild every player page at once, a hall every team match page). A tournament's approval still shows at once, and the nightly run catches one the Studio's call missed. To show a change right away, refresh it by hand (see `README.md`).
+- If refreshing the site fails after a run's upload, the next run refreshes everything, so no page is left with old data.
+- `refresh-site.mjs` refreshes the files an upload changed, and `sanity-revisions.mjs` tells what changed in the Studio.
+
 ## v1.27.0 (2026-11-10)
 
 - Every rating now has a class, as in the official senior classes: E (elite), A, B, C or D. It's from the rating, not ranking points, so it shows the class you play like. Player pages show it under each discipline's rating, and the rankings have a class column.
