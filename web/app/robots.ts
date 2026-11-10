@@ -5,6 +5,9 @@
 // are pointed to the sitemap (app/sitemap.ts). Link preview bots (what fetches a link shared in a
 // chat or a post, to show its title and picture) may also open head to head, so a shared comparison
 // gets its preview; they only fetch the links people share, never the pages linked from them.
+// Google's image crawler is kept off the link preview pictures (…/preview.png, opengraph-image): about 10,000 a day in
+// November 2026, each drawn and stored in the cache, though nobody searches Google Images for them. Its own group
+// replaces "*" for it, so it repeats those rules. Link previews and Google's web search don't use it.
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/utils/hrefs";
 
@@ -80,6 +83,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       { userAgent: AI_CRAWLERS, disallow: "/" },
       { userAgent: PREVIEW_BOTS, allow: "/", disallow: ["/api/", "/studio"] },
+      { userAgent: "Googlebot-Image", allow: "/", disallow: ["/*preview.png", "/*opengraph-image", "/head-to-head", "/en/head-to-head", "/api/", "/studio"] },
       { userAgent: "*", allow: "/", disallow: ["/head-to-head", "/en/head-to-head", "/api/", "/studio"] },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

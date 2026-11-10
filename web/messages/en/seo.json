@@ -64,6 +64,7 @@
     "rank": "#{rank} {pool}",
     "rating": "{pool}",
     "asOf": "Ratings as of {date}",
+    "lastMatch": "Last match {date}",
     "events": "Events",
     "entries": "Entries",
     "players": "Players",

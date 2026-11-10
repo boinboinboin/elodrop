@@ -1,6 +1,7 @@
 // A player's link preview, at /players/<id>/preview.png: their name, club, and rating and rank in up to three disciplines,
-// and the day the ratings are from
-import { previewCard, ratingsNote } from "@/components/seo/PreviewCard";
+// and the day of their last match. From the player's own file only (not meta.json's update time, which changes with
+// every run), so the picture is drawn and stored again only when their data changes, not after every run
+import { previewCard } from "@/components/seo/PreviewCard";
 import { getPlayer } from "@/data/players";
 import { createI18n, isLanguage } from "@/messages/i18n";
 import type { PlayerPool, Pool } from "@/types";
@@ -10,11 +11,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ lan
   const { lang, id: rawId } = await params;
   if (!isLanguage(lang)) return new Response(null, { status: 404 });
   const i18n = createI18n(lang);
-  const { t, num, poolCodes } = i18n;
+  const { t, num, date, poolCodes } = i18n;
   const id = parseId(rawId);
-  const [player, note] = await Promise.all([id !== null ? getPlayer(id) : null, ratingsNote(i18n)]);
+  const player = id !== null ? await getPlayer(id) : null;
   if (!player) return new Response(null, { status: 404 });
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
+  const lastPlayed = pools.map(([, p]) => p.lastPlayed ?? "").sort().at(-1);
+  const note = lastPlayed ? t("seo.preview.lastMatch", { date: date(lastPlayed) }) : undefined;
   return previewCard(i18n, {
     kicker: t("seo.preview.player"),
     title: player.name,

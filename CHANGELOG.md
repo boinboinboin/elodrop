@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.3 (2026-11-10)
+
+- Google's image crawler is asked to leave the link preview pictures alone (about 10,000 a day, each one drawn and stored again). Link previews in chats and social media, and Google's web search, are unaffected.
+- A player's link preview shows the day of their last match instead of the day of the last data update, so the picture is only redrawn when the player's own data changes, not after every nightly run.
+
 ## v1.27.2 (2026-11-10)
 
 - Exa's and Amazon's AI search crawlers (ExaSearchBot, ExaUser, Amzn-SearchBot) are now asked to stay away, like the other AI crawlers. Exa alone opened about 81,000 pages in a week, each one rebuilt and stored again in the site's cache. Search engines (Google, Bing) and link previews are unaffected.

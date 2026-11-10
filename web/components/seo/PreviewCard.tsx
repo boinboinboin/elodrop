@@ -1,5 +1,5 @@
 // The picture a shared link shows (Open Graph / X card, 1200×630), drawn by next/og: the elodrop
-// mark, what it is ("Player") and a note at the other end (the day the ratings are from), the title,
+// mark, what it is ("Player") and a note at the other end (a player's last match, head to head's day the ratings are from), the title,
 // a line under it, up to five numbers with their labels (a club's rank in all five disciplines), a
 // chance bar (head to head and team matches: each side's chance of winning, as on the page), and the site's address. Used by app/opengraph-image.tsx and the preview.png routes (players, clubs,
 // tournaments, team matches, head to head).

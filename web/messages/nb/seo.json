@@ -64,6 +64,7 @@
     "rank": "#{rank} {pool}",
     "rating": "{pool}",
     "asOf": "Ratinger per {date}",
+    "lastMatch": "Siste kamp {date}",
     "events": "Klasser",
     "entries": "Påmeldinger",
     "players": "Spillere",
