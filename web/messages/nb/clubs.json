@@ -60,6 +60,9 @@
     "woman": "dame",
     "man": "herre",
     "rankNote": "# er landsplasseringen i {pool}.",
-    "rankNoteMixed": "# er landsplasseringen i {pool}, blant herrer eller blant damer."
+    "rankNoteMixed": "# er landsplasseringen i {pool}, blant herrer eller blant damer.",
+    "inactiveLoading": "Henter de inaktive spillerne …",
+    "inactiveFailed": "Klarte ikke å hente de inaktive spillerne: prøv igjen",
+    "noInactive": "Ingen inaktive spillere."
   }
 }

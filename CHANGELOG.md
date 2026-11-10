@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.27.6 (2026-11-10)
+
+- Club pages have the rankings' "Show inactive players": each discipline's list can also show the club's players who haven't played in the last 12 months, in grey with the month they last played, in rating order among the ranked ones. Also for a discipline with no ranked players. It's kept in the address (`?inactive=true`) for every discipline at once, so a link can open it. The inactive players load when it's switched on, so the page itself stays as light as before.
+
 ## v1.27.5 (2026-11-10)
 
 - The rankings and a club's players are divided by class: in rating order, each class starts with a header with its ratings ("Class A · 1,450–1,799"). In the rankings it stays in view under the table's header while its players scroll past. It replaces the class column and the badge under the rating on phones.

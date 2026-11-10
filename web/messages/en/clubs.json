@@ -60,6 +60,9 @@
     "woman": "woman",
     "man": "man",
     "rankNote": "# is the national rank in {pool}.",
-    "rankNoteMixed": "# is the national rank in {pool}, among men or among women."
+    "rankNoteMixed": "# is the national rank in {pool}, among men or among women.",
+    "inactiveLoading": "Loading the inactive players…",
+    "inactiveFailed": "Couldn't load the inactive players: try again",
+    "noInactive": "No inactive players."
   }
 }

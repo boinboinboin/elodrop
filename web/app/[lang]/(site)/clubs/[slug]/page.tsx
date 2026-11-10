@@ -1,5 +1,6 @@
 // A club (CMS entry) with its strength over time and, per discipline, its strength history and
 // ranked players.
+import { createHash } from "node:crypto";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ClubPlayers, { type ClubPlayerRow } from "@/components/clubs/ClubPlayers";
@@ -184,6 +185,16 @@ async function OverTime({ history }: { history: Partial<Record<Pool | "combined"
   );
 }
 
+/**
+ * The version in the address of a club's inactive players (app/api/clubs/[slug]/inactive): from its ranked players, so
+ * it changes when one goes inactive or comes back (the CDN keeps each address's answer for long)
+ */
+const inactiveVersion = (players: { id: number }[]) =>
+  createHash("sha1")
+    .update(players.map((p) => p.id).join(","))
+    .digest("hex")
+    .slice(0, 10);
+
 async function Discipline({ pool, entry, history, names, file, players }: { pool: Pool; entry: ClubEntry; history: ClubHistoryPool | null; names: Record<string, string>; file: ClubsFile | null; players: Awaited<ReturnType<typeof getClubPlayers>> }) {
   const i18n = await getI18n();
   const { t, plural, num, pools } = i18n;
@@ -227,25 +238,27 @@ async function Discipline({ pool, entry, history, names, file, players }: { pool
         </Card>
       )}
       {players.length === 0 ? (
-        <p className="text-gray-600">{t("clubs.club.noPlayers", { club: entry.title, pool: t(`common.poolsInSentence.${pool}`) })}</p>
+        <p className="text-gray-600 mb-6">{t("clubs.club.noPlayers", { club: entry.title, pool: t(`common.poolsInSentence.${pool}`) })}</p>
       ) : (
-        <>
-          <p className="text-gray-600 mb-6">
-            {plural("clubs.club.rankedPlayers", players.length, { count: num(players.length) })}
-            {standing && (
-              <>
-                {" · "}
-                <Link href={strongestClubsHref(pool)} className={TEXT_LINK}>{t("clubs.club.strongestRank", { rank: standing.rank })}</Link> {t("clubs.club.strengthValue", { strength: Math.round(standing.strength) })}
-              </>
-            )}
-          </p>
-          <ClubPlayers
-            pool={pool}
-            rows={players.map((p): ClubPlayerRow => [p.id, p.name, p.rank, p.rating, p.ratingChange, p.matches, p.gender])}
-            mixed={pool === "mixedDoubles"}
-          />
-          <p className="text-sm text-gray-600 mt-2">{t(pool === "mixedDoubles" ? "clubs.club.rankNoteMixed" : "clubs.club.rankNote", { pool: t(`common.poolsInSentence.${pool}`) })}</p>
-        </>
+        <p className="text-gray-600 mb-6">
+          {plural("clubs.club.rankedPlayers", players.length, { count: num(players.length) })}
+          {standing && (
+            <>
+              {" · "}
+              <Link href={strongestClubsHref(pool)} className={TEXT_LINK}>{t("clubs.club.strongestRank", { rank: standing.rank })}</Link> {t("clubs.club.strengthValue", { strength: Math.round(standing.strength) })}
+            </>
+          )}
+        </p>
+      )}
+      {/* Also with no ranked players, for "show inactive players" */}
+      <ClubPlayers
+        pool={pool}
+        rows={players.map((p): ClubPlayerRow => [p.id, p.name, p.rank, p.rating, p.ratingChange, p.matches, p.gender])}
+        mixed={pool === "mixedDoubles"}
+        inactiveUrl={`/api/clubs/${encodeURIComponent(entry.slug)}/inactive?pool=${pool}&v=${inactiveVersion(players)}`}
+      />
+      {players.length > 0 && (
+        <p className="text-sm text-gray-600 mt-2">{t(pool === "mixedDoubles" ? "clubs.club.rankNoteMixed" : "clubs.club.rankNote", { pool: t(`common.poolsInSentence.${pool}`) })}</p>
       )}
     </div>
   );
