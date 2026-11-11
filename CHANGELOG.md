@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.6 (2026-11-11)
+
+- New tournaments get their organiser from Cup2000 the night their draw comes in, so they reach the Studio with their club (and its hall, where the club has one) filled in, ready to check and approve. Before, every tournament since late October came in without one.
+- A failed or skipped import of the tournaments into the Studio now shows as a warning on the pipeline's run, instead of passing silently (Polarcirkel Cup 2026 was missing from the Studio, and has been added).
+
 ## v1.28.5 (2026-11-11)
 
 - Results that come late are picked up. When a tournament's results reach badmintonportalen or Cup2000 days or weeks after it ended, for some classes only (Bygdø Høsttreff's singles came 10 days later), they're rated and shown once they're there. Until then, a class with results on one of them is rated from it.

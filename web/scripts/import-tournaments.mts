@@ -42,7 +42,9 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
 const token = process.env.SANITY_WRITE_TOKEN;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET ?? "production";
 if (!projectId || !token) {
-  console.log("No NEXT_PUBLIC_SANITY_PROJECT_ID or SANITY_WRITE_TOKEN: the tournaments aren't added to Sanity");
+  // In the pipeline's run (GitHub Actions): a warning on the run, as the Studio then misses its new tournaments
+  const warning = process.env.GITHUB_ACTIONS ? "::warning title=Tournaments not added to Sanity::" : "";
+  console.log(`${warning}No NEXT_PUBLIC_SANITY_PROJECT_ID or SANITY_WRITE_TOKEN: the tournaments aren't added to Sanity`);
   process.exit(0);
 }
 const api = `https://${projectId}.api.sanity.io/v2025-02-19/data`;

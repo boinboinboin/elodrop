@@ -275,16 +275,16 @@ jobs:
 
       # This season's tournaments to the Studio, for checking their organiser and hall
       # (web/scripts/import-tournaments.mts: plain Node, no packages). Sanity being down doesn't fail
-      # the run; the next night tries again.
+      # the run (the next night tries again), but it shows as a warning on the run, as does a
+      # missing token, so tournaments don't silently stay out of the Studio.
       - name: Add the tournaments to Sanity
         if: steps.build.outputs.mode != 'none'
-        continue-on-error: true
         working-directory: web
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
           SANITY_WRITE_TOKEN: ${{ secrets.SANITY_WRITE_TOKEN }}
           DATA_DIR: ../pipeline/export
-        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/import-tournaments.mts
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/import-tournaments.mts || echo "::warning title=Tournaments not added to Sanity::The import failed (see the step's log); the next night tries again"
 
       # Last, so a failed rebuild is tried again the next night
       - name: Save the fingerprint

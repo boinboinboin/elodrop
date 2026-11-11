@@ -45,7 +45,7 @@
 // from then on.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { call, text } from "./portalen.mjs";
-import { service, unescape, parsePlayer } from "./fetch-tournament.mjs";
+import { fetchTournamentInfo, service, unescape, parsePlayer } from "./fetch-tournament.mjs";
 import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
@@ -876,6 +876,36 @@ for (const target of targets) {
     for (const u of t.unmatched.slice(0, 5)) console.error(`  not identified: ${u}`);
   } catch (err) {
     console.error(`${label}: FAILED ${err.stack}`);
+  }
+}
+
+// Organisers: Cup2000's list of tournaments (data/tournaments.json) is built by list-organisers.mjs, run
+// by hand, so a tournament newer than its last scan isn't in it (or is null: its id was empty then).
+// Each tournament with a draw here that the list lacks is looked up on Cup2000 (once: two requests),
+// so its file gets its organiser and the Studio its club and hall (web/scripts/import-tournaments.mts).
+if (!offline) {
+  const file = `${DIR}data/tournaments.json`;
+  const list = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {};
+  const ids = new Set([
+    ...targets.map((t) => t.raw?.cupId ?? t.cup2000 ?? null),
+    ...readdirSync(OUT).filter((f) => f.endsWith(".json")).map((f) => +f.replace(".json", "")),
+  ]);
+  let added = 0;
+  for (const id of ids) {
+    if (!id || list[id]) continue;
+    try {
+      const info = await fetchTournamentInfo(id);
+      if (!info) continue;
+      list[id] = { ...info, html: undefined };
+      added++;
+      console.error(`Cup2000 ${id}: organiser ${info.organiser || "(none given)"}`);
+    } catch (err) {
+      console.error(`Cup2000 ${id}: organiser not fetched (${err.message}), tried again next run`);
+    }
+  }
+  if (added) {
+    writeFileSync(file, JSON.stringify(list));
+    cup2000List = null; // organiserOf reads it again, for the list of tournaments below
   }
 }
 
