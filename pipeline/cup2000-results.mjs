@@ -36,7 +36,8 @@ export const RECHECK_DAYS = 30;
  */
 export function missingResults(analysis, portalenMatches = null, day = today()) {
   if (!analysis?.endDate || analysis.endDate >= day || analysis.cancelled) return [];
-  if (!portalenMatches) return analysis.events.filter((e) => e.resultsMissing);
+  // (an analysis from before the flag was kept: the events not played, so the first run after it still fetches them)
+  if (!portalenMatches) return analysis.events.filter((e) => e.resultsMissing ?? !e.played);
   const has = new Set(portalenMatches.map((m) => `${m.className}|${m.discipline}`));
   return analysis.events.filter((e) => !has.has(`${e.className}|${e.discipline}`));
 }
