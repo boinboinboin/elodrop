@@ -18,9 +18,9 @@ import { BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
-import { playerHref, teamMatchHref, tournamentHref } from "@/utils/hrefs";
+import { playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
-import { eventHref } from "@/utils/tournament";
+import { matchHref } from "@/utils/tournament";
 
 interface Props {
   matches: Match[];
@@ -40,16 +40,8 @@ const SORTS = ["date", "gain", "loss"] as const;
 
 /** A league match's team match page, or a tournament match's event page (or the tournament's) when its tournament has a draw-luck page */
 function matchEventHref(m: Match, links: Record<string, number> | undefined, pool: Pool | undefined) {
-  // A league match: its team match's page
-  const teamMatch = m.key?.match(/^L(\d+) /)?.[1];
-  if (teamMatch) return teamMatchHref(Number(teamMatch));
   const id = m.key?.match(/^T(\d+)/)?.[1];
-  const cupId = id ? links?.[id] : undefined;
-  if (!cupId) return null;
-  // The match's event: its class from the event name ("... (SEN A)") and the pool
-  const className = m.event.match(/\(([^()]+)\)\s*$/)?.[1];
-  const eventPool = m.pool ?? pool;
-  return className && eventPool ? eventHref(cupId, { className, pool: eventPool }) : tournamentHref(cupId);
+  return matchHref(m, id ? links?.[id] : undefined, pool);
 }
 
 export default function MatchTable({ matches: newest, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks, more }: Props) {

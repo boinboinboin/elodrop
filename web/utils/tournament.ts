@@ -2,6 +2,7 @@
 // their rounds, the orders of the event table and the numbering of final standings.
 import { createI18n, DEFAULT_LANGUAGE, type I18n } from "@/messages/i18n";
 import type { Entry, Pool, Tournament, TournamentEvent } from "@/types";
+import { teamMatchHref, tournamentHref } from "./hrefs";
 import { isSingles } from "./pools";
 import { byRating } from "./sort";
 
@@ -38,6 +39,20 @@ export const classSlug = (className: string) => className.toLowerCase().replace(
 /** An event's page: /tournaments/<id>/<class>/<pool>, with the table order last unless it's the default */
 export const eventHref = (cup2000Id: number, e: Pick<TournamentEvent, "className" | "pool">, order?: string) =>
   `/tournaments/${cup2000Id}/${classSlug(e.className)}/${e.pool}${order && order !== "default" ? `/${order}` : ""}`;
+
+/**
+ * A match's page, from its key: a league match's team match ("L123 ..."), or a tournament match's event ("T7075 ...":
+ * its class from the event name, "... (SEN A)", and its pool) when the tournament has a page (`cup2000Id`, from the
+ * export's tournament links), else that tournament's page; null without one. For player matches (MatchTable) and upsets.
+ */
+export function matchHref(m: { key?: string; event: string; pool?: Pool | null }, cup2000Id: number | null | undefined, pool?: Pool) {
+  const teamMatch = m.key?.match(/^L(\d+) /)?.[1];
+  if (teamMatch) return teamMatchHref(Number(teamMatch));
+  if (!cup2000Id || !m.key?.startsWith("T")) return null;
+  const className = m.event.match(/\(([^()]+)\)\s*$/)?.[1];
+  const eventPool = m.pool ?? pool;
+  return className && eventPool ? eventHref(cup2000Id, { className, pool: eventPool }) : tournamentHref(cup2000Id);
+}
 
 /**
  * What a tournament page shows, from its path after the id: [] the first event, ["summary"] the

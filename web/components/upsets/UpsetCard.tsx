@@ -1,5 +1,6 @@
 // One upset: who beat whom with what win chance, each player's rating before the match, the
-// rating gained or lost and their club; the score, discipline, event and day.
+// rating gained or lost and their club; the score, discipline, event and day. The event links to its page: the
+// tournament's class (when the tournament has a page, `cup2000Id` from the export) or the team match.
 import Team from "@/components/clubs/Team";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -7,10 +8,13 @@ import { getI18n } from "@/messages/server";
 import type { ClubEntry, Upset } from "@/types";
 import { toneClass } from "@/utils/format";
 import { doublesHeadToHeadHref, headToHeadHref, playerHref } from "@/utils/hrefs";
+import { matchHref } from "@/utils/tournament";
 
 export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?: number; clubs: Record<string, ClubEntry> }) {
   const { date, pct, signed, t } = await getI18n();
   const ids = (side: Upset["winners"]) => side.map((p) => p.id);
+  // The match's event: the tournament's class page when it has one, or the team match
+  const event = matchHref(upset, upset.cup2000Id);
   return (
     <article className="bg-white p-4 md:p-5 h-full flex flex-col">
       <div className="flex items-baseline justify-between gap-3">
@@ -46,7 +50,7 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
       ))}
       <p className="mt-2 tabular-nums">{upset.score}</p>
       <p className="mt-auto pt-3 text-sm text-gray-600">
-        {upset.poolLabel} · {upset.event} · {date(upset.day)}
+        {upset.poolLabel} · {event ? <Link href={event} className={TEXT_LINK}>{upset.event}</Link> : upset.event} · {date(upset.day)}
         {upset.winners.length === 1 && (
           <>
             {" · "}

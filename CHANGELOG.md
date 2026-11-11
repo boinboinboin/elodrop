@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.8 (2026-11-11)
+
+- The upsets link to where they happened: the tournament's class page when the tournament has a page on the site, or the team match. In the week's cards and in the year's list of each week's biggest upset.
+- The upsets carousel's dots wrap onto a second line on the narrowest phones, instead of making the page scroll sideways.
+
 ## v1.28.7 (2026-11-11)
 
 - The nightly refresh of what changed in the Studio (clubs, badges, halls) shows a warning on the pipeline's run when it can't run, instead of being skipped silently: it and the tournament import were skipped because the pipeline had no Sanity project id.

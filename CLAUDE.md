@@ -17,7 +17,7 @@ The PR check (`.github/workflows/changelog.yml`) fails when a PR into `main` doe
 
 ## Mobile
 
-Every page and component must work on mobile (from 320px wide), new ones and changes to old ones alike: check it at a phone's width before it's done, with nothing making the page scroll sideways.
+Every page and component must work on mobile (from 340px wide; narrower screens aren't designed for), new ones and changes to old ones alike: check it at a phone's width (340px and 375px) before it's done, with nothing making the page scroll sideways.
 
 - A table wider than the screen scrolls inside its own box (`overflow-x-auto`), its values on one line (`whitespace-nowrap` on the cells), as the Eliteserien head-to-head matrix does; or it drops columns below a breakpoint (`hidden sm:table-cell`), as the Eliteserien table does.
 - A grid around such a box needs `grid-cols-1` (or `min-w-0` on its items): a bare `grid` sizes its column to the widest content, and the box then widens the page instead of scrolling.

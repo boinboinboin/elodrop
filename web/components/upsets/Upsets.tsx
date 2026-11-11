@@ -9,7 +9,7 @@ import Carousel from "@/components/ui/Carousel";
 import Link from "@/components/ui/Link";
 import { WeekArrows, YearLinks } from "@/components/ui/PeriodNav";
 import Section from "@/components/ui/Section";
-import { ROW } from "@/components/ui/styles";
+import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import UpsetCard from "@/components/upsets/UpsetCard";
 import { getClubMap } from "@/data/sanity";
 import { getUpsetYear, getUpsetsIndex } from "@/data/upsets";
@@ -18,6 +18,7 @@ import { getI18n } from "@/messages/server";
 import type { UpsetWeek } from "@/types";
 import { addDays } from "@/utils/format";
 import { upsetsHref } from "@/utils/hrefs";
+import { matchHref } from "@/utils/tournament";
 
 /** The page for a period: null for the newest week, a year ("2019") for its newest week, or a week's Monday */
 export default async function Upsets({ period }: { period: Promise<string | null> }) {
@@ -87,6 +88,8 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
               {yearWeeks.map((w) => {
                 const u = w.matches[0];
                 const chanceText = pct(u.winChance);
+                // The event's page: the tournament's class, or the team match
+                const eventLink = matchHref(u, u.cup2000Id);
                 return (
                   <tr key={w.week} className={`${ROW} align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
                     <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap">{/* The ISO week number, "Week 41" (W41 on phones), the week's days on hover */}
@@ -99,7 +102,9 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                       {u.winners.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold pool={u.pool} />)}
                       <span className="block text-sm text-gray-600">{t("upsets.table.beat")}</span>
                       {u.losers.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} pool={u.pool} />)}
-                      <span className="block mt-1 text-sm text-gray-600">{u.score} · {pools[u.pool]} · {u.event}</span>
+                      <span className="block mt-1 text-sm text-gray-600">
+                        {u.score} · {pools[u.pool]} · {eventLink ? <Link href={eventLink} className={TEXT_LINK}>{u.event}</Link> : u.event}
+                      </span>
                       <span className="sm:hidden block text-sm text-gray-600 tabular-nums">{rich("upsets.table.chanceOnPhones", { strong: (text) => <strong className="text-gray-900">{text}</strong> }, { chance: chanceText })}</span>
                     </td>
                     <td className="hidden sm:table-cell py-2 px-4 text-right tabular-nums">{chanceText}</td>

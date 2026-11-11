@@ -37,8 +37,9 @@ export default function Carousel({ slides, label }: { slides: ReactNode[]; label
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2">
-        {/* Each dot is a 24px button (a size a finger can tap) around the small dot that shows */}
-        <div className="flex -mx-1.5" role="group" aria-label={t("common.carousel.positions")}>
+        {/* Each dot is a 24px button (a size a finger can tap) around the small dot that shows; on the narrowest
+            phones ten of them and the arrows don't fit on one line, so they wrap */}
+        <div className="flex flex-wrap min-w-0 -mx-1.5" role="group" aria-label={t("common.carousel.positions")}>
           {count > 1 &&
             Array.from({ length: count }, (_, i) => (
               <button

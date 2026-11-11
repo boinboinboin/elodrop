@@ -171,6 +171,13 @@ write("search-index.json", { generatedAt, players: search });
 
 // Upsets by year
 const upsets = optional("upsets.json");
+// An upset in a tournament with a page (a draw) links to it: the tournament's Cup2000 id. Only the upsets' files
+// change when a tournament gets a page, not every page's
+const withTournament = (u) => {
+  const cup2000Id = tournamentLinks.get(u.key?.match(/^T(\d+)/)?.[1]);
+  return cup2000Id ? { ...u, cup2000Id } : u;
+};
+for (const w of upsets.weeks ?? []) w.matches = w.matches.map(withTournament);
 const years = new Map();
 for (const w of upsets.weeks ?? []) {
   const year = w.week.slice(0, 4);

@@ -316,6 +316,8 @@ export interface Upset {
   poolLabel?: string;
   event: string;
   key?: string;
+  /** The tournament's page (its Cup2000 id), when it has one (missing in older exports) */
+  cup2000Id?: number;
   winChance: number;
   winners: UpsetPlayer[];
   losers: UpsetPlayer[];
