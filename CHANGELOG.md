@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.7 (2026-11-11)
+
+- The nightly refresh of what changed in the Studio (clubs, badges, halls) shows a warning on the pipeline's run when it can't run, instead of being skipped silently: it and the tournament import were skipped because the pipeline had no Sanity project id.
+
 ## v1.28.6 (2026-11-11)
 
 - New tournaments get their organiser from Cup2000 the night their draw comes in, so they reach the Studio with their club (and its hall, where the club has one) filled in, ready to check and approve. Before, every tournament since late October came in without one.

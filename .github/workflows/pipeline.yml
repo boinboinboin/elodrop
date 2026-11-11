@@ -260,8 +260,9 @@ jobs:
       # refreshed them at once, so this only matters when its call didn't arrive). The first run only
       # remembers the state. The state is kept only once the site is refreshed, so a failure is tried
       # again the next night; Sanity or the site being down doesn't fail the run.
+      # Without the SANITY_PROJECT_ID variable it's skipped with a warning on the run.
       - name: Refresh what changed in the Studio
-        if: vars.SITE_URL != '' && vars.SANITY_PROJECT_ID != ''
+        if: vars.SITE_URL != ''
         continue-on-error: true
         env:
           SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
@@ -269,6 +270,7 @@ jobs:
           SITE_URL: ${{ vars.SITE_URL }}
           REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
         run: |
+          if [ -z "$SANITY_PROJECT_ID" ]; then echo "::warning title=Studio changes not refreshed::Set the SANITY_PROJECT_ID variable (Settings → Secrets and variables → Actions → Variables)"; exit 0; fi
           tags=$(node sanity-revisions.mjs data/sanity-revisions.json sanity-revisions.json)
           if [ -n "$tags" ]; then echo "Changed in the Studio: $tags"; node refresh-site.mjs --tags $tags; fi
           cp sanity-revisions.json data/sanity-revisions.json && rclone copyto data/sanity-revisions.json "$RAW/sanity-revisions.json"
