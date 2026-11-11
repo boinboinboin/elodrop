@@ -8,6 +8,14 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.5 (2026-11-11)
+
+- Results that come late are picked up. When a tournament's results reach badmintonportalen or Cup2000 days or weeks after it ended, for some classes only (Bygdø Høsttreff's singles came 10 days later), they're rated and shown once they're there. Until then, a class with results on one of them is rated from it.
+- A tournament that has ended with classes still without results has a "Results missing" tag in the list and on its page, and a dot on those classes' buttons.
+- The tournament list shows the tournaments being played on their own, above the upcoming ones.
+- A class where two players who both withdrew never played each other now counts as played, with its winner and in how the predictions turned out: 10 classes this season, so Bygdø Høsttreff shows its favourites winning 15 of 23 classes, not 14 of 22.
+- Long words in page headings ("Turneringstrekninger") no longer make the page scroll sideways on the narrowest phones.
+
 ## v1.28.4 (2026-11-10)
 
 - More buttons keep the page where it was instead of jumping back to the top: a tournament's classes and disciplines, the earlier and later week and the years on the upsets page, and the seasons in Eliteserien's season reviews.

@@ -2,8 +2,12 @@
 // so the matches of a weekend are rated the night after they're played. badmintonportalen gets a
 // tournament's results only after it has ended (fetch-portalen.mjs fetches it then): until there
 // is a data/portalen/<id>.json for it, its matches played so far are taken from the draw, in the
-// same shape as fetch-portalen.mjs writes, and once there is, that is used instead (also if it has
-// no matches), so finished tournaments are rated from badmintonportalen as before.
+// same shape as fetch-portalen.mjs writes, and once there is, that is used instead, so finished
+// tournaments are rated from badmintonportalen as before. Results can come late, to either: an event
+// (class and discipline) badmintonportalen's file has no matches in is still taken from the draw, until
+// badmintonportalen has it (not for a tournament that wasn't played, `cancelled` in its analysis).
+// missingResults says which events of a finished tournament still lack results, for the fetch scripts
+// to ask again (recheckDue: nightly for RECHECK_DAYS after it ended, then weekly).
 // Players are identified by name: from identities.txt (a name in the draw that isn't the player's on
 // badmintonportalen), the tournament's entry list on badmintonportalen (the event's, then the whole
 // tournament's), then the player register if only one player has that name. Matches
@@ -14,6 +18,42 @@ import { unescape, parsePlayer } from "./fetch-tournament.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const RAW = `${DIR}data/upcoming/raw`;
+const ANALYSES = `${DIR}data/upcoming`;
+const today = () => new Date().toISOString().slice(0, 10);
+const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
+// Late results: a finished tournament with events still without results is asked about again every
+// night for this many days after it ended, then in the weekly runs
+export const RECHECK_DAYS = 30;
+
+/**
+ * The events of a tournament's analysis (data/upcoming/<cup2000 id>.json, upcoming.mjs) that still lack
+ * results after it ended. With badmintonportalen's matches (for fetch-portalen.mjs): the events without
+ * a match there in their class and discipline. Without: the events the analysis marks `resultsMissing`,
+ * without results on Cup2000 nor badmintonportalen (for upcoming.mjs, which fetches their draws again).
+ * None for a tournament not over yet or not played (cancelled). The analysis leaves out events with a
+ * single entry, which have no matches.
+ */
+export function missingResults(analysis, portalenMatches = null, day = today()) {
+  if (!analysis?.endDate || analysis.endDate >= day || analysis.cancelled) return [];
+  if (!portalenMatches) return analysis.events.filter((e) => e.resultsMissing);
+  const has = new Set(portalenMatches.map((m) => `${m.className}|${m.discipline}`));
+  return analysis.events.filter((e) => !has.has(`${e.className}|${e.discipline}`));
+}
+
+/** Whether a finished tournament with missing results is asked about again: nightly for RECHECK_DAYS after it ended, then only in the weekly runs */
+export const recheckDue = (endDate, weekly, day = today()) => weekly || addDays(endDate, RECHECK_DAYS) >= day;
+
+/** The tournaments' analyses (data/upcoming/*.json) by badmintonportalen id */
+export function analysesByPortalen() {
+  const byId = new Map();
+  if (!existsSync(ANALYSES)) return byId;
+  for (const f of readdirSync(ANALYSES).filter((f) => f.endsWith(".json"))) {
+    const a = JSON.parse(readFileSync(`${ANALYSES}/${f}`, "utf8"));
+    if (a.portalenId) byId.set(a.portalenId, a);
+  }
+  return byId;
+}
 
 // Cup2000 event code (e=) -> badmintonportalen discipline and its heading in the entry lists
 export const EVENTS = {
@@ -100,19 +140,28 @@ function side(names, eventPlayers, allPlayers) {
   });
 }
 
-// The tournaments with a Cup2000 draw and played matches but no results from badmintonportalen yet,
-// as fetch-portalen.mjs's files: { tournamentId, name, startDate, endDate, provisional, matches }
+// The tournaments with a Cup2000 draw and played matches not on badmintonportalen yet, as
+// fetch-portalen.mjs's files: { tournamentId, name, startDate, endDate, provisional, matches }. For a
+// tournament badmintonportalen has, only the events (class and discipline) its file has no matches in
+// (results that came late), unless the tournament wasn't played (cancelled in its analysis).
 export function provisionalTournaments() {
   if (!existsSync(RAW)) return [];
   const tournaments = [];
   for (const file of readdirSync(RAW).filter((f) => f.endsWith(".json")).sort()) {
     const raw = JSON.parse(readFileSync(`${RAW}/${file}`, "utf8"));
-    if (!raw.portalenId || !raw.info?.startDate || existsSync(`${DIR}data/portalen/${raw.portalenId}.json`)) continue;
+    if (!raw.portalenId || !raw.info?.startDate) continue;
+    const portalenFile = `${DIR}data/portalen/${raw.portalenId}.json`;
+    let onPortalen = null; // "class|discipline" of the events badmintonportalen has matches in
+    if (existsSync(portalenFile)) {
+      const analysisFile = `${ANALYSES}/${raw.cupId}.json`;
+      if (existsSync(analysisFile) && JSON.parse(readFileSync(analysisFile, "utf8")).cancelled) continue;
+      onPortalen = new Set(JSON.parse(readFileSync(portalenFile, "utf8")).matches.map((m) => `${m.className}|${m.discipline}`));
+    }
     const allPlayers = raw.info.lists.flatMap((l) => l.entries.flat());
     const matches = [];
     for (const draw of raw.draws) {
       const event = EVENTS[draw.e];
-      if (!event) continue;
+      if (!event || onPortalen?.has(`${draw.className}|${event.discipline}`)) continue;
       const eventPlayers = raw.info.lists.filter((l) => l.className === draw.className && l.heading === event.heading).flatMap((l) => l.entries.flat());
       for (const m of playedMatches(draw.pages)) {
         matches.push({

@@ -122,6 +122,12 @@ export default async function TournamentPage({ params }: PageProps<"/[lang]/tour
         />
         <h1 className="h1 mt-4">{tour.name}</h1>
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
+        {/* Ended, but some events still have no results (pipeline/upcoming.mjs looks for them) */}
+        {tour.events.some((e) => e.resultsMissing) && (
+          <p className="mt-2" title={t("tournaments.list.resultsMissingTitle")}>
+            <Badge>{t("tournaments.list.resultsMissing")}</Badge>
+          </p>
+        )}
         {hallLine && (
           <p className="mt-1 text-gray-700">
             <ExternalLink href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hallLine)}`}>
@@ -304,10 +310,18 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
                   href={eventHref(tour.cup2000Id, e)}
                   // Another event of the tournament, where the visitor is (as LinkTabs)
                   scroll={false}
-                  className={`shrink-0 px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}
                   aria-current={i === eventIndex ? "page" : undefined}
+                  title={e.resultsMissing ? t("tournaments.list.eventResultsMissing") : undefined}
                 >
                   <PoolName pool={e.pool} />
+                  {/* Its results are still missing: a dot in the logo's accent colour, named for screen readers */}
+                  {e.resultsMissing && (
+                    <>
+                      <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--color-accent)" }} />
+                      <span className="sr-only">{t("tournaments.list.resultsMissing")}</span>
+                    </>
+                  )}
                 </Link>
               ))}
             </ScrollRow>
@@ -315,7 +329,14 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
         ))}
       </nav>
 
-      <h2 className="text-3xl mb-1">{eventTitle(i18n, event)}</h2>
+      <h2 className="text-3xl mb-1">
+        {eventTitle(i18n, event)}
+        {event.resultsMissing && (
+          <span title={t("tournaments.list.eventResultsMissing")}>
+            <Badge className="ml-3 align-middle">{t("tournaments.list.resultsMissing")}</Badge>
+          </span>
+        )}
+      </h2>
       <p className="text-gray-700 mb-4">
         {entryCount(i18n, event)}
         {formatDescription(i18n, event)}.{" "}

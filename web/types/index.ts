@@ -648,6 +648,8 @@ export interface TournamentEvent {
   placement: boolean;
   advance: { ranks: number[]; best: number[] };
   played: boolean;
+  /** The tournament has ended, but the event has no results yet, on Cup2000 nor badmintonportalen (missing in older data) */
+  resultsMissing?: boolean;
   /**
    * The main knockout's final once the event is played (missing in older exports; null without one): the winner's and
    * the runner-up's entry indices, and each set's points from the winner's side, or a walkover
@@ -700,6 +702,8 @@ export interface TournamentSummary extends Omit<Tournament, "events" | "unmatche
   events: number;
   entries: number;
   played: number;
+  /** Events still without results after the tournament ended (missing in older data) */
+  missing?: number;
 }
 
 export interface TournamentsIndex {

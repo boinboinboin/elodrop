@@ -9,10 +9,14 @@
     "about": "Trekningene kommer fra Cup2000 og spillerne fra påmeldingslistene på badmintonportalen, så snart trekningen er publisert, med ratingene fra uken før. Når en turnering er ferdigspilt, viser siden hvordan prediksjonene gikk.",
     "predictionsExplained": "Favoritten er deltakeren med størst sjanse til å vinne klassen med den faktiske trekningen. Hvis sjansene stemmer, vinner omtrent like mange favoritter som forventet.\n\n«Flaksen viste seg i resultatene» sammenligner hver deltakers resultat mot en rettferdig trekning med trekningsflaksen deres (i runder, en regresjon gjennom null). Nær 1 ga en trekning som var en runde heldigere, omtrent en runde mer.",
     "correlation": "Flaks forklarer bare en liten del av et resultat (korrelasjon {correlation}): mesteparten er hvordan kampene går.",
+    "ongoing": "Pågår nå",
     "upcoming": "Kommende",
     "noUpcoming": "Ingen kommende turneringer med publisert trekning.",
     "played": "Ferdigspilt",
     "notPlayed": "Ikke spilt",
+    "resultsMissing": "Resultater mangler",
+    "resultsMissingTitle": "Noen klasser har ikke resultater ennå, verken på Cup2000 eller badmintonportalen. Vi ser etter dem hver natt i en måned etter turneringen, deretter hver uke.",
+    "eventResultsMissing": "Resultatene for denne klassen mangler ennå, verken på Cup2000 eller badmintonportalen. Vi ser etter dem hver natt i en måned etter turneringen, deretter hver uke.",
     "events": {
       "one": "{count} klasse",
       "other": "{count} klasser"

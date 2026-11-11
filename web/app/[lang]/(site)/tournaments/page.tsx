@@ -1,8 +1,10 @@
-// Tournaments with a published draw and draw luck (pipeline/upcoming.mjs): upcoming ones, played
-// ones by month, and how the predictions turned out over the season.
+// Tournaments with a published draw and draw luck (pipeline/upcoming.mjs): the ones being played,
+// upcoming ones, played ones by month (tagged when results are still missing), and how the
+// predictions turned out over the season.
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PredictionStats, { luckFit } from "@/components/tournaments/PredictionStats";
+import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
 import { getTournamentsIndex } from "@/data/tournaments";
@@ -49,7 +51,14 @@ async function Row({ tournament: tour }: { tournament: TournamentSummary }) {
       <div>
         <Link href={tournamentHref(tour.cup2000Id)} className="text-xl hover:text-blue-600">{tour.name}</Link>
         {tour.cancelled && (
-          <span className="ml-2 align-[0.18em] font-mono text-xs px-1.5 py-0.5 border border-red-700 text-red-700 rounded" title={reason ?? undefined}>{t("tournaments.list.notPlayed")}</span>
+          <span title={reason ?? undefined}>
+            <Badge tone="red" className="ml-2 align-[0.18em]">{t("tournaments.list.notPlayed")}</Badge>
+          </span>
+        )}
+        {!tour.cancelled && !!tour.missing && (
+          <span title={t("tournaments.list.resultsMissingTitle")}>
+            <Badge className="ml-2 align-[0.18em]">{t("tournaments.list.resultsMissing")}</Badge>
+          </span>
         )}
         <span className="block text-sm text-gray-600">{facts.filter(Boolean).join(" · ")}</span>
       </div>
@@ -64,7 +73,11 @@ async function Content() {
   const tournaments = index?.tournaments ?? [];
   // "Today" is the day of the data update, which the page is rendered with
   const now = index?.generatedAt.slice(0, 10) ?? "";
-  const upcoming = tournaments.filter((tour) => (tour.endDate ?? now) >= now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
+  // Being played (from its first day to its last), upcoming (soonest first) and played
+  const ongoing = tournaments
+    .filter((tour) => !!tour.startDate && tour.startDate <= now && (tour.endDate ?? now) >= now)
+    .sort((a, b) => (a.endDate ?? "").localeCompare(b.endDate ?? ""));
+  const upcoming = tournaments.filter((tour) => (tour.endDate ?? now) >= now && !ongoing.includes(tour)).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""));
   const past = tournaments.filter((tour) => (tour.endDate ?? now) < now);
   // Played tournaments by month of the first day, newest first
   const months = new Map<string, TournamentSummary[]>();
@@ -84,6 +97,11 @@ async function Content() {
             {blocks("tournaments.list.predictionsExplained")}
             {fit?.correlation != null && <p>{t("tournaments.list.correlation", { correlation: num(fit.correlation, 2) })}</p>}
           </div>
+        </Section>
+      )}
+      {ongoing.length > 0 && (
+        <Section title={t("tournaments.list.ongoing")}>
+          <ul className="grid gap-3">{ongoing.map((tour) => <Row key={tour.cup2000Id} tournament={tour} />)}</ul>
         </Section>
       )}
       <Section title={t("tournaments.list.upcoming")}>

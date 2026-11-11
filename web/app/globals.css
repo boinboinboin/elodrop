@@ -180,8 +180,12 @@ input[type="search"]::-webkit-search-decoration {
 @utility base-container {
   @apply container mx-auto;
 }
+/* A long word ("Turneringstrekninger") is wider than the narrowest phones (320px) at this size: hyphenated in the
+   page's language where the browser can, otherwise broken, rather than making the page scroll sideways */
 @utility h1 {
   @apply text-heading-1-mobile xl:text-heading-1-desktop font-normal tracking-tight;
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 
 /* A player's match table (components/players/MatchTable.tsx): what every row and cell had in its own classes, set

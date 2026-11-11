@@ -11,7 +11,13 @@
 // in case dates move). A tournament that ended in the last week without any results yet is asked
 // about again each night, as badmintonportalen may get them later (until then its matches are rated
 // from its Cup2000 draw, cup2000-results.mjs); after a week it's saved as it is.
+// Results can also come late for some events only (a tournament's singles days after its doubles): a
+// saved tournament whose analysis (data/upcoming, upcoming.mjs) has events it has no matches for is
+// fetched again, every night for 30 days after it ended and then weekly (--check-dates), until it has
+// them (cup2000-results.mjs missingResults, recheckDue). Tournaments without a Cup2000 draw have no
+// analysis, so they're fetched once as before.
 import { readdir, readFile, writeFile, mkdir, appendFile } from "node:fs/promises";
+import { analysesByPortalen, missingResults, recheckDue } from "./cup2000-results.mjs";
 import { call, unescape, text } from "./portalen.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -169,6 +175,20 @@ const seasons = process.argv.includes("--season")
 
 await mkdir(OUT, { recursive: true });
 const done = new Set(refetch ? [] : (await readdir(OUT)).map((f) => +f.replace(".json", "")));
+// Saved tournaments still missing results in some events: fetched again while the recheck is due
+const weekly = process.argv.includes("--check-dates");
+const analyses = analysesByPortalen();
+const incomplete = [];
+for (const id of done) {
+  const analysis = analyses.get(id);
+  if (!analysis || !recheckDue(analysis.endDate, weekly)) continue;
+  const saved = JSON.parse(await readFile(`${OUT}/${id}.json`, "utf8"));
+  const missing = missingResults(analysis, saved.matches);
+  if (!missing.length) continue;
+  done.delete(id);
+  incomplete.push(`${id} ${analysis.name} (${missing.map((e) => `${e.className} ${e.discipline}`).join(", ")})`);
+}
+if (incomplete.length) console.error(`Missing results, asked again:\n  ${incomplete.join("\n  ")}`);
 
 const tournaments = [];
 for (const year of seasons) {

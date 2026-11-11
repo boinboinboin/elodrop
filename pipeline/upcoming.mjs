@@ -5,10 +5,13 @@
 //                                             from the season plan: registration closed in the
 //                                             last 45 days, not over yet), and the ones that ended
 //                                             in the last week, once more after they ended, for
-//                                             their final results
+//                                             their final results; and finished ones with events
+//                                             still without results, every night for 30 days after
+//                                             they ended (late results)
 //        node upcoming.mjs --season 2026      every tournament of the 2026/27 season whose
 //                                             registration has closed, played ones too (finished
-//                                             ones already fetched after they ended are kept)
+//                                             ones already fetched after they ended are kept,
+//                                             unless results are still missing: the weekly check)
 //        node upcoming.mjs --portalen 7076    one tournament by its badmintonportalen id
 //        node upcoming.mjs --cup2000 11094    one tournament by its Cup2000 id (the badmintonportalen
 //                                             tournament is found by its link to the draw)
@@ -46,7 +49,7 @@ import { service, unescape, parsePlayer } from "./fetch-tournament.mjs";
 import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
-import { EVENTS, knownAs, normalize } from "./cup2000-results.mjs";
+import { EVENTS, analysesByPortalen, knownAs, missingResults, normalize, recheckDue } from "./cup2000-results.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/upcoming`;
@@ -269,15 +272,18 @@ function parseEvent(pages) {
         walkover: /w\.?\s*o/i.test(played.score),
         sets: [...played.score.matchAll(/(\d+)\s*[/-]\s*(\d+)/g)].map(([, a, b]) => (played.winner === 1 ? [+a, +b] : [+b, +a])),
       };
-  // Played once every match with two players has a winner
+  // A group match never played because both its entries withdrew (each lost a match in the event by
+  // walkover): it has no result, and needs none, as neither came through (Bygdø Høsttreff 2026, U13 A)
+  const unplayed = groups.flatMap((g) => g.matches).filter(([a, b, no]) => winners[no] === 0 && withdrawals.has(a) && withdrawals.has(b)).map(([, , no]) => no);
+  // Played once every other match with two players has a winner
   const event = { slots: entries.length, groups, stages: stageList };
-  const decided = Object.values(winners);
+  const decided = Object.entries(winners).filter(([no]) => !unplayed.includes(no)).map(([, w]) => w);
   const done = decided.length > 0 && decided.every((w) => w > 0);
   return {
     title: pages[0].stageTitle,
     entries,
     event,
-    results: done ? { winners, groupOrder, walkovers: [...walkovers], withdrawals: [...withdrawals] } : null,
+    results: done ? { winners, groupOrder, walkovers: [...walkovers], withdrawals: [...withdrawals], unplayed } : null,
     final: done ? final : null,
     unknownPlaceholders: [...unknownPlaceholders],
   };
@@ -396,6 +402,13 @@ function identify({ name, club }, eventList, allLists) {
   return pick ? { id: pick.id, source: "name" } : { id: null, source: null };
 }
 
+// The events ("class|discipline") a tournament's results on badmintonportalen have matches in
+function portalenEvents(portalenId) {
+  const file = `${DIR}data/portalen/${portalenId}.json`;
+  if (!portalenId || !existsSync(file)) return new Set();
+  return new Set(JSON.parse(readFileSync(file, "utf8")).matches.map((m) => `${m.className}|${m.discipline}`));
+}
+
 // A played tournament's results on badmintonportalen (data/portalen, fetch-portalen.mjs) name its
 // players with their ids: as entry lists per class and discipline heading
 function resultLists(portalenId) {
@@ -497,8 +510,12 @@ async function fetchRaw({ portalen, cup2000 }) {
   const cupId = cup2000 || info.cup2000Id;
   if (!cupId) throw new Error(`No Cup2000 draw linked from badmintonportalen tournament ${portalen.tournamentId}`);
   const draws = await fetchDraws(cupId);
+  // A finished tournament fetched again (for results still missing) that hasn't changed: the saved one is
+  // kept as it was, its fetchedAt too, so nothing after it changes (nor the site's pages)
+  const saved = savedRaw(cupId);
+  if (saved?.info?.endDate && saved.fetchedAt.slice(0, 10) > saved.info.endDate && JSON.stringify(saved.draws) === JSON.stringify(draws) && JSON.stringify(saved.info) === JSON.stringify(info)) return saved;
   // The seeding from when the draw was first published, if it was fetched before
-  const raw = { cupId, portalenId: portalen?.tournamentId ?? null, fetchedAt: new Date().toISOString(), info, draws, seeding: savedRaw(cupId)?.seeding ?? null };
+  const raw = { cupId, portalenId: portalen?.tournamentId ?? null, fetchedAt: new Date().toISOString(), info, draws, seeding: saved?.seeding ?? null };
   if (draws.some((d) => parseEvent(d.pages))) writeFileSync(`${OUT}/raw/${cupId}.json`, JSON.stringify(await withSeeding(raw, portalen?.deadline)));
   return raw;
 }
@@ -667,12 +684,18 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
     });
   }
   const name = info.name ?? draws[0]?.title ?? `Cup2000 ${cupId}`;
+  // Not played: the draw stands, without results
+  const cancelled = CANCELLED[portalenId] ?? (/avlyst/i.test(name) ? "cancelled" : null);
+  // Results missing: once a played tournament has ended, its events without results on Cup2000 (not every
+  // match decided) nor any match on badmintonportalen; they're fetched again (late results, cup2000-results.mjs)
+  const onPortalen = portalenEvents(portalenId);
+  const over = !cancelled && !!info.endDate && info.endDate < today;
+  for (const e of events) e.resultsMissing = over && !e.played && !onPortalen.has(`${e.className}|${e.discipline}`);
   return {
     cup2000Id: cupId,
     portalenId,
     name,
-    // Not played: the draw stands, without results
-    cancelled: CANCELLED[portalenId] ?? (/avlyst/i.test(name) ? "cancelled" : null),
+    cancelled,
     startDate: info.startDate,
     endDate: info.endDate,
     // The registration deadline and the ranking list the seeds are from
@@ -778,24 +801,34 @@ if (!offline) {
     targets = [{ portalen: t, cup2000: arg("--cup2000") ? +arg("--cup2000") : null }];
   } else {
     // A season: every tournament whose registration has closed; else those that closed in the last
-    // 45 days and aren't over yet or ended in the last week
-    const candidates = plan.filter((t) => t.deadline <= today && (arg("--season") || t.deadline >= addDays(today, -45)));
+    // 45 days and aren't over yet or ended in the last week, and the finished ones still missing
+    // results (late results: asked again nightly for RECHECK_DAYS after they ended, then in the weekly
+    // --season rescan; cup2000-results.mjs)
+    const weekly = !!arg("--season");
+    const lateResults = new Set(
+      [...analysesByPortalen().values()].filter((a) => recheckDue(a.endDate, weekly) && missingResults(a).length).map((a) => a.portalenId),
+    );
+    const candidates = plan.filter((t) => t.deadline <= today && (weekly || t.deadline >= addDays(today, -45) || lateResults.has(t.tournamentId)));
     for (const t of candidates) {
       const info = await entryList(t.classId);
+      const missing = lateResults.has(t.tournamentId);
       // Not a season: the ones not over yet, and the ones that ended in the last week (fetched once
       // more after they ended, for the final results; after that the saved draw is used, below)
-      if (!info.endDate || (!arg("--season") && info.endDate < addDays(today, -7))) continue;
+      if (!info.endDate || (!weekly && !missing && info.endDate < addDays(today, -7))) continue;
       if (arg("--cup2000") && info.cup2000Id !== +arg("--cup2000")) continue;
       if (!info.cup2000Id) info.cup2000Id = findCup2000(info, t.title);
       if (!info.cup2000Id) {
         console.error(`${t.title}: no Cup2000 link, skipped`);
         continue;
       }
-      // A finished tournament already fetched after it ended has nothing new
+      // A finished tournament already fetched after it ended has nothing new, unless results are missing
       const saved = savedRaw(info.cup2000Id);
       // (its seeding added if it was saved without one)
-      if (!refetch && saved && info.endDate < today && saved.fetchedAt.slice(0, 10) > info.endDate) targets.push({ raw: saved, deadline: t.deadline });
-      else targets.push({ portalen: t, cup2000: info.cup2000Id });
+      if (!refetch && !missing && saved && info.endDate < today && saved.fetchedAt.slice(0, 10) > info.endDate) targets.push({ raw: saved, deadline: t.deadline });
+      else {
+        if (missing) console.error(`${t.title}: results missing, fetched again`);
+        targets.push({ portalen: t, cup2000: info.cup2000Id });
+      }
     }
     if (arg("--cup2000") && !targets.length) {
       console.error(`Cup2000 ${arg("--cup2000")} isn't linked from a tournament in the season plan: players are matched by name only`);
@@ -861,7 +894,14 @@ const tournaments = readdirSync(OUT)
     writeFileSync(`${OUT}/${f}`, JSON.stringify(updated));
     return updated;
   })
-  .map(({ events, unmatched, ...t }) => ({ ...t, events: events.length, entries: events.reduce((s, e) => s + e.entries.length, 0), played: events.filter((e) => e.played).length }))
+  .map(({ events, unmatched, ...t }) => ({
+    ...t,
+    events: events.length,
+    entries: events.reduce((s, e) => s + e.entries.length, 0),
+    played: events.filter((e) => e.played).length,
+    // Events still without results after the tournament ended (none in analyses from before this was kept)
+    missing: events.filter((e) => e.resultsMissing).length,
+  }))
   .sort((a, b) => (b.startDate ?? "").localeCompare(a.startDate ?? ""));
 const total = { events: 0, winners: 0, favouritesWon: 0, favouritesExpected: 0, winnerChance: 0, logLoss: 0, luck: { rounds: { n: 0, xx: 0, xy: 0, yy: 0 }, places: { n: 0, xx: 0, xy: 0, yy: 0 } } };
 for (const { evaluation: ev } of tournaments) {

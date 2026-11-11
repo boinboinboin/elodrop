@@ -9,10 +9,14 @@
     "about": "Draws are from Cup2000 and the players from the entry lists on badmintonportalen, as soon as the draw is published, with their ratings from the week before. Once a tournament is played, its page shows how the predictions turned out.",
     "predictionsExplained": "The favourite is the entry with the best chance of winning the event with the actual draw. If the chances are right, about as many favourites win as expected.\n\n“Luck showed in the results” compares each entry's result against a fair draw with its draw luck (in rounds, a regression through zero). Near 1, a draw rated a round luckier gave about a round more.",
     "correlation": "Luck explains only a small part of a result (correlation {correlation}): most of it is how the matches go.",
+    "ongoing": "Being played",
     "upcoming": "Upcoming",
     "noUpcoming": "No upcoming tournaments with a published draw.",
     "played": "Played",
     "notPlayed": "Not played",
+    "resultsMissing": "Results missing",
+    "resultsMissingTitle": "Some events have no results yet, on Cup2000 or badmintonportalen. We look for them every night for a month after the tournament, then every week.",
+    "eventResultsMissing": "This event's results are still missing, on Cup2000 and badmintonportalen. We look for them every night for a month after the tournament, then every week.",
     "events": {
       "one": "{count} event",
       "other": "{count} events"

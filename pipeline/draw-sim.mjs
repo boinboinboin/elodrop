@@ -146,9 +146,10 @@ export function rng(seed = 1) {
 // final), so a bye counts as a round got through; with no knockout, progress is the match wins.
 // With `redraw`, every run first redraws the entries as above: `seeding` is the seeds, best first
 // (by default the strongest entries by rating, as many as seedCount). With `forced` (a played draw's
-// results: { winners: { match no: 1 | 2 }, groupOrder: [[slot, ...] per group] }, or for results
-// known only by who beat whom, { pairs: Map("entry|entry" → winning entry) }), the matches go as
-// they did: one run gives each entry's actual outcome.
+// results: { winners: { match no: 1 | 2 }, groupOrder: [[slot, ...] per group], unplayed: [match no] },
+// or for results known only by who beat whom, { pairs: Map("entry|entry" → winning entry) }), the
+// matches go as they did: one run gives each entry's actual outcome. An `unplayed` group match (both
+// its entries withdrew) is won by neither.
 // With `withdrawn` (Map entry → match no), an entry that withdrew loses every match from that one
 // on (numbered after it; generated round-robin matches have no number and count as after).
 export function simulate(event, ratings, { runs = 20000, redraw = false, seeding = null, seed = 1, forced = null, withdrawn = null, pool } = {}) {
@@ -193,6 +194,8 @@ export function simulate(event, ratings, { runs = 20000, redraw = false, seeding
       for (let slot = 0; slot < n; slot++) if (!used.has(slot)) atSlot[slot] = rest[k++];
     }
     const play = (a, b, no) => {
+      // Never played (both entries withdrew): no winner
+      if (no != null && forced?.unplayed?.includes(String(no))) return null;
       const side = forced?.winners?.[no];
       const known = forced?.pairs?.get(`${a}|${b}`) ?? forced?.pairs?.get(`${b}|${a}`);
       const out = (e) => {
@@ -211,7 +214,7 @@ export function simulate(event, ratings, { runs = 20000, redraw = false, seeding
       const wins = new Map(g.slots.map((s) => [atSlot[s], 0]));
       for (const [x, y, no] of groupMatches[gi]) {
         const w = play(atSlot[x], atSlot[y], no);
-        wins.set(w, wins.get(w) + 1);
+        if (w !== null) wins.set(w, wins.get(w) + 1);
       }
       for (const [e, w] of wins) groupWins.set(e, w);
       const order = forced?.groupOrder?.[gi]
