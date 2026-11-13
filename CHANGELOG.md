@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.9 (2026-11-13)
+
+- Only the search engines (Google, Bing, DuckDuckGo, Apple) and link previews are let in by robots.txt; every other crawler is asked to stay out, instead of only the ones named. SEO tools and new AI crawlers are kept out before their first sweep of the site, not after: AhrefsBot fetched 18,000 pages in a week.
+
 ## v1.28.8 (2026-11-11)
 
 - The upsets link to where they happened: the tournament's class page when the tournament has a page on the site, or the team match. In the week's cards and in the year's list of each week's biggest upset.
