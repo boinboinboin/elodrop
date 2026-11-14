@@ -28,6 +28,7 @@ import { clubHref, DISCIPLINE_PARAM } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
 // purpose (no loading text first); without this, dev warns that the navigation isn't instant
@@ -82,7 +83,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {entry.logo && <img src={logoSrc(entry.logo, 20)} alt="" className="w-20 h-20 object-contain shrink-0" />}
           <div>
-            <h1 className="h1">{entry.title}</h1>
+            <h1 className="h1">{hyphenate(entry.title)}</h1>
             {entry.fullName && entry.fullName !== entry.title && <p className="text-2xl text-gray-700">{entry.fullName}</p>}
           </div>
         </div>

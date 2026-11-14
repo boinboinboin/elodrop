@@ -10,6 +10,7 @@ import { getI18n } from "@/messages/server";
 import { type Release as ReleaseData, getReleases, isFeature } from "@/utils/changelog";
 import { PALETTE } from "@/utils/chart";
 import { pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -40,7 +41,7 @@ export default async function WhatsNewPage() {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("whatsNew.title") }]} />
-        <h1 className="h1 mt-4">{t("whatsNew.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("whatsNew.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("whatsNew.intro")}</p>
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           {latest && (

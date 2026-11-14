@@ -16,6 +16,7 @@ import { getI18n } from "@/messages/server";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
 import { LAUNCH_YEAR } from "@/utils/changelog";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Each card's colour: the first five chart colours, which are apart in every pair, and head to head
 // its two sides' (the first two), so no card shares a colour with one next to it, in two columns or three
@@ -55,7 +56,7 @@ export default async function Home() {
         }}
       />
       <Section>
-        <h1 className="h1">{t("home.title")}</h1>
+        <h1 className="h1">{hyphenate(t("home.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("home.intro")}</p>
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link href="/rankings" className={`${BUTTON} inline-flex items-center gap-2 px-5 py-3 text-lg`}>

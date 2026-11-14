@@ -19,6 +19,7 @@ import type { UpsetWeek } from "@/types";
 import { addDays } from "@/utils/format";
 import { upsetsHref } from "@/utils/hrefs";
 import { matchHref } from "@/utils/tournament";
+import { hyphenate } from "@/utils/hyphenate";
 
 /** The page for a period: null for the newest week, a year ("2019") for its newest week, or a week's Monday */
 export default async function Upsets({ period }: { period: Promise<string | null> }) {
@@ -27,7 +28,7 @@ export default async function Upsets({ period }: { period: Promise<string | null
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("upsets.breadcrumb") }]} />
-        <h1 className="h1 mt-4">{t("upsets.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("upsets.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("upsets.intro")}</p>
         <div className="max-w-3xl mt-4 space-y-3 text-gray-700">{blocks("upsets.explanation")}</div>
       </Section>

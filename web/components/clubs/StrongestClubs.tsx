@@ -15,6 +15,7 @@ import type { CombinedClubStanding, ClubStanding, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
+import { hyphenate } from "@/utils/hyphenate";
 
 const TABS: (Pool | "combined")[] = ["combined", ...POOL_KEYS];
 
@@ -30,7 +31,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
     <>
       <Section>
         <Breadcrumbs trail={combined ? [{ label: t("clubs.clubs") }] : [{ label: t("clubs.clubs"), href: "/clubs" }, { label: pools[pool] }]} />
-        <h1 className="h1 mt-4">{t("clubs.strongest.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("clubs.strongest.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{combined ? t("clubs.strongest.combinedIntro") : rule && t("clubs.strongest.poolIntro", { rule: clubRule(i18n, rule) })}</p>
       </Section>
 

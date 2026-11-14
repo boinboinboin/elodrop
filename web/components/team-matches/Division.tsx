@@ -17,6 +17,7 @@ import { getTeamDivision, getTeamMatchesIndex, isJuniorAgeGroup, NATIONAL } from
 import { getI18n } from "@/messages/server";
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamMatchesHref } from "@/utils/hrefs";
+import { hyphenate } from "@/utils/hyphenate";
 
 /** A season ("2025-26") as its first year, or null */
 export const parseSeason = (slug: string): number | null => {
@@ -60,7 +61,7 @@ async function Content({ params }: { params: Promise<{ period: string; division:
             { label: division.division },
           ]}
         />
-        <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{division.division}</h1>
+        <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{hyphenate(division.division)}</h1>
         <p className="text-2xl text-gray-700 mt-2">
           {[division.region === NATIONAL ? t("teamMatches.divisions.national") : division.region, division.ageGroup !== "SEN" ? division.ageGroup : null, seasonLabel(season, true)].filter(Boolean).join(" · ")}
         </p>

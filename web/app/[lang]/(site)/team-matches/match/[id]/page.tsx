@@ -23,6 +23,7 @@ import { doublesHeadToHeadHref, headToHeadHref, seasonSlug, teamDivisionHref, te
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { clubByOrganiser, findVenue, organizationOf, placeOf } from "@/utils/structuredData";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
 // purpose (no loading text first); without this, dev warns that the navigation isn't instant
@@ -134,7 +135,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/team-matches/match/[i
             { label: `${tie.home} – ${tie.away}` },
           ]}
         />
-        <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{breakable(tie.home)} – {breakable(tie.away)}</h1>
+        <h1 className="h1 mt-4 [overflow-wrap:anywhere]">{breakable(hyphenate(tie.home))} – {breakable(hyphenate(tie.away))}</h1>
         {/* The division, group and day, and the preview and share buttons at the end of the line */}
         <div className="mt-2 flex items-center justify-between gap-4">
           <p className="text-gray-600">

@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.11 (2026-11-14)
+
+- Page titles no longer hyphenate long words in odd places on phones: a long word now breaks only where it's been marked by hand ("Turnerings-trekninger", "badminton-rangering").
+
 ## v1.28.10 (2026-11-14)
 
 - Norwegian: "lagkamper" is now "lagspill": the menu item and the team match pages' titles are "Lagspill", as are Eliteserien's headings and the page descriptions. One is still "en lagkamp", and "lagkampene" stays.

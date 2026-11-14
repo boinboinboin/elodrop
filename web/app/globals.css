@@ -180,11 +180,12 @@ input[type="search"]::-webkit-search-decoration {
 @utility base-container {
   @apply container mx-auto;
 }
-/* A long word ("Turneringstrekninger") is wider than the narrowest phones (320px) at this size: hyphenated in the
-   page's language where the browser can, otherwise broken, rather than making the page scroll sideways */
+/* A long word ("Turneringstrekninger") is wider than a phone at this size: hyphenated only where it's marked by hand
+   (utils/hyphenate.ts, soft hyphens), since the browser's own hyphenation broke Norwegian words in odd places, and
+   a word that isn't marked is broken at the screen's edge rather than making the page scroll sideways */
 @utility h1 {
   @apply text-heading-1-mobile xl:text-heading-1-desktop font-normal tracking-tight;
-  hyphens: auto;
+  hyphens: manual;
   overflow-wrap: break-word;
 }
 

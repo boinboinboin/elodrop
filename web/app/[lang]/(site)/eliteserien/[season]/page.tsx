@@ -17,6 +17,7 @@ import { getI18n } from "@/messages/server";
 import type { Loose, Pool } from "@/types";
 import { eliteserienHref, playerHref, teamMatchHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
 // purpose (no loading text first); without this, dev warns that the navigation isn't instant
@@ -63,7 +64,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("eliteserien.title"), href: "/eliteserien" }, { label: data.season }]} />
-        <h1 className="h1 mt-4">{t("eliteserien.review.title", { season: data.season })}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("eliteserien.review.title", { season: data.season }))}</h1>
         {seasons.length > 1 && (
           <nav className="mt-3 flex flex-wrap gap-2" aria-label={t("eliteserien.review.seasons")}>
             {seasons.map((s) =>

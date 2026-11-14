@@ -18,6 +18,7 @@ import { getI18n } from "@/messages/server";
 import type { Achievement, AchievementStats, Badge } from "@/types";
 import { playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -61,7 +62,7 @@ export default async function AchievementsPage() {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("achievements.title") }]} />
-        <h1 className="h1 mt-4">{t("achievements.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("achievements.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("achievements.intro")}</p>
       </Section>
       <Section>

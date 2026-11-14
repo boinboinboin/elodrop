@@ -13,6 +13,7 @@ import type { TournamentSummary } from "@/types";
 import { tournamentHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { cancelledReason } from "@/utils/tournament";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -25,7 +26,7 @@ export default async function TournamentsPage() {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("layout.nav.tournaments") }]} />
-        <h1 className="h1 mt-4">{t("tournaments.list.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("tournaments.list.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("tournaments.list.intro")}</p>
         <p className="max-w-3xl mt-4 text-gray-700">{t("tournaments.list.about")}</p>
       </Section>

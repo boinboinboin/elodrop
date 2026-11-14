@@ -39,6 +39,7 @@ import { DISCIPLINE_PARAM, playerHref } from "@/utils/hrefs";
 import { DOUBLES_POOLS } from "@/utils/pools";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Two players compared get their own title, description, address and preview (so a shared
 // comparison shows who's in it); the page without them the general ones
@@ -84,7 +85,7 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head">,
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("headToHead.title") }]} />
-        <h1 className="h1 mt-4">{t("headToHead.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("headToHead.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("headToHead.intro")}</p>
         <HeadToHeadSwitch current="players" />
         <form action={href("/head-to-head")} method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_1fr_auto] items-end max-w-4xl">

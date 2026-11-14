@@ -45,6 +45,7 @@ import { DISCIPLINE_PARAM, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
 import { parseId } from "@/utils/parse";
 import { KIND_POOLS } from "@/utils/pools";
+import { hyphenate } from "@/utils/hyphenate";
 
 const FIELDS = ["a1", "a2", "b1", "b2"] as const;
 
@@ -122,7 +123,7 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head/do
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("headToHead.title"), href: "/head-to-head" }, { label: t("headToHead.doublesCrumb") }]} />
-        <h1 className="h1 mt-4">{t("headToHead.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("headToHead.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("headToHead.introDoubles")}</p>
         <HeadToHeadSwitch current="pairs" />
         <form action={href("/head-to-head/doubles")} method="get" className="mt-6 grid gap-4 md:grid-cols-[1fr_auto_1fr] items-center max-w-4xl">

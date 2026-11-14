@@ -17,6 +17,7 @@ import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, playerHref } from "@/ut
 import { pageMetadata } from "@/utils/metadata";
 import { SLOT_POOLS } from "@/utils/pools";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -66,7 +67,7 @@ async function Content() {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("eliteserien.title"), href: ELITESERIEN_HREF }, { label: t("eliteserien.tenMatches.title") }]} />
-        <h1 className="h1 mt-4">{t("eliteserien.tenMatches.heading")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("eliteserien.tenMatches.heading"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("eliteserien.tenMatches.intro", { season: data?.season ?? "" })}</p>
         {data && (
           <div className="mt-6 max-w-3xl bg-white border-l-4 p-4 md:p-6 space-y-2" style={{ borderColor: "var(--color-chart-5)" }} role="note">

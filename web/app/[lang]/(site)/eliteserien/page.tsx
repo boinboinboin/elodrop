@@ -34,6 +34,7 @@ import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, eliteserienHref, player
 import { pageMetadata } from "@/utils/metadata";
 import { SLOT_POOLS } from "@/utils/pools";
 import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -93,7 +94,7 @@ export default async function EliteserienPage() {
     <>
       <Section>
         <Breadcrumbs trail={[{ label: t("eliteserien.title") }]} />
-        <h1 className="h1 mt-4">{t("eliteserien.heading", { season: data?.season ?? "" })}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("eliteserien.heading", { season: data?.season ?? "" }))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("eliteserien.intro")}</p>
         {forecast && (
           <p className="mt-4 text-lg">

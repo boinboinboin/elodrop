@@ -39,6 +39,7 @@ import { parseId } from "@/utils/parse";
 import { HIGHLIGHTS, type Highlight, logVersion, RECENT_MATCHES } from "@/utils/playerLog";
 import { POOL_KEYS } from "@/utils/pools";
 import { rankingHref } from "@/utils/rankings";
+import { hyphenate } from "@/utils/hyphenate";
 
 // Allowed to block a navigation until the page is rendered: its URL (params) is read outside Suspense, on
 // purpose (no loading text first); without this, dev warns that the navigation isn't instant
@@ -109,7 +110,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
             },
           }}
         />
-        <h1 className="h1 mt-4">{player.name}</h1>
+        <h1 className="h1 mt-4">{hyphenate(player.name)}</h1>
         {/* The club, and the preview and share buttons at the end of its line */}
         <div className="flex items-center justify-between gap-4 mt-2">
           {player.club ? (

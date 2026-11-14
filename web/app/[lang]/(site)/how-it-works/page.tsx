@@ -22,6 +22,7 @@ import { PALETTE } from "@/utils/chart";
 import { CLASS_CUTOFFS, CLASSES } from "@/utils/classes";
 import { repoHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 export async function generateMetadata(): Promise<Metadata> {
   const i18n = await getI18n();
@@ -92,7 +93,7 @@ export default async function HowItWorksPage() {
       />
       <Section>
         <Breadcrumbs trail={[{ label: t("howItWorks.title") }]} />
-        <h1 className="h1 mt-4">{t("howItWorks.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t("howItWorks.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("howItWorks.intro")}</p>
       </Section>
 

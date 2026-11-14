@@ -19,6 +19,7 @@ import { getI18n } from "@/messages/server";
 import type { Gender, Pool } from "@/types";
 import { CLASS_CUTOFFS } from "@/utils/classes";
 import { combinedRankingHref, DISCIPLINES, disciplineHref, juniorRankingHref, listTabs, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
+import { hyphenate } from "@/utils/hyphenate";
 
 const GENDERS: Gender[] = ["M", "K"];
 const INACTIVE_SHOWN = 500;
@@ -37,7 +38,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
   return (
     <Section>
       <Breadcrumbs trail={[{ label: t("rankings.heading") }]} />
-      <h1 className="h1 mt-4">{t("rankings.pageHeading")}</h1>
+      <h1 className="h1 mt-4">{hyphenate(t("rankings.pageHeading"))}</h1>
       <p className="text-2xl max-w-3xl mt-2">{t("rankings.intro")}</p>
       {/* How the class column's classes are set (utils/classes.ts), with this discipline's cut-offs */}
       <p className="text-lg text-gray-700 max-w-3xl mt-3 mb-8">
@@ -102,7 +103,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
   return (
     <Section>
       <Breadcrumbs trail={[{ label: t("rankings.heading"), href: rankingHref(pool, gender) }, { label: t("rankings.junior.crumb") }]} />
-      <h1 className="h1 mt-4">{t("rankings.junior.heading")}</h1>
+      <h1 className="h1 mt-4">{hyphenate(t("rankings.junior.heading"))}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t("rankings.junior.intro")}</p>
       <AgeTabs junior all={rankingHref(pool, gender)} juniors={juniorRankingHref(pool, gender)} />
       <GenderTabs current={listTabs(pool, gender)} junior />
@@ -141,7 +142,7 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
   return (
     <Section>
       <Breadcrumbs trail={crumbs} />
-      <h1 className="h1 mt-4">{t(junior ? "rankings.junior.heading" : "rankings.pageHeading")}</h1>
+      <h1 className="h1 mt-4">{hyphenate(t(junior ? "rankings.junior.heading" : "rankings.pageHeading"))}</h1>
       <p className="text-2xl max-w-3xl mt-2 mb-8">{t(junior ? "rankings.junior.intro" : "rankings.intro")}</p>
       <AgeTabs junior={junior} all={combinedRankingHref(gender)} juniors={combinedRankingHref(gender, true)} />
       <GenderTabs current={listTabs("combined", gender)} junior={junior} />

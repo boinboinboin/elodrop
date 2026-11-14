@@ -24,6 +24,7 @@ import type { TeamDivisionEntry, TeamMatchesIndex, TeamMatchesWeekEntry } from "
 import { seasonLabel } from "@/utils/format";
 import { seasonSlug, teamDivisionHref, teamMatchesHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
+import { hyphenate } from "@/utils/hyphenate";
 
 type Season = TeamMatchesIndex["seasons"][number];
 
@@ -37,7 +38,7 @@ export default async function TeamMatches({ period, junior = false }: { period: 
     <>
       <Section>
         <Breadcrumbs trail={junior ? [{ label: t("teamMatches.breadcrumb"), href: teamMatchesHref() }, { label: t("teamMatches.juniorsCrumb") }] : [{ label: t("teamMatches.breadcrumb") }]} />
-        <h1 className="h1 mt-4">{t(junior ? "teamMatches.juniorTitle" : "teamMatches.title")}</h1>
+        <h1 className="h1 mt-4">{hyphenate(t(junior ? "teamMatches.juniorTitle" : "teamMatches.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("teamMatches.intro")}</p>
         <div className="max-w-3xl mt-4 space-y-3 text-gray-700 [&_strong]:font-semibold">{blocks("teamMatches.explanation")}</div>
       </Section>

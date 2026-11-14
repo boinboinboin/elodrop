@@ -34,6 +34,7 @@ import { absoluteUrl, pageMetadata } from "@/utils/metadata";
 import { clubByOrganiser, organizationOf, placeOf } from "@/utils/structuredData";
 import { parseId } from "@/utils/parse";
 import { isSingles } from "@/utils/pools";
+import { hyphenate } from "@/utils/hyphenate";
 import {
   type Order,
   allEntries,
@@ -120,7 +121,7 @@ export default async function TournamentPage({ params }: PageProps<"/[lang]/tour
             ...(organizer ? { organizer } : {}),
           }}
         />
-        <h1 className="h1 mt-4">{tour.name}</h1>
+        <h1 className="h1 mt-4">{hyphenate(tour.name)}</h1>
         {tour.startDate && <p className="text-2xl text-gray-700 mt-2">{dateRange(tour.startDate, tour.endDate, true)}</p>}
         {/* Ended, but some events still have no results (pipeline/upcoming.mjs looks for them) */}
         {tour.events.some((e) => e.resultsMissing) && (

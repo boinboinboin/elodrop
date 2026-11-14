@@ -9,6 +9,7 @@ import Section from "@/components/ui/Section";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getI18n } from "@/messages/server";
 import { ACCENT } from "@/utils/logo";
+import { hyphenate } from "@/utils/hyphenate";
 
 // The court's lines, white on every mat
 const LINES = "#fff";
@@ -35,7 +36,7 @@ export default async function NotFound() {
           </g>
         </g>
       </svg>
-      <h1 className="h1">{t("layout.notFound.title")}</h1>
+      <h1 className="h1">{hyphenate(t("layout.notFound.title"))}</h1>
       <p className="text-2xl mt-2 max-w-3xl">{t("layout.notFound.call")}</p>
       <p className="text-gray-700 mt-4 max-w-3xl">{t("layout.notFound.text")}</p>
       <p className="mt-4">
