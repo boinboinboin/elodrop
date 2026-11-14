@@ -152,7 +152,7 @@
     "elo": "Høyest rating vant",
     "official": "Flest rankingpoeng vant",
     "nerd1": "Endringer vurderes etter log loss på kamper innstillingene ikke ble justert på (lavere er bedre): den belønner sikre riktige prediksjoner og straffer sikre gale. De nåværende reglene ble justert på sesongene 2025/26 og 2026/27, med 2023–25 holdt utenfor, og sjekket på hver sesong siden 2017/18.",
-    "nerd2": "Testet og ikke brukt, fordi de predikerte dårligere: at gjentatte kamper mot samme motstander teller mindre, en høyere K-faktor for nykommere, å nedvekte resultater mot ustabile motstandere (som Glicko gjør), hjemmefordel i lagkamper, å rate en hel turnering samtidig, og ratinger som synker mens en spiller er borte.",
+    "nerd2": "Testet og ikke brukt, fordi de predikerte dårligere: at gjentatte kamper mot samme motstander teller mindre, en høyere K-faktor for nykommere, å nedvekte resultater mot ustabile motstandere (som Glicko gjør), hjemmefordel i lagspill, å rate en hel turnering samtidig, og ratinger som synker mens en spiller er borte.",
     "nerd3": "Hver regel, parameter og test er skrevet ned i <spec>spesifikasjonen</spec> og <benchmark>benchmarken</benchmark>."
   },
   "data": {

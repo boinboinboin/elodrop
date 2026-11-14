@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.28.10 (2026-11-14)
+
+- Norwegian: "lagkamper" is now "lagspill": the menu item and the team match pages' titles are "Lagspill", as are Eliteserien's headings and the page descriptions. One is still "en lagkamp", and "lagkampene" stays.
+
 ## v1.28.9 (2026-11-13)
 
 - Only the search engines (Google, Bing, DuckDuckGo, Apple) and link previews are let in by robots.txt; every other crawler is asked to stay out, instead of only the ones named. SEO tools and new AI crawlers are kept out before their first sweep of the site, not after: AhrefsBot fetched 18,000 pages in a week.

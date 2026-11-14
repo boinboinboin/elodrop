@@ -1,29 +1,29 @@
 {
   "metadata": {
-    "title": "Lagkamper",
-    "week": "Lagkamper, {week}",
-    "titleJunior": "Juniorlagkamper",
-    "seasonJunior": "Juniorlagkamper {season}",
-    "weekJunior": "Juniorlagkamper, {week}",
+    "title": "Lagspill",
+    "week": "Lagspill, {week}",
+    "titleJunior": "Juniorlagspill",
+    "seasonJunior": "Juniorlagspill {season}",
+    "weekJunior": "Juniorlagspill, {week}",
     "match": "{home} – {away}, {date}",
-    "season": "Lagkamper {season}",
+    "season": "Lagspill {season}",
     "division": "{division} {season}"
   },
-  "breadcrumb": "Lagkamper",
-  "title": "Lagkamper",
-  "juniorTitle": "Juniorlagkamper",
+  "breadcrumb": "Lagspill",
+  "title": "Lagspill",
+  "juniorTitle": "Juniorlagspill",
   "ages": "Aldersgruppe",
   "seniors": "Senior",
   "juniors": "Junior (U13–U19)",
   "juniorsCrumb": "Junior",
-  "noneOfAge": "Ingen lagkamper i denne aldersgruppen ennå.",
-  "intro": "Alle lagkamper i seriene, divisjon for divisjon: resultatene, hver kamp, overraskelsene og hvor sterke lagene var.",
+  "noneOfAge": "Ingen lagspill i denne aldersgruppen ennå.",
+  "intro": "Alle lagspill i seriene, divisjon for divisjon: resultatene, hver kamp, overraskelsene og hvor sterke lagene var.",
   "explanation": "Et lags styrke er oppstillingen det stilte med. Hver kamps seierssjanse er regnet ut fra spillernes ratinger rett før den, og sammen gir de lagets sjanse til å vinne lagkampen.\n\n- En <strong>lagkamp</strong> er en overraskelse når vinneren hadde under 30 % sjanse.\n- En <strong>kamp</strong> er en overraskelse etter de samme reglene som de største overraskelsene: mellom etablerte spillere.",
-  "none": "Ingen lagkamper ennå: kjør pipelinen.",
+  "none": "Ingen lagspill ennå: kjør pipelinen.",
   "season": "Sesong",
   "count": {
     "one": "{count} lagkamp",
-    "other": "{count} lagkamper"
+    "other": "{count} lagspill"
   },
   "upset": "Overraskelse",
   "upsetTitle": "Vunnet av laget med under 30 % sjanse, med oppstillingene som ble brukt",
@@ -55,7 +55,7 @@
     "introPlayoff": "Plasseringene, fra badmintonportalen.",
     "team": "Lag",
     "played": "S",
-    "playedTitle": "Lagkamper spilt",
+    "playedTitle": "Lagspill spilt",
     "won": "V",
     "wonTitle": "Vunnet",
     "drawn": "U",
@@ -81,7 +81,7 @@
     "playersTitle": "Spillere som spilte for laget i sesongen",
     "actual": "Faktisk",
     "actualTitle": "Kamper faktisk vunnet per lagkamp i gruppen",
-    "actualCell": "Over {ties} lagkamper",
+    "actualCell": "Over {ties} lagspill",
     "howTitle": "Slik regnes det",
     "how": "- <strong>Troppen:</strong> alle som spilte for laget i sesongen, med ratingene fra uken {date}, gruppens siste lagkamp. Mangler en double- eller mixrating, regnes den fra singleratingen.\n- <strong>Oppstillingen:</strong> lagets beste i gruppens format. Kampene fylles én om gangen med spilleren eller paret som har best sjanse mot gruppens gjennomsnittlige motstander. Hver spiller spiller høyst to kamper, og én per disiplin.\n- <strong>Lagkampene:</strong> lagene møtes oppstilling mot oppstilling, kamp for kamp, med de samme seierssjansene som ratingene. En kamp et lag ikke kan stille i, er walkover.\n\n<strong>Forventet</strong> er kampene vunnet per lagkamp, i snitt mot gruppens andre lag. <strong>Seier</strong> er sjansen for å vinne en lagkamp. <strong>Faktisk</strong> er kampene laget virkelig vant per lagkamp, fra de offisielle resultatene.\n\nTroppene regnes på full styrke. Et lag som sjelden stilte sine beste spillere, gjør det derfor dårligere enn forventet."
   },
@@ -90,10 +90,10 @@
   "filter": {
     "label": "Lag",
     "all": "Alle lag",
-    "none": "Ingen lagkamper for {team} her.",
+    "none": "Ingen lagspill for {team} her.",
     "search": "Søk etter lag eller klubb",
-    "found": "{found} av {total} lagkamper",
-    "noneFound": "Ingen lagkamper passer med søket ditt."
+    "found": "{found} av {total} lagspill",
+    "noneFound": "Ingen lagspill passer med søket ditt."
   },
   "divisions": {
     "title": "Divisjoner {season}",
