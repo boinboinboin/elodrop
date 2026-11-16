@@ -2,18 +2,19 @@
 // for nerds under it (shown with the switch on), and a formula.
 import type { ReactNode } from "react";
 import { NerdOnly } from "@/components/how-it-works/NerdMode";
+import { Reveal } from "@/components/ui/Motion";
 import { getI18n } from "@/messages/server";
 
-/** A part of the page: its number in its colour, its heading and the plain text, then anything else */
+/** A part of the page: its number in its colour, its heading and the plain text, then anything else; it fades up as it scrolls into view */
 export function Part({ id, number, color, title, children }: { id: string; number: number; color: string; title: string; children: ReactNode }) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24 xl:scroll-mt-8">
+    <Reveal as="section" id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24 xl:scroll-mt-8">
       <div className="flex items-baseline gap-3 mb-4">
         <span aria-hidden="true" className="font-mono text-sm font-semibold" style={{ color }}>{String(number).padStart(2, "0")}</span>
         <h2 id={`${id}-title`} className="text-3xl">{title}</h2>
       </div>
       <div className="grid gap-4 text-lg max-w-3xl [&_strong]:font-semibold">{children}</div>
-    </section>
+    </Reveal>
   );
 }
 

@@ -15,17 +15,19 @@
 // - The Sanity webhook, after a document is published, changed or deleted: its body says which
 //   document, so only the pages using it refresh (the tags in data/sanityTags.ts, used by data/sanity.ts):
 //     a tournament → its own pages (the nightly check refreshes them again only if this call didn't arrive)
+//     a written page (About, Help & support; _id page-about-nb) → that page in both languages (two small pages)
 //     a badge, a club or a hall → nothing now: the badges are on every player page (about 23,600 with both
 //       languages), the clubs on nearly every page and the halls on every team match page (about 12,000), so
 //       they wait for the night, when the pipeline refreshes each kind once if any of it changed
 //   To show one at once (seldom needed), call this by hand with its tag (sanity:badges, sanity:clubs, sanity:venues):
 //     curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" "https://www.elodrop.no/api/revalidate?tag=sanity:badges"
-//   So the webhook needs only tournaments (filter _type == "tournament"), with the projection { _id, _type, cup2000Id }.
+//   So the webhook needs only tournaments and written pages (filter _type in ["tournament", "page"]), with the
+//   projection { _id, _type, cup2000Id }.
 //   Drafts are skipped (the webhook should leave them out anyway: the Studio saves one every few seconds).
 //   Without a body, ?tag=sanity refreshes all of Sanity's content.
 import { revalidateTag } from "next/cache";
 import { DATA_TAG, fileTag, isDataPath } from "@/data/dataTags";
-import { SANITY_TAG, TOURNAMENTS_TAG, tournamentTag } from "@/data/sanityTags";
+import { PAGES_TAG, pageKeyOf, pageTag, SANITY_TAG, TOURNAMENTS_TAG, tournamentTag } from "@/data/sanityTags";
 
 const isTag = (tag: string) => tag === DATA_TAG || tag === SANITY_TAG || /^(elo-data|sanity):[a-z0-9:-]+$/.test(tag);
 /** The most files one call refreshes (the pipeline sends more in several calls) */
@@ -47,6 +49,10 @@ function sanityTags(body: Body | null): string[] | null {
   switch (body._type) {
     case "tournament":
       return [typeof body.cup2000Id === "number" ? tournamentTag(body.cup2000Id) : TOURNAMENTS_TAG];
+    case "page": {
+      const key = typeof body._id === "string" ? pageKeyOf(body._id) : null;
+      return [key ? pageTag(key) : PAGES_TAG];
+    }
     case "venue":
     case "badge":
     case "club":

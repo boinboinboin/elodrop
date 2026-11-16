@@ -4,6 +4,7 @@
 import type { Metadata } from "next";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
+import { Lead, MotionPage, Reveal, Title } from "@/components/ui/Motion";
 import Section from "@/components/ui/Section";
 import Release, { KindBadge, Markdown, releaseId } from "@/components/whats-new/Release";
 import { getI18n } from "@/messages/server";
@@ -38,11 +39,13 @@ export default async function WhatsNewPage() {
   const colorOf = (r: ReleaseData) => (r.name === "launch" ? "var(--color-accent)" : PALETTE[features.indexOf(r) % 5]);
 
   return (
-    <>
+    // The title's words rise in, then the intro; each version fades up as it scrolls into view (the days stay put,
+    // sticky beside them)
+    <MotionPage>
       <Section>
         <Breadcrumbs trail={[{ label: t("whatsNew.title") }]} />
-        <h1 className="h1 mt-4">{hyphenate(t("whatsNew.title"))}</h1>
-        <p className="text-2xl max-w-3xl mt-2">{t("whatsNew.intro")}</p>
+        <Title text={hyphenate(t("whatsNew.title"))} />
+        <Lead words={t("whatsNew.title").split(" ").length} className="mt-2">{t("whatsNew.intro")}</Lead>
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           {latest && (
             <a href={`#${releaseId(latest)}`} className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 font-mono text-sm hover:opacity-80 transition-opacity">
@@ -70,7 +73,9 @@ export default async function WhatsNewPage() {
               </div>
               <div className="grid gap-4 md:border-l md:border-gray-300 md:pl-8">
                 {day.releases.map((r) => (
-                  <Release key={r.version} release={r} color={colorOf(r)} />
+                  <Reveal key={r.version}>
+                    <Release release={r} color={colorOf(r)} />
+                  </Reveal>
                 ))}
               </div>
             </li>
@@ -102,6 +107,6 @@ export default async function WhatsNewPage() {
           </div>
         </Section>
       )}
-    </>
+    </MotionPage>
   );
 }

@@ -10,6 +10,7 @@ import { AwardLine, fillBadgeText, levelView } from "@/components/players/Achiev
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
+import { Lead, MotionPage, Reveal, Title } from "@/components/ui/Motion";
 import Section from "@/components/ui/Section";
 import { getAchievementStats } from "@/data/achievements";
 import { getMeta } from "@/data/meta";
@@ -59,28 +60,30 @@ export default async function AchievementsPage() {
     .sort((a, b) => holders(a, stats) - holders(b, stats) || a.title.localeCompare(b.title));
 
   return (
-    <>
+    // The title's words rise in, then the intro; each card fades up as it scrolls into view, the right column a
+    // moment after the left
+    <MotionPage>
       <Section>
         <Breadcrumbs trail={[{ label: t("achievements.title") }]} />
-        <h1 className="h1 mt-4">{hyphenate(t("achievements.title"))}</h1>
-        <p className="text-2xl max-w-3xl mt-2">{t("achievements.intro")}</p>
+        <Title text={hyphenate(t("achievements.title"))} />
+        <Lead words={t("achievements.title").split(" ").length} className="mt-2">{t("achievements.intro")}</Lead>
       </Section>
       <Section>
         {sorted.length ? (
           // Each card is two rows of the page's grid (subgrid): its body, as tall as the body beside it, and
           // its list of the latest, only as tall as its own, so opening one doesn't stretch its neighbour
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-x-6">
-            {sorted.map((badge) => (
-              <li key={badge.id} className="grid grid-rows-subgrid row-span-2">
+            {sorted.map((badge, i) => (
+              <Reveal as="li" key={badge.id} delay={(i % 2) * 0.08} className="grid grid-rows-subgrid row-span-2">
                 <BadgeCard badge={badge} stats={stats} links={meta?.tournamentLinks ?? {}} />
-              </li>
+              </Reveal>
             ))}
           </ul>
         ) : (
           <p>{t("achievements.none")}</p>
         )}
       </Section>
-    </>
+    </MotionPage>
   );
 }
 

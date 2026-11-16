@@ -13,3 +13,12 @@ export const TOURNAMENTS_TAG = "sanity:tournaments";
 export const tournamentTag = (cup2000Id: number) => `${TOURNAMENTS_TAG}:${cup2000Id}`;
 /** The players' badges (title, description, art, the players given one by hand): every player page, so refreshed by the nightly run when they changed, not the Sanity webhook */
 export const BADGES_TAG = "sanity:badges";
+/** The pages written in the Studio (About, Help & support) */
+export const PAGES_TAG = "sanity:pages";
+/** Their keys: their addresses on the site (/about) and their documents' ids (page-about-nb) */
+export const WRITTEN_PAGES = ["about", "support"] as const;
+export type WrittenPageKey = (typeof WRITTEN_PAGES)[number];
+/** One written page ("about", "support"), both languages: its own two pages, so the Sanity webhook refreshes it at once */
+export const pageTag = (key: string) => `${PAGES_TAG}:${key}`;
+/** The written page a document is ("page-about-en" → "about"), or null (another document) */
+export const pageKeyOf = (id: string) => /^page-([a-z]+)-(?:nb|en)$/.exec(id)?.[1] ?? null;

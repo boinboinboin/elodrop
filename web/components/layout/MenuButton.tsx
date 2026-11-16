@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import InstallApp from "@/components/layout/InstallApp";
 import LanguagePicker from "@/components/layout/LanguagePicker";
+import { usePublishedPages, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import ThemePicker from "@/components/layout/ThemePicker";
 import Link from "@/components/ui/Link";
 import { useI18n } from "@/messages/client";
@@ -19,9 +20,13 @@ interface MenuLink {
   label: string;
   /** Small text after the label ("v1.15.0") */
   detail?: string;
+  /** A page written in the Studio: linked only once it's published (./PublishedPages.tsx) */
+  page?: WrittenPageKey;
 }
 
-export default function MenuButton({ links, about }: { links: MenuLink[]; about: MenuLink[] }) {
+export default function MenuButton({ links, about: allAbout }: { links: MenuLink[]; about: MenuLink[] }) {
+  const published = usePublishedPages();
+  const about = allAbout.filter((l) => !l.page || published[l.page]);
   const [open, setOpen] = useState(false);
   const [openedAt, setOpenedAt] = useState<string | null>(null);
   const { t } = useI18n();
