@@ -32,6 +32,8 @@
     "winChance": "won with a {chance} chance",
     "all": "All achievements",
     "close": "Close the achievements",
+    "show": "Show details",
+    "hide": "Hide details",
     "streak": "{count} wins in a row",
     "values": {
       "ironPlayer": "{count} rated matches",

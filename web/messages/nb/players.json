@@ -32,6 +32,8 @@
     "winChance": "vant med {chance} sjanse",
     "all": "Alle prestasjoner",
     "close": "Lukk prestasjonene",
+    "show": "Vis detaljer",
+    "hide": "Skjul detaljer",
     "streak": "{count} seire på rad",
     "values": {
       "ironPlayer": "{count} ratede kamper",

@@ -1,7 +1,9 @@
 // A group's power ranking (pipeline/team-matches.mjs): its teams by the players who played for them
 // that season, as expected matches won per team match against the group's other teams, beside the
-// matches each actually won per team match, with how it's worked out folded under it
+// matches each actually won per team match, with how it's worked out folded under it. A team's name shows its team
+// matches (TeamFilter.tsx TeamButton).
 import Team from "@/components/clubs/Team";
+import { TeamButton } from "@/components/team-matches/TeamFilter";
 import Card from "@/components/ui/Card";
 import Disclosure from "@/components/ui/Disclosure";
 import { ROW } from "@/components/ui/styles";
@@ -30,7 +32,7 @@ export default async function PowerRanking({ power, clubs }: { power: TeamPowerR
             {power.teams.map((team) => (
               <tr key={team.team} data-team={team.team} className={ROW}>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-600">{team.rank}</td>
-                <td className="py-2 pr-4"><Team name={team.team} club={team.club} clubs={clubs} size={5} /></td>
+                <td className="py-2 pr-4"><TeamButton team={team.team}><Team name={team.team} club={team.club} clubs={clubs} size={5} linked={false} /></TeamButton></td>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums">{num(team.expected, 2)}</td>
                 {played && (
                   <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-700" title={team.actual ? t("teamMatches.power.actualCell", { ties: team.actual.ties }) : undefined}>

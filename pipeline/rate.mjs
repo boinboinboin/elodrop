@@ -236,17 +236,16 @@ function correct(m, source) {
   return { ...m, score: sets.map((x) => x.join("/")).join(","), walkover: false, winner: won1 > won2 ? 1 : won2 > won1 ? 2 : null };
 }
 
-// A badmintonportalen tournament's matches with corrections.txt applied (removed matches left out),
-// keyed as toGame keys them: for other scripts (achievements.mjs, the event winners).
+// Matches from one source ("T588", "L13279") with corrections.txt applied, keyed as toGame keys them:
+// each corrected, or null where removed
 let correctionsRead = false;
-export function correctedMatches(t) {
+function correctedList(source, matches) {
   if (!correctionsRead) {
     corrections = readCorrections();
     correctionsRead = true;
   }
-  const source = `T${t.tournamentId}`;
   const seen = new Map();
-  return (t.matches ?? []).flatMap((m) => {
+  return matches.map((m) => {
     let key = source;
     if (m.side1.length && m.side2.length) {
       const pair = canonical(source, sideIds(m.side1), sideIds(m.side2));
@@ -254,9 +253,21 @@ export function correctedMatches(t) {
       seen.set(pair, n);
       if (n > 1) key = `${source}.${n}`;
     }
-    const corrected = correct(m, key);
-    return corrected ? [corrected] : [];
+    return correct(m, key);
   });
+}
+
+// A badmintonportalen tournament's matches with corrections.txt applied (removed matches left out):
+// for other scripts (achievements.mjs, the event winners)
+export function correctedMatches(t) {
+  return correctedList(`T${t.tournamentId}`, t.matches ?? []).filter(Boolean);
+}
+
+// A league tie's matches with corrections.txt applied, in their places: a removed match (it didn't
+// happen) as not played, without a score or winner. For team-matches.mjs, so the team match pages
+// show what was rated.
+export function correctedTieGames(tie) {
+  return correctedList(`L${tie.matchId}`, tie.games).map((m, i) => m ?? { ...tie.games[i], score: null, winner: null, walkover: false });
 }
 
 // Scores to review: impossible for the season's set formats, or extreme blowouts (at most 1 point
@@ -333,8 +344,9 @@ function suspiciousReport(review) {
 const complete = (pool, sides) => sides.every((side) => side.length === (DOUBLES.has(pool) ? 2 : 1) && side.every((p) => p.id));
 
 // One rateable game: both sides complete, all with ids. With meta.previews, a league match not played
-// (a walkover, no result) whose sides are complete is returned as a preview instead (`preview: true`):
-// not rated, only its chance from the ratings before it (computeRatings' `previews`).
+// (a walkover, no result, or removed in corrections.txt: shown not played) whose sides are complete is
+// returned as a preview instead (`preview: true`): not rated, only its chance from the ratings before it
+// (computeRatings' `previews`).
 function toGame(original, meta) {
   const pool = POOLS[original.discipline];
   if (!pool) return null;
@@ -346,13 +358,14 @@ function toGame(original, meta) {
     if (n > 1) meta = { ...meta, keySource: `${meta.source}.${n}` };
   }
   const m = correct(original, meta.keySource ?? meta.source);
+  const { side1, side2 } = m ?? original;
+  const preview = () => (meta.previews && complete(pool, [side1, side2]) ? { preview: true, pool, side1, side2, key: matchKey(meta.keySource ?? meta.source, side1, side2), ...meta } : null);
   if (!m) {
     skipped.removed++;
-    return null;
+    return preview();
   }
   if (m === original) checkScore(m, meta);
   const sets = R.parseSets(m.score ?? "");
-  const preview = () => (meta.previews && complete(pool, [m.side1, m.side2]) ? { preview: true, pool, side1: m.side1, side2: m.side2, key: matchKey(meta.keySource ?? meta.source, m.side1, m.side2), ...meta } : null);
   if (R.isWalkover(m, sets, meta.day)) {
     skipped.walkover++;
     return preview();

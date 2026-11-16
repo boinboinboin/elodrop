@@ -12,6 +12,13 @@ Every change merged into `main` gets an entry here, newest first.
 
 - elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.
 
+## v1.28.12 (2026-11-16)
+
+- Player pages: a "Show details" button beside the badges (under them on phones) makes it clear they open, and opens them.
+- Division pages: clicking a team in the standings or the power ranking shows just that team's team matches (click it again for all), and on smaller screens scrolls down to them.
+- Division pages: between 1024 and 1280px wide, the tables no longer lie over the team matches; they now sit above them until the screen is wide enough for both side by side.
+- Team match pages show the hand corrections the ratings already used: a match that never happened is shown as not played, with each side's chance as for other matches not played, and no longer counts in the score. OSI–Klemetsrud (22 March 2026) is now 1–8: its 1st women's doubles, entered as 21-19 21-19, was never played and is no longer rated.
+
 ## v1.28.11 (2026-11-14)
 
 - Page titles no longer hyphenate long words in odd places on phones: a long word now breaks only where it's been marked by hand ("Turnerings-trekninger", "badminton-rangering").

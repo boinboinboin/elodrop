@@ -4,13 +4,14 @@
 // under their name. Clicking one opens a box below (its details rendered on the server:
 // components/players/Achievements.tsx), with a pointer up to the badge clicked: that badge first, in
 // full across the box with how rare it is, then the others, the rarest first. Clicking another badge
-// puts it first; clicking it again, or the box's close button, closes the box. Closed at first, so
+// puts it first; clicking it again, or the box's close button, closes the box. A "Show details" button beside the
+// badges opens it too (on the first badge), so it's plain that they open. Closed at first, so
 // the page doesn't move until asked. How rare each badge is comes from app/api/achievement-stats, loaded here, so
 // the page doesn't depend on achievements.json (which changes with every run).
 import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { ArrowRight, Cross } from "@/components/SVG";
+import { ArrowRight, ChevronRight, Cross } from "@/components/SVG";
 import Link from "@/components/ui/Link";
-import { ICON_BUTTON, TEXT_LINK } from "@/components/ui/styles";
+import { BUTTON, ICON_BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { badgeHolders, type RarityOf, type RarityStats } from "@/utils/achievements";
 
@@ -87,28 +88,45 @@ export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }
 
   return (
     <div className="relative mt-3">
-      <ul className="flex flex-wrap gap-2" aria-label={t("players.achievements.title")}>
-        {items.map((item) => (
-          <li key={item.id}>
-            <button
-              type="button"
-              ref={(el) => {
-                if (el) buttons.current.set(item.id, el);
-                else buttons.current.delete(item.id);
-              }}
-              onClick={() => setOpen(open === item.id ? null : item.id)}
-              aria-expanded={open === item.id}
-              aria-controls={boxId}
-              title={item.title}
-              aria-label={item.count > 1 ? `${item.title} ×${item.count}` : item.title}
-              className={`relative w-11 h-11 inline-flex items-center justify-center cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 ${open === item.id ? "-translate-y-0.5" : ""}`}
-            >
-              <Art src={item.art} className="w-11 h-11" />
-              {item.count > 1 && <TimesLabel count={item.count} className="absolute -right-1.5 -bottom-1" />}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* The badges, then the details button: under them on phones, beside them from sm up (at the top, by the
+          first row, however many rows the badges take, so more badges never move it) */}
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
+        <ul className="flex flex-wrap gap-2 min-w-0" aria-label={t("players.achievements.title")}>
+          {items.map((item) => (
+            <li key={item.id}>
+              <button
+                type="button"
+                ref={(el) => {
+                  if (el) buttons.current.set(item.id, el);
+                  else buttons.current.delete(item.id);
+                }}
+                onClick={() => setOpen(open === item.id ? null : item.id)}
+                aria-expanded={open === item.id}
+                aria-controls={boxId}
+                title={item.title}
+                aria-label={item.count > 1 ? `${item.title} ×${item.count}` : item.title}
+                className={`relative w-11 h-11 inline-flex items-center justify-center cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 ${open === item.id ? "-translate-y-0.5" : ""}`}
+              >
+                <Art src={item.art} className="w-11 h-11" />
+                {item.count > 1 && <TimesLabel count={item.count} className="absolute -right-1.5 -bottom-1" />}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {/* Said in words too: many didn't see that the badges open. Opens on the first badge, as clicking it would.
+            As the site's buttons (filled black while the box is open), in the box heading's small mono capitals;
+            from sm up level with the badges' middle (44px high, the button 32px) */}
+        <button
+          type="button"
+          onClick={() => setOpen(open ? null : items[0].id)}
+          aria-expanded={!!open}
+          aria-controls={boxId}
+          className={`group shrink-0 sm:mt-1.5 inline-flex items-center gap-1.5 h-8 pl-3 pr-2 font-mono text-[11px] uppercase tracking-widest whitespace-nowrap ${BUTTON} ${open ? "bg-black text-white" : ""}`}
+        >
+          {t(open ? "players.achievements.hide" : "players.achievements.show")}
+          <ChevronRight className={`text-sm transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${open ? "rotate-90" : "group-hover:translate-x-0.5"}`} />
+        </button>
+      </div>
       {open && (
         <div id={boxId} ref={box} className="relative bg-white mt-4 p-4 md:p-6 shadow-sm scroll-mt-24">
           {/* The pointer up to the badge clicked */}

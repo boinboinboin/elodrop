@@ -90,6 +90,8 @@
   "filter": {
     "label": "Team",
     "all": "All teams",
+    "show": "Show team matches for {team}",
+    "showAll": "Show team matches for all teams",
     "none": "No team matches for {team} here.",
     "search": "Search team or club",
     "found": "{found} of {total} team matches",

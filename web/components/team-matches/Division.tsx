@@ -79,15 +79,17 @@ async function Content({ params }: { params: Promise<{ period: string; division:
         const rounds = Map.groupBy(group.ties, (tie) => tie.day);
         return (
           <Section key={group.group} title={division.groups.length > 1 ? group.group : undefined}>
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
-              {/* The standings, then the power ranking to compare them with */}
-              <div className="grid gap-8">
+            {/* Side by side from xl: narrower, the tables were wider than their column and lay over the team matches */}
+            <div className="grid grid-cols-1 gap-8 xl:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] items-start">
+              {/* The standings, then the power ranking to compare them with; grid-cols-1, so a table wider than the
+                  column scrolls in its box instead of widening it */}
+              <div className="grid grid-cols-1 gap-8">
                 {group.standings && <Standings standings={group.standings} clubs={clubs} />}
                 {group.power && <PowerRanking power={group.power} clubs={clubs} />}
               </div>
               <TeamTies
                 teams={teams}
-                className="grid gap-6"
+                className="grid gap-6 scroll-mt-24"
                 sections={[...rounds].map(([day, list]) => ({
                   key: day,
                   heading: <h3 className="text-lg mb-2">{date(day)}</h3>,

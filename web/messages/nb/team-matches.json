@@ -90,6 +90,8 @@
   "filter": {
     "label": "Lag",
     "all": "Alle lag",
+    "show": "Vis lagspill for {team}",
+    "showAll": "Vis lagspill for alle lag",
     "none": "Ingen lagspill for {team} her.",
     "search": "Søk etter lag eller klubb",
     "found": "{found} av {total} lagspill",
