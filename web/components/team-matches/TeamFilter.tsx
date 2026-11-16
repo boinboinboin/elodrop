@@ -6,7 +6,7 @@
 //   can open it, and the team's rows in the standings and the power ranking are marked (their `data-team`).
 //   Reading the URL can't happen when the page is prerendered (as components/ui/Tabs.tsx), so each has its
 //   own Suspense boundary: the prerendered HTML shows every team, and the browser then follows the URL. A
-//   team that isn't on the page (an older link) shows them all.
+//   team that isn't on the page (an older link) shows them all. A team's name in the tables picks it too (TeamButton).
 // - On a weekend's page (TeamMatches.tsx), a search for a team or club (TieSearch), as the rankings'.
 // The team matches are rendered on the server, all of them; the browser hides the others.
 import { parseAsString, useQueryState } from "nuqs";
@@ -74,6 +74,44 @@ function TeamSelectView({ teams, team, onSelect, className }: { teams: string[];
   );
 }
 
+/**
+ * A team's name in a division's standings or power ranking, as a button that picks the team (as the dropdown does;
+ * again: all teams) and, if the group's team matches are out of sight (below the tables on smaller screens), scrolls
+ * to them. Before the browser follows the URL, just the name.
+ */
+export function TeamButton({ team, children }: { team: string; children: ReactNode }) {
+  return (
+    <Suspense fallback={children}>
+      <UrlTeamButton team={team}>{children}</UrlTeamButton>
+    </Suspense>
+  );
+}
+
+function UrlTeamButton({ team, children }: { team: string; children: ReactNode }) {
+  const { t } = useI18n();
+  const [param, setParam] = useQueryState(TEAM_PARAM, parseAsString.withOptions({ history: "replace", scroll: false }));
+  const picked = param === team;
+  const label = picked ? t("teamMatches.filter.showAll") : t("teamMatches.filter.show", { team });
+  return (
+    <button
+      type="button"
+      aria-pressed={picked}
+      title={label}
+      onClick={(e) => {
+        setParam(picked ? null : team);
+        if (picked) return;
+        // The group's list (TeamTies in the same section), its top brought into view if it isn't
+        const list = e.currentTarget.closest("section")?.querySelector("[data-ties]");
+        const top = list?.getBoundingClientRect().top;
+        if (list && top !== undefined && (top < 0 || top > window.innerHeight * 0.75)) list.scrollIntoView({ behavior: "smooth", block: "start" });
+      }}
+      className="text-left cursor-pointer transition-colors hover:text-blue-600"
+    >
+      {children}
+    </button>
+  );
+}
+
 /** The lists of team matches, each section under its heading, narrowed to the team picked; `teams`: the page's */
 export function TeamTies({ teams, sections, className }: { teams: string[]; sections: TieSection[]; className?: string }) {
   return (
@@ -120,9 +158,10 @@ export function TieSearch({ sections, summary, className }: { sections: TieSecti
 /** The sections with the team matches that `match` (all without), leaving out those with none; `none`: shown when none do */
 function Ties({ sections, match, none, className }: { sections: TieSection[]; match?: (tie: TieItem) => boolean; none?: string; className?: string }) {
   const shown = match ? sections.map((s) => ({ ...s, ties: s.ties.filter(match) })).filter((s) => s.ties.length) : sections;
-  if (match && !shown.length) return <p className="text-gray-600">{none}</p>;
+  // data-ties: what a team's button in the tables scrolls to (TeamButton)
+  if (match && !shown.length) return <p data-ties className="text-gray-600 scroll-mt-24">{none}</p>;
   return (
-    <div className={className}>
+    <div data-ties className={className}>
       {shown.map((section) => (
         <div key={section.key}>
           {section.heading}

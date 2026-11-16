@@ -17,6 +17,7 @@
 //                       (web/scripts/import-venues.mts)
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { lowestRatings, playedOdds, playerRatings } from "./eliteserien.mjs";
+import { correctedTieGames } from "./rate.mjs";
 import * as R from "./rules.mjs";
 import { leagueLevel } from "./rules.mjs";
 
@@ -62,8 +63,22 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
   const group = read(`${DIR}data/league/${file}`);
   const rank = rankOf(group);
   for (const tie of group.ties) {
-    const [homeWon, awayWon] = tie.score.split("-").map(Number);
-    if (!Number.isFinite(homeWon) || !Number.isFinite(awayWon)) continue;
+    const official = tie.score.split("-").map(Number);
+    if (!official.every(Number.isFinite)) continue;
+    // With corrections.txt applied, as rated (rate.mjs): a match that didn't happen ("remove") is shown
+    // not played and no longer counts for the side it was given to, and a corrected winner takes the
+    // point. Everything below (the score, the power ranking's matches won) then follows the corrected tie.
+    const corrected = correctedTieGames(tie);
+    const won = [...official];
+    tie.games.forEach((g, i) => {
+      const [before, after] = [g.winner, corrected[i].winner];
+      if (before === after) return;
+      if (before === 1 || before === 2) won[before - 1]--;
+      if (after === 1 || after === 2) won[after - 1]++;
+    });
+    tie.games = corrected;
+    tie.score = won.join("-");
+    const [homeWon, awayWon] = won;
     const [home, away] = [teamName(tie.home), teamName(tie.away)];
     const ratedGames = rated[tie.matchId] ?? {};
     // A side's players with their ratings before and the changes (r: the match in league-games.json;

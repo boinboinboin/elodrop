@@ -2,8 +2,10 @@
 // ranking on the division page (components/team-matches/Division.tsx): place, team matches played,
 // won, drawn and lost, matches and sets won and lost, and table points. A knockout playoff
 // (Eliteserien's) has only the places. The dashed line badmintonportalen draws under some places (the
-// ones going through to the playoffs, or a split into top and bottom groups) is dashed here too.
+// ones going through to the playoffs, or a split into top and bottom groups) is dashed here too. A team's name shows
+// its team matches (TeamFilter.tsx TeamButton).
 import Team from "@/components/clubs/Team";
+import { TeamButton } from "@/components/team-matches/TeamFilter";
 import Card from "@/components/ui/Card";
 import { ROW } from "@/components/ui/styles";
 import { getI18n } from "@/messages/server";
@@ -49,7 +51,7 @@ export default async function Standings({ standings, clubs }: { standings: TeamS
             {standings.map((row, i) => (
               <tr key={row.team} data-team={row.team} className={line(i) ? "border-b border-dashed border-gray-400" : ROW}>
                 <td className="py-2 pr-2 sm:pr-4 text-right tabular-nums text-gray-600">{row.place || EMPTY}</td>
-                <td className="py-2 pr-4"><Team name={row.team} club={row.club} clubs={clubs} size={5} /></td>
+                <td className="py-2 pr-4"><TeamButton team={row.team}><Team name={row.team} club={row.club} clubs={clubs} size={5} linked={false} /></TeamButton></td>
                 {table && (
                   <>
                     {columns.map((key) => (

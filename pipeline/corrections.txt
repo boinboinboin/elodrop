@@ -9,13 +9,14 @@
 #
 # Corrections:
 #   walkover          not rated, like a walkover
-#   remove            the match didn't happen
+#   remove            the match didn't happen (a team match's is shown as not played)
 #   score 15/9,15/12  the right score; the winner follows from it
 #   winner 2          the other side won (score unchanged)
 #
 # data/suspicious-scores.txt lists scores worth checking, as lines ready to copy here.
 
 T7143 47570 vs 24320  walkover  # Mossetreffen 2026: 21-1 21-1 is impossible with sets to 15
+L13279 24320+29866 vs 48778+46511  remove  # OSI–Klemetsrud 2026-03-22, 1. DD: never played, 21-19 21-19 was entered as a fake result
 
 
 # ################################################################################################
