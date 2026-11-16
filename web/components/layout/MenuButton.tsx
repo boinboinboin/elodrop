@@ -73,7 +73,10 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
       <div
         id={id}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-40 bg-white border-b border-gray-200 shadow-sm md:left-auto md:right-0 md:top-[calc(100%+0.5rem)] md:w-72 md:border transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+        // The header is sticky, so the menu can't be scrolled to with the page: on phones it covers the screen below the
+        // header and scrolls in itself; from md the dropdown scrolls in itself when it's taller than the screen below
+        // the header. Scrolling to its end doesn't go on to scroll the page behind it (overscroll-contain).
+        className={`absolute inset-x-0 top-full z-40 bg-white border-b border-gray-200 shadow-sm overflow-y-auto overscroll-contain max-md:h-[calc(100dvh-var(--header-offset))] md:max-h-[calc(100dvh-var(--header-offset)-1rem)] md:left-auto md:right-0 md:top-[calc(100%+0.5rem)] md:w-72 md:border transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
       >
         <div className="base-container px-4 py-2 md:px-5 md:py-3">
           <nav aria-label={t("layout.nav.label")} className="xl:hidden">
