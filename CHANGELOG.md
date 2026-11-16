@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.31.2 (2026-11-16)
+
+- Eliteserien: the line under the title counts all the season's regular-season ties ("12 of 28", not "12 of 16"), and a round with ties still to play no longer shows as finished after its first day. In the play-offs, semi-finals already played stay in the brackets.
+
 ## v1.31.1 (2026-11-16)
 
 - The site's name is written Elodrop, with a capital E, everywhere: the logo, page titles, link previews, the app and the texts.

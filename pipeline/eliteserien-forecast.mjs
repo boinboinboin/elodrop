@@ -132,8 +132,14 @@ export function forecastSeason({ teams, ref, replacement, groups, ties, history 
   const regularGroup = groups.find((g) => !isPlayoff(g));
   const regularPlayed = ties.filter((t) => !isPlayoff(t));
   const playedIds = new Set(ties.map((t) => t.matchId));
-  // The regular season's ties: the schedule (or, without one, the ties played)
-  const schedule = (regularGroup?.schedule ?? regularPlayed).map((s) => ({ matchId: s.matchId, time: s.time, home: s.home, away: s.away }));
+  // A group's ties, played and to play, in order: its schedule (fetch-league.mjs) holds only the ties still to play,
+  // and none once the group is complete
+  const allTies = (group, played) =>
+    [...played, ...(group?.schedule ?? []).filter((s) => !played.some((t) => t.matchId === s.matchId))]
+      .map((s) => ({ matchId: s.matchId, time: s.time, home: s.home, away: s.away }))
+      .sort((a, b) => a.time.localeCompare(b.time) || a.matchId - b.matchId);
+  // The regular season's ties
+  const schedule = allTies(regularGroup, regularPlayed);
   const remaining = schedule.filter((s) => !playedIds.has(s.matchId) && byName.has(s.home) && byName.has(s.away));
   const playoffGroups = groups.filter(isPlayoff).sort((a, b) => a.group.localeCompare(b.group));
   const playoffDays = playoffGroups.flatMap((g) => (g.schedule ?? []).map((s) => s.time.slice(0, 10)));
@@ -177,12 +183,12 @@ export function forecastSeason({ teams, ref, replacement, groups, ties, history 
   const realOrder = (rows, tiebreak = () => 0) =>
     [...rows].sort((a, b) => b.points - a.points || diff(b.matches) - diff(a.matches) || diff(b.sets) - diff(a.sets) || diff(b.rallies) - diff(a.rallies) || tiebreak(a, b));
 
-  // The play-offs: each bracket's ties in the schedule's order (semi-final 1, semi-final 2, final, 3rd place), with
-  // the real ones played; without a schedule, the ties played in order
+  // The play-offs: each bracket's ties, played and to play, in order (semi-final 1, semi-final 2, final, 3rd place),
+  // with the real ones played
   const brackets = [0, 1].map((i) => {
     const group = playoffGroups[i];
     const played = ties.filter((t) => isPlayoff(t) && t.group === group?.group);
-    const slots = (group?.schedule ?? played).map((s) => played.find((t) => t.matchId === s.matchId) ?? { matchId: s.matchId, time: s.time, home: s.home, away: s.away });
+    const slots = allTies(group, played).map((s) => played.find((t) => t.matchId === s.matchId) ?? s);
     return { name: i === 0 ? "1-4" : "5-8", group: group?.group ?? null, slots };
   });
   const tieWinner = (tie) => {
@@ -430,7 +436,7 @@ export function forecastSeason({ teams, ref, replacement, groups, ties, history 
   const lastDay = ties.map((t) => t.day).sort().at(-1) ?? null;
   const forecast = {
     sims: SIMS,
-    rounds: rounds.map((r) => ({ ...r, ties: [...schedule, ...playoffGroups.flatMap((g) => g.schedule ?? [])].filter((s) => s.time.slice(0, 10) >= r.from && s.time.slice(0, 10) <= r.to).length || ties.filter((t) => t.day >= r.from && t.day <= r.to).length, played: ties.filter((t) => t.day >= r.from && t.day <= r.to).length })),
+    rounds: rounds.map((r) => ({ ...r, ties: [...schedule, ...brackets.flatMap((b) => b.slots)].filter((s) => s.time.slice(0, 10) >= r.from && s.time.slice(0, 10) <= r.to).length, played: ties.filter((t) => t.day >= r.from && t.day <= r.to).length })),
     lastDay,
     lastRound: lastDay ? roundOf(lastDay) : null,
     regular: { played: regularPlayed.length, total: schedule.length },
