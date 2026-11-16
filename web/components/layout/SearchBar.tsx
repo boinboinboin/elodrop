@@ -6,11 +6,11 @@
 // Enter without moving opens the first result. Escape closes the list.
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import { Search } from "@/components/SVG";
 import { startNavigationProgress } from "@/components/layout/NavigationProgress";
 import ClearButton from "@/components/ui/ClearButton";
 import { useI18n } from "@/messages/client";
-import { logoSrc } from "@/utils/clubs";
 import { loadSearchIndex, searchSite } from "@/utils/search";
 
 interface Result {
@@ -19,6 +19,7 @@ interface Result {
   club?: string | null;
   url: string;
   logo?: string | null;
+  invert?: true;
 }
 type Group = "players" | "clubs" | "tournaments" | "eliteserien";
 type Found = Partial<Record<Group, Result[]>>;
@@ -128,8 +129,7 @@ export default function SearchBar() {
                 onMouseEnter={() => setActive(i)}
                 className="flex items-center gap-2 px-3 py-2 cursor-pointer transition-colors duration-150 aria-selected:bg-gray-100"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {item.logo && <img src={logoSrc(item.logo, 5)} alt="" className="w-5 h-5 object-contain shrink-0" />}
+                {item.logo && <LogoImage src={item.logo} size={5} invert={item.invert} className="w-5 h-5" />}
                 <span>
                   {item.name}
                   <span className="block text-sm text-gray-600">{item.detail ?? item.club ?? ""}</span>

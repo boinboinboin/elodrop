@@ -56,7 +56,9 @@ export const fillBadgeText = (text: string, awards: Achievement[], format: (n: n
  */
 export function levelView(badge: Badge, level: number | undefined) {
   const own = level === undefined ? undefined : badge.levels.filter((l) => l.level <= level).at(-1);
-  return { title: own?.title ?? badge.title, description: own?.description ?? badge.description, art: own?.art ?? badge.art };
+  // The art's "Invert in dark mode" goes with the art: the level's own, else the badge's
+  const artInvert = own?.art ? own.artInvert : badge.artInvert;
+  return { title: own?.title ?? badge.title, description: own?.description ?? badge.description, art: own?.art ?? badge.art, ...(artInvert ? { artInvert } : {}) };
 }
 
 /** The level a milestone's number reaches: the highest of the badge's levels at or below it (undefined: below them all) */
@@ -94,6 +96,7 @@ export default async function Achievements({ player, badges, links }: { player: 
           rarityOf: badge.key ? { key: badge.key, level: awards[0]?.level } : { players: badge.players.length },
           title: fillBadgeText(view.title, awards, num),
           art: view.art,
+          ...(view.artInvert ? { artInvert: true as const } : {}),
           count: awards.length,
           details: <BadgeDetails description={view.description} awards={awards} links={links} />,
         };

@@ -9,14 +9,14 @@
 // each discipline's [strength, rank] (null: not listed in it). `clubs`: the clubs in the table with a page, short name
 // → [slug, logo]. In one discipline (`pool`), the clubs and players link to their pages on it.
 import { useState } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
 import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
-import type { Pool } from "@/types";
-import { logoSrc } from "@/utils/clubs";
+import type { ClubLink, Pool } from "@/types";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
@@ -27,7 +27,7 @@ export type TopPlayer = [number, string, number];
 export type PoolStanding = [number, number] | null;
 export type ClubRow = [string, number, number | null | undefined, number, number | null | undefined, number, TopPlayer[][] | PoolStanding[]];
 
-export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "combined"; pairs: boolean; rows: ClubRow[]; clubs: Record<string, [string, string | null]> }) {
+export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "combined"; pairs: boolean; rows: ClubRow[]; clubs: Record<string, ClubLink> }) {
   const { pools, signed, t } = useI18n();
   const [byPlayers, setByPlayers] = useState(false);
   const [byChange, setByChange] = useState<ChangeOrder>(null);
@@ -71,8 +71,7 @@ export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "
               <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
               <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                 <span className="flex items-center gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {entry?.[1] && <img src={logoSrc(entry[1], 8)} alt="" className="w-8 h-8 object-contain shrink-0" />}
+                  {entry?.[1] && <LogoImage src={entry[1]} size={8} invert={entry[2]} className="w-8 h-8" />}
                   {entry ? <Link href={clubHref(entry[0], tab)} className="hover:text-blue-600">{club}</Link> : club}
                 </span>
               </td>

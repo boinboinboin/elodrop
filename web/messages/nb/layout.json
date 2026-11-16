@@ -38,6 +38,10 @@
     "iosAfter": "i nettleseren, og velg «Legg til på Hjem-skjerm»."
   },
   "themes": {
+    "auto": {
+      "label": "Automatisk",
+      "description": "Yinyang eller Lights out, etter om enheten er i lys eller mørk modus"
+    },
     "yinyang": {
       "label": "Yinyang",
       "description": "Svart og hvitt"
@@ -49,6 +53,10 @@
     "allengland": {
       "label": "All England",
       "description": "All Englands grå baner"
+    },
+    "lightsout": {
+      "label": "Lights out",
+      "description": "Kullsvart, laget for OLED-skjermer"
     }
   },
   "breadcrumbs": {

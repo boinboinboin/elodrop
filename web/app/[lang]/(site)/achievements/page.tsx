@@ -125,7 +125,7 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
             levels={levels
               .map(({ level, players }) => {
                 const view = levelView(badge, level);
-                return { level, title: fillBadgeText(view.title, atLevel(badge, level), num), art: view.art, players: plural("achievements.players", players, { count: num(players) }) };
+                return { level, title: fillBadgeText(view.title, atLevel(badge, level), num), art: view.art, ...(view.artInvert ? { artInvert: true as const } : {}), players: plural("achievements.players", players, { count: num(players) }) };
               })
               .reverse()}
           >
@@ -135,7 +135,7 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
           <>
             {badge.art ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={badge.art} alt="" width={96} height={96} className="w-16 h-16 md:w-24 md:h-24 object-contain shrink-0" />
+              <img src={badge.art} alt="" width={96} height={96} className={`w-16 h-16 md:w-24 md:h-24 object-contain shrink-0${badge.artInvert ? " dark-invert" : ""}`} />
             ) : (
               <span aria-hidden="true" className="w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-gray-200" />
             )}

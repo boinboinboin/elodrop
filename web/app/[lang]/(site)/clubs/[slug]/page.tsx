@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ClubPlayers, { type ClubPlayerRow } from "@/components/clubs/ClubPlayers";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
+import LogoImage from "@/components/clubs/LogoImage";
 import PoolName from "@/components/format/PoolName";
 import SeasonLabel from "@/components/format/SeasonLabel";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -22,7 +23,6 @@ import { getClubBySlug, getClubEntries } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, ClubHistory, ClubHistoryPool, ClubsFile, Pool } from "@/types";
 import { clubRule } from "@/utils/clubs";
-import { logoSrc } from "@/utils/clubs";
 import { EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, DISCIPLINE_PARAM } from "@/utils/hrefs";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
@@ -80,8 +80,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
           }}
         />
         <div className="flex items-center gap-6 mt-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {entry.logo && <img src={logoSrc(entry.logo, 20)} alt="" className="w-20 h-20 object-contain shrink-0" />}
+          {entry.logo && <LogoImage src={entry.logo} size={20} invert={entry.logoInvert} className="w-20 h-20" />}
           <div>
             <h1 className="h1">{hyphenate(entry.title)}</h1>
             {entry.fullName && entry.fullName !== entry.title && <p className="text-2xl text-gray-700">{entry.fullName}</p>}

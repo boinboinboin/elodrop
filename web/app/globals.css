@@ -28,7 +28,8 @@ input[type="search"]::-webkit-search-decoration {
    text-blue-600 for links, green-700 and red-700 for good and bad, ...). "yinyang" (the default) is
    Tailwind's own values; another theme re-points the palette variables those classes read, under
    html[data-theme]. The choice is made in the header's menu (components/layout/ThemePicker.tsx), saved in the browser and set before
-   the page paints (app/layout.tsx). Charts, the logo's cork and other non-class colours use the
+   the page paints (app/layout.tsx); "Automatic" (the default) is Yinyang or, when the device is in dark mode,
+   "lightsout" (utils/theme.ts). Charts, the logo's cork and other non-class colours use the
    tokens below. */
 
 /* Always emitted (static): they're read from code (utils/chart.ts, utils/logo.ts), not by a class */
@@ -171,6 +172,63 @@ input[type="search"]::-webkit-search-decoration {
     --color-chart-crosshair: #aeb4bf;
     --color-chart-surface: #eef1f5;
   }
+}
+
+/* lightsout: pitch black, for OLED screens (their black pixels are off). The page is black, the cards, header and
+   footer a touch lighter, the text a soft warm cream (white glares on black), its grays the same warmth; "black"
+   (selected tabs, buttons, borders) is that cream and "white" the cards, so they swap as in Yinyang. Also "auto"'s
+   theme when the device is in dark mode (utils/theme.ts). Every text colour passes WCAG AA on the page, cards and
+   rows (the faintest, gray-500, 4.6:1 on a highlighted row; body text 13:1 on the cards); links light blue (8.1:1), good and bad a light
+   green and red. The charts' colours are stepped for black (validated on the card colour, --pairs all for the first
+   five: worst protan/deutan ΔE 11.0, normal 20.4; all eight against their neighbours: worst 18.0; all ≥ 3:1).
+   The Eliteserien zones keep their colours (all ≥ 3:1 here too). Logos and badge art that are black on transparent
+   are inverted (.dark-invert, below), as they'd vanish. */
+@layer theme {
+  html[data-theme="lightsout"] {
+    color-scheme: dark;
+    --color-stone-100: #000000;
+    --color-white: #0e0e0e;
+    --color-black: #dcd6c2;
+    /* The grays, black to cream: rows and lines (50–300), decorative text (400), text from faint to body (500–900),
+       the text the cream darkened in steps */
+    --color-gray-50: #161616;
+    --color-gray-100: #1c1c1c;
+    --color-gray-200: #2a2a2a;
+    --color-gray-300: #3d3d3d;
+    --color-gray-400: #6b6b6b;
+    --color-gray-500: #888578;
+    --color-gray-600: #9e9a8c;
+    --color-gray-700: #bbb6a5;
+    --color-gray-800: #cdc7b4;
+    --color-gray-900: #dcd6c2;
+    /* Links and good and bad, lightened to read on black; hover (700) lighter still */
+    --color-blue-500: #7aa7ff;
+    --color-blue-600: #7aa7ff;
+    --color-blue-700: #a3c2ff;
+    --color-green-600: #6fd28b;
+    --color-green-700: #5cc77a;
+    --color-red-600: #ff8f87;
+    --color-red-700: #ff7b72;
+    --color-chart-1: #265ff3;
+    --color-chart-2: #c72f21;
+    --color-chart-3: #1aa6b6;
+    --color-chart-4: #b58e18;
+    --color-chart-5: #b826b2;
+    --color-chart-6: #5b9340;
+    --color-chart-7: #838dd7;
+    --color-chart-8: #eb1e47;
+    --color-chart-other: #6e6e6b;
+    --color-chart-grid: #2a2a2a;
+    --color-chart-axis: #888578;
+    --color-chart-text: #dcd6c2;
+    --color-chart-crosshair: #4d4d4d;
+    --color-chart-surface: #0e0e0e;
+  }
+}
+/* A club logo or badge art ticked "Invert in dark mode" in the Studio (black on transparent): white in Lights out,
+   its white parts black, its colours about the same hue (components/clubs/ClubLogo.tsx) */
+html[data-theme="lightsout"] .dark-invert {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 /* Page building blocks, as on the old site */

@@ -16,6 +16,8 @@ export interface ShowcaseLevel {
   /** The level's title, its placeholders filled ("On fire: 20 in a row") */
   title: string;
   art: string | null;
+  /** The art is inverted in the dark theme */
+  artInvert?: true;
   /** "12 players" */
   players: string;
 }
@@ -56,7 +58,7 @@ export default function LevelShowcase({ levels, children }: { levels: ShowcaseLe
                 key={l.level}
                 src={l.art}
                 alt=""
-                className="absolute inset-0 w-full h-full object-contain drop-shadow-md transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none"
+                className={`absolute inset-0 w-full h-full object-contain drop-shadow-md transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none${l.artInvert ? " dark-invert" : ""}`}
                 style={place(i - current)}
               />
             ) : (
@@ -91,7 +93,7 @@ export default function LevelShowcase({ levels, children }: { levels: ShowcaseLe
                   className={`flex items-center gap-2 text-sm text-left cursor-pointer transition-colors duration-200 ${l.i === current ? "text-black" : "text-gray-500 hover:text-black"}`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {l.art ? <img src={l.art} alt="" className="w-6 h-6 object-contain shrink-0" /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
+                  {l.art ? <img src={l.art} alt="" className={`w-6 h-6 object-contain shrink-0${l.artInvert ? " dark-invert" : ""}`} /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
                   {/* The title and the number of players: on two lines on a phone, one from md up */}
                   <span className="flex flex-col md:flex-row md:gap-2">
                     <span className={l.i === current ? "underline decoration-1" : ""}>{l.title}</span>

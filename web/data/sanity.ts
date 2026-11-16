@@ -26,7 +26,12 @@ interface SanityLogo {
   height: number;
   /** The fraction cut off each side (scripts/trim-logos.mts, or set by hand in the Studio) */
   crop: { left: number; top: number; right: number; bottom: number } | null;
+  /** Inverted in the dark theme (the Studio's "Invert in dark mode", sanity/schemas/invertInDark.ts) */
+  invert: boolean | null;
 }
+
+/** `{ [key]: true }` for an image inverted in the dark theme, else nothing, so pages carry it only for those */
+const inverted = <K extends string>(image: SanityLogo | null, key: K) => (image?.invert ? ({ [key]: true } as Record<K, true>) : {});
 
 /** A logo's URL, cropped (rect=left,top,width,height in pixels) when it has a crop; Sanity's image servers do the cropping */
 const logoUrl = (logo: SanityLogo | null): string | null => (logo ? sanityImageUrl(logo) : null);
@@ -67,9 +72,9 @@ async function query<T>(projectId: string, groq: string, { raw = false, drafts =
 async function fromSanity(projectId: string): Promise<ClubEntry[]> {
   const result = await query<(Omit<ClubEntry, "logo"> & { logo: SanityLogo | null })[]>(
     projectId,
-    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop }) }`,
+    `*[_type == "club"] | order(title asc) { title, "slug": slug.current, fullName, region, website, nbfClubId, "logo": select(defined(logo.asset) => { "url": logo.asset->url, "width": logo.asset->metadata.dimensions.width, "height": logo.asset->metadata.dimensions.height, "crop": logo.crop, "invert": logo.invertInDark }) }`,
   );
-  return result.map((c) => ({ ...c, logo: logoUrl(c.logo) }));
+  return result.map((c) => ({ ...c, logo: logoUrl(c.logo), ...inverted(c.logo, "logoInvert") }));
 }
 
 /** Every club entry, by title (without their home halls: getClubHomeVenues, so a home hall added doesn't refresh every page) */
@@ -144,7 +149,7 @@ export async function getBadges(lang: Language): Promise<Badge[]> {
   if (!projectId) return [];
   type Text = { title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null };
   type Row = Text & { id: string; key: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null; listed: boolean; levels: (Text & { level: number | null; art: SanityLogo | null })[] | null };
-  const art = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop })`;
+  const art = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop, "invert": ${field}.invertInDark })`;
   const result = await query<Row[]>(
     projectId,
     `*[_type == "badge" && !(_id in path("drafts.**"))] | order(title asc) { "id": _id, key, "listed": listed != false, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${art("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${art("art")} } }`,
@@ -156,9 +161,9 @@ export async function getBadges(lang: Language): Promise<Badge[]> {
     if (!title) return [];
     const levels = (b.levels ?? [])
       .filter((l): l is typeof l & { level: number } => typeof l.level === "number")
-      .map((l) => ({ level: l.level, title: pick(l.title, l.titleEn), description: pick(l.description, l.descriptionEn), art: logoUrl(l.art) }))
+      .map((l) => ({ level: l.level, title: pick(l.title, l.titleEn), description: pick(l.description, l.descriptionEn), art: logoUrl(l.art), ...inverted(l.art, "artInvert") }))
       .sort((x, y) => x.level - y.level);
-    return [{ id: b.id, key: b.key ?? null, title, description: pick(b.description, b.descriptionEn), about: pick(b.about, b.aboutEn), art: logoUrl(b.art), players: b.players ?? [], listed: b.listed, levels }];
+    return [{ id: b.id, key: b.key ?? null, title, description: pick(b.description, b.descriptionEn), about: pick(b.about, b.aboutEn), art: logoUrl(b.art), ...inverted(b.art, "artInvert"), players: b.players ?? [], listed: b.listed, levels }];
   });
 }
 

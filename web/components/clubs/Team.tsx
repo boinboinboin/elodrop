@@ -3,9 +3,9 @@
 // units (default 6); `stacked` puts the logo above the name; `club` is the club when the name is a
 // team's ("Sandefjord 2"); `pool` opens the club page on that discipline.
 import { Fragment } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import Link from "@/components/ui/Link";
 import type { ClubEntry, Pool } from "@/types";
-import { logoSrc } from "@/utils/clubs";
 import { clubHref } from "@/utils/hrefs";
 
 interface Props {
@@ -35,10 +35,7 @@ export default function Team({ name, club, clubs, size = 6, stacked = false, lin
   const entry = clubs[club ?? name];
   const inner = (
     <>
-      {entry?.logo && (
-        // eslint-disable-next-line @next/next/no-img-element -- small logos from the CMS or public/
-        <img src={logoSrc(entry.logo, size)} alt="" className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />
-      )}
+      {entry?.logo && <LogoImage src={entry.logo} size={size} invert={entry.logoInvert} />}
       <span>{breakable(name)}</span>
     </>
   );
@@ -54,8 +51,7 @@ export default function Team({ name, club, clubs, size = 6, stacked = false, lin
 
 /** Just the club's logo (if any), named for screen readers and on hover */
 export function ClubLogo({ name, clubs, size = 4 }: { name: string | null; clubs: Record<string, ClubEntry>; size?: number }) {
-  const logo = name ? clubs[name]?.logo : null;
-  if (!logo) return null;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={logoSrc(logo, size)} alt={name ?? ""} title={name ?? ""} className="object-contain shrink-0" style={{ width: `${size * 0.25}rem`, height: `${size * 0.25}rem` }} />;
+  const entry = name ? clubs[name] : undefined;
+  if (!name || !entry?.logo) return null;
+  return <LogoImage src={entry.logo} size={size} invert={entry.logoInvert} alt={name} title={name} />;
 }

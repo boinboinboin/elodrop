@@ -16,6 +16,8 @@ export interface SearchPage {
   detail: string;
   url: string;
   logo?: string | null;
+  /** The logo is inverted in the dark theme (only when set) */
+  invert?: true;
   terms: string;
 }
 export interface SearchIndex {
@@ -175,7 +177,7 @@ export function searchSite(index: Loaded, query: string) {
     // Every Eliteserien page (no limit) that matches, else the close ones
     return withCloseMatches(list, index.words[key], m, list.filter((p) => m.matches(p.text)), limit === Infinity ? 1 : limit)
       .slice(0, limit)
-      .map(({ name, detail, url, logo }) => ({ name, detail, url, logo }));
+      .map(({ name, detail, url, logo, invert }) => ({ name, detail, url, logo, invert }));
   };
   return {
     players: searchPlayers(index, query, 6).map((p) => ({ name: p.name, club: p.club, url: playerHref(p.id) })),

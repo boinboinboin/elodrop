@@ -10,5 +10,8 @@ export const teamId = (team: string) => `team-${team.toLowerCase().replace(/[^a-
  */
 export const outcome = (x: number, chance: (x: number) => string, pct: (x: number) => string) => (x <= 0 ? EMPTY : x >= 1 ? pct(1) : chance(x));
 
-/** The colour of a chance in a heat map: the theme's first chart colour, deeper with the chance, light enough for dark text */
+/**
+ * The colour of a chance in a heat map: the theme's first chart colour, deeper with the chance, mixed into the card
+ * colour: light enough for dark text, and in Lights out dark enough for its light text
+ */
 export const heat = (x: number) => `color-mix(in srgb, var(--color-chart-1) ${Math.round(6 + x * 56)}%, var(--color-white))`;

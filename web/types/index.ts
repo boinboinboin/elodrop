@@ -201,6 +201,8 @@ export interface Badge {
   /** How it's earned in general, for the badges page (null: use the description) */
   about: string | null;
   art: string | null;
+  /** The art is inverted in the dark theme (only when set) */
+  artInvert?: true;
   players: number[];
   /** On the achievements page (the Studio's toggle); players' pages show it either way */
   listed: boolean;
@@ -213,6 +215,7 @@ export interface BadgeLevel {
   title: string | null;
   description: string | null;
   art: string | null;
+  artInvert?: true;
 }
 
 /** The badges page's numbers (achievements.json): per rule's key, how many players have earned it, out of `players` */
@@ -724,7 +727,12 @@ export interface ClubEntry {
   website: string | null;
   nbfClubId: number | null;
   logo: string | null;
+  /** The logo is black on transparent: inverted in the dark theme (the Studio's "Invert in dark mode"; only when set) */
+  logoInvert?: true;
 }
+
+/** A club for a table's rows, small for the page: its slug, logo and whether that's inverted in the dark theme (utils/clubs.ts clubLink) */
+export type ClubLink = [slug: string, logo: string | null, invert?: true];
 
 /** A hall (CMS, sanity/schemas/venue.ts): its name, the other spellings the results use, and its address */
 export interface Venue {

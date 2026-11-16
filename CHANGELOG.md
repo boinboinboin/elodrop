@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.32.0 (2026-11-16)
+
+- Dark mode: a new colour theme, Lights out, pitch black for OLED screens, with soft cream text, light blue links and chart colours chosen for black (still easy to tell apart with colour blindness).
+- Automatic, the new default in the menu's colour themes: Yinyang when your device is in light mode, Lights out when it's in dark mode, switching along with it. A theme you've picked yourself stays as it is.
+- Black-and-white club logos turn white in Lights out, so they don't disappear on black.
+- For editors: club logos and badge art have an "Invert in dark mode" box in the Studio, for images that are black on a transparent background.
+
 ## v1.31.2 (2026-11-16)
 
 - Eliteserien: the line under the title counts all the season's regular-season ties ("12 of 28", not "12 of 16"), and a round with ties still to play no longer shows as finished after its first day. In the play-offs, semi-finals already played stay in the brackets.

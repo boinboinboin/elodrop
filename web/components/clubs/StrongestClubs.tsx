@@ -12,7 +12,7 @@ import { getClubsFile } from "@/data/clubs";
 import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { CombinedClubStanding, ClubStanding, Pool } from "@/types";
-import { clubRule } from "@/utils/clubs";
+import { clubLink, clubRule } from "@/utils/clubs";
 import { POOL_KEYS } from "@/utils/pools";
 import { strongestClubsHref } from "@/utils/rankings";
 import { hyphenate } from "@/utils/hyphenate";
@@ -55,7 +55,7 @@ export default async function StrongestClubs({ pool }: { pool: Pool | "combined"
                   ? [club.club, club.rank, club.previousRank, club.score, club.scoreChange, club.players, POOL_KEYS.map((key) => (club.pools[key] ? [Math.round(club.pools[key].strength), club.pools[key].rank] : null))]
                   : [club.club, club.rank, club.previousRank, Math.round(club.strength), club.strengthChange, club.players, club.top.map((slot) => slot.map((p): TopPlayer => [p.id, p.name, Math.round(p.rating)]))],
               )}
-              clubs={Object.fromEntries(clubs.filter((club) => entries[club.club]).map((club) => [club.club, [entries[club.club].slug, entries[club.club].logo ?? null]]))}
+              clubs={Object.fromEntries(clubs.filter((club) => entries[club.club]).map((club) => [club.club, clubLink(entries[club.club])]))}
             />
           </div>
         )}

@@ -4,7 +4,7 @@
 // prerendered and refreshed with the data (the elo-data and sanity tags). The addresses are without
 // a language (the search bar puts the page's in front); the searched terms are in both languages.
 // → { players: [id, name, club][] (ranked first, then most matches), clubs, tournaments, eliteserien },
-// the last three [{ name, detail, url, logo?, terms }], where terms is the text searched.
+// the last three [{ name, detail, url, logo?, invert?, terms }], where terms is the text searched.
 import { getMeta } from "@/data/meta";
 import { getSearchIndex } from "@/data/players";
 import { getClubEntries } from "@/data/sanity";
@@ -40,6 +40,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ lan
       detail: c.fullName && c.fullName !== c.title ? c.fullName : (c.region ?? ""),
       url: clubHref(c.slug),
       logo: c.logo,
+      ...(c.logoInvert ? { invert: true as const } : {}),
       terms: `${c.title} ${c.fullName ?? ""}`,
     })),
     tournaments: (tournaments?.tournaments ?? []).map((tour) => ({

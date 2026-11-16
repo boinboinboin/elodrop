@@ -1,6 +1,7 @@
 // What if an Eliteserien tie were 10 matches (pipeline/eliteserien-ten-matches.mjs): this season's
 // teams with a 3rd men's singles and a 2nd men's doubles, against today's 8 matches.
 import type { Metadata } from "next";
+import LogoImage from "@/components/clubs/LogoImage";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Card from "@/components/ui/Card";
@@ -11,7 +12,6 @@ import { getEliteserienTenMatches } from "@/data/eliteserien";
 import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Loose } from "@/types";
-import { logoSrc } from "@/utils/clubs";
 import { EMPTY, toneClass } from "@/utils/format";
 import { ELITESERIEN_HREF, ELITESERIEN_TEN_MATCHES_HREF, playerHref } from "@/utils/hrefs";
 import { pageMetadata } from "@/utils/metadata";
@@ -153,8 +153,7 @@ async function Content() {
                         </td>
                         <td className="py-3 px-4">
                           <a href={`#${teamId(team.team)}`} className="flex items-center gap-2 hover:text-blue-600">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            {clubs[team.team]?.logo && <img src={logoSrc(clubs[team.team].logo!, 6)} alt="" className="w-6 h-6 object-contain" />}
+                            {clubs[team.team]?.logo && <LogoImage src={clubs[team.team].logo!} size={6} invert={clubs[team.team].logoInvert} className="w-6 h-6" />}
                             {team.team}
                           </a>
                         </td>

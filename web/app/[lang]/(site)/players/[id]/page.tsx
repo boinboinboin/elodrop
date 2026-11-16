@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import { ArrowRight } from "@/components/SVG";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
@@ -30,7 +31,6 @@ import { getBadges, getClubMap } from "@/data/sanity";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
-import { logoSrc } from "@/utils/clubs";
 import { classOf } from "@/utils/classes";
 import { addDays, EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, DISCIPLINE_PARAM, headToHeadHref, playerHref } from "@/utils/hrefs";
@@ -115,8 +115,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
         <div className="flex items-center justify-between gap-4 mt-2">
           {player.club ? (
             <p className="flex items-center gap-3 text-2xl text-gray-700 min-w-0">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {club?.logo && <img src={logoSrc(club.logo, 10)} alt="" className="w-10 h-10 object-contain shrink-0" />}
+              {club?.logo && <LogoImage src={club.logo} size={10} invert={club.logoInvert} className="w-10 h-10" />}
               {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
             </p>
           ) : (

@@ -8,6 +8,7 @@
 // the clubs in the table with a page, short name → [slug, logo]. A discipline's rating links to the player's page on
 // that discipline.
 import { useMemo, useState } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import { Search } from "@/components/SVG";
 import PoolName from "@/components/format/PoolName";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
@@ -18,15 +19,14 @@ import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
 import { useI18n } from "@/messages/client";
-import type { Pool } from "@/types";
-import { logoSrc } from "@/utils/clubs";
+import type { ClubLink, Pool } from "@/types";
 import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByChange, sortByDesc } from "@/utils/sort";
 
 export type CombinedRow = [number, string, string | null, number, number, number, ([number | null, number] | null)[], number | null, (number | null)?];
 
-export default function CombinedTable({ pools, rows, clubs, summary }: { pools: Pool[]; rows: CombinedRow[]; clubs: Record<string, [string, string | null]>; summary: string }) {
+export default function CombinedTable({ pools, rows, clubs, summary }: { pools: Pool[]; rows: CombinedRow[]; clubs: Record<string, ClubLink>; summary: string }) {
   const { num, signed, t } = useI18n();
   const [query, setQuery] = useState("");
   const [byMatches, setByMatches] = useState(false);
@@ -89,8 +89,7 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                     {club &&
                       (entry ? (
                         <Link href={clubHref(entry[0])} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          {entry[1] && <img src={logoSrc(entry[1], 5)} alt="" loading="lazy" className="w-5 h-5 object-contain shrink-0" />}
+                          {entry[1] && <LogoImage src={entry[1]} size={5} invert={entry[2]} lazy className="w-5 h-5" />}
                           <span>{club}</span>
                         </Link>
                       ) : (

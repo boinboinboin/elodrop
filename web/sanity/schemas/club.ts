@@ -5,6 +5,7 @@
 // whichever is the home team, so only its own hall counts).
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { badge } from "./badge";
+import { invertInDark } from "./invertInDark";
 import { page } from "./page";
 import { tidySlug, tidyText } from "./spacing";
 import { tournament } from "./tournament";
@@ -22,8 +23,8 @@ export const club = defineType({
     defineField({ name: "website", type: "url" }),
     defineField({ name: "nbfClubId", title: "NBF club id", type: "number", description: "badmintonportalen's club id" }),
     // hotspot: the crop tool, to trim a logo's margins (scripts/trim-logos.mts sets the crop to the
-    // logo's visible part; the site applies it)
-    defineField({ name: "logo", type: "image", options: { hotspot: true } }),
+    // logo's visible part; the site applies it). invertInDark: a black logo, white in the dark theme
+    defineField({ name: "logo", type: "image", options: { hotspot: true }, fields: [invertInDark] }),
     defineField({
       name: "homeVenues",
       title: "Home halls",

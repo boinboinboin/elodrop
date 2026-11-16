@@ -11,6 +11,7 @@
 // threshold (500: 500 matches or more), and a player gets the highest they have reached, with its own
 // title, description and art where it has them (else the badge's). Without levels nobody gets it.
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { invertInDark } from "./invertInDark";
 import { tidyText } from "./spacing";
 
 /** The pipeline's rules (RULES in pipeline/achievements.mjs): a new rule needs its key here */
@@ -59,7 +60,7 @@ export const badge = defineType({
     defineField({ name: "descriptionEn", title: "Description (English)", type: "text", rows: 3, description: "Empty: the Norwegian description" }),
     defineField({ name: "about", title: "How it's earned (Norwegian)", type: "text", rows: 3, description: "On the badges page, about the badge in general (no {year} there). Empty: the description" }),
     defineField({ name: "aboutEn", title: "How it's earned (English)", type: "text", rows: 3, description: "Empty: the Norwegian text" }),
-    defineField({ name: "art", type: "image", options: { hotspot: true }, description: "Square, at least 256 × 256 pixels; SVG or PNG" }),
+    defineField({ name: "art", type: "image", options: { hotspot: true }, description: "Square, at least 256 × 256 pixels; SVG or PNG", fields: [invertInDark] }),
     defineField({
       name: "levels",
       title: "Levels",
@@ -81,7 +82,7 @@ export const badge = defineType({
             defineField({ name: "titleEn", title: "Title (English)", type: "string", validation: tidyText }),
             defineField({ name: "description", title: "Description (Norwegian)", type: "text", rows: 2 }),
             defineField({ name: "descriptionEn", title: "Description (English)", type: "text", rows: 2 }),
-            defineField({ name: "art", type: "image", options: { hotspot: true } }),
+            defineField({ name: "art", type: "image", options: { hotspot: true }, fields: [invertInDark] }),
           ],
           preview: { select: { level: "level", title: "title", titleEn: "titleEn", media: "art" }, prepare: ({ level, title, titleEn, media }) => ({ title: `Level ${level ?? "?"}`, subtitle: title || titleEn, media }) },
         }),

@@ -9,6 +9,7 @@
 // the senior lists (the junior ratings are on their own scale), in rating order (unless sorted by matches or change)
 // the rows grouped by rating class under sticky headers with each class's ratings (ClassGroups).
 import { useMemo, useState } from "react";
+import LogoImage from "@/components/clubs/LogoImage";
 import { Search } from "@/components/SVG";
 import { ClassHeader, classGroups, useHeadHeight } from "@/components/rankings/ClassGroups";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
@@ -19,8 +20,7 @@ import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
 import { useI18n } from "@/messages/client";
-import type { Pool } from "@/types";
-import { logoSrc } from "@/utils/clubs";
+import type { ClubLink, Pool } from "@/types";
 import { EMPTY } from "@/utils/format";
 import { clubHref, playerHref } from "@/utils/hrefs";
 import { sortByChange, sortByDesc } from "@/utils/sort";
@@ -39,7 +39,7 @@ export default function RankingTable({
 }: {
   pool: Pool;
   rows: RankingRow[];
-  clubs: Record<string, [string, string | null]>;
+  clubs: Record<string, ClubLink>;
   summary: string;
   classes?: boolean;
 }) {
@@ -108,8 +108,7 @@ export default function RankingTable({
                       {club &&
                         (entry ? (
                           <Link href={clubHref(entry[0], pool)} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            {entry[1] && <img src={logoSrc(entry[1], 5)} alt="" loading="lazy" className="w-5 h-5 object-contain shrink-0" />}
+                            {entry[1] && <LogoImage src={entry[1]} size={5} invert={entry[2]} lazy className="w-5 h-5" />}
                             <span>{club}</span>
                           </Link>
                         ) : (

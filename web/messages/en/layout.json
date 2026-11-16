@@ -38,6 +38,10 @@
     "iosAfter": "in the browser, then choose “Add to Home Screen”."
   },
   "themes": {
+    "auto": {
+      "label": "Automatic",
+      "description": "Yinyang or Lights out, following your device's light or dark mode"
+    },
     "yinyang": {
       "label": "Yinyang",
       "description": "Black and white"
@@ -49,6 +53,10 @@
     "allengland": {
       "label": "All England",
       "description": "The All England's grey courts"
+    },
+    "lightsout": {
+      "label": "Lights out",
+      "description": "Pitch black, made for OLED screens"
     }
   },
   "breadcrumbs": {

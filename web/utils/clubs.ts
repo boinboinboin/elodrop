@@ -1,6 +1,6 @@
 // How a club's strength in a pool is calculated, as a sentence fragment
 import type { I18n } from "@/messages/i18n";
-import type { ClubStrengthRule } from "@/types";
+import type { ClubEntry, ClubLink, ClubStrengthRule } from "@/types";
 
 export function clubRule({ t, pct }: I18n, rule: ClubStrengthRule): string {
   const weights = t("clubs.rule.weights", { weights: rule.weights.map((w) => pct(w)).join(" · ") });
@@ -18,3 +18,6 @@ export function logoSrc(url: string, size: number): string {
   const px = size * 4 * 2;
   return `${url}${url.includes("?") ? "&" : "?"}w=${px}&h=${px}&fit=max&auto=format`;
 }
+
+/** A club for a table's rows (ClubLink): its slug and logo, and `true` when the logo is inverted in the dark theme */
+export const clubLink = (entry: ClubEntry): ClubLink => (entry.logoInvert ? [entry.slug, entry.logo, true] : [entry.slug, entry.logo]);

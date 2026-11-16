@@ -29,6 +29,8 @@ export interface BadgeStripItem {
   id: string;
   title: string;
   art: string | null;
+  /** The art is inverted in the dark theme (the Studio's "Invert in dark mode") */
+  artInvert?: true;
   /** Times earned (0: given by hand) */
   count: number;
   /** What its rarity is counted from (at the player's level, for a milestone) */
@@ -41,9 +43,9 @@ export function TimesLabel({ count, className = "" }: { count: number; className
   return <span className={`inline-block font-mono text-[11px] leading-none tabular-nums px-1 py-[3px] bg-white text-black border border-black rounded-full ${className}`}>×{count}</span>;
 }
 
-function Art({ src, className }: { src: string | null; className: string }) {
+function Art({ src, invert, className }: { src: string | null; invert?: boolean; className: string }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return src ? <img src={src} alt="" className={`${className} object-contain shrink-0`} /> : <span aria-hidden="true" className={`${className} shrink-0 rounded-full bg-gray-200`} />;
+  return src ? <img src={src} alt="" className={`${className} object-contain shrink-0${invert ? " dark-invert" : ""}`} /> : <span aria-hidden="true" className={`${className} shrink-0 rounded-full bg-gray-200`} />;
 }
 
 export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }) {
@@ -107,7 +109,7 @@ export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }
                 aria-label={item.count > 1 ? `${item.title} ×${item.count}` : item.title}
                 className={`relative w-11 h-11 inline-flex items-center justify-center cursor-pointer transition-transform duration-200 hover:-translate-y-0.5 ${open === item.id ? "-translate-y-0.5" : ""}`}
               >
-                <Art src={item.art} className="w-11 h-11" />
+                <Art src={item.art} invert={item.artInvert} className="w-11 h-11" />
                 {item.count > 1 && <TimesLabel count={item.count} className="absolute -right-1.5 -bottom-1" />}
               </button>
             </li>
@@ -141,7 +143,7 @@ export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }
           </div>
           {featured && (
             <div className="flex gap-4 md:gap-6">
-              <Art src={featured.art} className="w-20 h-20 md:w-24 md:h-24" />
+              <Art src={featured.art} invert={featured.artInvert} className="w-20 h-20 md:w-24 md:h-24" />
               <div className="min-w-0">
                 <p className="text-2xl leading-snug">
                   {featured.title}
@@ -156,7 +158,7 @@ export default function BadgeStrip({ items: given }: { items: BadgeStripItem[] }
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mt-6 pt-6 border-t border-gray-100">
               {others.map((item) => (
                 <li key={item.id} className="flex gap-4">
-                  <Art src={item.art} className="w-14 h-14" />
+                  <Art src={item.art} invert={item.artInvert} className="w-14 h-14" />
                   <div className="min-w-0">
                     <p className="text-lg leading-snug">
                       {item.title}

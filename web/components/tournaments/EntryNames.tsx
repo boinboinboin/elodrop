@@ -3,10 +3,10 @@
 // the name and club (narrow boxes), wider screens beside the name. `changes`: each player's rating
 // gained or lost (in the tournament's week), shown after their rating. `pool`: the event's discipline, which the
 // players' pages open on.
+import LogoImage from "@/components/clubs/LogoImage";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, Entry, Pool } from "@/types";
-import { logoSrc } from "@/utils/clubs";
 import { toneClass } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
 
@@ -27,7 +27,7 @@ export default async function EntryNames({
   return (
     <>
       {e.players.map((p, i) => {
-        const logo = p.club ? clubs[p.club]?.logo : null;
+        const club = p.club ? clubs[p.club] : undefined;
         const rating = { text: `${p.estimated ? "≈" : ""}${Math.round(p.rating)}`, title: p.estimated ? t("tournaments.entry.estimated") : undefined };
         const change = changes?.[i];
         const changed = change != null && (
@@ -40,10 +40,9 @@ export default async function EntryNames({
             {/* The rating is in the name's text, so a long name that wraps has it after its last word; the logo is
                 centred on the first line */}
             <span className="flex gap-1.5">
-              {logo && (
+              {club?.logo && (
                 <span className="h-[1lh] flex items-center shrink-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={logoSrc(logo, 4)} alt="" loading="lazy" className="w-4 h-4 object-contain" />
+                  <LogoImage src={club.logo} size={4} invert={club.logoInvert} lazy className="w-4 h-4" />
                 </span>
               )}
               <span className="min-w-0">
@@ -54,9 +53,9 @@ export default async function EntryNames({
                 </span>
               </span>
             </span>
-            {p.club && <span className={`block text-sm text-gray-600 ${logo ? "pl-5.5" : ""}`}>{p.club}</span>}
+            {p.club && <span className={`block text-sm text-gray-600 ${club?.logo ? "pl-5.5" : ""}`}>{p.club}</span>}
             {ratingBelow && (
-              <span className={`sm:hidden block text-sm text-gray-500 tabular-nums ${logo ? "pl-5.5" : ""}`} title={rating.title}>{rating.text}{changed}</span>
+              <span className={`sm:hidden block text-sm text-gray-500 tabular-nums ${club?.logo ? "pl-5.5" : ""}`} title={rating.title}>{rating.text}{changed}</span>
             )}
           </span>
         );

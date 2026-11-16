@@ -18,6 +18,7 @@ import { getClubMap } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Gender, Pool } from "@/types";
 import { CLASS_CUTOFFS } from "@/utils/classes";
+import { clubLink } from "@/utils/clubs";
 import { combinedRankingHref, DISCIPLINES, disciplineHref, juniorRankingHref, listTabs, RANKING_LISTS, type RankingList, rankingHref } from "@/utils/rankings";
 import { hyphenate } from "@/utils/hyphenate";
 
@@ -72,7 +73,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
           pool={pool}
           classes
           rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
-          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
+          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, clubLink(clubs[c])]))}
           summary={
             !showInactive
               ? t("rankings.summary.ranked", { count: num(players.length) })
@@ -119,7 +120,7 @@ export async function JuniorRankings({ list }: { list: RankingList }) {
         <RankingTable
           pool={pool}
           rows={players.map((p): RankingRow => [p.id, p.name, p.club, p.rank, Math.round(p.rating), p.matches, p.lastPlayed, p.previousRank, p.ratingChange])}
-          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
+          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, clubLink(clubs[c])]))}
           summary={t("rankings.junior.summary", { count: num(players.length), year: bornFrom ?? "" })}
         />
       )}
@@ -157,7 +158,7 @@ export async function CombinedRankings({ gender, junior }: { gender: Gender; jun
         <CombinedTable
           pools={pools}
           rows={players.map((p): CombinedRow => [p.id, p.name, p.club, p.rank, p.score, p.matches, pools.map((pool) => { const e = p.pools[pool]; return e ? [e.rank, Math.round(e.rating)] : null; }), p.previousRank, p.scoreChange])}
-          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, [clubs[c].slug, clubs[c].logo]]))}
+          clubs={Object.fromEntries([...new Set(players.map((p) => p.club).filter((c): c is string => !!c && !!clubs[c]))].map((c) => [c, clubLink(clubs[c])]))}
           summary={
             junior
               ? t("rankings.combined.juniorSummary", { count: num(players.length), year: bornFrom ?? "" })
