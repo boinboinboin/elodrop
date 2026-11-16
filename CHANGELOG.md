@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.29.0 (2026-11-16)
+
+- elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.
+
 ## v1.28.11 (2026-11-14)
 
 - Page titles no longer hyphenate long words in odd places on phones: a long word now breaks only where it's been marked by hand ("Turnerings-trekninger", "badminton-rangering").

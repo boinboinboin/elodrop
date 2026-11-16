@@ -1,11 +1,13 @@
 "use client";
 
 // The header's menu: a button whose three lines turn into a cross, opening the site's links (on
-// screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language. On phones the menu is
+// screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language,
+// and installing the site as an app where it can be (InstallApp). On phones the menu is
 // a panel under the whole header; from md a dropdown under the button. It closes on a link (the next
 // page), a theme picked or Escape (focus back on the button), or a press outside it.
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import InstallApp from "@/components/layout/InstallApp";
 import LanguagePicker from "@/components/layout/LanguagePicker";
 import ThemePicker from "@/components/layout/ThemePicker";
 import Link from "@/components/ui/Link";
@@ -122,6 +124,8 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
             <h2 className="text-sm text-gray-600 mb-2">{t("layout.menu.language")}</h2>
             <LanguagePicker onPick={() => setOpen(false)} />
           </section>
+          {/* Only where the site can be installed as an app and isn't open as one */}
+          <InstallApp title={t("layout.menu.app")} className="pt-2 pb-2" />
         </div>
       </div>
     </div>

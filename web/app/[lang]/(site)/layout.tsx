@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import KeyEggs from "@/components/easter-eggs/KeyEggs";
+import InstallApp from "@/components/layout/InstallApp";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
@@ -78,6 +79,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             })}
           </p>
           <UpdatedAt />
+          {/* Only where the site can be installed as an app and isn't open as one (filled in by the browser) */}
+          <InstallApp className="w-full" />
           {/* The copyright, and what on the site is someone else's or not the site's own yet */}
           <p className="w-full">
             {t("layout.footer.rights", { years: copyrightYears(), site: t("layout.siteName") })} {t("layout.footer.others")}

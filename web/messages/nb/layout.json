@@ -27,7 +27,13 @@
   "menu": {
     "button": "Meny",
     "theme": "Fargetema",
-    "language": "Språk"
+    "language": "Språk",
+    "app": "App"
+  },
+  "install": {
+    "button": "Installer appen",
+    "iosBefore": "Trykk på Del-knappen",
+    "iosAfter": "i nettleseren, og velg «Legg til på Hjem-skjerm»."
   },
   "themes": {
     "yinyang": {

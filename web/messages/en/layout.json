@@ -27,7 +27,13 @@
   "menu": {
     "button": "Menu",
     "theme": "Colour theme",
-    "language": "Language"
+    "language": "Language",
+    "app": "App"
+  },
+  "install": {
+    "button": "Install the app",
+    "iosBefore": "Tap the Share button",
+    "iosAfter": "in the browser, then choose “Add to Home Screen”."
   },
   "themes": {
     "yinyang": {

@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import InstallScript from "@/components/layout/InstallScript";
 import ThemeScript from "@/components/layout/ThemeScript";
 import { LanguageProvider } from "@/messages/client";
 import { isLanguage, LANGUAGES } from "@/messages/i18n";
@@ -34,13 +35,17 @@ export const generateStaticParams = async () => LANGUAGES.map((lang) => ({ lang 
 // The defaults; every page sets its own title, description, canonical address and preview
 // (utils/metadata.ts). metadataBase makes their addresses absolute.
 export async function generateMetadata(): Promise<Metadata> {
-  const { t, openGraphLocale } = await getI18n();
+  const { t, openGraphLocale, href } = await getI18n();
   return {
     metadataBase: new URL(SITE_URL),
     title: { default: t("seo.homeTitle"), template: t("layout.titleTemplate") },
     description: t("layout.description"),
     openGraph: { type: "website", siteName: t("layout.siteName"), locale: openGraphLocale },
     twitter: { card: "summary_large_image" },
+    // The app (a PWA): the language's manifest (manifest.webmanifest/route.ts), and on iPhone a home-screen icon that
+    // opens full screen, named "elodrop"
+    manifest: href("/manifest.webmanifest"),
+    appleWebApp: { capable: true, title: t("layout.siteName"), statusBarStyle: "default" },
   };
 }
 
@@ -57,6 +62,8 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
       <head>
         {/* The saved colour theme, before the page paints (utils/theme.ts, components/layout/ThemeScript.tsx) */}
         <ThemeScript />
+        {/* The browser's offer to install the app, kept for the install button (utils/install.ts) */}
+        <InstallScript />
       </head>
       <body className="min-h-screen flex flex-col">
         {/* Type-safe URL query state (nuqs) for client components */}

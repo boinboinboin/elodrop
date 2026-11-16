@@ -13,3 +13,4 @@ export { Picture } from "./Picture";
 export { Male } from "./Male";
 export { Search } from "./Search";
 export { Share } from "./Share";
+export { ShareBox } from "./ShareBox";
