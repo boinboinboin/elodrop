@@ -1,11 +1,11 @@
 {
-  "title": "elodrop",
+  "title": "Elodrop",
   "intro": "Single- og doubleratinger for norsk badminton, regnet ut fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
   "toRankings": "Se rangeringene",
   "playersRated": "{count} spillere med rating",
   "howItWorksLink": "Hvordan fungerer det?",
-  "pages": "Hva finnes på elodrop",
-  "about": "Om elodrop",
+  "pages": "Hva finnes på Elodrop",
+  "about": "Om Elodrop",
   "noData": "Ingen data ennå.",
   "rankings": {
     "title": "Rangeringer",
@@ -52,7 +52,7 @@
     "link": "Sammenlign to spillere"
   },
   "howItWorks": {
-    "title": "Hvordan fungerer elodrop?",
+    "title": "Hvordan fungerer Elodrop?",
     "description": "Hvordan en rating regnes ut, på vanlig norsk, og alle formlene bak for de store nerdene.",
     "teaser": "En spiller med {favourite} mot en med {underdog}",
     "favourite": "Favoritten vinner",
@@ -63,7 +63,7 @@
   },
   "whatsNew": {
     "title": "Hva er nytt?",
-    "description": "Hver nye side, funksjon og rettelse på elodrop, nyeste først.",
+    "description": "Hver nye side, funksjon og rettelse på Elodrop, nyeste først.",
     "teaser": "De siste oppdateringene",
     "link": "Alle oppdateringer"
   }

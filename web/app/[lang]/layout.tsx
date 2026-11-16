@@ -44,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: { type: "website", siteName: t("layout.siteName"), locale: openGraphLocale },
     twitter: { card: "summary_large_image" },
     // The app (a PWA): the language's manifest (manifest.webmanifest/route.ts), and on iPhone a home-screen icon that
-    // opens full screen, named "elodrop"
+    // opens full screen, named "Elodrop"
     manifest: href("/manifest.webmanifest"),
     appleWebApp: { capable: true, title: t("layout.siteName"), statusBarStyle: "default" },
   };

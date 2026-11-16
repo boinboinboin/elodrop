@@ -12,7 +12,7 @@ export const PREVIEW_SIZE = { width: 1200, height: 630 };
 
 /**
  * A page's metadata, in the page's language (`i18n`, from getI18n()). `title` goes through the
- * layout's template ("… · elodrop") unless `absolute`; `path` is the page's address without a
+ * layout's template ("… · Elodrop") unless `absolute`; `path` is the page's address without a
  * language ("/players/123"): the canonical address is the page's own language's, and both languages'
  * are listed (hreflang, Norwegian the default), so search engines show each reader theirs. `image`
  * is the preview's address (also without a language) and what it shows (the site's preview without one).

@@ -57,7 +57,7 @@ export const isFeature = (r: Release) => r.y === 0;
 
 /**
  * A bullet split into its lead and the rest, at its first colon when that comes early ("Fixed: …",
- * "A front page: what elodrop is, …"), so the page can show the lead in bold. Without one, all rest.
+ * "A front page: what Elodrop is, …"), so the page can show the lead in bold. Without one, all rest.
  */
 export function splitLead(text: string): { lead: string | null; rest: string } {
   const at = text.indexOf(": ");

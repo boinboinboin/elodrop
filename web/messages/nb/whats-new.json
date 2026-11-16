@@ -3,19 +3,19 @@
     "title": "Hva er nytt?"
   },
   "title": "Hva er nytt?",
-  "intro": "Alt som har endret seg på elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
+  "intro": "Alt som har endret seg på Elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
   "latest": "Nå på {version}",
   "feature": "Ny",
   "improvement": "Forbedret",
   "launch": "Lansering",
-  "launchTitle": "elodrop går live",
+  "launchTitle": "Elodrop går live",
   "developers": "For utviklere",
   "releases": {
     "one": "{count} oppdatering",
     "other": "{count} oppdateringer"
   },
   "beforeLaunch": "Før lanseringen",
-  "beforeLaunchIntro": "Hvordan elodrop ble bygget, fra henting av de første resultatene til nettsiden, i {count} versjoner, {dates}.",
+  "beforeLaunchIntro": "Hvordan Elodrop ble bygget, fra henting av de første resultatene til nettsiden, i {count} versjoner, {dates}.",
   "versions": "Versjoner",
   "legendFeature": "en ny side eller funksjon",
   "legendImprovement": "mindre forbedringer og rettelser"

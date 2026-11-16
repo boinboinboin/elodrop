@@ -1,4 +1,4 @@
-// The elodrop mark: a drop shot. One line runs across: a rating graph that drops, its dip the
+// The Elodrop mark: a drop shot. One line runs across: a rating graph that drops, its dip the
 // feathers of a shuttlecock falling cork first, and recovers; the cork (the one accent colour) leads.
 // Drawn on a 32 grid; the 16 px icon has its own drawing on the pixel grid (whole-pixel lines, the
 // graph's wiggle left out), as the full one blurs at that size.

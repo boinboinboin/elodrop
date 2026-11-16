@@ -1,4 +1,4 @@
-# elodrop
+# Elodrop
 
 Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from every tournament and league result on [badmintonportalen.no](https://badmintonportalen.no) since 2013, with rankings, player and club pages, head to head, the biggest upsets, Eliteserien team strengths and reviews, and draw luck in tournaments.
 

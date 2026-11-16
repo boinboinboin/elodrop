@@ -1,4 +1,4 @@
-// An arrow out of a box: a link that leaves elodrop (components/ui/ExternalLink.tsx)
+// An arrow out of a box: a link that leaves Elodrop (components/ui/ExternalLink.tsx)
 import { type IconProps, iconProps } from "./iconProps";
 
 export const External = ({ className }: IconProps) => (

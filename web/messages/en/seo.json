@@ -1,5 +1,5 @@
 {
-  "homeTitle": "elodrop · Elo ratings and rankings for Norwegian badminton",
+  "homeTitle": "Elodrop · Elo ratings and rankings for Norwegian badminton",
   "listTitle": "{list} badminton rankings, Norway",
   "juniorListTitle": "{list} junior badminton rankings (U19), Norway",
   "descriptions": {
@@ -32,23 +32,23 @@
     "teamMatch": "{home} against {away} in {division}, {date}: {score}, with each match, the players' ratings and the chances before.",
     "headToHead": "Any two Norwegian badminton players head to head: their matches against each other and together, and their chances if they met now.",
     "doublesHeadToHead": "Any two Norwegian badminton pairs head to head: their chances against each other now, from the players' Elo ratings.",
-    "whatsNew": "Everything that has changed on elodrop, newest first: new pages and features, improvements and fixes.",
-    "achievements": "The achievements players earn on elodrop, what each is for and how many players have it: triple winners, national champions and the week's biggest upsets.",
+    "whatsNew": "Everything that has changed on Elodrop, newest first: new pages and features, improvements and fixes.",
+    "achievements": "The achievements players earn on Elodrop, what each is for and how many players have it: triple winners, national champions and the week's biggest upsets.",
     "teamMatchesDivision": "{division} {season}: every team match, round by round, and a power ranking of the teams by the players who played for them.",
     "headToHeadPair": "{a} and {b} head to head in badminton: their matches against each other and together, and their chances if they met now.",
     "doublesHeadToHeadPair": "The pairs {a} and {b} head to head in badminton: their matches against each other and their chances now, from the players' Elo ratings."
   },
   "imageAlt": {
-    "site": "elodrop: Elo ratings for Norwegian badminton",
-    "player": "The player's name, club, and rating and rank in each discipline, on elodrop",
-    "club": "The badminton club's name and its rank among Norwegian clubs in each discipline, on elodrop",
-    "tournament": "The tournament's name, dates and number of events and entries, on elodrop",
-    "teamMatch": "The teams, the result and the chances before the team match, on elodrop",
-    "headToHead": "The two players, their record against each other and their chances now, on elodrop",
-    "doublesHeadToHead": "The two pairs, their record against each other and their chances now, on elodrop"
+    "site": "Elodrop: Elo ratings for Norwegian badminton",
+    "player": "The player's name, club, and rating and rank in each discipline, on Elodrop",
+    "club": "The badminton club's name and its rank among Norwegian clubs in each discipline, on Elodrop",
+    "tournament": "The tournament's name, dates and number of events and entries, on Elodrop",
+    "teamMatch": "The teams, the result and the chances before the team match, on Elodrop",
+    "headToHead": "The two players, their record against each other and their chances now, on Elodrop",
+    "doublesHeadToHead": "The two pairs, their record against each other and their chances now, on Elodrop"
   },
   "faq": {
-    "idea": "How are elodrop's badminton ratings calculated?",
+    "idea": "How are Elodrop's badminton ratings calculated?",
     "start": "What rating does a new player start at?",
     "counts": "Does every match count the same?",
     "doubles": "How do doubles and mixed doubles ratings work?",

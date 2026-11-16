@@ -1,5 +1,5 @@
 {
-  "homeTitle": "elodrop · Elo-ratinger og rangeringer for norsk badminton",
+  "homeTitle": "Elodrop · Elo-ratinger og rangeringer for norsk badminton",
   "listTitle": "{list} badmintonrangering, Norge",
   "juniorListTitle": "{list} juniorrangering i badminton (U19), Norge",
   "descriptions": {
@@ -32,23 +32,23 @@
     "teamMatch": "{home} mot {away} i {division}, {date}: {score}, med hver kamp, spillernes ratinger og sjansene før.",
     "headToHead": "Head to head mellom to vilkårlige norske badmintonspillere: kampene mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
     "doublesHeadToHead": "Head to head mellom to vilkårlige norske badmintonpar: sjansene mot hverandre nå, ut fra spillernes Elo-ratinger.",
-    "whatsNew": "Alt som har endret seg på elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
-    "achievements": "Prestasjonene spillere kan få på elodrop, hva hver er for og hvor mange som har den: trippelvinnere, norgesmestere og ukas største overraskelser.",
+    "whatsNew": "Alt som har endret seg på Elodrop, nyeste først: nye sider og funksjoner, forbedringer og rettelser.",
+    "achievements": "Prestasjonene spillere kan få på Elodrop, hva hver er for og hvor mange som har den: trippelvinnere, norgesmestere og ukas største overraskelser.",
     "teamMatchesDivision": "{division} {season}: alle lagkampene, runde for runde, og en styrkerangering av lagene etter spillerne som spilte for dem.",
     "headToHeadPair": "Head to head mellom {a} og {b} i badminton: kampene mot hverandre og sammen, og sjansene deres hvis de møttes nå.",
     "doublesHeadToHeadPair": "Head to head mellom parene {a} og {b} i badminton: kampene mot hverandre og sjansene deres nå, ut fra spillernes Elo-ratinger."
   },
   "imageAlt": {
-    "site": "elodrop: Elo-ratinger for norsk badminton",
-    "player": "Spillerens navn, klubb, og rating og plassering i hver disiplin, på elodrop",
-    "club": "Badmintonklubbens navn og plassering blant norske klubber i hver disiplin, på elodrop",
-    "tournament": "Turneringens navn, datoer og antall klasser og påmeldinger, på elodrop",
-    "teamMatch": "Lagene, resultatet og sjansene før lagkampen, på elodrop",
-    "headToHead": "De to spillerne, kampene mot hverandre og sjansene deres nå, på elodrop",
-    "doublesHeadToHead": "De to parene, kampene mot hverandre og sjansene deres nå, på elodrop"
+    "site": "Elodrop: Elo-ratinger for norsk badminton",
+    "player": "Spillerens navn, klubb, og rating og plassering i hver disiplin, på Elodrop",
+    "club": "Badmintonklubbens navn og plassering blant norske klubber i hver disiplin, på Elodrop",
+    "tournament": "Turneringens navn, datoer og antall klasser og påmeldinger, på Elodrop",
+    "teamMatch": "Lagene, resultatet og sjansene før lagkampen, på Elodrop",
+    "headToHead": "De to spillerne, kampene mot hverandre og sjansene deres nå, på Elodrop",
+    "doublesHeadToHead": "De to parene, kampene mot hverandre og sjansene deres nå, på Elodrop"
   },
   "faq": {
-    "idea": "Hvordan regnes elodrops badmintonratinger ut?",
+    "idea": "Hvordan regnes Elodrops badmintonratinger ut?",
     "start": "Hvilken rating starter en ny spiller på?",
     "counts": "Teller alle kamper likt?",
     "doubles": "Hvordan fungerer ratingene i double og mixdouble?",

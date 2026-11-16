@@ -1,4 +1,4 @@
-// How does elodrop work? The ratings and what's built on them, in plain words, with a switch ("I'm a
+// How does Elodrop work? The ratings and what's built on them, in plain words, with a switch ("I'm a
 // big nerd", components/how-it-works/NerdMode.tsx) that opens the formulas, parameters and tests under
 // each part. The details follow pipeline/README.md, the full specification; keep them in step with it.
 // Static: rendered once per data update (the ratings' spread is the only part that reads the data).

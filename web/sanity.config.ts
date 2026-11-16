@@ -22,7 +22,7 @@ const pageHref = (key: string, lang: string) => `${lang === "en" ? "/en" : ""}/$
 
 export default defineConfig({
   name: "default",
-  title: "elodrop",
+  title: "Elodrop",
   basePath: "/studio",
   projectId,
   dataset,
