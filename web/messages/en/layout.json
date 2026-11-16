@@ -62,6 +62,8 @@
   "search": {
     "label": "Search players, clubs, tournaments and Eliteserien",
     "placeholder": "Players, clubs, tournaments…",
+    "open": "Search",
+    "close": "Close the search",
     "results": "Search results",
     "nothing": "Nothing found",
     "groups": {

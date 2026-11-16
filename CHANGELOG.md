@@ -11,6 +11,8 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.29.0 (2026-11-16)
 
 - elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.
+- The phone's bars around the page (in the browser and in the app) are no longer orange: they take the header's and footer's colour in each colour theme.
+- The header stays at the top while you scroll. On phones it slides away as you scroll down and comes back as you scroll up, and the search is tucked behind a search button beside the menu. Table headings, tabs and other headings that stick to the top now stick just below it.
 
 ## v1.28.12 (2026-11-16)
 

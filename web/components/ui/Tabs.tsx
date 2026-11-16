@@ -40,9 +40,9 @@ interface Props {
   /** Smaller buttons, for tabs inside a box */
   small?: boolean;
   /**
-   * The tab list sticks to the top of the page while scrolling through the panels, with a line
-   * under it while it's stuck; sticky table headers inside them stick below it (--sticky-offset,
-   * the list's height)
+   * The tab list sticks to the top of the page (below the sticky header: --header-offset) while scrolling through
+   * the panels, with a line under it while it's stuck; sticky table headers inside them stick below it
+   * (--sticky-offset, the list's height)
    */
   sticky?: boolean;
 }
@@ -85,15 +85,24 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
     observer.observe(el);
     return () => observer.disconnect();
   }, [sticky]);
-  // Stuck: the marker just above the list has scrolled out of view at the top
+  // Stuck: the marker just above the list has scrolled up under the header (its height on screen changes as it
+  // slides away and back on phones, so this is checked as the page scrolls rather than with an observer's fixed edge)
   const marker = useRef<HTMLDivElement>(null);
   const [stuck, setStuck] = useState(false);
   useEffect(() => {
     const el = marker.current;
     if (!sticky || !el) return;
-    const observer = new IntersectionObserver(([entry]) => setStuck(!entry.isIntersecting && entry.boundingClientRect.top < 0));
-    observer.observe(el);
-    return () => observer.disconnect();
+    const check = () => {
+      const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--header-offset")) || 0;
+      setStuck(el.getBoundingClientRect().top < header);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
   }, [sticky]);
   const elementId = (tab: string) => (prefix ? `${prefix}-${tab}` : tab);
   // Tabs inside a hidden panel are all hidden
@@ -119,7 +128,7 @@ function TabsView({ tabs, label, id: prefix, className = "mb-8", small = false, 
         aria-label={label}
         // Sticky: on the page's background, reaching to the container's edges, the line under it
         // shown only while stuck (always there, transparent otherwise, so nothing shifts)
-        className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${sticky ? `sticky top-0 z-20 bg-stone-100 -mx-4 px-4 py-2 border-b transition-colors duration-200 ${stuck ? "border-gray-300" : "border-transparent"}` : ""} ${className}`}
+        className={`flex flex-wrap ${small ? "gap-1" : "gap-2"} ${sticky ? `sticky top-(--header-offset) z-20 bg-stone-100 -mx-4 px-4 py-2 border-b transition-[top,border-color] duration-200 ${stuck ? "border-gray-300" : "border-transparent"}` : ""} ${className}`}
       >
         {tabs.map((t, i) => (
           <button

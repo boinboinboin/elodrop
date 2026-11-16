@@ -19,8 +19,8 @@ export const THEME_KEY = "theme";
 // Runs before the first paint: the saved theme onto <html> (the default needs no attribute). React
 // clears <html>'s attributes when it mounts the root layout again (some client navigations do), so
 // it also puts the saved theme back whenever data-theme changes from it; the observer's callback
-// runs before the next paint. It also gives the installed app's bars the theme's `bar` colour (the theme-color meta
-// without a media query, which only the app uses: app/[lang]/layout.tsx), now and whenever the theme changes; and
+// runs before the next paint. It also gives the bars around the page (the browser's on phones, the installed app's)
+// the theme's `bar` colour (the theme-color meta: app/[lang]/layout.tsx), now and whenever the theme changes; and
 // again once the page is read, in case the meta comes after this script.
 const BARS = Object.fromEntries(Object.entries(THEMES).map(([name, theme]) => [name, theme.bar]));
-export const THEME_SCRIPT = `try{var d=document.documentElement,b=${JSON.stringify(BARS)},m=function(){var e=document.querySelector('meta[name="theme-color"]:not([media])');if(e)e.content=b[d.dataset.theme||"${DEFAULT_THEME}"]},f=function(){var t=localStorage.getItem("${THEME_KEY}");t=t&&t!=="${DEFAULT_THEME}"&&${JSON.stringify(Object.keys(THEMES))}.indexOf(t)>=0?t:void 0;if(d.dataset.theme!==t){if(t)d.dataset.theme=t;else delete d.dataset.theme}m()};f();new MutationObserver(f).observe(d,{attributes:true,attributeFilter:["data-theme"]});document.addEventListener("DOMContentLoaded",m)}catch(e){}`;
+export const THEME_SCRIPT = `try{var d=document.documentElement,b=${JSON.stringify(BARS)},m=function(){var e=document.querySelector('meta[name="theme-color"]');if(e)e.content=b[d.dataset.theme||"${DEFAULT_THEME}"]},f=function(){var t=localStorage.getItem("${THEME_KEY}");t=t&&t!=="${DEFAULT_THEME}"&&${JSON.stringify(Object.keys(THEMES))}.indexOf(t)>=0?t:void 0;if(d.dataset.theme!==t){if(t)d.dataset.theme=t;else delete d.dataset.theme}m()};f();new MutationObserver(f).observe(d,{attributes:true,attributeFilter:["data-theme"]});document.addEventListener("DOMContentLoaded",m)}catch(e){}`;

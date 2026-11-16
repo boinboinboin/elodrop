@@ -9,7 +9,6 @@ import { LanguageProvider } from "@/messages/client";
 import { isLanguage, LANGUAGES } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import { SITE_URL } from "@/utils/hrefs";
-import { ACCENT } from "@/utils/logo";
 import { DEFAULT_THEME, THEMES } from "@/utils/theme";
 import "../globals.css";
 
@@ -50,15 +49,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// The brand orange in the browser: Discord colours a shared link's embed with it (the first theme-color), and phones'
-// browsers their bar. In the installed app the bars are the header's and footer's colour instead, so they don't show:
-// the default theme's here, the theme picked set by THEME_SCRIPT (utils/theme.ts)
-export const viewport: Viewport = {
-  themeColor: [
-    { media: "(display-mode: browser)", color: ACCENT },
-    { color: THEMES[DEFAULT_THEME].bar },
-  ],
-};
+// The colour of the bars around the page (the browser's on phones, the installed app's): the header's and footer's,
+// so they don't show. The default theme's here; the theme picked is set by THEME_SCRIPT (utils/theme.ts). (Not the
+// brand orange any more: the owner didn't want the bars orange. Discord colours a shared link's embed with it too.)
+export const viewport: Viewport = { themeColor: THEMES[DEFAULT_THEME].bar };
 
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) has its own root layout
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {

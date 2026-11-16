@@ -62,6 +62,8 @@
   "search": {
     "label": "Søk etter spillere, klubber, turneringer og Eliteserien",
     "placeholder": "Spillere, klubber, turneringer…",
+    "open": "Søk",
+    "close": "Lukk søket",
     "results": "Søkeresultater",
     "nothing": "Ingen treff",
     "groups": {
