@@ -21,6 +21,13 @@ declare global {
   }
 }
 
+/**
+ * Open as the installed app (with navigator.standalone for iPhone's home-screen apps): in its own window, however
+ * the browser shows it. The manifest asks for standalone; a browser may give fullscreen or minimal-ui, and desktop
+ * Chrome's custom title bar is window-controls-overlay. Only "browser" is a normal tab.
+ */
+export const APP_DISPLAY = "(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui), (display-mode: window-controls-overlay)";
+
 /** Sent on window when the install offer comes or goes */
 export const INSTALL_EVENT = "elodrop:installable";
 

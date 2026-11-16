@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import AppSplash, { SplashScript } from "@/components/layout/AppSplash";
 import InstallScript from "@/components/layout/InstallScript";
 import ThemeScript from "@/components/layout/ThemeScript";
 import { LanguageProvider } from "@/messages/client";
@@ -66,8 +67,11 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <ThemeScript />
         {/* The browser's offer to install the app, kept for the install button (utils/install.ts) */}
         <InstallScript />
+        {/* The installed app's startup screen, once per launch (utils/splash.ts) */}
+        <SplashScript />
       </head>
       <body className="min-h-screen flex flex-col">
+        <AppSplash />
         {/* Type-safe URL query state (nuqs) for client components */}
         <NuqsAdapter>
           <LanguageProvider lang={lang}>{children}</LanguageProvider>

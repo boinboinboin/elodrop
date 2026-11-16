@@ -260,6 +260,104 @@ body {
   }
 }
 
+/* The installed app's startup screen (components/layout/AppSplash.tsx, utils/splash.ts): only while <html> has
+   data-splash. The mark as the app's icon: its line draws itself, the shuttle drops into the dip and settles, the name
+   rises in under it; then ("out") the screen lifts off the page. About 1.5 s in all; with reduced motion, a still
+   screen for 0.3 s that fades. */
+.app-splash {
+  display: none;
+}
+html[data-splash] .app-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+html[data-splash="out"] .app-splash {
+  pointer-events: none;
+  animation: splash-lift 0.45s cubic-bezier(0.55, 0, 0.75, 0.2) both;
+}
+.app-splash-mark {
+  width: 6rem;
+  height: 6rem;
+  animation: splash-mark 0.4s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+.app-splash-line {
+  stroke-dasharray: 1;
+  animation: splash-line 0.6s 0.1s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.app-splash-cork {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: splash-cork 0.5s 0.45s cubic-bezier(0.3, 0, 0.3, 1) both;
+}
+.app-splash-name {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  animation: splash-name 0.45s 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+@keyframes splash-mark {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+@keyframes splash-line {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+/* Falls cork first from above, lands with a little squash, settles */
+@keyframes splash-cork {
+  0% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  55% {
+    opacity: 1;
+    transform: translateY(0) scale(1.08, 0.88);
+  }
+  80% {
+    transform: translateY(-1px) scale(0.97, 1.04);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes splash-name {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+@keyframes splash-lift {
+  to {
+    opacity: 0;
+    transform: translateY(-2.5rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-splash-mark,
+  .app-splash-line,
+  .app-splash-cork,
+  .app-splash-name {
+    animation: none;
+  }
+  html[data-splash="out"] .app-splash {
+    animation: splash-fade 0.3s both;
+  }
+  @keyframes splash-fade {
+    to {
+      opacity: 0;
+    }
+  }
+}
+
 /* Disclosures (<details>, components/ui/Disclosure.tsx) open and close by sliding their content's
    height and fading it, instead of jumping. Sliding to the content's height needs interpolate-size
    (Chrome, Edge): without it they only fade; without ::details-content, or with reduced motion,

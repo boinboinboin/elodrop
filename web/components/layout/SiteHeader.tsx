@@ -3,12 +3,14 @@
 // The site's header (app/[lang]/(site)/layout.tsx gives it the logo, links, search and menu), sticky at the top of the
 // page. On phones (below md) it slides away while the page scrolls down and comes back as soon as it scrolls up
 // (never while the menu or the search is open, nor near the top), and the search is folded away behind a button
-// beside the menu's, opening on its own line. From md the header always stays, the search beside the logo.
+// beside the menu's, opening on its own line. From md the header always stays, the search beside the logo. Where the
+// site can be installed as an app, a download button comes first among the buttons (InstallApp).
 //
 // Its height on screen (0 while it's away) is --header-offset on <html>, for everything else that sticks to the top
 // (table headings, tabs, day headings: "top-(--header-offset)"), so it sticks just under the header and slides with
 // it. Until this runs, app/globals.css sets the header's usual height.
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import InstallApp from "@/components/layout/InstallApp";
 import { Cross, Search } from "@/components/SVG";
 import { BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
@@ -99,6 +101,7 @@ export default function SiteHeader({ logo, nav, search, menu }: { logo: ReactNod
           {search}
         </div>
         <div className="ml-auto md:ml-0 flex gap-2">
+          <InstallApp icon />
           <button
             ref={toggle}
             type="button"

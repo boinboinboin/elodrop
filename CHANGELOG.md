@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.30.0 (2026-11-16)
+
+- The app opens with a startup screen: the elodrop mark draws itself, the shuttle drops into place and the screen lifts away (about a second, once each time you open the app; not on the website).
+- Installing the app is easier to find: a download button in the header, beside the search and the menu, where your browser can install it. The install buttons in the menu and the footer have a download icon too.
+
 ## v1.29.0 (2026-11-16)
 
 - elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.

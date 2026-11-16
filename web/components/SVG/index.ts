@@ -6,6 +6,7 @@ export { CaretUp } from "./CaretUp";
 export { Check } from "./Check";
 export { ChevronRight } from "./ChevronRight";
 export { Cross } from "./Cross";
+export { Download } from "./Download";
 export { External } from "./External";
 export { Female } from "./Female";
 export { MapPin } from "./MapPin";
