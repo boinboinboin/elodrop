@@ -1,7 +1,7 @@
 {
-  "siteName": "elodrop",
-  "titleTemplate": "%s · elodrop",
-  "description": "elodrop: Elo-ratinger i single og double for norsk badminton, fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
+  "siteName": "Elodrop",
+  "titleTemplate": "%s · Elodrop",
+  "description": "Elodrop: Elo-ratinger i single og double for norsk badminton, fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
   "manifestDescription": "Elo-ratinger for norsk badminton",
   "nav": {
     "label": "Hovedmeny",
@@ -14,7 +14,7 @@
     "achievements": "Prestasjoner",
     "headToHead": "Head to head",
     "about": "Om siden",
-    "aboutPage": "Om elodrop",
+    "aboutPage": "Om Elodrop",
     "support": "Hjelp og støtte",
     "howItWorks": "Slik fungerer det",
     "whatsNew": "Hva er nytt?"
@@ -80,7 +80,7 @@
     "drawLuck": "Trekningsflaks",
     "tenMatches": "Hva om en lagkamp hadde 10 kamper"
   },
-  "logoLabel": "elodrop, hjem",
+  "logoLabel": "Elodrop, hjem",
   "easterEggs": {
     "smashSpeed": "565 km/t"
   }

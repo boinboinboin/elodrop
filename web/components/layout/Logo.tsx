@@ -18,7 +18,7 @@ export default async function Logo() {
           <path className="animate-logo-line motion-reduce:animate-none [stroke-dasharray:1]" pathLength={1} d={MARK.line.replace(/^M-1 /, "M0 ").replace(/H33$/, "H28.5")} fill="none" stroke="currentColor" strokeWidth={2.4} strokeLinejoin="round" />
           <path className="animate-logo-cork motion-reduce:animate-none fill-accent" d={MARK.cork} />
         </svg>
-        <span>elodrop</span>
+        <span>Elodrop</span>
       </LogoDrop>
     </Link>
   );

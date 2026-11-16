@@ -1,7 +1,7 @@
 {
-  "siteName": "elodrop",
-  "titleTemplate": "%s · elodrop",
-  "description": "elodrop: singles and doubles Elo ratings for Norwegian badminton, from every tournament and league result on badmintonportalen.no since 2013.",
+  "siteName": "Elodrop",
+  "titleTemplate": "%s · Elodrop",
+  "description": "Elodrop: singles and doubles Elo ratings for Norwegian badminton, from every tournament and league result on badmintonportalen.no since 2013.",
   "manifestDescription": "Elo ratings for Norwegian badminton",
   "nav": {
     "label": "Main",
@@ -14,7 +14,7 @@
     "achievements": "Achievements",
     "headToHead": "Head to head",
     "about": "About the site",
-    "aboutPage": "About elodrop",
+    "aboutPage": "About Elodrop",
     "support": "Help & support",
     "howItWorks": "How it works",
     "whatsNew": "What's new"
@@ -80,7 +80,7 @@
     "drawLuck": "Draw luck",
     "tenMatches": "What if a tie were 10 matches"
   },
-  "logoLabel": "elodrop, home",
+  "logoLabel": "Elodrop, home",
   "easterEggs": {
     "smashSpeed": "565 km/h"
   }

@@ -116,7 +116,7 @@ const person = defineArrayMember({
   icon: UserIcon,
   fields: [
     defineField({ name: "name", type: "string", validation: (rule) => [rule.required(), tidyText(rule)] }),
-    defineField({ name: "role", type: "string", description: "E.g. Made elodrop", validation: tidyText }),
+    defineField({ name: "role", type: "string", description: "E.g. Made Elodrop", validation: tidyText }),
     imageField("photo", "Photo", { alt: false }),
     richText("text", "About them"),
     hrefField({ name: "link", title: "Link (optional)", required: false }),

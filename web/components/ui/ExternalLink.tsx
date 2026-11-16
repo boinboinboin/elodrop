@@ -1,4 +1,4 @@
-// A link that leaves elodrop (badmintonportalen, Cup2000, a club's website, GitHub, a map): the
+// A link that leaves Elodrop (badmintonportalen, Cup2000, a club's website, GitHub, a map): the
 // External icon after its text says so. It opens in the same tab, as the site's other links do.
 // Internal links use ./Link instead.
 import type { ReactNode } from "react";

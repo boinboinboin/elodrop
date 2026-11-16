@@ -25,7 +25,7 @@ export default function AppSplash() {
           <path className="app-splash-cork" d={cork} fill={ACCENT} />
         </g>
       </svg>
-      <span className="app-splash-name">elodrop</span>
+      <span className="app-splash-name">Elodrop</span>
     </div>
   );
 }

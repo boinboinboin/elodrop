@@ -1,4 +1,4 @@
-# elodrop
+# Elodrop
 
 Elo ratings for Norwegian badminton: `pipeline/` (the rating pipeline; `pipeline/README.md` is its specification) and `web/` (the Next.js site; read `web/AGENTS.md` before writing Next.js code). See `README.md` for how it fits together.
 

@@ -8,20 +8,24 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.31.1 (2026-11-16)
+
+- The site's name is written Elodrop, with a capital E, everywhere: the logo, page titles, link previews, the app and the texts.
+
 ## v1.31.0 (2026-11-16)
 
-- New pages: About elodrop (who's behind it, why and how it began) and Help & support (common questions, how to report a mistake, contact, and ways to support the site), in the menu and the footer once they're published. Their parts move in as you scroll: titles rise in, numbers count up, answers slide open.
+- New pages: About Elodrop (who's behind it, why and how it began) and Help & support (common questions, how to report a mistake, contact, and ways to support the site), in the menu and the footer once they're published. Their parts move in as you scroll: titles rise in, numbers count up, answers slide open.
 - How it works, Achievements and What's new move a little too: the title rises in, and the parts fade up as you scroll to them.
 - For editors: the two pages are written in the Studio, with a preview beside the editor that follows the draft as you type.
 
 ## v1.30.0 (2026-11-16)
 
-- The app opens with a startup screen: the elodrop mark draws itself, the shuttle drops into place and the screen lifts away (about a second, once each time you open the app; not on the website).
+- The app opens with a startup screen: the Elodrop mark draws itself, the shuttle drops into place and the screen lifts away (about a second, once each time you open the app; not on the website).
 - Installing the app is easier to find: a download button in the header, beside the search and the menu, where your browser can install it. The install buttons in the menu and the footer have a download icon too.
 
 ## v1.29.0 (2026-11-16)
 
-- elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.
+- Elodrop can be installed as an app: "Install the app" in the menu and the footer (on Android and in Chrome and Edge), or on iPhone how to add it to the home screen. It opens in its own window, without the browser's bars, on the front page in your language.
 - The phone's bars around the page (in the browser and in the app) are no longer orange: they take the header's and footer's colour in each colour theme.
 - The header stays at the top while you scroll. On phones it slides away as you scroll down and comes back as you scroll up, and the search is tucked behind a search button beside the menu. Table headings, tabs and other headings that stick to the top now stick just below it.
 
@@ -73,7 +77,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.28.3 (2026-11-10)
 
 - Switching a list with its buttons (the discipline, men or women, all players or juniors on the rankings, the discipline on the club rankings, the "show inactive players" box, the season and division pickers on the team match pages) keeps the page where it was, instead of jumping back to the top.
-- The footer says "© 2026 elodrop. All rights reserved.", the years running on from the launch with each new year's release, and that the club logos belong to the clubs and some achievement badges are, for now, drawn parodies of memes.
+- The footer says "© 2026 Elodrop. All rights reserved.", the years running on from the launch with each new year's release, and that the club logos belong to the clubs and some achievement badges are, for now, drawn parodies of memes.
 
 ## v1.28.2 (2026-11-10)
 
@@ -142,7 +146,7 @@ Every change merged into `main` gets an entry here, newest first.
 ## v1.27.0 (2026-11-10)
 
 - Every rating now has a class, as in the official senior classes: E (elite), A, B, C or D. It's from the rating, not ranking points, so it shows the class you play like. Player pages show it under each discipline's rating, and the rankings have a class column.
-- Each class starts about one standard deviation above the next, with the same cut-offs in every discipline (E from 1800, A 1450, B 1125, C 775), so a rating means the same class everywhere: E is roughly the top 2% of active players, A the next 6%, B 17%, C 39% and D the rest. The rankings page explains it under the heading, as does "How does elodrop work?". The cut-offs are set at the start of each season, so your class only changes with your own rating.
+- Each class starts about one standard deviation above the next, with the same cut-offs in every discipline (E from 1800, A 1450, B 1125, C 775), so a rating means the same class everywhere: E is roughly the top 2% of active players, A the next 6%, B 17%, C 39% and D the rest. The rankings page explains it under the heading, as does "How does Elodrop work?". The cut-offs are set at the start of each season, so your class only changes with your own rating.
 - `node class-cutoffs.mjs` works out the cut-offs from the latest ratings.
 
 ## v1.26.3 (2026-11-08)
@@ -254,7 +258,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 - Tournaments in the Studio: each night, this season's tournaments with a published programme are added to Sanity with their organiser (the club recognised from Cup2000's organiser) and hall (that club's first home hall). The Studio lists the ones needing a look (organiser not recognised, no hall, or a hall without an address) and the ones not approved yet. Once approved, a tournament's search engine data uses the organiser and hall given there; until then, the guess. The nightly run needs a `SANITY_WRITE_TOKEN` secret and a `SANITY_PROJECT_ID` variable in GitHub; locally: `pnpm --filter web import-tournaments`.
 - An approved tournament's page shows its hall and address under the dates, with a map pin, linking to it on Google Maps.
-- Links that leave elodrop (badmintonportalen, Cup2000, club websites, the maps, the code on GitHub) have an arrow-out icon after them.
+- Links that leave Elodrop (badmintonportalen, Cup2000, club websites, the maps, the code on GitHub) have an arrow-out icon after them.
 - Link underlines sit a little further below the text.
 - Fixed: extra spaces typed in the Studio (at the start or end of a field, or two in a row) no longer reach the site, so a club's short name with one still links the club to its ratings (Oslofjorden Badmintonkrets had a double space). The Studio warns about such spaces in the clubs' and halls' fields.
 - Clubs can have several home halls in Sanity ("Home halls"); the first is the default hall for its tournaments.
@@ -268,7 +272,7 @@ Every change merged into `main` gets an entry here, newest first.
 - Share buttons (open the preview image, share or copy the link) on the front page and on club, tournament, team match and head to head pages, as on player pages.
 - A player's preview image says which day its ratings are from ("Ratinger per 2. nov. 2026", as on the head to head previews) and shows at most three disciplines, their own gender's, without the ratings a woman has in the men's lists.
 - A club's preview image shows its rank in all five disciplines it's ranked in (it stopped at four, leaving out mixed doubles).
-- Discord shows shared links with the elodrop orange, and phones' browsers colour their bar with it.
+- Discord shows shared links with the Elodrop orange, and phones' browsers colour their bar with it.
 - Search results and link previews say "badminton" for the clubs: a club page is titled "Alta: badmintonklubb" ("Alta: badminton club" in English) and its description starts with "Badmintonklubben Alta", and the strongest clubs lists are "Sterkeste badmintonklubber".
 - Search results say "badminton" for the players too: a player page is titled "Markus Barth: badmintonspiller" ("Markus Barth: badminton player") and its description starts with "Badmintonspilleren Markus Barth".
 - Search engines: the sitemap now lists every team match weekend and every team match, so they're found without going through the division pages, and gives each page the day it last changed (a player's last match, a tournament's last update, the day of a team match) instead of the same date for every page. An English club page's structured data gives the English page's address (it gave the Norwegian one).
@@ -368,15 +372,15 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.19.0 (2026-10-28)
 
-- elodrop is in Norwegian: every page, at the same addresses as before (elodrop.no/rankings, elodrop.no/players/…), with numbers and dates written the Norwegian way ("2 646", "31. okt. 2026"). The English site is under /en (elodrop.no/en/rankings), and the menu switches between Norsk and English on the same page.
+- Elodrop is in Norwegian: every page, at the same addresses as before (elodrop.no/rankings, elodrop.no/players/…), with numbers and dates written the Norwegian way ("2 646", "31. okt. 2026"). The English site is under /en (elodrop.no/en/rankings), and the menu switches between Norsk and English on the same page.
 - Search engines get both languages: each page names its Norwegian and English version, and the sitemap lists both.
 - The "What's new" page and a few Eliteserien notes from the data are still in English.
 
 ## v1.18.0 (2026-10-28)
 
-- Links to elodrop show a preview when shared (Facebook, Messenger, Slack, X and others): a player's card has their club and rating and rank in each discipline, a club's its logo and rank in each discipline, a tournament's its dates and number of events and entries, and every other page the site's card.
-- Every page has its own description for search results, written from its data: a player's ratings and ranks, a club's full name and region, a tournament's dates. Search engines and AI answer engines also get each page's canonical address and what it's about as structured data: players, clubs, tournaments, the breadcrumbs, and the questions "How does elodrop work?" answers.
-- Clearer titles for search results: "Men's singles badminton rankings, Norway" instead of "Men's singles", and the front page's "elodrop · Elo ratings and rankings for Norwegian badminton". The rankings pages' heading is "Norwegian badminton rankings".
+- Links to Elodrop show a preview when shared (Facebook, Messenger, Slack, X and others): a player's card has their club and rating and rank in each discipline, a club's its logo and rank in each discipline, a tournament's its dates and number of events and entries, and every other page the site's card.
+- Every page has its own description for search results, written from its data: a player's ratings and ranks, a club's full name and region, a tournament's dates. Search engines and AI answer engines also get each page's canonical address and what it's about as structured data: players, clubs, tournaments, the breadcrumbs, and the questions "How does Elodrop work?" answers.
+- Clearer titles for search results: "Men's singles badminton rankings, Norway" instead of "Men's singles", and the front page's "Elodrop · Elo ratings and rankings for Norwegian badminton". The rankings pages' heading is "Norwegian badminton rankings".
 - The search bar and the head-to-head player search answer as you type: everything they search is loaded once, when you first click a search field, and searched in your browser instead of asking the server on every keystroke.
 - Club logos load at the size they're shown (and as WebP or AVIF) instead of the full upload: the 150 logos on the rankings page went from about 13 MB to about 0.1 MB. Logos in the long ranking and draw lists load only when scrolled to.
 - The search fields (the search bar, the head-to-head player search and the rankings' search) share the site's magnifying glass, and clear with a cross drawn like the site's other icons instead of the browser's own.
@@ -426,9 +430,9 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.15.0 (2026-10-26)
 
-- A page on how elodrop works: /how-it-works explains how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings, and a chart shows how the ratings spread over the players in each discipline, the ranked players or everyone ever rated, against a normal distribution with the same average and spread (the ratings lean towards the bottom, with a long tail of strong players).
+- A page on how Elodrop works: /how-it-works explains how the ratings are calculated, in plain words anyone can follow, from where a new player starts to doubles, rankings and the rest of the site. Flip the "I'm a big nerd" switch for the formulas, parameters and tests under each part (a link with ?nerd=1 opens them). A "Try it" box shows two players' chances and what a win would be worth as you drag their ratings, and a chart shows how the ratings spread over the players in each discipline, the ranked players or everyone ever rated, against a normal distribution with the same average and spread (the ratings lean towards the bottom, with a long tail of strong players).
 - A What's new page: /whats-new is this changelog made readable, a timeline by day with new features and improvements marked, and the versions before the launch folded away.
-- Both pages are on the front page, each with a card (what a win is worth for the favourite and the underdog, and the three newest updates), in the header's menu at every screen size, under "About elodrop", and in the footer, with the current version beside What's new.
+- Both pages are on the front page, each with a card (what a win is worth for the favourite and the underdog, and the three newest updates), in the header's menu at every screen size, under "About Elodrop", and in the footer, with the current version beside What's new.
 
 ## v1.14.0 (2026-10-26)
 
@@ -447,7 +451,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.13.0 (2026-10-24)
 
-- A front page: what elodrop is, and a card for each part of the site with a live glimpse of it: the number one in each ranking, the strongest clubs, the predicted Eliteserien table, the week's biggest upset, the next tournament's luckiest draw and the season's favourites, and the top two men head to head.
+- A front page: what Elodrop is, and a card for each part of the site with a live glimpse of it: the number one in each ranking, the strongest clubs, the predicted Eliteserien table, the week's biggest upset, the next tournament's luckiest draw and the season's favourites, and the top two men head to head.
 - The rankings moved to /rankings (men's singles; the other lists as before). Old links to /rankings/men and /ranking go there, and every ranking list has a heading and a short introduction.
 
 ## v1.12.0 (2026-10-24)
@@ -663,7 +667,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v0.11.0 (2026-10-16)
 
-- The elodrop website (Next.js): rankings, players, clubs, head to head, Eliteserien, upsets and tournament draws, with the club content in Sanity.
+- The Elodrop website (Next.js): rankings, players, clubs, head to head, Eliteserien, upsets and tournament draws, with the club content in Sanity.
 - The pipeline moved into its own repository, with a data export for the site and a nightly workflow.
 
 ## v0.10.5 (2026-10-16)

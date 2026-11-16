@@ -1,4 +1,4 @@
-// The front page: what elodrop is, and a card for each of the site's pages with a live glimpse of it
+// The front page: what Elodrop is, and a card for each of the site's pages with a live glimpse of it
 // (components/home). The rankings, the front page until this one, are at /rankings.
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
