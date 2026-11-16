@@ -5,7 +5,7 @@
 // language is its own app (its own id). Icons from scripts/make-icons.mts. Static: built once per language.
 import type { MetadataRoute } from "next";
 import { createI18n, isLanguage, LANGUAGES } from "@/messages/i18n";
-import { ACCENT } from "@/utils/logo";
+import { DEFAULT_THEME, THEMES } from "@/utils/theme";
 
 export const generateStaticParams = async () => LANGUAGES.map((lang) => ({ lang }));
 
@@ -24,9 +24,9 @@ export async function GET(_request: Request, { params }: RouteContext<"/[lang]/m
     scope: start,
     // Its own window, without the browser's address bar and buttons
     display: "standalone",
-    // The pages' own colour for the browser's bar (the root layout's viewport), and the page background behind the
-    // splash screen while it starts
-    theme_color: ACCENT,
+    // The app's bars: the header's and footer's colour, so they don't show (the default theme's; the page sets the
+    // theme picked: utils/theme.ts), and the page background behind the splash screen while it starts
+    theme_color: THEMES[DEFAULT_THEME].bar,
     background_color: "#f5f5f4",
     icons: [
       { src: "/icon-192.png", sizes: "192x192", type: "image/png" },

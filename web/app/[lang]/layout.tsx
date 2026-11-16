@@ -10,6 +10,7 @@ import { isLanguage, LANGUAGES } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import { SITE_URL } from "@/utils/hrefs";
 import { ACCENT } from "@/utils/logo";
+import { DEFAULT_THEME, THEMES } from "@/utils/theme";
 import "../globals.css";
 
 // Redaction (SIL Open Font License, app/fonts/redaction/OFL.txt) is self-hosted: it is newer than
@@ -49,8 +50,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-// The brand orange: Discord colours a shared link's embed with it, and phones' browsers their bar
-export const viewport: Viewport = { themeColor: ACCENT };
+// The brand orange in the browser: Discord colours a shared link's embed with it (the first theme-color), and phones'
+// browsers their bar. In the installed app the bars are the header's and footer's colour instead, so they don't show:
+// the default theme's here, the theme picked set by THEME_SCRIPT (utils/theme.ts)
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(display-mode: browser)", color: ACCENT },
+    { color: THEMES[DEFAULT_THEME].bar },
+  ],
+};
 
 // The site's pages are in (site), with the header and footer; the Sanity Studio (/studio) has its own root layout
 export default async function RootLayout({ children, params }: LayoutProps<"/[lang]">) {
