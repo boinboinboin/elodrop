@@ -8,7 +8,8 @@
 import type { MetadataRoute } from "next";
 import { getMeta } from "@/data/meta";
 import { getSearchIndex } from "@/data/players";
-import { getClubEntries } from "@/data/sanity";
+import { getClubEntries, getPublishedPages } from "@/data/sanity";
+import { WRITTEN_PAGES } from "@/data/sanityTags";
 import { getTournamentsIndex } from "@/data/tournaments";
 import { getTeamMatchesIndex, getTeamMatchWeek, seasonWeeks } from "@/data/teamMatches";
 import { getUpsetsIndex } from "@/data/upsets";
@@ -17,7 +18,7 @@ import { POOL_KEYS } from "@/utils/pools";
 import { combinedRankingHref, juniorRankingHref, RANKING_LISTS, rankingHref, strongestClubsHref } from "@/utils/rankings";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [meta, players, clubs, tournaments, upsets, teamMatches] = await Promise.all([getMeta(), getSearchIndex(), getClubEntries(), getTournamentsIndex(), getUpsetsIndex(), getTeamMatchesIndex()]);
+  const [meta, players, clubs, tournaments, upsets, teamMatches, written] = await Promise.all([getMeta(), getSearchIndex(), getClubEntries(), getTournamentsIndex(), getUpsetsIndex(), getTeamMatchesIndex(), getPublishedPages()]);
   // Each team match is listed from its week's file, the one place that has every team match's id
   const weeks = (teamMatches?.seasons ?? []).flatMap((s) => s.weeks.map((w) => w.week));
   const weekFiles = await Promise.all(weeks.map(getTeamMatchWeek));
@@ -54,6 +55,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]),
     ...(teamMatches?.seasons ?? []).flatMap((s) => (s.divisions ?? []).map((d): [string, string | undefined] => [teamDivisionHref(s.season, d.slug), seasonEnd(s)])),
     ...weekFiles.flatMap((w) => (w?.ties ?? []).map((tie): [string, string] => [teamMatchHref(tie.matchId), tie.day])),
+    // The pages written in the Studio, once published
+    ...WRITTEN_PAGES.filter((key) => written[key]).map((key): [string] => [`/${key}`]),
     ["/how-it-works"],
     ["/whats-new"],
     ...players.map(([id, , , , , lastPlayed]): [string, string | null | undefined] => [playerHref(id), lastPlayed]),

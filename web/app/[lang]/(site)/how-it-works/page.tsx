@@ -11,6 +11,7 @@ import WinChance from "@/components/how-it-works/WinChance";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
 import ExternalLink from "@/components/ui/ExternalLink";
+import { Lead, MotionPage, Title } from "@/components/ui/Motion";
 import Section from "@/components/ui/Section";
 import StatCard from "@/components/ui/StatCard";
 import { ROW } from "@/components/ui/styles";
@@ -80,7 +81,8 @@ export default async function HowItWorksPage() {
   // Without markup, and with paragraphs and list items run together as sentences
   const plain = (key: MessageKey) => t(key).replace(/<[^>]+>/g, "").replace(/\s*\n+(- )?/g, " ");
   return (
-    <>
+    // The title's words rise in, then the intro; each part fades up as it scrolls into view (Part)
+    <MotionPage>
       <JsonLd
         data={{
           "@type": "FAQPage",
@@ -93,8 +95,8 @@ export default async function HowItWorksPage() {
       />
       <Section>
         <Breadcrumbs trail={[{ label: t("howItWorks.title") }]} />
-        <h1 className="h1 mt-4">{hyphenate(t("howItWorks.title"))}</h1>
-        <p className="text-2xl max-w-3xl mt-2">{t("howItWorks.intro")}</p>
+        <Title text={hyphenate(t("howItWorks.title"))} />
+        <Lead words={t("howItWorks.title").split(" ").length} className="mt-2">{t("howItWorks.intro")}</Lead>
       </Section>
 
       <Section>
@@ -337,7 +339,7 @@ export default async function HowItWorksPage() {
           </div>
         </div>
       </Section>
-    </>
+    </MotionPage>
   );
 }
 

@@ -9,6 +9,7 @@ import headToHead from "./head-to-head.json";
 import home from "./home.json";
 import howItWorks from "./how-it-works.json";
 import layout from "./layout.json";
+import pages from "./pages.json";
 import players from "./players.json";
 import rankings from "./rankings.json";
 import seo from "./seo.json";
@@ -17,4 +18,4 @@ import tournaments from "./tournaments.json";
 import upsets from "./upsets.json";
 import whatsNew from "./whats-new.json";
 
-export const nb: Messages = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, achievements, howItWorks, whatsNew, seo };
+export const nb: Messages = { common, layout, home, rankings, players, clubs, headToHead, eliteserien, tournaments, teamMatches, upsets, achievements, howItWorks, whatsNew, pages, seo };

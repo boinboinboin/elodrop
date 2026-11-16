@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.31.0 (2026-11-16)
+
+- New pages: About elodrop (who's behind it, why and how it began) and Help & support (common questions, how to report a mistake, contact, and ways to support the site), in the menu and the footer once they're published. Their parts move in as you scroll: titles rise in, numbers count up, answers slide open.
+- How it works, Achievements and What's new move a little too: the title rises in, and the parts fade up as you scroll to them.
+- For editors: the two pages are written in the Studio, with a preview beside the editor that follows the draft as you type.
+
 ## v1.30.0 (2026-11-16)
 
 - The app opens with a startup screen: the elodrop mark draws itself, the shuttle drops into place and the screen lifts away (about a second, once each time you open the app; not on the website).

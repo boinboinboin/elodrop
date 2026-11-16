@@ -5,6 +5,7 @@
 // whichever is the home team, so only its own hall counts).
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { badge } from "./badge";
+import { page } from "./page";
 import { tidySlug, tidyText } from "./spacing";
 import { tournament } from "./tournament";
 import { venue } from "./venue";
@@ -36,4 +37,4 @@ export const club = defineType({
   preview: { select: { title: "title", subtitle: "fullName", media: "logo" } },
 });
 
-export const schemaTypes = [tournament, club, venue, badge];
+export const schemaTypes = [tournament, club, venue, badge, page];

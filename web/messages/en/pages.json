@@ -1,0 +1,23 @@
+{
+  "about": {
+    "title": "About elodrop",
+    "description": "About elodrop: who's behind it, why the site exists and how it came about."
+  },
+  "support": {
+    "title": "Help & support",
+    "description": "Help with elodrop: common questions, how to report a mistake, contact, and how you can support the site."
+  },
+  "soon": "This page is being written. Do come back soon!",
+  "notTranslated": "This page is only in Norwegian so far.",
+  "updated": "Last updated {date}",
+  "email": {
+    "label": "Email",
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "stats": {
+    "players": "Players with a rating",
+    "teamMatches": "Team matches",
+    "seasons": "Seasons"
+  }
+}

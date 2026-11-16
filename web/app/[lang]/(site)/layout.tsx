@@ -6,6 +6,7 @@ import InstallApp from "@/components/layout/InstallApp";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
+import { PublishedOnly, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import SearchBar from "@/components/layout/SearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
 import UpdatedAt from "@/components/layout/UpdatedAt";
@@ -28,11 +29,14 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/upsets", label: t("layout.nav.upsets") },
     { href: "/head-to-head", label: t("layout.nav.headToHead") },
   ];
-  // About the site, in the menu at every width (and the footer), the current version beside What's new
-  const ABOUT = [
+  // About the site, in the menu at every width (and the footer), the current version beside What's new. The pages
+  // written in the Studio (`page`) are linked only once published (components/layout/PublishedPages.tsx)
+  const ABOUT: { href: string; label: string; detail?: string; page?: WrittenPageKey }[] = [
+    { href: "/about", label: t("layout.nav.aboutPage"), page: "about" },
     { href: "/how-it-works", label: t("layout.nav.howItWorks") },
     { href: "/achievements", label: t("layout.nav.achievements") },
     { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
+    { href: "/support", label: t("layout.nav.support"), page: "support" },
   ];
   return (
     <>
@@ -65,12 +69,15 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
           <nav aria-label={t("layout.nav.about")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
-            {ABOUT.map((l) => (
-              <Link key={l.href} href={l.href} className="hover:text-black">
-                {l.label}
-                {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
-              </Link>
-            ))}
+            {ABOUT.map((l) => {
+              const link = (
+                <Link key={l.href} href={l.href} className="hover:text-black">
+                  {l.label}
+                  {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
+                </Link>
+              );
+              return l.page ? <PublishedOnly key={l.href} page={l.page}>{link}</PublishedOnly> : link;
+            })}
           </nav>
           <p>
             {rich("layout.footer.sources", {

@@ -1,4 +1,5 @@
 // Shapes of the files written by pipeline/export.mjs (see its header for the layout).
+import type { PortableTextBlock } from "@portabletext/react";
 
 export type Pool = "men" | "women" | "mensDoubles" | "womensDoubles" | "mixedDoubles";
 export type Gender = "M" | "K";
@@ -733,6 +734,42 @@ export interface Venue {
   postalCode: string | null;
   town: string | null;
 }
+
+/** An image from Sanity: its address, size and the crop set in the Studio (utils/sanityImage.ts builds its URLs) */
+export interface SanityImage {
+  url: string;
+  width: number;
+  height: number;
+  /** The fraction cut off each side, null: none */
+  crop: { left: number; top: number; right: number; bottom: number } | null;
+  alt?: string | null;
+}
+
+/** Rich text from Sanity (Portable Text): paragraphs, headings, lists and links, rendered by components/content/PortableBody.tsx */
+export type RichText = PortableTextBlock[];
+
+/** A page written in the Studio (sanity/schemas/page.ts; data/sanity.ts getPage), in the page's language or Norwegian */
+export interface WrittenPage {
+  /** The document's language: the English site shows the Norwegian page when it has no English one */
+  lang: "nb" | "en";
+  title: string;
+  lead: string | null;
+  description: string | null;
+  /** When it was last published */
+  updatedAt: string;
+  content: PageBlock[];
+}
+
+/** A part of a written page's content: text, or a block between its paragraphs */
+export type PageBlock =
+  | (PortableTextBlock & { _type: "block" })
+  | { _type: "faq"; _key: string; heading?: string | null; items?: { _key: string; question?: string | null; answer?: RichText | null }[] | null }
+  | { _type: "figure"; _key: string; image?: SanityImage | null; caption?: string | null }
+  | { _type: "person"; _key: string; name?: string | null; role?: string | null; photo?: SanityImage | null; text?: RichText | null; link?: string | null; linkLabel?: string | null }
+  | { _type: "linkButton"; _key: string; label?: string | null; href?: string | null; style?: "primary" | "secondary" | null }
+  | { _type: "note"; _key: string; tone?: "info" | "warning" | null; text?: RichText | null }
+  | { _type: "stats"; _key: string; items?: string[] | null }
+  | { _type: "contact"; _key: string; address?: string | null; label?: string | null; note?: string | null };
 
 export * from "./head-to-head";
 
