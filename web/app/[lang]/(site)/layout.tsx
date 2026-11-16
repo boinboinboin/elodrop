@@ -2,10 +2,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
 import KeyEggs from "@/components/easter-eggs/KeyEggs";
+import InstallApp from "@/components/layout/InstallApp";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
 import NavigationProgress from "@/components/layout/NavigationProgress";
 import SearchBar from "@/components/layout/SearchBar";
+import SiteHeader from "@/components/layout/SiteHeader";
 import UpdatedAt from "@/components/layout/UpdatedAt";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
@@ -38,28 +40,27 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Suspense fallback={null}>
         <NavigationProgress />
       </Suspense>
-      {/* Phones: the logo and the menu button, the search on its own line; tablets and small laptops:
-          the search between; from xl the links too (the menu then holds the pages about the site and the colour theme). */}
-      <header className="relative bg-white border-b border-gray-200">
-        <div className="base-container px-4 py-3 md:py-4 flex flex-wrap md:flex-nowrap items-center gap-x-6 gap-y-3">
-          <Logo />
+      {/* Sticky (components/layout/SiteHeader.tsx). Phones: the logo, then the search and menu buttons, the search
+          opening on its own line; tablets and small laptops: the search between; from xl the links too (the menu then
+          holds the pages about the site and the colour theme). */}
+      <SiteHeader
+        logo={<Logo />}
+        nav={
           <nav aria-label={t("layout.nav.label")} className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="hover:text-black">{n.label}</Link>
             ))}
           </nav>
-          <div className="order-last w-full md:order-none md:w-auto md:flex-1 md:min-w-0">
-            <SearchBar />
-          </div>
-          <div className="ml-auto md:ml-0 flex">
-            {/* It reads the URL (the current page in the menu): on a page whose address is only known when
-                it's asked for (a division not prerendered), the button's outline stands in until then */}
-            <Suspense fallback={<span aria-hidden="true" className="w-[42px] h-[42px] border border-black" />}>
-              <MenuButton links={NAV} about={ABOUT} />
-            </Suspense>
-          </div>
-        </div>
-      </header>
+        }
+        search={<SearchBar />}
+        menu={
+          // It reads the URL (the current page in the menu): on a page whose address is only known when it's asked
+          // for (a division not prerendered), the button's outline stands in until then
+          <Suspense fallback={<span aria-hidden="true" className="w-[42px] h-[42px] border border-black" />}>
+            <MenuButton links={NAV} about={ABOUT} />
+          </Suspense>
+        }
+      />
       <main className="flex-1">{children}</main>
       <footer className="border-t border-gray-200 bg-white">
         <div className="base-container px-4 py-6 text-sm text-gray-600 flex flex-wrap justify-between gap-4">
@@ -78,6 +79,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             })}
           </p>
           <UpdatedAt />
+          {/* Only where the site can be installed as an app and isn't open as one (filled in by the browser) */}
+          <InstallApp className="w-full" />
           {/* The copyright, and what on the site is someone else's or not the site's own yet */}
           <p className="w-full">
             {t("layout.footer.rights", { years: copyrightYears(), site: t("layout.siteName") })} {t("layout.footer.others")}

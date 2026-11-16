@@ -12,8 +12,11 @@ export const ICON_BUTTON = `inline-flex items-center justify-center w-10 h-10 ${
 /** An underlined link in running text */
 export const TEXT_LINK = "underline hover:text-blue-600";
 
-/** A table header that stays at the top of the page while its table scrolls past */
-export const STICKY_HEAD = "sticky top-0 z-10 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]";
+/**
+ * A table header that stays at the top of the page while its table scrolls past, below the sticky header
+ * (--header-offset: components/layout/SiteHeader.tsx), sliding up with it when it goes away on phones
+ */
+export const STICKY_HEAD = "sticky top-(--header-offset) z-10 transition-[top] duration-200 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]";
 
 /** A table row with a line under it (but the last) */
 export const ROW = "border-b border-gray-100 last:border-0";

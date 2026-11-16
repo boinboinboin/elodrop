@@ -1,11 +1,13 @@
 "use client";
 
 // The header's menu: a button whose three lines turn into a cross, opening the site's links (on
-// screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language. On phones the menu is
+// screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language,
+// and installing the site as an app where it can be (InstallApp). On phones the menu is
 // a panel under the whole header; from md a dropdown under the button. It closes on a link (the next
 // page), a theme picked or Escape (focus back on the button), or a press outside it.
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import InstallApp from "@/components/layout/InstallApp";
 import LanguagePicker from "@/components/layout/LanguagePicker";
 import ThemePicker from "@/components/layout/ThemePicker";
 import Link from "@/components/ui/Link";
@@ -71,7 +73,10 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
       <div
         id={id}
         inert={!open}
-        className={`absolute inset-x-0 top-full z-40 bg-white border-b border-gray-200 shadow-sm md:left-auto md:right-0 md:top-[calc(100%+0.5rem)] md:w-72 md:border transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+        // The header is sticky, so the menu can't be scrolled to with the page: on phones it covers the screen below the
+        // header and scrolls in itself; from md the dropdown scrolls in itself when it's taller than the screen below
+        // the header. Scrolling to its end doesn't go on to scroll the page behind it (overscroll-contain).
+        className={`absolute inset-x-0 top-full z-40 bg-white border-b border-gray-200 shadow-sm overflow-y-auto overscroll-contain max-md:h-[calc(100dvh-var(--header-offset))] md:max-h-[calc(100dvh-var(--header-offset)-1rem)] md:left-auto md:right-0 md:top-[calc(100%+0.5rem)] md:w-72 md:border transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
       >
         <div className="base-container px-4 py-2 md:px-5 md:py-3">
           <nav aria-label={t("layout.nav.label")} className="xl:hidden">
@@ -122,6 +127,8 @@ export default function MenuButton({ links, about }: { links: MenuLink[]; about:
             <h2 className="text-sm text-gray-600 mb-2">{t("layout.menu.language")}</h2>
             <LanguagePicker onPick={() => setOpen(false)} />
           </section>
+          {/* Only where the site can be installed as an app and isn't open as one */}
+          <InstallApp title={t("layout.menu.app")} className="pt-2 pb-2" />
         </div>
       </div>
     </div>

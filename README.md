@@ -44,6 +44,7 @@ Then it rebuilds only what's needed (`pipeline/fingerprint.mjs` compares the inp
 - `types/`: the shapes of the exported data.
 - `app/(site)/how-it-works`: the ratings explained, in plain words and (with the "I'm a big nerd" switch) with the formulas; its text (`messages/en/how-it-works.json`) and numbers follow `pipeline/README.md`, so update it when the rules change. `app/(site)/whats-new` is `CHANGELOG.md`, read when the site is built.
 - `messages/`: the site's text, one JSON file per area (`messages/en/`), read through `t()`, `plural()` and `rich()` in `messages/i18n.ts`. English is the only language so far; another (Norwegian) is a new folder with the same keys.
+- The app: the site installs as an app (a Progressive Web App), so there's no separate app to build or keep in step: every change to the site is in the app too. Each language has its manifest (`app/[lang]/manifest.webmanifest/route.ts`, opening on that language's front page in its own window). The menu and the footer show "Install the app" where the browser can install it (`components/layout/InstallApp.tsx`, with `utils/install.ts` keeping Chrome's install offer from before the page has loaded), and on iPhone how to add it to the home screen. There's no service worker: browsers don't need one to install the site, and without one nothing is cached or fetched on its own, so it costs nothing. Offline use or notifications would need one. Not in the App Store or Google Play: Apple doesn't take an app that is only a website, and Play would need its own listing.
 
 ## Local development
 

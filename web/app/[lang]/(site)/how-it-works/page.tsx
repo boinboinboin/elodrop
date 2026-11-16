@@ -100,7 +100,7 @@ export default async function HowItWorksPage() {
       <Section>
         <div className="xl:grid xl:grid-cols-[15rem_minmax(0,1fr)] xl:gap-16">
           {/* The switch stays in view: on top of the page on phones and tablets, beside the parts from xl */}
-          <aside className="sticky top-0 z-20 -mx-4 px-4 py-3 mb-8 bg-stone-100 border-b border-gray-300 xl:top-8 xl:self-start xl:mx-0 xl:px-0 xl:py-0 xl:mb-0 xl:border-0">
+          <aside className="sticky top-(--header-offset) z-20 transition-[top] duration-200 -mx-4 px-4 py-3 mb-8 bg-stone-100 border-b border-gray-300 xl:top-[calc(var(--header-offset)+2rem)] xl:self-start xl:mx-0 xl:px-0 xl:py-0 xl:mb-0 xl:border-0">
             <NerdSwitch />
             <nav aria-label={t("howItWorks.contents")} className="hidden xl:block mt-10">
               <h2 className="text-sm text-gray-600 mb-3">{t("howItWorks.contents")}</h2>

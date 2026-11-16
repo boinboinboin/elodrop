@@ -1,6 +1,6 @@
 // The site's icons, rendered from the mark in utils/logo.ts: favicon.ico (the 16 px drawing, and 32 and
 // 48 px from the full one), apple-icon.png (180 px) for iPhone home screens, and the web app
-// manifest's icons (public/icon-192.png, icon-512.png; app/manifest.ts). The home-screen icons are a
+// manifest's icons (public/icon-192.png, icon-512.png; app/[lang]/manifest.webmanifest/route.ts). The home-screen icons are a
 // plain square (the phone rounds or masks the corners itself; the line runs off the edges anyway,
 // and the shuttle stays inside the circle an Android mask keeps). There's no SVG icon: browsers
 // would draw it at 16 px too, instead of the drawing made for that size.

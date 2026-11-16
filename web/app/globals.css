@@ -246,6 +246,20 @@ body {
   @apply bg-stone-100 text-gray-900 antialiased;
 }
 
+/* The sticky header's height on screen (components/layout/SiteHeader.tsx sets the exact one, 0 while it's away on
+   phones): what else sticks to the top sticks below it, and a link to a place on the page lands below it. Until the
+   script runs, its usual height: one row (42px buttons, py-3 or md:py-4, the line under it). */
+:root {
+  --header-offset: 67px;
+  scroll-padding-top: var(--header-offset);
+}
+/* md: 48rem */
+@media (width >= 48rem) {
+  :root {
+    --header-offset: 75px;
+  }
+}
+
 /* Disclosures (<details>, components/ui/Disclosure.tsx) open and close by sliding their content's
    height and fading it, instead of jumping. Sliding to the content's height needs interpolate-size
    (Chrome, Edge): without it they only fade; without ::details-content, or with reduced motion,
