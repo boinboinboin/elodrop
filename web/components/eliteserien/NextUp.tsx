@@ -2,7 +2,7 @@
 // a home win, a draw and an away win as one bar, the expected score, and what's at stake for each team: the chance
 // (title, top 4, 7th or 8th) that changes most between winning and losing it.
 import Team from "@/components/clubs/Team";
-import { SplitBar } from "@/components/head-to-head/ChanceBar";
+import { SplitBar } from "@/components/head-to-head/SplitBar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import { getI18n } from "@/messages/server";

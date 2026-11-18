@@ -1,0 +1,57 @@
+<!-- The sign-in code (supabase/config.toml: confirmation and magic_link). Paste the same into the hosted project:
+     Authentication → Emails, for "Confirm signup" and "Magic link" (subject: "Your Elodrop code").
+     Styled as the site's default theme: a light grey page, a white card with the cork's orange along its top (as the
+     front page's cards), black text in a serif (Georgia stands in for Redaction, which email can't load), the code in a
+     black outline (as the site's buttons). Tables and inline styles only, for email clients; the icon is the site's own
+     (public/icon-192.png), and the alt text stands in where images are blocked. -->
+<!doctype html>
+<html lang="nb">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Elodrop</title>
+  </head>
+  <body style="margin: 0; padding: 0; background: #f5f5f4">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background: #f5f5f4">
+      <tr>
+        <td align="center" style="padding: 32px 16px">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width: 480px">
+            <!-- The logo, as in the site's header -->
+            <tr>
+              <td style="padding: 0 0 20px 0">
+                <a href="{{ .SiteURL }}" style="text-decoration: none; color: #000000">
+                  <img src="{{ .SiteURL }}/icon-192.png" width="28" height="28" alt="" style="vertical-align: middle; border: 0; border-radius: 6px" />
+                  <span style="vertical-align: middle; margin-left: 8px; font-family: Georgia, 'Times New Roman', serif; font-size: 22px; font-weight: 600; letter-spacing: -0.3px; color: #000000">Elodrop</span>
+                </a>
+              </td>
+            </tr>
+            <!-- The card -->
+            <tr>
+              <td style="background: #ffffff; border-top: 4px solid #f97316; padding: 28px 24px 24px 24px; font-family: Georgia, 'Times New Roman', serif; color: #000000">
+                <h1 style="margin: 0 0 8px 0; font-size: 30px; line-height: 1.1; font-weight: normal; letter-spacing: -0.5px">Logg inn</h1>
+                <p style="margin: 0 0 20px 0; font-size: 17px; line-height: 1.5; color: #374151">Skriv inn koden på siden der du ba om den:</p>
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="border: 1px solid #000000; padding: 12px 12px 12px 20px; font-family: Georgia, 'Times New Roman', serif; font-size: 34px; font-weight: 600; letter-spacing: 8px; color: #000000">{{ .Token }}</td>
+                  </tr>
+                </table>
+                <p style="margin: 20px 0 0 0; font-size: 15px; line-height: 1.5; color: #4b5563">Den gjelder i en time. Ba du ikke om den, kan du se bort fra denne e-posten.</p>
+                <!-- English, below a line -->
+                <p style="margin: 24px 0 0 0; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 15px; line-height: 1.5; color: #4b5563">
+                  <strong style="color: #000000; font-weight: 600">Sign in:</strong> type the code on the page where you asked for it. It works for an hour. If you didn't ask for it, you can ignore this email.
+                </p>
+              </td>
+            </tr>
+            <!-- As the site's footer -->
+            <tr>
+              <td style="padding: 16px 0 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 13px; line-height: 1.5; color: #4b5563">
+                Elodrop: Elo-rating for norsk badminton · <a href="{{ .SiteURL }}" style="color: #4b5563; text-decoration: underline">elodrop.no</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

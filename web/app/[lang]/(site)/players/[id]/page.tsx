@@ -7,6 +7,9 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import LogoImage from "@/components/clubs/LogoImage";
 import { ArrowRight } from "@/components/SVG";
+import FollowButton from "@/components/account/FollowButton";
+import ReportMistake from "@/components/account/ReportMistake";
+import YouBadge from "@/components/account/YouBadge";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -110,7 +113,10 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
             },
           }}
         />
-        <h1 className="h1 mt-4">{hyphenate(player.name)}</h1>
+        <h1 className="h1 mt-4">
+          {hyphenate(player.name)}
+          <YouBadge playerId={player.id} />
+        </h1>
         {/* The club, and the preview and share buttons at the end of its line */}
         <div className="flex items-center justify-between gap-4 mt-2">
           {player.club ? (
@@ -121,13 +127,18 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           ) : (
             <span />
           )}
-          <ShareButtons path={playerHref(player.id)} image={`${playerHref(player.id)}/preview.png`} title={player.name} kind="player" />
+          <div className="flex gap-2 shrink-0">
+            <FollowButton kind="player" target={player.id} name={player.name} />
+            <ShareButtons path={playerHref(player.id)} image={`${playerHref(player.id)}/preview.png`} title={player.name} kind="player" />
+          </div>
         </div>
         <Achievements player={player} badges={badges} links={links} />
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>
         </p>
+        {/* Only for the signed-in user who has said this player is them, in the browser */}
+        <ReportMistake playerId={player.id} pools={Object.keys(player.pools) as Pool[]} />
       </Section>
 
       <AllDisciplines player={player} />

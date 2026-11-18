@@ -24,7 +24,7 @@ import PortableBody, { type SiteNumbers } from "./PortableBody";
 import PreviewRefresh from "./PreviewRefresh";
 
 /** The pages written in the Studio: their texts in the messages before one is published */
-export type PageKey = "about" | "support";
+export type PageKey = "about" | "support" | "privacy";
 
 /** The site's numbers, for a stats block: players with a rating, team matches and their seasons */
 async function siteNumbers(): Promise<SiteNumbers> {

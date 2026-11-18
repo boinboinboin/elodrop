@@ -7,6 +7,10 @@
     "title": "Hjelp og støtte",
     "description": "Hjelp med Elodrop: vanlige spørsmål, hvordan du melder fra om feil, kontakt, og hvordan du kan støtte siden."
   },
+  "privacy": {
+    "title": "Personvern",
+    "description": "Hvordan Elodrop behandler dataene dine: hva en konto lagrer, hvorfor, hvor lenge, og hvordan du sletter den."
+  },
   "soon": "Denne siden skrives nå. Kom gjerne tilbake snart!",
   "notTranslated": "Denne siden finnes bare på norsk så langt.",
   "updated": "Sist oppdatert {date}",

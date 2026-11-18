@@ -2,7 +2,7 @@
 // columns on wide screens) and time: the teams, and the chances of a home win, a draw and an away win with each team's
 // best lineup now, as the team match pages' bar (SplitBar) between the teams, the numbers on hover.
 import Team from "@/components/clubs/Team";
-import { SplitBar } from "@/components/head-to-head/ChanceBar";
+import { SplitBar } from "@/components/head-to-head/SplitBar";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, EliteserienForecast } from "@/types";
 import { ROW } from "@/components/ui/styles";

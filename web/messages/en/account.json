@@ -1,0 +1,265 @@
+{
+  "metadata": {
+    "title": "Your account",
+    "description": "Sign in to follow players and clubs, mark yourself and the tournaments you play, and vote on what Elodrop does next."
+  },
+  "button": {
+    "signIn": "Sign in",
+    "account": "Your account ({nickname})"
+  },
+  "signIn": {
+    "intro": "With an account you can follow players and clubs, mark which player is you, keep your tournaments in your calendar and vote on what comes next. The rankings and every page stay open to everyone.",
+    "email": "Email",
+    "sendCode": "Send me a code",
+    "sending": "Sending…",
+    "codeSent": "We sent a code to {email}. It works for an hour.",
+    "code": "Code",
+    "verify": "Sign in",
+    "verifying": "Signing in…",
+    "otherEmail": "Use another email",
+    "or": "or",
+    "google": "Continue with Google",
+    "sendFailed": "The code couldn't be sent. Check the address, or try again in a minute.",
+    "codeFailed": "That code didn't work. Check it, or send a new one."
+  },
+  "profile": {
+    "title": "Create your account",
+    "intro": "Two things before you start.",
+    "birthDate": "Date of birth",
+    "birthDateHelp": "Only the year is kept.",
+    "nickname": "Nickname",
+    "nicknameHelp": "3–20 characters. It's shown with the ideas you suggest, never with your name or email.",
+    "privacy": "I've read <link>how Elodrop handles my data</link>.",
+    "create": "Create account",
+    "creating": "Creating…",
+    "tooYoung": "Accounts are for ages {age} and over, so none was made, and your sign-in has been deleted. A parent can follow your player page with their own account."
+  },
+  "settings": {
+    "signedInAs": "Signed in as {email}",
+    "nickname": "Nickname",
+    "save": "Save",
+    "saved": "Saved",
+    "signOut": "Sign out"
+  },
+  "me": {
+    "title": "This is me",
+    "intro": "Pick yourself among the players. Only you see it: it marks your player page and puts your rating on the front page.",
+    "label": "You are",
+    "choose": "This is me",
+    "clear": "Not me after all",
+    "current": "You are <link>{name}</link>.",
+    "locked": "You can choose someone else from {date}.",
+    "you": "You",
+    "confirm": "Are you {name}? Once you've chosen, you can't choose someone else for {days} days.",
+    "confirmYes": "Yes, this is me",
+    "confirmClear": "Remove {name} as you? You can't choose anyone again until {date}.",
+    "confirmClearYes": "Yes, remove",
+    "cancel": "Cancel"
+  },
+  "follow": {
+    "follow": "Follow {name}",
+    "unfollow": "Stop following {name}",
+    "signIn": "Sign in to follow {name}"
+  },
+  "following": {
+    "title": "Following",
+    "description": "You and the players you follow, with their ratings and how they moved last week.",
+    "empty": "Follow players with the star on their page, and they show up here.",
+    "link": "Manage on your account page",
+    "clubs": "Clubs",
+    "manage": "The players and clubs you follow. Press the cross to stop following one.",
+    "columns": {
+      "player": "Player",
+      "singles": "Singles",
+      "doubles": "Doubles",
+      "mixed": "Mixed",
+      "unfollow": "Stop following"
+    },
+    "more": {
+      "one": "{count} more on your account page",
+      "other": "{count} more on your account page"
+    }
+  },
+  "danger": {
+    "title": "Danger zone",
+    "intro": "Everything goes at once: your profile, follows, tournaments, votes and reports. Ideas you suggested stay, without your name.",
+    "delete": "Delete my account",
+    "confirm": "Yes, delete everything",
+    "cancel": "Keep it",
+    "warning": "This can't be undone. Your account and everything in it are deleted at once, and can't be brought back.",
+    "open": "Delete your account"
+  },
+  "errors": {
+    "too_young": "Accounts are for ages 15 and over.",
+    "nickname_blocked": "That nickname can't be used. Try another.",
+    "nickname_taken": "That nickname is taken. Try another.",
+    "claim_too_soon": "You chose a player less than 30 days ago.",
+    "account_too_new": "Your account is too new for this yet.",
+    "too_many_pending": "You have 2 ideas waiting to be looked at already.",
+    "reports_off": "Reports are switched off for now.",
+    "reports_blocked": "You can't send reports any more.",
+    "not_your_player": "You can only report mistakes about yourself, 14 days after choosing who you are.",
+    "report_open": "You have a report waiting already.",
+    "too_many_reports": "You've sent 3 reports in the last 90 days.",
+    "player_reported": "This player has reports waiting already.",
+    "unknown": "Something went wrong. Try again."
+  },
+  "report": {
+    "open": "Report a mistake about you",
+    "title": "Report a mistake",
+    "intro": "Something wrong on your page? Tell us what, and it's checked by hand. You can send one at a time and 3 in 90 days.",
+    "kind": "What's wrong",
+    "kinds": {
+      "club": "My club is wrong",
+      "match": "A match isn't mine",
+      "tournament": "A tournament is missing",
+      "duplicate": "I'm on Elodrop twice",
+      "birthYear": "My birth year is wrong"
+    },
+    "club": "Your club now",
+    "pool": "Discipline",
+    "match": "The match",
+    "loadingMatches": "Loading your matches…",
+    "tournament": "The tournament's name",
+    "duplicate": "Your other player page",
+    "birthYear": "Your birth year",
+    "note": "Anything else (optional)",
+    "noteHelp": "Up to 280 characters. Don't write anything about others.",
+    "send": "Send",
+    "sending": "Sending…",
+    "cancel": "Cancel",
+    "sent": "Thanks. It will be checked by hand, and you can follow it on your account page.",
+    "mine": "Your reports",
+    "status": {
+      "open": "Waiting",
+      "accepted": "Fixed or accepted",
+      "declined": "Declined"
+    },
+    "declinedNote": "A second declined report ends reporting for your account."
+  },
+  "ideas": {
+    "title": "Ideas",
+    "description": "What could Elodrop do next? Vote for the ideas you want, or suggest one.",
+    "intro": "What could Elodrop do next? Vote for the ideas you'd use. The most wanted come first, and the ones being worked on are marked.",
+    "sort": {
+      "votes": "Most votes",
+      "planned": "Planned",
+      "done": "Done"
+    },
+    "votes": {
+      "one": "{count} vote",
+      "other": "{count} votes"
+    },
+    "vote": "Vote",
+    "voted": "Voted",
+    "unvote": "Take back your vote for “{title}”",
+    "voteFor": "Vote for “{title}”",
+    "signIn": "<link>Sign in</link> to vote and suggest ideas.",
+    "status": {
+      "pending": "Waiting to be looked at",
+      "open": "Open",
+      "planned": "Planned",
+      "done": "Done",
+      "declined": "Not this time"
+    },
+    "none": "No ideas here yet.",
+    "suggest": {
+      "title": "Suggest an idea",
+      "intro": "Ideas are read before they're shown, with your nickname. You can have 2 waiting at a time.",
+      "name": "The idea, in a line",
+      "body": "More about it (optional)",
+      "send": "Suggest",
+      "sending": "Sending…",
+      "sent": "Thanks! It's shown once it has been read.",
+      "tooNew": "Accounts can suggest ideas from 7 days after they're made.",
+      "contact": "Elodrop may email me about this idea",
+      "contactHelp": "To ask about it or talk it through. Your email address is never shown to anyone.",
+      "sentOpen": "Thanks! It's on the list."
+    },
+    "mine": "Your suggestions",
+    "by": "by {nickname}"
+  },
+  "tabs": {
+    "label": "Your account",
+    "overview": "Overview",
+    "settings": "Settings"
+  },
+  "overview": {
+    "noClaim": "Pick yourself among the players, and your numbers show up here: your next tournament, your recent weeks, each season and your career.",
+    "pickYourself": "Choose who you are",
+    "loading": "Loading your numbers…",
+    "next": {
+      "title": "Your next tournament",
+      "inDays": {
+        "one": "in {count} day",
+        "other": "in {count} days"
+      },
+      "today": "today",
+      "seed": "Seed {seed}",
+      "unseeded": "Not seeded",
+      "with": "with ",
+      "entries": {
+        "one": "{count} entry",
+        "other": "{count} entries"
+      },
+      "winChance": "Chance to win",
+      "luck": "Draw luck",
+      "group": "Your group",
+      "you": "You",
+      "note": "Your chance against each from your ratings now. Draw luck: above zero your draw helps, below it hurts, against a fair draw (as on the tournament page)."
+    },
+    "weeks": {
+      "title": "Your recent weeks",
+      "teamMatches": "Team matches",
+      "record": "{wins}–{losses}",
+      "recordWithDraws": "{wins}–{draws}–{losses}",
+      "bestWin": "Best win: against {names}, with {chance}",
+      "matches": "The matches"
+    },
+    "season": {
+      "title": "Season in review",
+      "pick": "Season",
+      "matches": "Matches",
+      "winRate": "{pct} won",
+      "rating": "Rating",
+      "underdog": "As the underdog",
+      "underdogHelp": "Matches you had under a 50 % chance of winning",
+      "decider": "Deciding sets",
+      "deciderHelp": "Matches that went to a third set",
+      "events": "Tournaments",
+      "eventsDetail": {
+        "one": "and {count} team match",
+        "other": "and {count} team matches"
+      },
+      "partner": "Most played with",
+      "opponents": "Most played against",
+      "badges": {
+        "one": "{count} badge earned",
+        "other": "{count} badges earned"
+      },
+      "none": "No matches this season yet."
+    },
+    "career": {
+      "title": "Career and form",
+      "form": "Your last 10",
+      "formHelp": "Newest first",
+      "lastTen": "Won of the last 10",
+      "careerRate": "{pct} over your career",
+      "streak": "Longest winning streak",
+      "streakDetail": "{from} – {to}",
+      "underdog": "As the underdog, all time",
+      "decider": "Deciding sets, all time",
+      "nemesisHelp": "The opponents you've lost to most (at least 3 losses)",
+      "together": "{matches} together, {wins}–{losses}",
+      "against": "{wins}–{losses} against",
+      "partnersDoubles": "Most frequent doubles partners",
+      "partnersMixed": "Most frequent mixed partners",
+      "nemeses": "Your nemeses"
+    },
+    "result": {
+      "win": "Won",
+      "loss": "Lost",
+      "draw": "Draw"
+    }
+  }
+}

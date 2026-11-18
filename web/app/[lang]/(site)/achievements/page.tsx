@@ -6,7 +6,7 @@
 // of the latest. A badge switched off in the Studio (`listed`) is left out. Linked from the menu and footer, and from the badges on player pages.
 import type { Metadata } from "next";
 import LevelShowcase from "@/components/achievements/LevelShowcase";
-import { AwardLine, fillBadgeText, levelView } from "@/components/players/Achievements";
+import { AwardLine } from "@/components/players/Achievements";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Disclosure from "@/components/ui/Disclosure";
 import Link from "@/components/ui/Link";
@@ -18,6 +18,7 @@ import { getBadges } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Achievement, AchievementStats, Badge } from "@/types";
 import { playerHref } from "@/utils/hrefs";
+import { fillBadgeText, levelView } from "@/utils/badges";
 import { pageMetadata } from "@/utils/metadata";
 import { hyphenate } from "@/utils/hyphenate";
 

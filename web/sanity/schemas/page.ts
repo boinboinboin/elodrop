@@ -20,6 +20,7 @@ import { tidyText } from "./spacing";
 export const PAGES = [
   { key: "about", title: "About" },
   { key: "support", title: "Help & support" },
+  { key: "privacy", title: "Privacy" },
 ] as const;
 export const PAGE_LANGUAGES = [
   { lang: "nb", title: "Norsk" },

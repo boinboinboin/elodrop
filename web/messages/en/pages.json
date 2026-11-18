@@ -7,6 +7,10 @@
     "title": "Help & support",
     "description": "Help with Elodrop: common questions, how to report a mistake, contact, and how you can support the site."
   },
+  "privacy": {
+    "title": "Privacy",
+    "description": "How Elodrop handles your data: what an account keeps, why, for how long, and how to delete it."
+  },
   "soon": "This page is being written. Do come back soon!",
   "notTranslated": "This page is only in Norwegian so far.",
   "updated": "Last updated {date}",

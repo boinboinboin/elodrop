@@ -3,6 +3,7 @@
 import { createHash } from "node:crypto";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import FollowButton from "@/components/account/FollowButton";
 import ClubPlayers, { type ClubPlayerRow } from "@/components/clubs/ClubPlayers";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
 import LogoImage from "@/components/clubs/LogoImage";
@@ -103,7 +104,10 @@ async function Content({ params }: Pick<PageProps<"/[lang]/clubs/[slug]">, "para
               </>
             )}
           </p>
-          <ShareButtons path={clubHref(entry.slug)} image={`${clubHref(entry.slug)}/preview.png`} title={entry.title} kind="club" />
+          <div className="flex gap-2 shrink-0">
+            <FollowButton kind="club" target={entry.slug} name={entry.title} />
+            <ShareButtons path={clubHref(entry.slug)} image={`${clubHref(entry.slug)}/preview.png`} title={entry.title} kind="club" />
+          </div>
         </div>
       </Section>
 
