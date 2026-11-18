@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Suspense } from "react";
+import { AccountProvider } from "@/components/account/AccountProvider";
 import KeyEggs from "@/components/easter-eggs/KeyEggs";
 import InstallApp from "@/components/layout/InstallApp";
 import Logo from "@/components/layout/Logo";
@@ -13,6 +14,7 @@ import UpdatedAt from "@/components/layout/UpdatedAt";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
+import { ACCOUNTS } from "@/utils/account";
 import { copyrightYears, getReleases } from "@/utils/changelog";
 
 const FOOTER_LINK = "underline hover:text-black";
@@ -28,6 +30,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/tournaments", label: t("layout.nav.tournaments") },
     { href: "/upsets", label: t("layout.nav.upsets") },
     { href: "/head-to-head", label: t("layout.nav.headToHead") },
+    // The fantasy game, where the site has accounts (utils/account.ts)
+    ...(ACCOUNTS ? [{ href: "/elostonk", label: t("layout.nav.elostonk") }] : []),
   ];
   // About the site, in the menu at every width (and the footer), the current version beside What's new. The pages
   // written in the Studio (`page`) are linked only once published (components/layout/PublishedPages.tsx)
@@ -37,9 +41,14 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/achievements", label: t("layout.nav.achievements") },
     { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
     { href: "/support", label: t("layout.nav.support"), page: "support" },
+    { href: "/privacy", label: t("layout.nav.privacy"), page: "privacy" },
+    // Where the site has accounts (utils/account.ts)
+    ...(ACCOUNTS ? [{ href: "/ideas", label: t("layout.nav.ideas") }] : []),
   ];
   return (
-    <>
+    // The signed-in user, for the client parts that show it (components/account): read in the browser, so every page
+    // stays the same for everyone
+    <AccountProvider>
       {/* A bar along the top while a page loads (it reads the URL, so it waits for the client) */}
       <Suspense fallback={null}>
         <NavigationProgress />
@@ -100,6 +109,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <KeyEggs />
       <Analytics />
       <SpeedInsights />
-    </>
+    </AccountProvider>
   );
 }

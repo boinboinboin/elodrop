@@ -1,0 +1,120 @@
+{
+  "title": "EloStonk",
+  "description": "A fantasy game on Elo ratings: pick 5 players, make one captain, and score from how much better than expected they play each round.",
+  "intro": "Pick 5 players and make one your captain. Each round, they score from how much better than expected they play, so an underdog's win counts more than a favourite's.",
+  "tabs": {
+    "label": "EloStonk",
+    "squad": "My squad",
+    "board": "Leaderboard",
+    "leagues": "Leagues",
+    "stats": "Statistics",
+    "rules": "How it works"
+  },
+  "rules": "**Your squad.** Pick 5 players, aged 18 or over. One is your captain, whose points count twice. Change your squad as often as you like until the round locks; after that it carries over to the next round until you change it.\n\n**Rounds.** A round runs from Friday to Thursday and locks at the start of its Friday (Norwegian time): the squad you have then plays the whole round. So a weekend's tournaments and the team matches the week after belong to the same round.\n\n**Points.** Every match one of your players plays in the round scores 100 × (the result − their chance of winning it, from Elodrop's ratings):\n- a win at a 20 % chance: +80\n- a win at a 90 % chance: +10\n- a loss at a 90 % chance: −90\n\nSo favourites gain less than underdogs who win, and the same scale counts at every level. Losses count too, so a stonk can fall. More matches mean more chances both ways.\n\n**When points come.** Points come in with the results, the night after each match day; late results can still change a round for 3 weeks, so recent rounds are marked provisional.\n\n**Leagues.** Make a league and invite others with its link, to have a table of your own beside everyone's.\n\nEloStonk is free, with no stake and no prizes.",
+  "squad": {
+    "signIn": "<link>Sign in</link> to pick your squad. The leaderboards and statistics are open to everyone.",
+    "title": "Your squad for {date}",
+    "locks": "Locks {time} · {hours}",
+    "hours": {
+      "one": "in {count} hour",
+      "other": "in {count} hours"
+    },
+    "gone": "No longer pickable",
+    "captain": "Captain: counts twice",
+    "makeCaptain": "Make {name} captain",
+    "remove": "Take {name} out",
+    "empty": "Pick a player below",
+    "saving": "Saving…",
+    "save": "Save squad",
+    "saved": "Saved. It carries over until you change it.",
+    "need": "{count} more to pick, and a captain",
+    "unsaved": "Not saved yet",
+    "carries": "Saved",
+    "now": "The round under way, from {date}",
+    "thisRound": "This round so far",
+    "provisional": "provisional",
+    "season": "This season",
+    "rank": "#{rank} of {of}",
+    "rounds": "Rounds played",
+    "notInRound": "You had no squad when this round locked.",
+    "history": "Your rounds",
+    "roundOf": "Round of {date}"
+  },
+  "search": {
+    "title": "Find players",
+    "label": "Name or club",
+    "sort": "Sort by",
+    "sorts": {
+      "form": "Form (last 4 rounds)",
+      "last": "Last round",
+      "rating": "Rating",
+      "picked": "Most picked"
+    },
+    "genders": {
+      "all": "Everyone",
+      "M": "Men",
+      "K": "Women"
+    },
+    "kinds": {
+      "all": "All disciplines",
+      "singles": "Singles",
+      "doubles": "Doubles",
+      "mixed": "Mixed"
+    },
+    "upcoming": "Only players with an upcoming tournament",
+    "upcomingHelp": "Drawn in a tournament that isn't over. Team matches can't be known ahead.",
+    "count": "{count} players",
+    "next": "Next: {name}, {date}",
+    "chart": "{name}'s points in the last 8 rounds",
+    "formTitle": "Points over the last 4 rounds",
+    "add": "Add {name} to your squad"
+  },
+  "board": {
+    "views": {
+      "season": "Season",
+      "round": "Round",
+      "alltime": "All time"
+    },
+    "season": "Season",
+    "round": "Round",
+    "none": "No scores yet.",
+    "player": "Player",
+    "points": "Points",
+    "rounds": "Rounds",
+    "best": "Best round"
+  },
+  "leagues": {
+    "signIn": "<link>Sign in</link> to make or join a league.",
+    "members": {
+      "one": "{count} member",
+      "other": "{count} members"
+    },
+    "noPoints": "No points this season yet.",
+    "owner": "owner",
+    "copied": "Link copied",
+    "invite": "Invite with a link",
+    "code": "Code: {code}",
+    "renew": "New code",
+    "leave": "Leave",
+    "none": "You're not in a league yet. Make one, or join one with its code.",
+    "create": "Make a league",
+    "name": "Name",
+    "createButton": "Make league",
+    "join": "Join a league",
+    "codeLabel": "Code",
+    "joinButton": "Join"
+  },
+  "stats": {
+    "none": "No rounds yet.",
+    "managers": "Squads",
+    "average": "Average",
+    "best": "Best score",
+    "mostPicked": "Most picked",
+    "mostCaptained": "Most captained",
+    "bestPicks": "Best picks",
+    "pickedBy": "in {pct} of squads",
+    "unbought": "The stonks nobody bought",
+    "unboughtHelp": "The best players this round that no squad had",
+    "empty": "–"
+  }
+}

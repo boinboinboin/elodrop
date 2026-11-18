@@ -1,0 +1,273 @@
+{
+  "metadata": {
+    "title": "Din konto",
+    "description": "Logg inn for å følge spillere og klubber, markere deg selv og turneringene du spiller, og stemme på hva Elodrop gjør videre."
+  },
+  "button": {
+    "signIn": "Logg inn",
+    "account": "Din konto ({nickname})"
+  },
+  "signIn": {
+    "intro": "Med en konto kan du følge spillere og klubber, markere hvilken spiller som er deg, ha turneringene dine i kalenderen og stemme på hva som kommer. Rankingene og alle sidene er fortsatt åpne for alle.",
+    "email": "E-post",
+    "sendCode": "Send meg en kode",
+    "sending": "Sender …",
+    "codeSent": "Vi sendte en kode til {email}. Den gjelder i en time.",
+    "code": "Kode",
+    "verify": "Logg inn",
+    "verifying": "Logger inn …",
+    "otherEmail": "Bruk en annen e-post",
+    "or": "eller",
+    "google": "Fortsett med Google",
+    "sendFailed": "Koden kunne ikke sendes. Sjekk adressen, eller prøv igjen om et minutt.",
+    "codeFailed": "Den koden virket ikke. Sjekk den, eller send en ny."
+  },
+  "profile": {
+    "title": "Lag kontoen din",
+    "intro": "To ting før du starter.",
+    "birthDate": "Fødselsdato",
+    "birthDateHelp": "Bare året lagres.",
+    "nickname": "Kallenavn",
+    "nicknameHelp": "3–20 tegn. Det vises med ideene du foreslår, aldri sammen med navnet eller e-posten din.",
+    "privacy": "Jeg har lest hvordan Elodrop behandler dataene mine",
+    "create": "Lag konto",
+    "creating": "Lager …",
+    "tooYoung": "Kontoer er for de som er {age} år eller eldre, så ingen konto ble laget, og innloggingen din er slettet. En forelder kan følge spillersiden din med sin egen konto.",
+    "privacyLink": "Hvordan Elodrop behandler dataene dine"
+  },
+  "settings": {
+    "signedInAs": "Logget inn som {email}",
+    "nickname": "Kallenavn",
+    "save": "Lagre",
+    "saved": "Lagret",
+    "signOut": "Logg ut"
+  },
+  "me": {
+    "title": "Dette er meg",
+    "intro": "Velg deg selv blant spillerne. Bare du ser det: det markerer spillersiden din og viser ratingen din på forsiden.",
+    "label": "Du er",
+    "choose": "Dette er meg",
+    "clear": "Ikke meg likevel",
+    "current": "Du er <link>{name}</link>.",
+    "locked": "Du kan velge en annen fra {date}.",
+    "you": "Deg",
+    "confirm": "Er du {name}? Når du har valgt, kan du ikke velge en annen på {days} dager.",
+    "confirmYes": "Ja, dette er meg",
+    "confirmClear": "Fjerne {name} som deg? Du kan ikke velge noen igjen før {date}.",
+    "confirmClearYes": "Ja, fjern",
+    "cancel": "Avbryt"
+  },
+  "follow": {
+    "follow": "Følg {name}",
+    "unfollow": "Slutt å følge {name}",
+    "signIn": "Logg inn for å følge {name}"
+  },
+  "following": {
+    "title": "Følger",
+    "description": "Deg og spillerne du følger, med ratingen deres og hvordan den endret seg forrige uke.",
+    "empty": "Følg spillere med stjernen på siden deres, så dukker de opp her.",
+    "link": "Administrer på kontosiden din",
+    "clubs": "Klubber",
+    "manage": "Spillerne og klubbene du følger. Trykk på krysset for å slutte å følge en.",
+    "columns": {
+      "player": "Spiller",
+      "singles": "Single",
+      "doubles": "Double",
+      "mixed": "Mix",
+      "unfollow": "Slutt å følge"
+    },
+    "more": {
+      "one": "{count} til på kontosiden din",
+      "other": "{count} til på kontosiden din"
+    }
+  },
+  "danger": {
+    "title": "Faresone",
+    "intro": "Alt forsvinner med en gang: profilen, følgingene, turneringene, stemmene og rapportene dine. Ideer du har foreslått blir stående, uten navnet ditt.",
+    "delete": "Slett kontoen min",
+    "confirm": "Ja, slett alt",
+    "cancel": "Behold den",
+    "warning": "Dette kan ikke angres. Kontoen din og alt i den slettes med en gang, og kan ikke hentes tilbake.",
+    "open": "Slett kontoen din"
+  },
+  "errors": {
+    "too_young": "Kontoer er for de som er 15 år eller eldre.",
+    "nickname_blocked": "Det kallenavnet kan ikke brukes. Prøv et annet.",
+    "nickname_taken": "Det kallenavnet er tatt. Prøv et annet.",
+    "claim_too_soon": "Du valgte en spiller for mindre enn 30 dager siden.",
+    "account_too_new": "Kontoen din er for ny til dette ennå.",
+    "too_many_pending": "Du har allerede 2 ideer som venter på å bli sett på.",
+    "reports_off": "Rapporter er slått av for nå.",
+    "reports_blocked": "Du kan ikke sende rapporter lenger.",
+    "not_your_player": "Du kan bare rapportere feil om deg selv, 14 dager etter at du valgte hvem du er.",
+    "report_open": "Du har allerede en rapport som venter.",
+    "too_many_reports": "Du har sendt 3 rapporter de siste 90 dagene.",
+    "player_reported": "Denne spilleren har allerede rapporter som venter.",
+    "squad_invalid": "Et lag er 5 forskjellige spillere, én av dem kaptein.",
+    "not_eligible": "En av spillerne kan ikke velges (under 18, eller ikke aktiv).",
+    "no_profile": "Lag kontoen din først (kallenavnet ditt).",
+    "league_not_found": "Ingen liga har den koden.",
+    "league_full": "Den ligaen er full (100 medlemmer).",
+    "too_many_leagues": "Du er med i så mange ligaer du kan være.",
+    "not_owner": "Bare eieren av ligaen kan gjøre det.",
+    "unknown": "Noe gikk galt. Prøv igjen."
+  },
+  "report": {
+    "open": "Meld fra om en feil om deg",
+    "title": "Meld fra om en feil",
+    "intro": "Noe galt på siden din? Fortell hva, så sjekkes det for hånd. Du kan sende én om gangen, og 3 på 90 dager.",
+    "kind": "Hva er galt",
+    "kinds": {
+      "club": "Klubben min er feil",
+      "match": "En kamp er ikke min",
+      "tournament": "En turnering mangler",
+      "duplicate": "Jeg er på Elodrop to ganger",
+      "birthYear": "Fødselsåret mitt er feil"
+    },
+    "club": "Klubben din nå",
+    "pool": "Disiplin",
+    "match": "Kampen",
+    "loadingMatches": "Henter kampene dine …",
+    "tournament": "Turneringens navn",
+    "duplicate": "Den andre spillersiden din",
+    "birthYear": "Fødselsåret ditt",
+    "note": "Noe mer (valgfritt)",
+    "noteHelp": "Opptil 280 tegn. Ikke skriv noe om andre.",
+    "send": "Send",
+    "sending": "Sender …",
+    "cancel": "Avbryt",
+    "sent": "Takk. Den sjekkes for hånd, og du kan følge den på kontosiden din.",
+    "mine": "Rapportene dine",
+    "status": {
+      "open": "Venter",
+      "accepted": "Rettet eller godtatt",
+      "declined": "Avvist"
+    },
+    "declinedNote": "En rapport til som avvises, avslutter muligheten til å rapportere for kontoen din."
+  },
+  "ideas": {
+    "title": "Ideer",
+    "description": "Hva kan Elodrop gjøre videre? Stem på ideene du vil ha, eller foreslå en.",
+    "intro": "Hva kan Elodrop gjøre videre? Stem på ideene du ville brukt. De mest ønskede kommer først, og de det jobbes med er markert.",
+    "sort": {
+      "votes": "Flest stemmer",
+      "planned": "Planlagt",
+      "done": "Ferdig"
+    },
+    "votes": {
+      "one": "{count} stemme",
+      "other": "{count} stemmer"
+    },
+    "vote": "Stem",
+    "voted": "Stemt",
+    "unvote": "Trekk stemmen din for «{title}»",
+    "voteFor": "Stem på «{title}»",
+    "signIn": "<link>Logg inn</link> for å stemme og foreslå ideer.",
+    "status": {
+      "pending": "Venter på å bli sett på",
+      "open": "Åpen",
+      "planned": "Planlagt",
+      "done": "Ferdig",
+      "declined": "Ikke denne gangen"
+    },
+    "none": "Ingen ideer her ennå.",
+    "suggest": {
+      "title": "Foreslå en idé",
+      "intro": "Ideer leses før de vises, med kallenavnet ditt. Du kan ha 2 som venter om gangen.",
+      "name": "Ideen, på én linje",
+      "body": "Mer om den (valgfritt)",
+      "send": "Foreslå",
+      "sending": "Sender …",
+      "sent": "Takk! Den vises når den er lest.",
+      "tooNew": "Kontoer kan foreslå ideer fra 7 dager etter at de er laget.",
+      "contact": "Elodrop kan sende meg e-post om denne ideen",
+      "contactHelp": "For å spørre om den eller snakke om den. E-postadressen din vises aldri for noen.",
+      "sentOpen": "Takk! Den står på listen."
+    },
+    "mine": "Forslagene dine",
+    "by": "fra {nickname}"
+  },
+  "tabs": {
+    "label": "Din konto",
+    "overview": "Oversikt",
+    "settings": "Innstillinger"
+  },
+  "overview": {
+    "noClaim": "Velg deg selv blant spillerne, så dukker tallene dine opp her: neste turnering, de siste ukene, hver sesong og karrieren din.",
+    "pickYourself": "Velg hvem du er",
+    "loading": "Henter tallene dine …",
+    "next": {
+      "title": "Din neste turnering",
+      "inDays": {
+        "one": "om {count} dag",
+        "other": "om {count} dager"
+      },
+      "today": "i dag",
+      "seed": "Seedet {seed}",
+      "unseeded": "Ikke seedet",
+      "with": "med ",
+      "entries": {
+        "one": "{count} påmeldt",
+        "other": "{count} påmeldte"
+      },
+      "winChance": "Sjanse for å vinne",
+      "luck": "Trekningsflaks",
+      "group": "Puljen din",
+      "you": "Du",
+      "note": "Sjansen din mot hver ut fra ratingene nå. Trekningsflaks: over null hjelper trekningen deg, under null gjør den det vanskeligere, sammenlignet med en rettferdig trekning (som på turneringssiden)."
+    },
+    "weeks": {
+      "title": "De siste ukene dine",
+      "teamMatches": "Lagkamper",
+      "record": "{wins}–{losses}",
+      "recordWithDraws": "{wins}–{draws}–{losses}",
+      "bestWin": "Beste seier: mot {names}, med {chance}",
+      "matches": "Kampene"
+    },
+    "season": {
+      "title": "Sesongen oppsummert",
+      "pick": "Sesong",
+      "matches": "Kamper",
+      "winRate": "{pct} vunnet",
+      "rating": "Rating",
+      "underdog": "Som underdog",
+      "underdogHelp": "Kamper der du hadde under 50 % sjanse for å vinne",
+      "decider": "Avgjørende sett",
+      "deciderHelp": "Kamper som gikk til tredje sett",
+      "events": "Turneringer",
+      "eventsDetail": {
+        "one": "og {count} lagkamp",
+        "other": "og {count} lagkamper"
+      },
+      "partner": "Spilt mest med",
+      "opponents": "Spilt mest mot",
+      "badges": {
+        "one": "{count} prestasjon oppnådd",
+        "other": "{count} prestasjoner oppnådd"
+      },
+      "none": "Ingen kamper denne sesongen ennå."
+    },
+    "career": {
+      "title": "Karriere og form",
+      "form": "Dine siste 10",
+      "formHelp": "Nyeste først",
+      "lastTen": "Vunnet av de siste 10",
+      "careerRate": "{pct} i karrieren",
+      "streak": "Lengste seiersrekke",
+      "streakDetail": "{from} – {to}",
+      "underdog": "Som underdog, totalt",
+      "decider": "Avgjørende sett, totalt",
+      "nemesisHelp": "Motstanderne du har tapt mest mot (minst 3 tap)",
+      "together": "{matches} sammen, {wins}–{losses}",
+      "against": "{wins}–{losses} mot",
+      "partnersDoubles": "Vanligste doublemakkere",
+      "partnersMixed": "Vanligste mixmakkere",
+      "nemeses": "Dine erkefiender"
+    },
+    "result": {
+      "win": "Vant",
+      "loss": "Tapte",
+      "draw": "Uavgjort"
+    }
+  }
+}

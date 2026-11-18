@@ -17,7 +17,10 @@
     "aboutPage": "About Elodrop",
     "support": "Help & support",
     "howItWorks": "How it works",
-    "whatsNew": "What's new"
+    "whatsNew": "What's new",
+    "ideas": "Ideas",
+    "privacy": "Privacy",
+    "elostonk": "EloStonk"
   },
   "footer": {
     "sources": "Results from {portalen} and {cup2000}.",

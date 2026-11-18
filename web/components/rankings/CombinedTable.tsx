@@ -9,12 +9,11 @@
 // that discipline.
 import { useMemo, useState } from "react";
 import LogoImage from "@/components/clubs/LogoImage";
-import { Search } from "@/components/SVG";
 import PoolName from "@/components/format/PoolName";
 import RankMovement, { WeekChange } from "@/components/rankings/RankMovement";
 import ChangeSortButton, { type ChangeOrder, nextChangeOrder } from "@/components/ui/ChangeSortButton";
-import ClearButton from "@/components/ui/ClearButton";
 import Link from "@/components/ui/Link";
+import SearchField from "@/components/ui/SearchField";
 import SortButton from "@/components/ui/SortButton";
 import { ROW, STICKY_HEAD } from "@/components/ui/styles";
 import { useGrowingList } from "@/components/ui/useGrowingList";
@@ -45,12 +44,7 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
         <p className="text-gray-600" aria-live="polite">
           {terms.length ? t("rankings.table.found", { found: num(shown.length), total: num(rows.length) }) : summary}
         </p>
-        <label className="flex items-center gap-2 border-b border-gray-300 focus-within:border-black transition-colors w-full sm:w-80">
-          <span className="sr-only">{t("rankings.table.search")}</span>
-          <Search className="text-xl text-gray-400" />
-          <input type="search" placeholder={t("rankings.table.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 min-w-0 py-2 bg-transparent outline-none" />
-          <ClearButton show={!!query} onClear={() => setQuery("")} />
-        </label>
+        <SearchField label={t("rankings.table.search")} value={query} onChange={setQuery} />
       </div>
 
       <div className="bg-white overflow-x-clip">

@@ -5,10 +5,11 @@
 // rankings (CombinedRankings, men or women) have ranked players only.
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { ArrowRight, Check, Female, Male } from "@/components/SVG";
+import { ArrowRight, Female, Male } from "@/components/SVG";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import CombinedTable, { type CombinedRow } from "@/components/rankings/CombinedTable";
 import RankingTable, { type RankingRow } from "@/components/rankings/RankingTable";
+import { CheckBox } from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
 import LinkTabs from "@/components/ui/LinkTabs";
 import Section from "@/components/ui/Section";
@@ -57,9 +58,7 @@ export default async function Rankings({ list, showInactive, allInactive = false
           role="checkbox"
           aria-checked={showInactive}
         >
-          <span className={`w-4 h-4 border border-black inline-flex items-center justify-center ${showInactive ? "bg-black text-white" : "bg-white"}`} aria-hidden="true">
-            {showInactive && <Check className="text-[0.75rem]" />}
-          </span>
+          <CheckBox checked={showInactive} />
           {t("rankings.showInactive")}
         </Link>
       </div>

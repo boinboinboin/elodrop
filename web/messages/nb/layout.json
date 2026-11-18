@@ -17,7 +17,10 @@
     "aboutPage": "Om Elodrop",
     "support": "Hjelp og støtte",
     "howItWorks": "Slik fungerer det",
-    "whatsNew": "Hva er nytt?"
+    "whatsNew": "Hva er nytt?",
+    "ideas": "Ideer",
+    "privacy": "Personvern",
+    "elostonk": "EloStonk"
   },
   "footer": {
     "sources": "Resultater fra {portalen} og {cup2000}.",

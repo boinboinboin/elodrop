@@ -4,12 +4,14 @@
 // page. On phones (below md) it slides away while the page scrolls down and comes back as soon as it scrolls up
 // (never while the menu or the search is open, nor near the top), and the search is folded away behind a button
 // beside the menu's, opening on its own line. From md the header always stays, the search beside the logo. Where the
-// site can be installed as an app, a download button comes first among the buttons (InstallApp).
+// site can be installed as an app, a download button comes first among the buttons (InstallApp); the account's
+// (AccountButton) is by the menu's.
 //
 // Its height on screen (0 while it's away) is --header-offset on <html>, for everything else that sticks to the top
 // (table headings, tabs, day headings: "top-(--header-offset)"), so it sticks just under the header and slides with
 // it. Until this runs, app/globals.css sets the header's usual height.
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import AccountButton from "@/components/account/AccountButton";
 import InstallApp from "@/components/layout/InstallApp";
 import { Cross, Search } from "@/components/SVG";
 import { BUTTON } from "@/components/ui/styles";
@@ -114,6 +116,7 @@ export default function SiteHeader({ logo, nav, search, menu }: { logo: ReactNod
           >
             {searching ? <Cross className="text-xl" /> : <Search className="text-xl" />}
           </button>
+          <AccountButton />
           {menu}
         </div>
       </div>

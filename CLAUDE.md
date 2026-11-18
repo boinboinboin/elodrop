@@ -22,6 +22,20 @@ Every page and component must work on mobile (from 340px wide; narrower screens 
 - A table wider than the screen scrolls inside its own box (`overflow-x-auto`), its values on one line (`whitespace-nowrap` on the cells), as the Eliteserien head-to-head matrix does; or it drops columns below a breakpoint (`hidden sm:table-cell`), as the Eliteserien table does.
 - A grid around such a box needs `grid-cols-1` (or `min-w-0` on its items): a bare `grid` sizes its column to the widest content, and the box then widens the page instead of scrolling.
 
+## Reuse
+
+Every page and component reuses the site's existing UI components (mostly in `web/components/ui`) instead of new look-alikes, new ones and changes to old ones alike. Look there first:
+- `LinkSelect` for dropdowns (`onSelect` picks a value), never a native `<select>`
+- `SearchField` for a list's search
+- `CheckToggle` / `CheckBox` for an on/off option
+- `Tabs`, `LinkTabs`, `ScrollRow` and `toggleClass` buttons for choices
+- `Section`, `Card`, `StatCard`, `Disclosure` and `Badge` for layout
+- `SplitBar` / `ChanceBar` and `WeekChange` for chances and changes
+- `useGrowingList` for long lists
+- the classes in `styles.ts`
+
+When one nearly fits, split out the part that does (as `SplitBar` was out of `ChanceBar`) and use it in the old places too.
+
 ## Cost
 
 Keep the site as cheap to run as possible (Vercel ISR writes and functions, R2 writes) without taking away functionality, and say so when a change would raise the cost. A page is written to Vercel's cache (an ISR write, counted by size) when it's visited after being made stale, and crawlers visit nearly every page, so what costs is how many pages each refresh reaches (see `README.md`, "How it fits together"):

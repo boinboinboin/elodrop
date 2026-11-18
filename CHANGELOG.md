@@ -8,6 +8,24 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.35.0 (2026-11-18)
+
+- EloStonk, a fantasy game on Elo ratings: pick 5 players (18 or older), make one your captain, and score each round from how much better than expected they play: a win at a 20 % chance is +80, a win at 90 % +10, a loss at 90 % −90, and the captain counts twice. A round runs Friday to Thursday and locks at the start of its Friday; your squad carries over until you change it.
+- Find players by name or club, by gender and discipline, sorted by form, last round, rating or how many picked them, with each player's points in the last 8 rounds, and a filter for players drawn in an upcoming tournament.
+- Leaderboards for the season, each round and all time, with anyone's squad a click away; leagues of your own, joined by an invite link; and each round's statistics: the most picked and captained players, the best picks and the best players nobody picked.
+- For running the site: the game's players and points are exported with the rest of the data (`elostonk/`), and Supabase imports them every night from the data bucket, so it needs no new secrets.
+
+## v1.34.0 (2026-11-18)
+
+- Accounts: sign in with a code sent to your email (or with Google), from 15 years old, with a quick check that you're not a bot. Every page stays open to everyone; an account adds things for you only.
+- Follow players and clubs with the star on their page. The front page then gets a Following card: you and the players you follow, with their singles, doubles and mixed ratings and last week's change. Your account page lists them all, with a cross to stop following each.
+- "This is me" on your account page: pick yourself among the players. Only you see it: your player page is marked "You", and your rating is on the front page.
+- My Elodrop: your account page opens on an overview of your own numbers, once you've said who you are: your next tournament as soon as its draw is out (your events, partner, seed, your group with your chance against each, your chance to win and your draw luck), your last weeks of matches, each season in review (record, as the underdog, in deciding sets, ratings, partners and opponents) and your career and form (your last 10, streaks, your most frequent doubles and mixed partners, and your nemeses). A season's badges are shown with their art.
+- Ideas: a new page to vote for what Elodrop does next, and, with an account a week old, to suggest ideas. Suggestions are read before they're shown, with the nickname of who sent them, and you can let Elodrop email you to talk an idea through.
+- Report a mistake about yourself (your club, a match that isn't yours, a missing tournament, a duplicate of you, your birth year) from your own player page, once your account is a month old. Reports are checked by hand.
+- Privacy: a new page on what an account keeps, why and for how long. You can delete your account and everything in it from your account page at any time (under Danger zone).
+- For running the site: the accounts are in Supabase (free tier; `supabase/` has the database and its rules) and are off until its keys are set. The overview is the one new cost on Vercel: a few function runs a day for each member at most.
+
 ## v1.33.0 (2026-11-18)
 
 - For running the site: a traffic watch (a GitHub workflow every 3 hours) finds scrapers that open uncached pages by the hundred without ever running the site's script, challenges their networks in Vercel's firewall and opens an issue for each; closing the issue lets the network in again, and networks quiet for 30 days are let go on their own. It also keeps a per-IP rate limit on full page loads and warns in an issue when ISR writes jump far above the week's.

@@ -3,6 +3,7 @@
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
 import { ArrowRight } from "@/components/SVG";
+import FollowingCard from "@/components/account/FollowingCard";
 import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
 import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
 import HomeCard from "@/components/home/HomeCard";
@@ -71,6 +72,8 @@ export default async function Home() {
         </div>
       </Section>
       <Section title={t("home.pages")} titleClassName="sr-only">
+        {/* A signed-in user's players and clubs, filled in the browser (nothing for anyone else) */}
+        <FollowingCard />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {CARDS.map(({ key, href, Glimpse, colors }) => (
             <HomeCard key={key} href={href} title={t(`home.${key}.title`)} description={t(`home.${key}.description`)} link={t(`home.${key}.link`)} colors={colors}>
