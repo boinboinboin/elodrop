@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.35.2 (2026-11-19)
+
+- For running the site: a data file whose download breaks off (a reset connection) or that the data bucket fails to send is tried again, up to 3 times, so one dropped connection no longer fails a deploy.
+
 ## v1.35.1 (2026-11-19)
 
 - EloStonk's leaderboards are updated once a week (Monday mornings, with the weekend's results) and its statistics every morning, and say so; a leaderboard shows the top 100 and your own place below them.
