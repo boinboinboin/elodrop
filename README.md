@@ -68,7 +68,7 @@ To work with the same data as the live site instead, pull it from the buckets (n
 
 Fetching everything from scratch takes hours (`fetch-players.mjs`, `fetch-clubs.mjs`, `fetch-portalen.mjs`, `fetch-league.mjs`, `fetch-ranking.mjs all`, `fetch-birth-years.mjs`); the nightly workflow only fetches what's new.
 
-## Going live (all on free plans, apart from the domain)
+## Going live (on free plans, apart from the domain and Vercel Pro)
 
 1. **Domain.** Buy one, e.g. through Cloudflare Registrar (sold at cost), so its DNS is on Cloudflare.
 2. **R2.** In Cloudflare, create the buckets `elo-raw` and `elo-data`. Give `elo-data` the custom domain `data.<domain>` (public read). Create an R2 API token with read and write on both buckets.
@@ -83,10 +83,11 @@ Fetching everything from scratch takes hours (`fetch-players.mjs`, `fetch-clubs.
    For the Studio's preview of the written pages (the Presentation tool, "Preview" in the Studio's top bar), create a Viewer token: `SANITY_READ_TOKEN` in Vercel and `web/.env.local`.
 5. **Vercel.** Import the GitHub repo with root directory `web` (its `vercel.json` skips building a push that changes nothing the site uses: only `pipeline/`, say), and set `DATA_URL=https://data.<domain>`, `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET=production`, `REVALIDATE_SECRET` (any long random string) and `SANITY_READ_TOKEN` (the Viewer token, for the Studio's preview). Add the domain.
 6. **GitHub.** In the repo settings, add the secrets `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REVALIDATE_SECRET`, `SANITY_WRITE_TOKEN`, and the variables `SITE_URL=https://<domain>` and `SANITY_PROJECT_ID`. Run the Pipeline workflow by hand once to check it.
+7. **Traffic watch.** Scrapers cost ISR writes (each uncached page they open is drawn and stored again), and the ones spread over thousands of home IPs get past robots.txt, the AI bots rule and rate limits. Every 3 hours the Traffic watch workflow (`pipeline/traffic-watch.mjs`) looks for networks opening uncached pages by the hundred without ever running the site's script (no analytics beacons), challenges them in Vercel's firewall, and opens an issue for each (closing it lets the network in again); it also keeps a per-IP rate limit and warns when ISR writes jump. Create a Vercel access token scoped to the project, add it as the secret `VERCEL_TOKEN`, add the variables `VERCEL_TEAM_ID` and `VERCEL_PROJECT_ID`, and run the workflow by hand with "dry run" once to check it.
 
-### Free-tier limits that matter
+### Plan limits that matter
 
 - **R2:** 10 GB storage (the data is under 1 GB), 1 million writes a month: the pipeline uploads only files whose content changed (`rclone --checksum`), around 12,000 a night at most.
-- **Vercel Hobby:** for personal, non-commercial use. Pages are cached, so most visits don't run any code.
+- **Vercel Pro:** a monthly fee with usage included, and what goes beyond it billed by use. What grows with crawlers is ISR writes (see Cost in `CLAUDE.md`), so pages are cached and refreshed only when their data changes, and most visits don't run any code. The firewall's rate limit is billed per request it lets through ($0.50 a million: cents a month here).
 - **Sanity:** 10,000 documents per dataset; the clubs and their logos are about 270.
 - **GitHub Actions:** unlimited minutes on a public repo; a nightly run takes 5–20 minutes.

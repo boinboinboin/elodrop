@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.33.0 (2026-11-18)
+
+- For running the site: a traffic watch (a GitHub workflow every 3 hours) finds scrapers that open uncached pages by the hundred without ever running the site's script, challenges their networks in Vercel's firewall and opens an issue for each; closing the issue lets the network in again, and networks quiet for 30 days are let go on their own. It also keeps a per-IP rate limit on full page loads and warns in an issue when ISR writes jump far above the week's.
+
 ## v1.32.0 (2026-11-16)
 
 - Dark mode: a new colour theme, Lights out, pitch black for OLED screens, with soft cream text, light blue links and chart colours chosen for black (still easy to tell apart with colour blindness).

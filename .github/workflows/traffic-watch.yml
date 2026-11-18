@@ -1,0 +1,52 @@
+# Every 3 hours: look for scrapers in the site's traffic and challenge them in Vercel's firewall, keep the per-IP
+# rate limit, and warn about ISR write spikes (pipeline/traffic-watch.mjs). It reports through issues labelled
+# scraper-network and isr-spike; closing a scraper-network issue lets its network in again.
+#
+# Secret: VERCEL_TOKEN (a Vercel access token scoped to the team; it reads observability and changes the firewall).
+# Variables: VERCEL_TEAM_ID, VERCEL_PROJECT_ID (the site's project).
+name: Traffic watch
+
+on:
+  schedule:
+    - cron: "40 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only report what it would do"
+        type: boolean
+        default: false
+      challenge:
+        description: "Challenge this network now (AS number), e.g. to move it from a rule of its own"
+        type: string
+        default: ""
+
+concurrency:
+  group: traffic-watch
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      # No package cache: the script needs no packages (see pipeline.yml)
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Watch
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ vars.VERCEL_TEAM_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+          CHALLENGE: ${{ inputs.challenge }}
+        run: node pipeline/traffic-watch.mjs $DRY_RUN ${CHALLENGE:+--challenge "$CHALLENGE"}
