@@ -65,6 +65,15 @@ Signing in is optional: every page is the same for everyone and stays cached, an
 
 Locally: `pnpm dlx supabase start` from the repo root (Docker) runs the database with the migrations applied and prints its URL and anon key for `web/.env.local`; the emails, codes included, are at http://127.0.0.1:54324.
 
+## EloStonk
+
+The fantasy game (`/elostonk`, `components/elostonk/`; the rules in `pipeline/README.md`, "EloStonk"): members pick 5 players aged 18 or older, one the captain (counted twice), and score each round (Friday to Thursday) from how much better than expected their players do.
+
+- **Data flow, with no new secrets:** the pipeline writes `elostonk/players.json` and the recent rounds' points (`elostonk/rounds/<Friday>.json`) with the rest of the export; Supabase imports them every night at 04:00 UTC from the data bucket (`stonk_import()`, a `pg_cron` job using the `http` extension, from `settings.data_url`). To import by hand: `select stonk_import();` in the SQL editor. The site reads the players through a prerendered route (`/api/elostonk/players`, one ISR write per data update); everything else comes from Supabase in the browser, so the page is static.
+- **The rules are in the database** (`supabase/migrations/*_elostonk.sql`, tested in `supabase/tests/elostonk.sql`): a squad is saved for the next round only (the database decides which: `stonk_next_round()`), must be 5 different pickable players with the captain among them, and carries over until changed. Everyone's squads, scores and the picks' statistics are shown by nickname only, and only once a round has locked (its Friday 00:00 in Norway).
+- **Leagues:** made by a member (at most 10), joined with an invite code or link (at most 20 per member, 100 members per league); a league without its owner passes to its longest member, an empty one goes.
+- **Cost:** one prerendered route and a static page on Vercel; a handful of small files in R2 each night (only changed ones are written); Supabase's free tier.
+
 ## Local development
 
 Requires Node 26 and pnpm 12. Node 26 no longer ships Corepack, so pnpm is installed on its own, at the version in `package.json`'s `packageManager`. On Linux, Node 26 also needs `libatomic1` (`sudo apt install libatomic1` on Debian and Ubuntu).

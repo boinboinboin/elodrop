@@ -1,0 +1,120 @@
+{
+  "title": "EloStonk",
+  "description": "Et fantasyspill på Elo-rating: velg 5 spillere, gjør én til kaptein, og få poeng for hvor mye bedre enn ventet de spiller hver runde.",
+  "intro": "Velg 5 spillere og gjør én til kaptein. Hver runde får de poeng for hvor mye bedre enn ventet de spiller, så en underdogs seier teller mer enn en favoritts.",
+  "tabs": {
+    "label": "EloStonk",
+    "squad": "Mitt lag",
+    "board": "Tabell",
+    "leagues": "Ligaer",
+    "stats": "Statistikk",
+    "rules": "Slik fungerer det"
+  },
+  "rules": "**Laget ditt.** Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det.\n\n**Runder.** En runde går fra fredag til torsdag og låses ved starten av fredagen (norsk tid): laget du har da, spiller hele runden. En helgs turneringer og lagkampene uka etter hører altså til samme runde.\n\n**Poeng.** Hver kamp en av spillerne dine spiller i runden, gir 100 × (resultatet − sjansen for å vinne den, fra Elodrops rating):\n- seier med 20 % sjanse: +80\n- seier med 90 % sjanse: +10\n- tap med 90 % sjanse: −90\n\nFavoritter får altså mindre enn underdoger som vinner, og skalaen er den samme på alle nivåer. Tap teller også, så en stonk kan falle. Flere kamper gir flere sjanser begge veier.\n\n**Når poengene kommer.** Poengene kommer med resultatene, natta etter hver kampdag; sene resultater kan fortsatt endre en runde i 3 uker, så de siste rundene er merket foreløpige.\n\n**Ligaer.** Lag en liga og inviter andre med lenken, for å ha en egen tabell ved siden av alles.\n\nEloStonk er gratis, uten innsats og uten premier.",
+  "squad": {
+    "signIn": "<link>Logg inn</link> for å velge laget ditt. Tabellene og statistikken er åpne for alle.",
+    "title": "Laget ditt for {date}",
+    "locks": "Låses {time} · {hours}",
+    "hours": {
+      "one": "om {count} time",
+      "other": "om {count} timer"
+    },
+    "gone": "Kan ikke velges lenger",
+    "captain": "Kaptein: teller dobbelt",
+    "makeCaptain": "Gjør {name} til kaptein",
+    "remove": "Ta ut {name}",
+    "empty": "Velg en spiller nedenfor",
+    "saving": "Lagrer …",
+    "save": "Lagre laget",
+    "saved": "Lagret. Det følger med til du endrer det.",
+    "need": "{count} til å velge, og en kaptein",
+    "unsaved": "Ikke lagret ennå",
+    "carries": "Lagret",
+    "now": "Runden som pågår, fra {date}",
+    "thisRound": "Denne runden så langt",
+    "provisional": "foreløpig",
+    "season": "Denne sesongen",
+    "rank": "Nr. {rank} av {of}",
+    "rounds": "Runder spilt",
+    "notInRound": "Du hadde ikke noe lag da denne runden ble låst.",
+    "history": "Rundene dine",
+    "roundOf": "Runden fra {date}"
+  },
+  "search": {
+    "title": "Finn spillere",
+    "label": "Navn eller klubb",
+    "sort": "Sorter etter",
+    "sorts": {
+      "form": "Form (siste 4 runder)",
+      "last": "Forrige runde",
+      "rating": "Rating",
+      "picked": "Mest valgt"
+    },
+    "genders": {
+      "all": "Alle",
+      "M": "Menn",
+      "K": "Kvinner"
+    },
+    "kinds": {
+      "all": "Alle disipliner",
+      "singles": "Single",
+      "doubles": "Double",
+      "mixed": "Mix"
+    },
+    "upcoming": "Bare spillere med en kommende turnering",
+    "upcomingHelp": "Trukket i en turnering som ikke er over. Lagkamper kan ikke vites på forhånd.",
+    "count": "{count} spillere",
+    "next": "Neste: {name}, {date}",
+    "chart": "Poengene til {name} de siste 8 rundene",
+    "formTitle": "Poeng de siste 4 rundene",
+    "add": "Legg {name} til laget"
+  },
+  "board": {
+    "views": {
+      "season": "Sesong",
+      "round": "Runde",
+      "alltime": "Totalt"
+    },
+    "season": "Sesong",
+    "round": "Runde",
+    "none": "Ingen poeng ennå.",
+    "player": "Spiller",
+    "points": "Poeng",
+    "rounds": "Runder",
+    "best": "Beste runde"
+  },
+  "leagues": {
+    "signIn": "<link>Logg inn</link> for å lage eller bli med i en liga.",
+    "members": {
+      "one": "{count} medlem",
+      "other": "{count} medlemmer"
+    },
+    "noPoints": "Ingen poeng denne sesongen ennå.",
+    "owner": "eier",
+    "copied": "Lenke kopiert",
+    "invite": "Inviter med lenke",
+    "code": "Kode: {code}",
+    "renew": "Ny kode",
+    "leave": "Forlat",
+    "none": "Du er ikke med i noen liga ennå. Lag en, eller bli med i en med koden.",
+    "create": "Lag en liga",
+    "name": "Navn",
+    "createButton": "Lag liga",
+    "join": "Bli med i en liga",
+    "codeLabel": "Kode",
+    "joinButton": "Bli med"
+  },
+  "stats": {
+    "none": "Ingen runder ennå.",
+    "managers": "Lag",
+    "average": "Snitt",
+    "best": "Beste poengsum",
+    "mostPicked": "Mest valgt",
+    "mostCaptained": "Oftest kaptein",
+    "bestPicks": "Beste valg",
+    "pickedBy": "i {pct} av lagene",
+    "unbought": "Stonksene ingen kjøpte",
+    "unboughtHelp": "De beste spillerne denne runden som ingen lag hadde",
+    "empty": "–"
+  }
+}

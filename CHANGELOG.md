@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.35.0 (2026-11-18)
+
+- EloStonk, a fantasy game on Elo ratings: pick 5 players (18 or older), make one your captain, and score each round from how much better than expected they play: a win at a 20 % chance is +80, a win at 90 % +10, a loss at 90 % −90, and the captain counts twice. A round runs Friday to Thursday and locks at the start of its Friday; your squad carries over until you change it.
+- Find players by name or club, by gender and discipline, sorted by form, last round, rating or how many picked them, with each player's points in the last 8 rounds, and a filter for players drawn in an upcoming tournament.
+- Leaderboards for the season, each round and all time, with anyone's squad a click away; leagues of your own, joined by an invite link; and each round's statistics: the most picked and captained players, the best picks and the best players nobody picked.
+- For running the site: the game's players and points are exported with the rest of the data (`elostonk/`), and Supabase imports them every night from the data bucket, so it needs no new secrets.
+
 ## v1.34.0 (2026-11-18)
 
 - Accounts: sign in with a code sent to your email (or with Google), from 15 years old, with a quick check that you're not a bot. Every page stays open to everyone; an account adds things for you only.

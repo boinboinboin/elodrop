@@ -11,9 +11,8 @@
 // The team matches are rendered on the server, all of them; the browser hides the others.
 import { parseAsString, useQueryState } from "nuqs";
 import { Fragment, type ReactNode, Suspense, useMemo, useState } from "react";
-import { Search } from "@/components/SVG";
-import ClearButton from "@/components/ui/ClearButton";
 import LinkSelect from "@/components/ui/LinkSelect";
+import SearchField from "@/components/ui/SearchField";
 import { useI18n } from "@/messages/client";
 
 /** The query parameter with the team shown */
@@ -143,12 +142,7 @@ export function TieSearch({ sections, summary, className }: { sections: TieSecti
         <p className="text-gray-600" aria-live="polite">
           {match ? t("teamMatches.filter.found", { found: num(found), total: num(total) }) : summary}
         </p>
-        <label className="flex items-center gap-2 border-b border-gray-300 focus-within:border-black transition-colors w-full sm:w-80">
-          <span className="sr-only">{t("teamMatches.filter.search")}</span>
-          <Search className="text-xl text-gray-400" />
-          <input type="search" placeholder={t("teamMatches.filter.search")} value={query} onChange={(e) => setQuery(e.target.value)} className="flex-1 min-w-0 py-2 bg-transparent outline-none" />
-          <ClearButton show={!!query} onClear={() => setQuery("")} />
-        </label>
+        <SearchField label={t("teamMatches.filter.search")} value={query} onChange={setQuery} />
       </div>
       <Ties sections={sections} match={match} none={t("teamMatches.filter.noneFound")} className={className} />
     </>

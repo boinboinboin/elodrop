@@ -79,6 +79,14 @@ export const ACCOUNT_ERRORS = [
   "report_open",
   "too_many_reports",
   "player_reported",
+  // EloStonk (supabase/migrations/*_elostonk.sql)
+  "squad_invalid",
+  "not_eligible",
+  "no_profile",
+  "league_not_found",
+  "league_full",
+  "too_many_leagues",
+  "not_owner",
 ] as const;
 export type AccountError = (typeof ACCOUNT_ERRORS)[number] | "unknown";
 

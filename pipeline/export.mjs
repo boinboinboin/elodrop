@@ -34,10 +34,12 @@
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
 //   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)
+//   elostonk/players.json, elostonk/rounds/<Friday>.json  the EloStonk game's players and points (elostonk.mjs)
 //   manifest.json                 every file with its size and hash (written last)
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { achievements, achievementStats } from "./achievements.mjs";
+import { stonkFiles } from "./elostonk.mjs";
 import { rankedIn } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -210,6 +212,16 @@ if (existsSync(`${DATA}/upcoming`)) {
 }
 
 if (existsSync(`${DATA}/gender-gap.json`)) write("gender-gap.json", read("gender-gap.json"));
+
+// EloStonk: the players who can be picked and their points per round (elostonk.mjs)
+for (const { path, value } of stonkFiles({
+  byPlayer,
+  matchesOf: (id) => optional(`matches/${id}.json`),
+  birthYears,
+  tournaments: tournaments.tournaments,
+  entriesOf: (cup2000Id) => optional(`upcoming/${cup2000Id}.json`),
+}))
+  write(path, value);
 
 write("meta.json", {
   generatedAt,

@@ -7,13 +7,14 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, FIELD, HELP, LABEL, SUBMIT } from "@/components/account/form";
+import CheckToggle from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { accountError, ageOn, MIN_AGE, type Profile, refusedRecently, rememberRefusal } from "@/utils/account";
 
 export default function CreateProfile() {
-  const { t, rich } = useI18n();
+  const { t } = useI18n();
   const { load, setProfile } = useAccount();
   const [birthDate, setBirthDate] = useState("");
   const [nickname, setNickname] = useState("");
@@ -67,11 +68,11 @@ export default function CreateProfile() {
         <input id="account-nickname" required minLength={3} maxLength={20} autoComplete="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} className={FIELD} />
         <p className={HELP}>{t("account.profile.nicknameHelp")}</p>
       </div>
-      <label className="flex items-start gap-3">
-        <input type="checkbox" required checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1.5 w-4 h-4 accent-black" />
-        <span>{rich("account.profile.privacy", { link: (text) => <Link href="/privacy" target="_blank" className={TEXT_LINK}>{text}</Link> })}</span>
-      </label>
-      <button type="submit" disabled={busy} className={SUBMIT}>{t(busy ? "account.profile.creating" : "account.profile.create")}</button>
+      <div>
+        <CheckToggle checked={agreed} onChange={setAgreed}>{t("account.profile.privacy")}</CheckToggle>
+        <Link href="/privacy" target="_blank" className={`${TEXT_LINK} inline-block ml-6 mt-1 text-sm`}>{t("account.profile.privacyLink")}</Link>
+      </div>
+      <button type="submit" disabled={busy || !agreed} className={SUBMIT}>{t(busy ? "account.profile.creating" : "account.profile.create")}</button>
       {error && <p role="alert" className={ERROR}>{error}</p>}
     </form>
   );

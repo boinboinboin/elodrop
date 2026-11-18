@@ -29,10 +29,11 @@
     "birthDateHelp": "Bare året lagres.",
     "nickname": "Kallenavn",
     "nicknameHelp": "3–20 tegn. Det vises med ideene du foreslår, aldri sammen med navnet eller e-posten din.",
-    "privacy": "Jeg har lest <link>hvordan Elodrop behandler dataene mine</link>.",
+    "privacy": "Jeg har lest hvordan Elodrop behandler dataene mine",
     "create": "Lag konto",
     "creating": "Lager …",
-    "tooYoung": "Kontoer er for de som er {age} år eller eldre, så ingen konto ble laget, og innloggingen din er slettet. En forelder kan følge spillersiden din med sin egen konto."
+    "tooYoung": "Kontoer er for de som er {age} år eller eldre, så ingen konto ble laget, og innloggingen din er slettet. En forelder kan følge spillersiden din med sin egen konto.",
+    "privacyLink": "Hvordan Elodrop behandler dataene dine"
   },
   "settings": {
     "signedInAs": "Logget inn som {email}",
@@ -102,6 +103,13 @@
     "report_open": "Du har allerede en rapport som venter.",
     "too_many_reports": "Du har sendt 3 rapporter de siste 90 dagene.",
     "player_reported": "Denne spilleren har allerede rapporter som venter.",
+    "squad_invalid": "Et lag er 5 forskjellige spillere, én av dem kaptein.",
+    "not_eligible": "En av spillerne kan ikke velges (under 18, eller ikke aktiv).",
+    "no_profile": "Lag kontoen din først (kallenavnet ditt).",
+    "league_not_found": "Ingen liga har den koden.",
+    "league_full": "Den ligaen er full (100 medlemmer).",
+    "too_many_leagues": "Du er med i så mange ligaer du kan være.",
+    "not_owner": "Bare eieren av ligaen kan gjøre det.",
     "unknown": "Noe gikk galt. Prøv igjen."
   },
   "report": {

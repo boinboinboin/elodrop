@@ -29,10 +29,11 @@
     "birthDateHelp": "Only the year is kept.",
     "nickname": "Nickname",
     "nicknameHelp": "3–20 characters. It's shown with the ideas you suggest, never with your name or email.",
-    "privacy": "I've read <link>how Elodrop handles my data</link>.",
+    "privacy": "I've read how Elodrop handles my data",
     "create": "Create account",
     "creating": "Creating…",
-    "tooYoung": "Accounts are for ages {age} and over, so none was made, and your sign-in has been deleted. A parent can follow your player page with their own account."
+    "tooYoung": "Accounts are for ages {age} and over, so none was made, and your sign-in has been deleted. A parent can follow your player page with their own account.",
+    "privacyLink": "How Elodrop handles your data"
   },
   "settings": {
     "signedInAs": "Signed in as {email}",
@@ -102,6 +103,13 @@
     "report_open": "You have a report waiting already.",
     "too_many_reports": "You've sent 3 reports in the last 90 days.",
     "player_reported": "This player has reports waiting already.",
+    "squad_invalid": "A squad is 5 different players, one of them captain.",
+    "not_eligible": "One of the players can't be picked (under 18, or not active).",
+    "no_profile": "Make your account first (your nickname).",
+    "league_not_found": "No league has that code.",
+    "league_full": "That league is full (100 members).",
+    "too_many_leagues": "You're in as many leagues as you can be.",
+    "not_owner": "Only the league's owner can do that.",
     "unknown": "Something went wrong. Try again."
   },
   "report": {

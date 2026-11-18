@@ -8,6 +8,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, FIELD, HELP, LABEL, SUBMIT } from "@/components/account/form";
 import { Check } from "@/components/SVG";
+import CheckToggle from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK, toggleClass } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
@@ -206,13 +207,12 @@ function Suggest({ userId, old, onSent }: { userId: string; old: boolean; onSent
             <textarea id="idea-body" maxLength={500} rows={4} value={body} onChange={(e) => setBody(e.target.value)} className={`${FIELD} max-w-none`} />
             <p className={HELP}>{body.length}/500</p>
           </div>
-          <label className="flex items-start gap-3">
-            <input type="checkbox" checked={contact} onChange={(e) => setContact(e.target.checked)} className="mt-1.5 w-4 h-4 accent-black" />
+          <CheckToggle checked={contact} onChange={setContact} className="items-start">
             <span>
               {t("account.ideas.suggest.contact")}
               <span className="block text-sm text-gray-600">{t("account.ideas.suggest.contactHelp")}</span>
             </span>
-          </label>
+          </CheckToggle>
           <button type="submit" disabled={busy} className={SUBMIT}>{t(busy ? "account.ideas.suggest.sending" : "account.ideas.suggest.send")}</button>
           {sent && <p role="status" className="text-gray-700">{t(sent === "open" ? "account.ideas.suggest.sentOpen" : "account.ideas.suggest.sent")}</p>}
           {error && <p role="alert" className={ERROR}>{error}</p>}

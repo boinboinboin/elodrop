@@ -1,0 +1,133 @@
+"use client";
+
+// EloStonk's player search, under the squad: everyone who can be picked, found by name or club (folded as the site's
+// search: utils/format.ts normalize), filtered by gender, discipline and "has an upcoming tournament" (drawn in one not
+// over: the pipeline knows from the draws; team matches can't be known ahead, so it's a filter, not a rule), sorted by
+// rating, form (the last 4 rounds), last round or how many picked them. Each with their stonk chart (the last 8 rounds)
+// and a button to add them to the squad.
+import { useMemo, useState } from "react";
+import Sparkline from "@/components/elostonk/Sparkline";
+import { bestRating, form, type StonkPlayer } from "@/components/elostonk/useStonk";
+import CheckToggle from "@/components/ui/CheckToggle";
+import Link from "@/components/ui/Link";
+import LinkSelect from "@/components/ui/LinkSelect";
+import SearchField from "@/components/ui/SearchField";
+import { toggleClass } from "@/components/ui/styles";
+import { useGrowingList } from "@/components/ui/useGrowingList";
+import { useI18n } from "@/messages/client";
+import type { Pool } from "@/types";
+import { normalize } from "@/utils/format";
+import { playerHref, tournamentHref } from "@/utils/hrefs";
+
+type Sort = "rating" | "form" | "last" | "picked";
+type Kind = "all" | "singles" | "doubles" | "mixed";
+const KIND_POOLS: Record<Exclude<Kind, "all">, Pool[]> = { singles: ["men", "women"], doubles: ["mensDoubles", "womensDoubles"], mixed: ["mixedDoubles"] };
+
+export default function PlayerSearch({
+  players,
+  picked,
+  owned,
+  full,
+  onAdd,
+}: {
+  players: StonkPlayer[];
+  /** In the squad being made */
+  picked: ReadonlySet<number>;
+  /** How many squads have each player in the round under way (%) */
+  owned: Map<number, number>;
+  full: boolean;
+  onAdd: (id: number) => void;
+}) {
+  const { t, num, poolCodes, date } = useI18n();
+  const [query, setQuery] = useState("");
+  const [gender, setGender] = useState<"all" | "M" | "K">("all");
+  const [kind, setKind] = useState<Kind>("all");
+  const [upcoming, setUpcoming] = useState(false);
+  const [sort, setSort] = useState<Sort>("form");
+
+  const texts = useMemo(() => new Map(players.map((p) => [p.id, normalize(`${p.name} ${p.club ?? ""}`)])), [players]);
+  const terms = normalize(query).split(/\s+/).filter(Boolean);
+  const list = players
+    .filter((p) => !terms.length || terms.every((w) => texts.get(p.id)!.includes(w)))
+    .filter((p) => gender === "all" || p.gender === gender)
+    .filter((p) => kind === "all" || KIND_POOLS[kind].some((pool) => p.ratings[pool]))
+    .filter((p) => !upcoming || p.upcoming.length > 0);
+  const score = (p: StonkPlayer) => (sort === "rating" ? bestRating(p) : sort === "form" ? form(p) : sort === "last" ? (p.points[1] ?? 0) : (owned.get(p.id) ?? 0));
+  const sorted = [...list].sort((a, b) => score(b) - score(a) || a.name.localeCompare(b.name));
+  // The first rows, and more as the end comes near (as the rankings)
+  const { limit, sentinel } = useGrowingList(sorted.length, `${query}|${gender}|${kind}|${upcoming}|${sort}`);
+
+  return (
+    <div>
+      {/* As the rankings: the count, and the search beside it; then the sort and the filters */}
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-4">
+        <p className="text-gray-600" aria-live="polite">{t("elostonk.search.count", { count: num(sorted.length) })}</p>
+        <SearchField label={t("elostonk.search.label")} value={query} onChange={setQuery} />
+      </div>
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-4 mb-4">
+        <LinkSelect
+          label={t("elostonk.search.sort")}
+          current={sort}
+          onSelect={(key) => setSort(key as Sort)}
+          options={(["form", "last", "rating", "picked"] as const).map((s) => ({ key: s, label: t(`elostonk.search.sorts.${s}`) }))}
+          className="w-full sm:w-64"
+        />
+        <div className="flex flex-wrap gap-2">
+          {(["all", "M", "K"] as const).map((g) => (
+            <button key={g} type="button" aria-pressed={gender === g} onClick={() => setGender(g)} className={toggleClass(gender === g, "sm")}>{t(`elostonk.search.genders.${g}`)}</button>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {(["all", "singles", "doubles", "mixed"] as const).map((k) => (
+            <button key={k} type="button" aria-pressed={kind === k} onClick={() => setKind(k)} className={toggleClass(kind === k, "sm")}>{t(`elostonk.search.kinds.${k}`)}</button>
+          ))}
+        </div>
+      </div>
+      <CheckToggle checked={upcoming} onChange={setUpcoming} className="mb-4 items-start">
+        <span>
+          {t("elostonk.search.upcoming")}
+          <span className="block text-sm text-gray-600">{t("elostonk.search.upcomingHelp")}</span>
+        </span>
+      </CheckToggle>
+      <ul className="divide-y divide-gray-200 bg-white">
+        {sorted.slice(0, limit).map((p) => {
+          const inSquad = picked.has(p.id);
+          return (
+            <li key={p.id} className="flex items-center gap-3 px-3 py-2">
+              <div className="flex-1 min-w-0">
+                <Link href={playerHref(p.id)} target="_blank" className="font-semibold hover:text-blue-600 break-words">{p.name}</Link>
+                <span className="block text-sm text-gray-600 truncate">
+                  {p.club ?? ""}
+                  {Object.entries(p.ratings).map(([pool, r]) => (
+                    <span key={pool} className="ml-2 whitespace-nowrap tabular-nums">
+                      {poolCodes[pool as Pool]} {num(r![0])}
+                    </span>
+                  ))}
+                </span>
+                {p.upcoming[0] && (
+                  <Link href={tournamentHref(p.upcoming[0].cup2000Id)} target="_blank" className="block text-xs text-gray-600 hover:text-blue-600 truncate">
+                    {t("elostonk.search.next", { name: p.upcoming[0].name, date: date(p.upcoming[0].startDate, "dayMonth") })}
+                  </Link>
+                )}
+              </div>
+              <div className="hidden sm:block text-right">
+                <Sparkline points={p.points} label={t("elostonk.search.chart", { name: p.name })} />
+              </div>
+              <span className="w-14 text-right tabular-nums text-sm" title={t("elostonk.search.formTitle")}>{form(p) > 0 ? "+" : ""}{num(Math.round(form(p)))}</span>
+              <button
+                type="button"
+                disabled={inSquad || full}
+                onClick={() => onAdd(p.id)}
+                aria-label={t("elostonk.search.add", { name: p.name })}
+                className={`shrink-0 w-10 h-10 border border-black text-xl leading-none ${inSquad ? "bg-black text-white" : "hover:bg-black hover:text-white"} disabled:cursor-default ${!inSquad && full ? "opacity-30" : ""}`}
+              >
+                {inSquad ? "✓" : "+"}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      {limit < sorted.length && <div ref={sentinel} aria-hidden="true" />}
+    </div>
+  );
+}

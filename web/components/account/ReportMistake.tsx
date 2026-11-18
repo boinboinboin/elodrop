@@ -9,6 +9,7 @@ import { type FormEvent, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, FIELD, HELP, LABEL, SUBMIT } from "@/components/account/form";
 import PlayerPicker from "@/components/head-to-head/PlayerPicker";
+import LinkSelect from "@/components/ui/LinkSelect";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { accountError, daysSince, REPORT_ACCOUNT_DAYS, REPORT_CLAIM_DAYS } from "@/utils/account";
@@ -26,6 +27,9 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
   // The matches loaded, and the discipline they're from (another discipline chosen: loading again)
   const [loaded, setMatches] = useState<{ pool: Pool; list: Match[] } | null>(null);
   const matches = loaded && loaded.pool === pool ? loaded.list : null;
+  // The match picked from the list (none until one is: the form can't be sent without it)
+  const [picked, setMatch] = useState<{ pool: Pool | null; label: string } | null>(null);
+  const match = picked && picked.pool === pool ? picked.label : null;
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +86,7 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
       kind === "club"
         ? { club: value("club") }
         : kind === "match"
-          ? { pool: pool ?? "", match: value("match") }
+          ? { pool: pool ?? "", match: match ?? "" }
           : kind === "tournament"
             ? { tournament: value("tournament") }
             : kind === "duplicate"
@@ -101,14 +105,7 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
     <form onSubmit={send} className="mt-6 max-w-xl space-y-4 border border-black p-4">
       <h2 className="text-2xl">{t("account.report.title")}</h2>
       <p className="text-gray-700">{t("account.report.intro")}</p>
-      <div>
-        <label htmlFor="report-kind" className={LABEL}>{t("account.report.kind")}</label>
-        <select id="report-kind" value={kind} onChange={(e) => setKind(e.target.value as Kind)} className={FIELD}>
-          {KINDS.map((k) => (
-            <option key={k} value={k}>{t(`account.report.kinds.${k}`)}</option>
-          ))}
-        </select>
-      </div>
+      <LinkSelect label={t("account.report.kind")} current={kind} onSelect={(k) => setKind(k as Kind)} options={KINDS.map((k) => ({ key: k, label: t(`account.report.kinds.${k}`) }))} className="max-w-sm" />
       {kind === "club" && <TextField name="club" label={t("account.report.club")} maxLength={60} />}
       {kind === "tournament" && <TextField name="tournament" label={t("account.report.tournament")} maxLength={80} />}
       {kind === "birthYear" && (
@@ -120,29 +117,20 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
       {kind === "duplicate" && <PlayerPicker name="other" label={t("account.report.duplicate")} initial={null} />}
       {kind === "match" && (
         <>
-          <div>
-            <label htmlFor="report-pool" className={LABEL}>{t("account.report.pool")}</label>
-            <select id="report-pool" value={pool ?? ""} onChange={(e) => setPool(e.target.value as Pool)} className={FIELD}>
-              {pools.map((p) => (
-                <option key={p} value={p}>{poolNames[p]}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="report-match" className={LABEL}>{t("account.report.match")}</label>
-            {matches === null ? (
-              <p className="text-gray-600">{t("account.report.loadingMatches")}</p>
-            ) : (
-              <select id="report-match" name="match" required className={FIELD}>
-                {matches.map((m, i) => {
-                  const label = `${date(m.day)} · ${m.event} · ${m.opponents.map((o) => o.name).join(" / ")} · ${m.score}`;
-                  return (
-                    <option key={m.key ?? i} value={label.slice(0, 200)}>{label}</option>
-                  );
-                })}
-              </select>
-            )}
-          </div>
+          <LinkSelect label={t("account.report.pool")} current={pool ?? ""} onSelect={(p) => setPool(p as Pool)} options={pools.map((p) => ({ key: p, label: poolNames[p] }))} className="max-w-sm" />
+          {matches === null ? (
+            <p className="text-gray-600">{t("account.report.loadingMatches")}</p>
+          ) : (
+            <LinkSelect
+              label={t("account.report.match")}
+              current={match ?? ""}
+              onSelect={(label) => setMatch({ pool, label })}
+              options={matches.map((m) => {
+                const label = `${date(m.day)} · ${m.event} · ${m.opponents.map((o) => o.name).join(" / ")} · ${m.score}`;
+                return { key: label.slice(0, 200), label };
+              })}
+            />
+          )}
         </>
       )}
       <div>
@@ -151,7 +139,7 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
         <p className={HELP}>{t("account.report.noteHelp")}</p>
       </div>
       <div className="flex flex-wrap gap-3">
-        <button type="submit" disabled={busy} className={SUBMIT}>{t(busy ? "account.report.sending" : "account.report.send")}</button>
+        <button type="submit" disabled={busy || (kind === "match" && !match)} className={SUBMIT}>{t(busy ? "account.report.sending" : "account.report.send")}</button>
         <button type="button" onClick={() => setOpen(false)} className={SUBMIT}>{t("account.report.cancel")}</button>
       </div>
       {error && <p role="alert" className={ERROR}>{error}</p>}

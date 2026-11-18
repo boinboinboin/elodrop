@@ -30,6 +30,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/tournaments", label: t("layout.nav.tournaments") },
     { href: "/upsets", label: t("layout.nav.upsets") },
     { href: "/head-to-head", label: t("layout.nav.headToHead") },
+    // The fantasy game, where the site has accounts (utils/account.ts)
+    ...(ACCOUNTS ? [{ href: "/elostonk", label: t("layout.nav.elostonk") }] : []),
   ];
   // About the site, in the menu at every width (and the footer), the current version beside What's new. The pages
   // written in the Studio (`page`) are linked only once published (components/layout/PublishedPages.tsx)

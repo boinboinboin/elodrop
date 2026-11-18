@@ -13,9 +13,9 @@
 // its own Suspense boundary: the prerendered HTML has it off, and the browser then follows the URL.
 import { parseAsBoolean, useQueryState } from "nuqs";
 import { Suspense, useEffect, useState } from "react";
-import { Check } from "@/components/SVG";
 import { ClassHeader, classGroups } from "@/components/rankings/ClassGroups";
 import { WeekChange } from "@/components/rankings/RankMovement";
+import CheckToggle from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
 import SortButton from "@/components/ui/SortButton";
 import { ROW } from "@/components/ui/styles";
@@ -111,12 +111,7 @@ function ClubPlayersView({ pool, rows, mixed, inactiveUrl, showInactive, onToggl
             {t("clubs.club.inactiveFailed")}
           </button>
         )}
-        <button type="button" onClick={onToggle} className="flex items-center gap-2 select-none cursor-pointer" role="checkbox" aria-checked={showInactive}>
-          <span className={`w-4 h-4 border border-black inline-flex items-center justify-center ${showInactive ? "bg-black text-white" : "bg-white"}`} aria-hidden="true">
-            {showInactive && <Check className="text-[0.75rem]" />}
-          </span>
-          {t("rankings.showInactive")}
-        </button>
+        <CheckToggle checked={showInactive} onChange={onToggle}>{t("rankings.showInactive")}</CheckToggle>
       </div>
       {shown.length > 0 && (
         <div className="bg-white overflow-x-auto">
