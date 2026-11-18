@@ -38,7 +38,8 @@
     "rounds": "Rounds played",
     "notInRound": "You had no squad when this round locked.",
     "history": "Your rounds",
-    "roundOf": "Round of {date}"
+    "roundOf": "Round of {date}",
+    "historyNote": "Updated on Monday mornings."
   },
   "search": {
     "title": "Find players",
@@ -81,7 +82,8 @@
     "player": "Player",
     "points": "Points",
     "rounds": "Rounds",
-    "best": "Best round"
+    "best": "Best round",
+    "updated": "The leaderboards are updated once a week, on Monday mornings, with the weekend's results."
   },
   "leagues": {
     "signIn": "<link>Sign in</link> to make or join a league.",
@@ -115,6 +117,7 @@
     "pickedBy": "in {pct} of squads",
     "unbought": "The stonks nobody bought",
     "unboughtHelp": "The best players this round that no squad had",
-    "empty": "–"
+    "empty": "–",
+    "updated": "Updated every morning."
   }
 }

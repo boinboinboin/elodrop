@@ -6,20 +6,25 @@ import { type FormEvent, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import DeleteAccount from "@/components/account/DeleteAccount";
 import FollowingSettings from "@/components/account/FollowingSettings";
-import { ERROR, FIELD, LABEL, PART, SUBMIT } from "@/components/account/form";
+import { ERROR, FIELD, HELP, LABEL, PART, SUBMIT } from "@/components/account/form";
 import MeSettings from "@/components/account/MeSettings";
 import MyReports from "@/components/account/MyReports";
 import { useI18n } from "@/messages/client";
-import { accountError, type Profile } from "@/utils/account";
+import { accountError, type Profile, USERNAME_LOCK_DAYS, USERNAME_PATTERN } from "@/utils/account";
 
 export default function AccountSettings() {
-  const { t } = useI18n();
+  const { t, date } = useI18n();
   const { email, profile, load, setProfile, signOut } = useAccount();
   const [nickname, setNickname] = useState(profile?.nickname ?? "");
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The moment the page opened (the settings are shown in the browser only)
+  const [now] = useState(() => Date.now());
   if (!profile) return null;
+  // The username can change again from this day (after the free first change; trusted accounts any time)
+  const unlocks = profile.nickname_changed_at && !profile.trusted ? new Date(new Date(profile.nickname_changed_at).getTime() + USERNAME_LOCK_DAYS * 86_400_000) : null;
+  const lockedUntil = unlocks && unlocks.getTime() > now ? unlocks : null;
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
@@ -46,6 +51,8 @@ export default function AccountSettings() {
               required
               minLength={3}
               maxLength={20}
+              pattern={USERNAME_PATTERN}
+              autoComplete="username"
               value={nickname}
               onChange={(e) => {
                 setNickname(e.target.value);
@@ -57,6 +64,7 @@ export default function AccountSettings() {
               {t(saved ? "account.settings.saved" : "account.settings.save")}
             </button>
           </div>
+          {lockedUntil && <p className={HELP}>{t("account.settings.nicknameLocked", { date: date(lockedUntil.toISOString().slice(0, 10)) })}</p>}
           {error && <p role="alert" className={ERROR}>{error}</p>}
         </form>
       </div>

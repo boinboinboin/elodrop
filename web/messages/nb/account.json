@@ -27,8 +27,8 @@
     "intro": "To ting før du starter.",
     "birthDate": "Fødselsdato",
     "birthDateHelp": "Bare året lagres.",
-    "nickname": "Kallenavn",
-    "nicknameHelp": "3–20 tegn. Det vises med ideene du foreslår, aldri sammen med navnet eller e-posten din.",
+    "nickname": "Brukernavn",
+    "nicknameHelp": "3–20 bokstaver, tall, _ . eller -, uten mellomrom. Det vises på tabellene og med ideene du foreslår, aldri sammen med navnet eller e-posten din. Du kan endre det én gang hver 30. dag.",
     "privacy": "Jeg har lest hvordan Elodrop behandler dataene mine",
     "create": "Lag konto",
     "creating": "Lager …",
@@ -37,10 +37,11 @@
   },
   "settings": {
     "signedInAs": "Logget inn som {email}",
-    "nickname": "Kallenavn",
+    "nickname": "Brukernavn",
     "save": "Lagre",
     "saved": "Lagret",
-    "signOut": "Logg ut"
+    "signOut": "Logg ut",
+    "nicknameLocked": "Du kan endre det igjen fra {date}."
   },
   "me": {
     "title": "Dette er meg",
@@ -92,8 +93,8 @@
   },
   "errors": {
     "too_young": "Kontoer er for de som er 15 år eller eldre.",
-    "nickname_blocked": "Det kallenavnet kan ikke brukes. Prøv et annet.",
-    "nickname_taken": "Det kallenavnet er tatt. Prøv et annet.",
+    "nickname_blocked": "Det brukernavnet kan ikke brukes. Prøv et annet.",
+    "nickname_taken": "Det brukernavnet er tatt. Prøv et annet.",
     "claim_too_soon": "Du valgte en spiller for mindre enn 30 dager siden.",
     "account_too_new": "Kontoen din er for ny til dette ennå.",
     "too_many_pending": "Du har allerede 2 ideer som venter på å bli sett på.",
@@ -105,11 +106,15 @@
     "player_reported": "Denne spilleren har allerede rapporter som venter.",
     "squad_invalid": "Et lag er 5 forskjellige spillere, én av dem kaptein.",
     "not_eligible": "En av spillerne kan ikke velges (under 18, eller ikke aktiv).",
-    "no_profile": "Lag kontoen din først (kallenavnet ditt).",
+    "no_profile": "Lag kontoen din først (brukernavnet ditt).",
     "league_not_found": "Ingen liga har den koden.",
     "league_full": "Den ligaen er full (100 medlemmer).",
     "too_many_leagues": "Du er med i så mange ligaer du kan være.",
     "not_owner": "Bare eieren av ligaen kan gjøre det.",
+    "too_fast": "Vent et øyeblikk, og lagre igjen.",
+    "name_blocked": "Det navnet kan ikke brukes. Prøv et annet.",
+    "username_too_soon": "Du endret brukernavnet for mindre enn 30 dager siden.",
+    "username_invalid": "Bruk 3–20 bokstaver, tall, _ . eller -, uten mellomrom.",
     "unknown": "Noe gikk galt. Prøv igjen."
   },
   "report": {
@@ -173,7 +178,7 @@
     "none": "Ingen ideer her ennå.",
     "suggest": {
       "title": "Foreslå en idé",
-      "intro": "Ideer leses før de vises, med kallenavnet ditt. Du kan ha 2 som venter om gangen.",
+      "intro": "Ideer leses før de vises, med brukernavnet ditt. Du kan ha 2 som venter om gangen.",
       "name": "Ideen, på én linje",
       "body": "Mer om den (valgfritt)",
       "send": "Foreslå",

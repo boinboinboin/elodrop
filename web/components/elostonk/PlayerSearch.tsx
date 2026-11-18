@@ -100,7 +100,7 @@ export default function PlayerSearch({
                   {p.club ?? ""}
                   {Object.entries(p.ratings).map(([pool, r]) => (
                     <span key={pool} className="ml-2 whitespace-nowrap tabular-nums">
-                      {poolCodes[pool as Pool]} {num(r![0])}
+                      {poolCodes[pool as Pool]} {num(r!)}
                     </span>
                   ))}
                 </span>

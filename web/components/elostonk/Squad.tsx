@@ -198,7 +198,8 @@ export default function Squad() {
       {/* The member's rounds */}
       {mine.length > 0 && (
         <section>
-          <h2 className="text-2xl mb-3">{t("elostonk.squad.history")}</h2>
+          <h2 className="text-2xl mb-1">{t("elostonk.squad.history")}</h2>
+          <p className="text-sm text-gray-600 mb-3">{t("elostonk.squad.historyNote")}</p>
           <ul className="bg-white divide-y divide-gray-100">
             {mine.map((r) => (
               <li key={r.round} className="flex justify-between gap-4 px-3 py-2">

@@ -5,7 +5,8 @@
 --
 -- A squad is saved for the next round only (the database decides which), and carries over: a member's squad for a
 -- round is the one they saved last before it locked. Everyone's squads, scores and the picks' statistics are shown by
--- nickname once a round has locked, never before, so nobody copies anyone.
+-- nickname once a round has locked, never before, so nobody copies anyone. They're worked out ahead, not on every view
+-- (materialized views): the squads and the statistics once a day, the scores and the leaderboards once a week.
 
 insert into public.settings (key, value) values
   -- The youngest age a player can be picked at (pipeline/elostonk.mjs MIN_AGE)
@@ -36,7 +37,6 @@ create table public.stonk_players (
   player_id integer primary key,
   name text not null,
   club text,
-  birth_year integer,
   -- In the newest file: 18 or older and active. A player no longer in it can't be picked again (a squad keeps them)
   eligible boolean not null default true,
   updated_at timestamptz not null default now()
@@ -91,7 +91,11 @@ language plpgsql security definer set search_path = '' as $$
 begin
   -- Always the next round: the one not yet locked (the client can't choose another)
   new.round := public.stonk_next_round();
-  new.updated_at := now();
+  -- A brake on scripts: one save every 2 seconds (a person never notices); by the clock, not the transaction's start
+  if tg_op = 'UPDATE' and old.updated_at > clock_timestamp() - interval '2 seconds' then
+    raise exception 'too_fast' using errcode = 'P0001';
+  end if;
+  new.updated_at := clock_timestamp();
   if not exists (select 1 from public.profiles where user_id = new.user_id) then
     raise exception 'no_profile' using errcode = 'P0001';
   end if;
@@ -107,10 +111,12 @@ $$;
 create trigger check_picks before insert or update on public.stonk_picks for each row execute function public.check_picks();
 
 -- ---------------------------------------------------------------------------------------------------------------------
--- Scores: each member's squad in each round under way or played (the newest saved before it), with its points
+-- Scores and statistics, worked out ahead (materialized views, refreshed by stonk_refresh below): the squads that counted
+-- and the picks' statistics once a day, the scores and the leaderboards once a week. The views everyone reads show
+-- them by nickname, without the members whose nickname the owner has hidden (profiles.hidden).
 -- ---------------------------------------------------------------------------------------------------------------------
-/** The squads that counted in each round that has started, carried over from the round they were saved for */
-create view public.stonk_squads as
+/** The squads that counted in each round that has started, carried over from the round they were saved for (daily) */
+create materialized view public.stonk_squads_mv as
   select r.round, s.user_id, s.players, s.captain
   from public.stonk_rounds r
   cross join lateral (
@@ -120,59 +126,84 @@ create view public.stonk_squads as
     order by p.user_id, p.round desc
   ) s
   where r.round <= public.stonk_round_of(now());
-revoke all on public.stonk_squads from anon, authenticated;
+create index on public.stonk_squads_mv (round, user_id);
 
-/** Each squad's points in each round, by nickname (the user's id stays inside) */
-create view public.stonk_round_scores as
-  select q.round,
-    (case when extract(month from q.round) >= 7 then extract(year from q.round) else extract(year from q.round) - 1 end)::integer as season,
-    pr.nickname,
-    coalesce(sum(pt.points * case when pt.player_id = q.captain then 2 else 1 end), 0)::numeric(8, 1) as points,
-    r.final
-  from public.stonk_squads q
-  join public.profiles pr on pr.user_id = q.user_id
-  join public.stonk_rounds r on r.round = q.round
-  left join public.stonk_points pt on pt.round = q.round and pt.player_id = any (q.players)
-  group by q.round, pr.nickname, r.final;
-grant select on public.stonk_round_scores to anon, authenticated;
-
-/** The season's table: points, rounds played and the best round, ranked */
-create view public.stonk_season_table as
-  select season, nickname, sum(points)::numeric(9, 1) as points, count(*)::integer as rounds, max(points) as best,
-    rank() over (partition by season order by sum(points) desc)::integer as rank
-  from public.stonk_round_scores
-  group by season, nickname;
-grant select on public.stonk_season_table to anon, authenticated;
-
-/** All time */
-create view public.stonk_alltime_table as
-  select nickname, sum(points)::numeric(10, 1) as points, count(*)::integer as rounds, max(points) as best,
-    rank() over (order by sum(points) desc)::integer as rank
-  from public.stonk_round_scores
-  group by nickname;
-grant select on public.stonk_alltime_table to anon, authenticated;
-
-/** Everyone's squad in each started round, by nickname, with each player's points (for the leaderboard's squads) */
-create view public.stonk_locked_squads as
-  select q.round, pr.nickname, q.players, q.captain
-  from public.stonk_squads q
-  join public.profiles pr on pr.user_id = q.user_id;
-grant select on public.stonk_locked_squads to anon, authenticated;
-
-/** How often each player was picked and made captain in each started round, out of the squads in it */
-create view public.stonk_ownership as
-  with squads as (select round, count(*) as total from public.stonk_squads group by round)
-  select q.round, p.player_id, sp.name,
+/** How often each player was picked and made captain in each started round, out of the squads in it (daily) */
+create materialized view public.stonk_ownership_mv as
+  with squads as (select round, count(*) as total from public.stonk_squads_mv group by round)
+  select q.round, p.player_id,
     count(*)::integer as picks,
     count(*) filter (where q.captain = p.player_id)::integer as captains,
     round(100.0 * count(*) / s.total, 1) as picked_pct,
     coalesce(pt.points, 0) as points
-  from public.stonk_squads q
+  from public.stonk_squads_mv q
   cross join lateral unnest(q.players) as p (player_id)
   join squads s on s.round = q.round
-  left join public.stonk_players sp on sp.player_id = p.player_id
   left join public.stonk_points pt on pt.round = q.round and pt.player_id = p.player_id
-  group by q.round, p.player_id, sp.name, s.total, pt.points;
+  group by q.round, p.player_id, s.total, pt.points;
+create index on public.stonk_ownership_mv (round);
+
+/** Each squad's points in each round (weekly) */
+create materialized view public.stonk_scores_mv as
+  select q.round,
+    (case when extract(month from q.round) >= 7 then extract(year from q.round) else extract(year from q.round) - 1 end)::integer as season,
+    q.user_id,
+    coalesce(sum(pt.points * case when pt.player_id = q.captain then 2 else 1 end), 0)::numeric(8, 1) as points,
+    r.final
+  from public.stonk_squads_mv q
+  join public.stonk_rounds r on r.round = q.round
+  left join public.stonk_points pt on pt.round = q.round and pt.player_id = any (q.players)
+  group by q.round, q.user_id, r.final;
+create index on public.stonk_scores_mv (round);
+create index on public.stonk_scores_mv (season);
+
+/** Each member's season and all time: points, rounds played and the best round (weekly) */
+create materialized view public.stonk_totals_mv as
+  select season, user_id, sum(points)::numeric(10, 1) as points, count(*)::integer as rounds, max(points) as best
+  from public.stonk_scores_mv group by season, user_id
+  union all
+  select null, user_id, sum(points)::numeric(10, 1), count(*)::integer, max(points)
+  from public.stonk_scores_mv group by user_id;
+create index on public.stonk_totals_mv (season);
+
+-- None of them is read directly: only through the views below
+revoke all on public.stonk_squads_mv, public.stonk_ownership_mv, public.stonk_scores_mv, public.stonk_totals_mv from anon, authenticated;
+
+/** Each squad's points in each round, by nickname (the user's id stays inside) */
+create view public.stonk_round_scores as
+  select s.round, s.season, pr.nickname, s.points, s.final
+  from public.stonk_scores_mv s
+  join public.profiles pr on pr.user_id = s.user_id and not pr.hidden;
+grant select on public.stonk_round_scores to anon, authenticated;
+
+/** The season's table, ranked */
+create view public.stonk_season_table as
+  select t.season, pr.nickname, t.points, t.rounds, t.best, rank() over (partition by t.season order by t.points desc)::integer as rank
+  from public.stonk_totals_mv t
+  join public.profiles pr on pr.user_id = t.user_id and not pr.hidden
+  where t.season is not null;
+grant select on public.stonk_season_table to anon, authenticated;
+
+/** All time, ranked */
+create view public.stonk_alltime_table as
+  select pr.nickname, t.points, t.rounds, t.best, rank() over (order by t.points desc)::integer as rank
+  from public.stonk_totals_mv t
+  join public.profiles pr on pr.user_id = t.user_id and not pr.hidden
+  where t.season is null;
+grant select on public.stonk_alltime_table to anon, authenticated;
+
+/** Everyone's squad in each started round, by nickname (for the leaderboard's squads) */
+create view public.stonk_locked_squads as
+  select q.round, pr.nickname, q.players, q.captain
+  from public.stonk_squads_mv q
+  join public.profiles pr on pr.user_id = q.user_id and not pr.hidden;
+grant select on public.stonk_locked_squads to anon, authenticated;
+
+/** The picks' statistics, with the players' names */
+create view public.stonk_ownership as
+  select o.round, o.player_id, sp.name, o.picks, o.captains, o.picked_pct, o.points
+  from public.stonk_ownership_mv o
+  left join public.stonk_players sp on sp.player_id = o.player_id;
 grant select on public.stonk_ownership to anon, authenticated;
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -219,6 +250,9 @@ begin
   if not exists (select 1 from public.profiles where user_id = new.owner) then
     raise exception 'no_profile' using errcode = 'P0001';
   end if;
+  if exists (select 1 from public.blocked_words w where position(w.word in lower(new.name)) > 0) then
+    raise exception 'name_blocked' using errcode = 'P0001';
+  end if;
   if (select count(*) from public.stonk_leagues where owner = new.owner) >= 10 then
     raise exception 'too_many_leagues' using errcode = 'P0001';
   end if;
@@ -229,6 +263,16 @@ begin
 end
 $$;
 create trigger check_league before insert on public.stonk_leagues for each row execute function public.check_league();
+create or replace function public.check_league_name() returns trigger
+language plpgsql security definer set search_path = '' as $$
+begin
+  if exists (select 1 from public.blocked_words w where position(w.word in lower(new.name)) > 0) then
+    raise exception 'name_blocked' using errcode = 'P0001';
+  end if;
+  return new;
+end
+$$;
+create trigger check_league_name before update of name on public.stonk_leagues for each row execute function public.check_league_name();
 create or replace function public.join_own_league() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
@@ -296,19 +340,19 @@ begin
 end
 $$;
 
-/** A league's table, for its members only: the season's points, and all time */
+/** A league's table, for its members only: the season's points (weekly, as the leaderboards) */
 create view public.stonk_league_table as
-  select m.league_id, s.season, s.nickname, s.points, s.rounds, s.best,
-    rank() over (partition by m.league_id, s.season order by s.points desc)::integer as rank
+  select m.league_id, t.season, pr.nickname, t.points, t.rounds, t.best,
+    rank() over (partition by m.league_id, t.season order by t.points desc)::integer as rank
   from public.stonk_league_members m
-  join public.profiles pr on pr.user_id = m.user_id
-  join public.stonk_season_table s on s.nickname = pr.nickname
+  join public.profiles pr on pr.user_id = m.user_id and not pr.hidden
+  join public.stonk_totals_mv t on t.user_id = m.user_id and t.season is not null
   where public.is_league_member(m.league_id);
 grant select on public.stonk_league_table to authenticated;
 
-/** A league's members by nickname, for its members */
+/** A league's members by nickname, for its members (a hidden nickname as hidden) */
 create view public.stonk_league_people as
-  select m.league_id, pr.nickname, m.joined_at, (l.owner = m.user_id) as owner
+  select m.league_id, case when pr.hidden then null else pr.nickname end as nickname, m.joined_at, (l.owner = m.user_id) as owner
   from public.stonk_league_members m
   join public.profiles pr on pr.user_id = m.user_id
   join public.stonk_leagues l on l.id = m.league_id
@@ -338,10 +382,10 @@ begin
   end if;
   players := res.content::jsonb;
   update public.stonk_players set eligible = false where eligible;
-  insert into public.stonk_players (player_id, name, club, birth_year, eligible, updated_at)
-    select (p ->> 0)::integer, p ->> 1, p ->> 2, (p ->> 4)::integer, true, now()
+  insert into public.stonk_players (player_id, name, club, eligible, updated_at)
+    select (p ->> 0)::integer, p ->> 1, p ->> 2, true, now()
     from jsonb_array_elements(players -> 'players') p
-  on conflict (player_id) do update set name = excluded.name, club = excluded.club, birth_year = excluded.birth_year, eligible = true, updated_at = now();
+  on conflict (player_id) do update set name = excluded.name, club = excluded.club, eligible = true, updated_at = now();
 
   for r in select jsonb_array_elements_text(players -> 'rounds') loop
     -- A final round is imported once
@@ -361,7 +405,25 @@ end
 $$;
 select cron.schedule('stonk-import', '0 4 * * *', $$select public.stonk_import()$$);
 
+/**
+ * The worked-out tables again: the squads and the statistics (daily, after the import), and with `weekly` the scores and
+ * the leaderboards too (Mondays, once the weekend's results are in)
+ */
+create or replace function public.stonk_refresh(weekly boolean default false) returns void
+language plpgsql security definer set search_path = '' as $$
+begin
+  refresh materialized view public.stonk_squads_mv;
+  refresh materialized view public.stonk_ownership_mv;
+  if weekly then
+    refresh materialized view public.stonk_scores_mv;
+    refresh materialized view public.stonk_totals_mv;
+  end if;
+end
+$$;
+select cron.schedule('stonk-refresh-daily', '30 4 * * *', $$select public.stonk_refresh(false)$$);
+select cron.schedule('stonk-refresh-weekly', '45 4 * * 1', $$select public.stonk_refresh(true)$$);
+
 -- Not for calling through the API
-revoke execute on function public.stonk_import(), public.check_picks(), public.check_league(), public.join_own_league(), public.after_league_member() from public, anon, authenticated;
+revoke execute on function public.stonk_import(), public.stonk_refresh(boolean), public.check_picks(), public.check_league(), public.check_league_name(), public.join_own_league(), public.after_league_member() from public, anon, authenticated;
 grant execute on function public.join_league(text), public.renew_league_code(bigint) to authenticated;
 revoke execute on function public.join_league(text), public.renew_league_code(bigint) from anon;

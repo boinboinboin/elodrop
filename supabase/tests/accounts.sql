@@ -2,7 +2,7 @@
 -- Run with `pnpm dlx supabase test db` (the local stack running).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(37);
+select plan(43);
 
 -- Three users: an old account (40 days), a new one, and a third for reports about the same player
 insert into auth.users (id, email, created_at, aud, role) values
@@ -45,6 +45,16 @@ select throws_ok(
 select lives_ok($$insert into profiles (user_id, nickname, birth_year) values ('00000000-0000-0000-0000-00000000000b', 'Newbie', 1995)$$, 'a second profile');
 select is((select count(*)::int from profiles), 1, 'a user reads only their own profile');
 
+-- ---- Usernames ----
+select throws_ok($$update profiles set nickname = 'two words'$$, '23514', null, 'a username with a space is refused');
+select lives_ok($$update profiles set nickname = 'Nybø_2'$$, 'Norwegian letters, digits and _ are fine, and the first change is free');
+select throws_ok($$update profiles set nickname = 'Newer'$$, 'P0001', 'username_too_soon', 'the next change waits 30 days');
+select lives_ok($$update profiles set nickname = 'NYBØ_2'$$, 'capitals alone can change any time');
+select pg_temp.as_owner();
+update public.profiles set nickname = 'Renamed' where user_id = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select is((select nickname from profiles), 'Renamed', 'the owner can still rename anyone in the dashboard');
+
 -- ---- The claim ----
 select lives_ok($$update profiles set player_id = 100$$, 'the first claim');
 select throws_ok($$update profiles set player_id = 101$$, 'P0001', 'claim_too_soon', 'the claim can''t change within 30 days');
@@ -72,6 +82,10 @@ select lives_ok($$insert into votes (user_id, idea_id) select '00000000-0000-000
 select throws_ok($$insert into votes (user_id, idea_id) select '00000000-0000-0000-0000-00000000000b', id from ideas_public$$, '23505', null, 'a second vote is refused');
 select is((select votes from ideas_public), 1, 'the votes are counted for everyone');
 select is((select author from ideas_public), 'Shuttle', 'an idea shows its author''s nickname');
+select pg_temp.as_owner();
+update public.profiles set hidden = true where nickname = 'Shuttle';
+select is((select author from ideas_public), null, 'but not a hidden one');
+update public.profiles set hidden = false where nickname = 'Shuttle';
 select pg_temp.as_owner();
 select is((select contact_ok from ideas where author = '00000000-0000-0000-0000-00000000000a'), false, 'contact is off unless ticked');
 

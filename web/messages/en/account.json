@@ -27,8 +27,8 @@
     "intro": "Two things before you start.",
     "birthDate": "Date of birth",
     "birthDateHelp": "Only the year is kept.",
-    "nickname": "Nickname",
-    "nicknameHelp": "3–20 characters. It's shown with the ideas you suggest, never with your name or email.",
+    "nickname": "Username",
+    "nicknameHelp": "3–20 letters, digits, _ . or -, no spaces. It's shown on leaderboards and with the ideas you suggest, never with your name or email. You can change it once every 30 days.",
     "privacy": "I've read how Elodrop handles my data",
     "create": "Create account",
     "creating": "Creating…",
@@ -37,10 +37,11 @@
   },
   "settings": {
     "signedInAs": "Signed in as {email}",
-    "nickname": "Nickname",
+    "nickname": "Username",
     "save": "Save",
     "saved": "Saved",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "nicknameLocked": "You can change it again from {date}."
   },
   "me": {
     "title": "This is me",
@@ -92,8 +93,8 @@
   },
   "errors": {
     "too_young": "Accounts are for ages 15 and over.",
-    "nickname_blocked": "That nickname can't be used. Try another.",
-    "nickname_taken": "That nickname is taken. Try another.",
+    "nickname_blocked": "That username can't be used. Try another.",
+    "nickname_taken": "That username is taken. Try another.",
     "claim_too_soon": "You chose a player less than 30 days ago.",
     "account_too_new": "Your account is too new for this yet.",
     "too_many_pending": "You have 2 ideas waiting to be looked at already.",
@@ -105,11 +106,15 @@
     "player_reported": "This player has reports waiting already.",
     "squad_invalid": "A squad is 5 different players, one of them captain.",
     "not_eligible": "One of the players can't be picked (under 18, or not active).",
-    "no_profile": "Make your account first (your nickname).",
+    "no_profile": "Make your account first (your username).",
     "league_not_found": "No league has that code.",
     "league_full": "That league is full (100 members).",
     "too_many_leagues": "You're in as many leagues as you can be.",
     "not_owner": "Only the league's owner can do that.",
+    "too_fast": "Hold on a moment, then save again.",
+    "name_blocked": "That name can't be used. Try another.",
+    "username_too_soon": "You changed your username less than 30 days ago.",
+    "username_invalid": "Use 3–20 letters, digits, _ . or -, with no spaces.",
     "unknown": "Something went wrong. Try again."
   },
   "report": {
@@ -173,7 +178,7 @@
     "none": "No ideas here yet.",
     "suggest": {
       "title": "Suggest an idea",
-      "intro": "Ideas are read before they're shown, with your nickname. You can have 2 waiting at a time.",
+      "intro": "Ideas are read before they're shown, with your username. You can have 2 waiting at a time.",
       "name": "The idea, in a line",
       "body": "More about it (optional)",
       "send": "Suggest",

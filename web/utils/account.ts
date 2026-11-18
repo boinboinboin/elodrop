@@ -55,6 +55,8 @@ export interface Profile {
   can_report: boolean;
   /** Set by the owner (the dashboard): suggestions shown at once and not limited, reports and the claim without the waits */
   trusted: boolean;
+  /** When the username last changed (null: never since sign-up; the next change is then free) */
+  nickname_changed_at: string | null;
   created_at: string;
 }
 
@@ -62,6 +64,10 @@ export type FollowKind = "player" | "club";
 
 /** How long after a claim before it may change, and before an error report may be sent about it (as the database) */
 export const CLAIM_LOCK_DAYS = 30;
+/** How often the username may change, after a first free change (as the database) */
+export const USERNAME_LOCK_DAYS = 30;
+/** A username: 3–20 letters (accented ones too), digits, _ . or - (the database's profiles_username_format) */
+export const USERNAME_PATTERN = "[A-Za-z0-9ÆØÅæøåÄÖÜäöüÉéÈèÊêÁáÀàÓóÒòÍíÚúÑñÇç_.\\-]{3,20}";
 export const REPORT_CLAIM_DAYS = 14;
 export const REPORT_ACCOUNT_DAYS = 30;
 
@@ -87,6 +93,10 @@ export const ACCOUNT_ERRORS = [
   "league_full",
   "too_many_leagues",
   "not_owner",
+  "too_fast",
+  "name_blocked",
+  "username_too_soon",
+  "username_invalid",
 ] as const;
 export type AccountError = (typeof ACCOUNT_ERRORS)[number] | "unknown";
 
@@ -94,6 +104,8 @@ export type AccountError = (typeof ACCOUNT_ERRORS)[number] | "unknown";
 export function accountError(error: { message?: string; code?: string } | null): AccountError | null {
   if (!error) return null;
   if (error.code === "23505" && error.message?.includes("nickname")) return "nickname_taken";
+  // The username's format (supabase/migrations/*_usernames.sql: profiles_username_format)
+  if (error.code === "23514" && error.message?.includes("profiles_")) return "username_invalid";
   return ACCOUNT_ERRORS.find((code) => error.message === code) ?? "unknown";
 }
 

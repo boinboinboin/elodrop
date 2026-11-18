@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.35.1 (2026-11-19)
+
+- EloStonk's leaderboards are updated once a week (Monday mornings, with the weekend's results) and its statistics every morning, and say so; a leaderboard shows the top 100 and your own place below them.
+- The players to pick from load faster: a smaller file, read straight from the data bucket.
+- Nicknames are now usernames: one word of 3–20 letters, digits, _ . or -, unique, and changeable once every 30 days (the first change after signing up is free, and capitals can change any time).
+- A rude username can be hidden from the leaderboards and ideas, and names with blocked words are refused for leagues too.
+
 ## v1.35.0 (2026-11-18)
 
 - EloStonk, a fantasy game on Elo ratings: pick 5 players (18 or older), make one your captain, and score each round from how much better than expected they play: a win at a 20 % chance is +80, a win at 90 % +10, a loss at 90 % −90, and the captain counts twice. A round runs Friday to Thursday and locks at the start of its Friday; your squad carries over until you change it.

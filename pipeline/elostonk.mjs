@@ -9,9 +9,11 @@
 // players the whole game. Losses count, so points can be negative. Only players who can be picked are scored:
 // 18 or older this year (a known birth year) and active in a discipline (a match in the last 12 months).
 //
-//   elostonk/players.json         { minAge, rounds: [the last ROUNDS Fridays, newest first], players: [[id, name, club,
-//                                  gender, birthYear, { pool: [rating, rank] }, [points in each of those rounds],
-//                                  [[cup2000Id, tournament, startDate], …] (drawn in, not over)], …] }
+//   elostonk/players.json         { minAge, rounds: [the last ROUNDS Fridays, newest first], tournaments: { cup2000Id:
+//                                  [name, startDate] } (drawn, not over), players: [[id, name, club, gender,
+//                                  { pool: rating }, [points in each of those rounds, whole], [cup2000Id, …]], …] }
+//                                  Only what the game's page shows, each tournament named once: it's loaded by every
+//                                  visitor of the page, straight from the data bucket (free traffic, not Vercel's).
 //   elostonk/rounds/<Friday>.json { round, final, points: { id: [points, matches] } } for the last SCORED rounds: late
 //                                  results change a recent round, so each is written again until it's final (3 weeks)
 //
@@ -66,38 +68,40 @@ export function stonkFiles({ byPlayer, matchesOf, birthYears, tournaments, entri
       }
     }
     for (const [round, [p, n]] of perRound) points.get(round)[id] = [Math.round(p * 10) / 10, n];
-    eligible.push({ id, entries, born, perRound });
+    eligible.push({ id, entries, perRound });
   }
 
   // The drawn tournaments not over yet, and who is entered in each
-  const upcoming = new Map(); // player id → [[cup2000Id, name, startDate], …]
-  for (const t of tournaments ?? []) {
+  const drawn = {}; // cup2000Id → [name, startDate]
+  const upcoming = new Map(); // player id → [cup2000Id, …]
+  for (const t of [...(tournaments ?? [])].sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))) {
     if (t.cancelled || !t.startDate || (t.endDate ?? t.startDate) < today) continue;
     const ids = new Set();
     for (const e of entriesOf(t.cup2000Id)?.events ?? []) for (const entry of e.entries) if (!entry.withdrew) for (const p of entry.players) if (p.id) ids.add(p.id);
+    if (!ids.size) continue;
+    drawn[t.cup2000Id] = [t.name, t.startDate];
     for (const id of ids) {
       if (!upcoming.has(id)) upcoming.set(id, []);
-      upcoming.get(id).push([t.cup2000Id, t.name, t.startDate]);
+      upcoming.get(id).push(t.cup2000Id);
     }
   }
 
   const players = eligible
-    .map(({ id, entries, born, perRound }) => {
+    .map(({ id, entries, perRound }) => {
       const list = Object.values(entries);
       return [
         id,
         list[0].name,
         list[0].club ?? null,
         list[0].gender ?? null,
-        born,
-        Object.fromEntries(Object.entries(entries).map(([pool, p]) => [pool, [Math.round(p.rating), p.rank]])),
-        rounds.map((r) => (perRound.has(r) ? Math.round(perRound.get(r)[0] * 10) / 10 : 0)),
-        (upcoming.get(id) ?? []).sort((a, b) => a[2].localeCompare(b[2])),
+        Object.fromEntries(Object.entries(entries).map(([pool, p]) => [pool, Math.round(p.rating)])),
+        rounds.map((r) => (perRound.has(r) ? Math.round(perRound.get(r)[0]) : 0)),
+        upcoming.get(id) ?? [],
       ];
     })
     .sort((a, b) => a[1].localeCompare(b[1], "nb"));
 
-  const files = [{ path: "elostonk/players.json", value: { minAge: MIN_AGE, rounds, players } }];
+  const files = [{ path: "elostonk/players.json", value: { minAge: MIN_AGE, rounds, tournaments: drawn, players } }];
   for (const round of rounds.slice(0, SCORED)) {
     const final = addDays(round, 6 + FINAL_DAYS) < today;
     files.push({ path: `elostonk/rounds/${round}.json`, value: { round, final, points: points.get(round) } });

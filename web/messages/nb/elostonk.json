@@ -38,7 +38,8 @@
     "rounds": "Runder spilt",
     "notInRound": "Du hadde ikke noe lag da denne runden ble låst.",
     "history": "Rundene dine",
-    "roundOf": "Runden fra {date}"
+    "roundOf": "Runden fra {date}",
+    "historyNote": "Oppdateres mandag morgen."
   },
   "search": {
     "title": "Finn spillere",
@@ -81,7 +82,8 @@
     "player": "Spiller",
     "points": "Poeng",
     "rounds": "Runder",
-    "best": "Beste runde"
+    "best": "Beste runde",
+    "updated": "Tabellene oppdateres én gang i uka, mandag morgen, med helgas resultater."
   },
   "leagues": {
     "signIn": "<link>Logg inn</link> for å lage eller bli med i en liga.",
@@ -115,6 +117,7 @@
     "pickedBy": "i {pct} av lagene",
     "unbought": "Stonksene ingen kjøpte",
     "unboughtHelp": "De beste spillerne denne runden som ingen lag hadde",
-    "empty": "–"
+    "empty": "–",
+    "updated": "Oppdateres hver morgen."
   }
 }

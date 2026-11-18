@@ -1,7 +1,9 @@
 "use client";
 
 // EloStonk's leaderboards, open to everyone: the season's table (any season played), a round's (any round that has
-// started: its scores so far until it's final) and all time, by nickname, the signed-in member's own row marked. A
+// started: its scores so far until it's final) and all time, by nickname, the signed-in member's own row marked. Worked
+// out once a week (the database's stonk_refresh), and only the top TOP read, with the member's own row below them when
+// they're further down: a small read whatever the number of players. A
 // nickname opens their squad in that round (the newest for the season and all time), with each player's points.
 import { Fragment, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
@@ -15,6 +17,7 @@ import { seasonLabel, toneClass } from "@/utils/format";
 import { currentRound, seasonOfRound } from "@/utils/rounds";
 
 type View = "season" | "round" | "alltime";
+const TOP = 100;
 interface Row {
   nickname: string;
   points: number;
@@ -26,6 +29,7 @@ interface Row {
 export default function Leaderboard() {
   const { t, num, signed, date } = useI18n();
   const { profile, load } = useAccount();
+  const nickname = profile?.nickname ?? null;
   const data = useStonkPlayers();
   const [view, setView] = useState<View>("season");
   const [rounds, setRounds] = useState<string[]>([]);
@@ -56,25 +60,36 @@ export default function Leaderboard() {
   useEffect(() => {
     if (season === null || (view === "round" && !round)) return;
     let live = true;
+    const me = nickname;
     void load().then(async (client) => {
       let list: Row[] = [];
-      if (view === "season") {
-        const { data } = await client.from("stonk_season_table").select("nickname, points, rounds, best, rank").eq("season", season).order("rank").limit(500);
-        list = (data as Row[] | null) ?? [];
-      } else if (view === "alltime") {
-        const { data } = await client.from("stonk_alltime_table").select("nickname, points, rounds, best, rank").order("rank").limit(500);
-        list = (data as Row[] | null) ?? [];
-      } else {
-        const { data } = await client.from("stonk_round_scores").select("nickname, points").eq("round", round).order("points", { ascending: false }).limit(500);
+      let mine: Row | null = null;
+      if (view === "round") {
+        const { data } = await client.from("stonk_round_scores").select("nickname, points").eq("round", round).order("points", { ascending: false }).limit(TOP);
         const scores = ((data as { nickname: string; points: number }[] | null) ?? []).map((r) => ({ ...r, points: Number(r.points) }));
         list = scores.map((r) => ({ ...r, rank: scores.filter((s) => s.points > r.points).length + 1 }));
+        if (me && !list.some((r) => r.nickname === me)) {
+          const own = await client.from("stonk_round_scores").select("nickname, points").eq("round", round).eq("nickname", me).maybeSingle<{ nickname: string; points: number }>();
+          if (own.data) {
+            const above = await client.from("stonk_round_scores").select("nickname", { count: "exact", head: true }).eq("round", round).gt("points", own.data.points);
+            mine = { nickname: me, points: Number(own.data.points), rank: (above.count ?? 0) + 1 };
+          }
+        }
+      } else {
+        const table = view === "season" ? "stonk_season_table" : "stonk_alltime_table";
+        const query = () => (view === "season" ? client.from(table).select("nickname, points, rounds, best, rank").eq("season", season) : client.from(table).select("nickname, points, rounds, best, rank"));
+        const { data } = await query().order("rank").limit(TOP);
+        list = (data as Row[] | null) ?? [];
+        if (me && !list.some((r) => r.nickname === me)) mine = ((await query().eq("nickname", me).maybeSingle<Row>()).data as Row | null) ?? null;
       }
+      // The member's own row, after the top ones
+      if (mine) list = [...list, mine];
       if (live) setRows(list.map((r) => ({ ...r, points: Number(r.points), best: r.best === undefined ? undefined : Number(r.best) })));
     });
     return () => {
       live = false;
     };
-  }, [load, view, round, season]);
+  }, [load, view, round, season, nickname]);
 
   const showSquad = async (nickname: string) => {
     if (open?.nickname === nickname) return setOpen(null);
@@ -111,6 +126,7 @@ export default function Leaderboard() {
           className="mb-4 w-full sm:w-72"
         />
       )}
+      <p className="text-sm text-gray-600 mb-3">{t("elostonk.board.updated")}</p>
       {rows === null ? (
         <p className="text-gray-600">{t("common.loading")}</p>
       ) : !rows.length ? (
@@ -128,11 +144,17 @@ export default function Leaderboard() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((r) => {
+              {rows.map((r, i) => {
                 const me = r.nickname === profile?.nickname;
                 const shown = open?.nickname === r.nickname && data;
+                const gap = i > 0 && r.rank > rows[i - 1].rank + 1 && i === rows.length - 1;
                 return (
                   <Fragment key={r.nickname}>
+                  {gap && (
+                    <tr aria-hidden="true">
+                      <td colSpan={view === "round" ? 3 : 5} className="py-1 px-3 text-gray-400">…</td>
+                    </tr>
+                  )}
                   <tr className={`${ROW} ${me ? "bg-gray-100" : ""}`}>
                     <td className="py-2 px-3 tabular-nums text-gray-600">{r.rank}</td>
                     <td className="py-2 px-3">

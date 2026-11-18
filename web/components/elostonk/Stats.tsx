@@ -84,6 +84,7 @@ export default function Stats() {
         options={rounds.map((r) => ({ key: r, label: t("elostonk.squad.roundOf", { date: date(r) }) }))}
         className="mb-6 w-full sm:w-72"
       />
+      <p className="text-sm text-gray-600 mb-3">{t("elostonk.stats.updated")}</p>
       <dl className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <StatCard label={t("elostonk.stats.managers")}>{num(scores.length)}</StatCard>
         <StatCard label={t("elostonk.stats.average")}>{average === null ? "–" : signed(Math.round(average * 10) / 10, 1)}</StatCard>

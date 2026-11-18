@@ -11,7 +11,7 @@ import CheckToggle from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
-import { accountError, ageOn, MIN_AGE, type Profile, refusedRecently, rememberRefusal } from "@/utils/account";
+import { accountError, ageOn, MIN_AGE, type Profile, refusedRecently, rememberRefusal, USERNAME_PATTERN } from "@/utils/account";
 
 export default function CreateProfile() {
   const { t } = useI18n();
@@ -65,7 +65,7 @@ export default function CreateProfile() {
       </div>
       <div>
         <label htmlFor="account-nickname" className={LABEL}>{t("account.profile.nickname")}</label>
-        <input id="account-nickname" required minLength={3} maxLength={20} autoComplete="nickname" value={nickname} onChange={(e) => setNickname(e.target.value)} className={FIELD} />
+        <input id="account-nickname" required minLength={3} maxLength={20} pattern={USERNAME_PATTERN} autoComplete="username" value={nickname} onChange={(e) => setNickname(e.target.value)} className={FIELD} />
         <p className={HELP}>{t("account.profile.nicknameHelp")}</p>
       </div>
       <div>
