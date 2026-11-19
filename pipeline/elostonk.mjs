@@ -1,7 +1,7 @@
 // EloStonk, the site's fantasy game (README: "EloStonk"): the files the game reads, written by export.mjs into
 // export/elostonk/ and uploaded with the rest of the site's data.
 //
-// A round runs Friday to Thursday (Norwegian days) and locks at the start of its Friday. A player's points in a round
+// A round runs Friday to Thursday (Norwegian days) and locks at 14:00 on its Friday. A player's points in a round
 // are how much better than expected they did in its matches, over every discipline, by the match's day: each match
 // scores 100 × (result − their chance of winning it), so a win at a 20 % chance is +80, a win at 90 % +10 and a loss at
 // 90 % −90 (a draw: 0.5). That is what moves a rating, but on the same scale at every level: the rating change itself is

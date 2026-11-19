@@ -1,7 +1,7 @@
 "use client";
 
 // EloStonk's "My squad" tab: the squad for the next round (5 players, one the captain, counted twice), saved until it
-// locks (its Friday 00:00 in Norway; the database saves it for that round whatever the browser says), the round under
+// locks (its Friday 14:00 in Norway; the database saves it for that round whatever the browser says), the round under
 // way (the squad that counts in it, and its points so far), the player search to fill the squad, and the member's
 // rounds so far. A squad with players who can't be picked (no longer in the players' file, or refused by the database
 // when saving) names them in a warning and can't be saved until they're out. Not signed in: a way to sign in; signed

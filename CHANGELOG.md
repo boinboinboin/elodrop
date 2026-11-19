@@ -12,6 +12,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 - EloStonk: inactive players can be picked too, as long as they're 18 or older and rated in singles, doubles and mixed.
 - EloStonk: when a squad has players who can't be picked, the warning names them, and they're marked in red in the squad, so you can see which to swap out.
+- EloStonk: a round now locks at 14:00 on its Friday instead of at midnight, so you can change your squad until Friday afternoon. That Friday's matches still count in the new round, and the round's squads and picks are shown right after the lock.
 
 ## v1.36.2 (2026-11-19)
 

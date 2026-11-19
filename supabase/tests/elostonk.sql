@@ -2,7 +2,7 @@
 -- Run with `pnpm dlx supabase test db` (the local stack running).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(30);
+select plan(32);
 
 insert into auth.users (id, email, created_at, aud, role) values
   ('00000000-0000-0000-0000-0000000000a1', 'a@example.com', now() - interval '40 days', 'authenticated', 'authenticated'),
@@ -24,9 +24,11 @@ create function pg_temp.as_owner() returns void language sql as $$
 $$;
 
 -- ---- Rounds ----
-select is(public.stonk_round_of('2026-11-20 12:00+01'), '2026-11-20'::date, 'a Friday is its own round');
-select is(public.stonk_round_of('2026-11-26 23:59+01'), '2026-11-20'::date, 'the next Thursday night is still in it');
-select is(public.stonk_round_of('2026-11-19 23:30+00'), '2026-11-20'::date, 'Friday 00:30 in Norway is the new round (Thursday 23:30 UTC)');
+select is(public.stonk_round_of('2026-11-20 14:00+01'), '2026-11-20'::date, 'a round starts at its Friday 14:00');
+select is(public.stonk_round_of('2026-11-20 13:59+01'), '2026-11-13'::date, 'Friday before 14:00 is still the last round');
+select is(public.stonk_round_of('2026-11-27 13:59+01'), '2026-11-20'::date, 'and so is the next Friday morning');
+select is(public.stonk_round_of('2026-11-20 13:30+00'), '2026-11-20'::date, 'Friday 14:30 in Norway is the new round (13:30 UTC)');
+select is(public.stonk_round_of('2026-06-05 12:30+00'), '2026-06-05'::date, 'in summer time too (14:30 in Norway, 12:30 UTC)');
 
 -- ---- Squads ----
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000a1');
