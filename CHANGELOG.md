@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.36.1 (2026-11-19)
+
+- EloStonk's player list shows each player's own three disciplines first (a woman's singles, doubles and mixed before a men's singles rating she may also have); points still count from every discipline they play.
+
 ## v1.36.0 (2026-11-19)
 
 - Notifications: turn them on in your account (Settings) and get one on your phone when a tournament draw on Elodrop includes you, as soon as it's published, with your events and groups. On Android straight from the site; on iPhone in the installed app (Add to Home Screen).
