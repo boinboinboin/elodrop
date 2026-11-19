@@ -8,8 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
-## v1.36.3 (2026-11-19)
+## v1.37.0 (2026-11-19)
 
+- New accounts get a short welcome right after they're made: choose who you are among the players (or skip it, if you're not a player), turn on notifications for your tournament draws, follow players by name, and pick your first EloStonk squad. Every step can be skipped, and all of it can be changed later.
+- EloStonk is marked as beta in the header and the menu.
 - EloStonk: inactive players can be picked too, as long as they're 18 or older and rated in singles, doubles and mixed.
 - EloStonk: when a squad has players who can't be picked, the warning names them, and they're marked in red in the squad, so you can see which to swap out.
 - EloStonk: a round now locks at 14:00 on its Friday instead of at midnight, so you can change your squad until Friday afternoon. That Friday's matches still count in the new round, and the round's squads and picks are shown right after the lock.

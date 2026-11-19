@@ -35,6 +35,21 @@
     "tooYoung": "Accounts are for ages {age} and over, so none was made, and your sign-in has been deleted. A parent can follow your player page with their own account.",
     "privacyLink": "How Elodrop handles your data"
   },
+  "welcome": {
+    "title": "Welcome, {name}",
+    "step": "Step {step} of {of}",
+    "next": "Next",
+    "notPlayer": "Skip: I'm not a player",
+    "doneTitle": "You're all set",
+    "settings": "You can change all of this later: who you are and notifications in your account's settings, who you follow with the stars, and your squad on EloStonk's page.",
+    "finish": "Go to your account",
+    "skip": "Skip",
+    "followTitle": "Follow players",
+    "followIntro": "Your teammates, rivals or favourites: the players you follow show up on your front page with their ratings and how they moved last week. You can also follow players and clubs with the star on their pages.",
+    "followLabel": "Player",
+    "followButton": "Follow",
+    "stonkIntro": "The site's fantasy game: pick 5 players and make one your captain, and score each round from how much better than expected they play. Pick your first squad below, or skip it and play later."
+  },
   "settings": {
     "signedInAs": "Signed in as {email}",
     "nickname": "Username",

@@ -35,6 +35,21 @@
     "tooYoung": "Kontoer er for de som er {age} år eller eldre, så ingen konto ble laget, og innloggingen din er slettet. En forelder kan følge spillersiden din med sin egen konto.",
     "privacyLink": "Hvordan Elodrop behandler dataene dine"
   },
+  "welcome": {
+    "title": "Velkommen, {name}",
+    "step": "Steg {step} av {of}",
+    "next": "Neste",
+    "notPlayer": "Hopp over: jeg er ikke spiller",
+    "doneTitle": "Alt klart",
+    "settings": "Alt dette kan du endre senere: hvem du er og varsler i innstillingene på kontoen din, hvem du følger med stjernene, og laget ditt på EloStonk-siden.",
+    "finish": "Gå til kontoen din",
+    "skip": "Hopp over",
+    "followTitle": "Følg spillere",
+    "followIntro": "Lagkamerater, rivaler eller favoritter: spillerne du følger, dukker opp på forsiden din med ratingen sin og hvordan den endret seg forrige uke. Du kan også følge spillere og klubber med stjerna på sidene deres.",
+    "followLabel": "Spiller",
+    "followButton": "Følg",
+    "stonkIntro": "Sidens fantasyspill: velg 5 spillere og gjør én til kaptein, og få poeng hver runde etter hvor mye bedre enn ventet de spiller. Velg ditt første lag nedenfor, eller hopp over og spill senere."
+  },
   "settings": {
     "signedInAs": "Logget inn som {email}",
     "nickname": "Brukernavn",

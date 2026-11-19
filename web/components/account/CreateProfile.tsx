@@ -13,7 +13,7 @@ import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { accountError, ageOn, MIN_AGE, type Profile, refusedRecently, rememberRefusal, USERNAME_PATTERN } from "@/utils/account";
 
-export default function CreateProfile() {
+export default function CreateProfile({ onCreated }: { onCreated?: () => void }) {
   const { t } = useI18n();
   const { load, setProfile } = useAccount();
   const [birthDate, setBirthDate] = useState("");
@@ -50,6 +50,7 @@ export default function CreateProfile() {
       .single<Profile>();
     setBusy(false);
     if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
+    onCreated?.();
     setProfile(data);
   };
 

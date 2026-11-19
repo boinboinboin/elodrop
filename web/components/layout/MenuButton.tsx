@@ -11,6 +11,7 @@ import InstallApp from "@/components/layout/InstallApp";
 import LanguagePicker from "@/components/layout/LanguagePicker";
 import { usePublishedPages, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import ThemePicker from "@/components/layout/ThemePicker";
+import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
 import { useI18n } from "@/messages/client";
 import { splitLanguage } from "@/messages/i18n";
@@ -20,6 +21,8 @@ interface MenuLink {
   label: string;
   /** Small text after the label ("v1.15.0") */
   detail?: string;
+  /** A tag after the label ("Beta") */
+  badge?: string;
   /** A page written in the Studio: linked only once it's published (./PublishedPages.tsx) */
   page?: WrittenPageKey;
 }
@@ -91,10 +94,11 @@ export default function MenuButton({ links, about: allAbout }: { links: MenuLink
                   <Link
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className={`block py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+                    className={`flex items-center gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
                     aria-current={current === l.href ? "page" : undefined}
                   >
                     {l.label}
+                    {l.badge && <Badge className="font-normal">{l.badge}</Badge>}
                   </Link>
                 </li>
               ))}

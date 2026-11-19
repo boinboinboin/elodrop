@@ -11,6 +11,7 @@ import { PublishedOnly, type WrittenPageKey } from "@/components/layout/Publishe
 import SearchBar from "@/components/layout/SearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
 import UpdatedAt from "@/components/layout/UpdatedAt";
+import Badge from "@/components/ui/Badge";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
@@ -31,7 +32,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/upsets", label: t("layout.nav.upsets") },
     { href: "/head-to-head", label: t("layout.nav.headToHead") },
     // The fantasy game, where the site has accounts (utils/account.ts)
-    ...(ACCOUNTS ? [{ href: "/elostonk", label: t("layout.nav.elostonk") }] : []),
+    ...(ACCOUNTS ? [{ href: "/elostonk", label: t("layout.nav.elostonk"), badge: t("layout.nav.beta") }] : []),
   ];
   // About the site, in the menu at every width (and the footer), the current version beside What's new. The pages
   // written in the Studio (`page`) are linked only once published (components/layout/PublishedPages.tsx)
@@ -61,7 +62,10 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         nav={
           <nav aria-label={t("layout.nav.label")} className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
             {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="hover:text-black">{n.label}</Link>
+              <Link key={n.href} href={n.href} className="hover:text-black">
+                {n.label}
+                {n.badge && <Badge className="ml-1.5 align-middle">{n.badge}</Badge>}
+              </Link>
             ))}
           </nav>
         }
