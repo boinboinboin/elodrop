@@ -231,7 +231,10 @@
       "luck": "Draw luck",
       "group": "Your group",
       "you": "You",
-      "note": "Your chance against each from your ratings now. Draw luck: above zero your draw helps, below it hurts, against a fair draw (as on the tournament page)."
+      "note": "Your chance against each from your ratings now. Draw luck: above zero your draw helps, below it hurts, against a fair draw (as on the tournament page).",
+      "met": "Before: {record}, last {date}",
+      "firstMeeting": "First meeting",
+      "form": "Form, 4 weeks:"
     },
     "weeks": {
       "title": "Your recent weeks",
@@ -262,7 +265,11 @@
         "one": "{count} badge earned",
         "other": "{count} badges earned"
       },
-      "none": "No matches this season yet."
+      "none": "No matches this season yet.",
+      "close": "Close matches",
+      "closeHelp": "Matches whose last set was decided by 3 points or fewer",
+      "tournaments": "Your tournaments",
+      "groupStage": "group stage"
     },
     "career": {
       "title": "Career and form",
@@ -279,12 +286,43 @@
       "against": "{wins}–{losses} against",
       "partnersDoubles": "Most frequent doubles partners",
       "partnersMixed": "Most frequent mixed partners",
-      "nemeses": "Your nemeses"
+      "nemeses": "Your nemeses",
+      "close": "Close matches, all time",
+      "chemistry": "Partner chemistry",
+      "chemistryHelp": "Points a match against expectation with each partner (5 matches or more): above zero, you play better together than your ratings say.",
+      "strongest": "Where you're strongest",
+      "strongestHelp": "Points a match against expectation: above zero, you do better there than your rating says.",
+      "perMatch": "{perf} a match",
+      "splits": {
+        "teamMatches": "Team matches",
+        "tournaments": "Tournaments",
+        "class": "Class {cls} tournaments"
+      },
+      "chemistryKinds": {
+        "doubles": "Doubles",
+        "mixed": "Mixed"
+      }
     },
     "result": {
       "win": "Won",
       "loss": "Lost",
       "draw": "Draw"
+    },
+    "standing": {
+      "title": "Where you stand",
+      "rank": "#{rank} · {rating}",
+      "above": "Above you:",
+      "below": "Below you:",
+      "top": "You're at the top",
+      "club": "#{rank} of {count} in {club}",
+      "nextClass": "{points} to class {cls}",
+      "topClass": "In the top class (E)"
+    },
+    "stonk": {
+      "title": "Your stonk",
+      "picked": "In {pct} of EloStonk squads (round of {date})",
+      "earned": "Points you earned them:",
+      "none": "No EloStonk squad has picked you yet."
     }
   }
 }

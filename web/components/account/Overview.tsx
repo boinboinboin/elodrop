@@ -16,10 +16,11 @@ import StatCard from "@/components/ui/StatCard";
 import { BUTTON, TEXT_LINK, toggleClass } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { I18n } from "@/messages/i18n";
-import type { Dashboard, NextTournament, Partner, Record3, SeasonReview, Week, Who } from "@/utils/dashboard";
+import type { Chemistry, Dashboard, NextTournament, Partner, Record3, SeasonReview, Split, Standing, Week, Who } from "@/utils/dashboard";
 import { seasonLabel, toneClass } from "@/utils/format";
 import { headToHeadHref, playerHref, tournamentHref } from "@/utils/hrefs";
-import { eventHref, eventTitle } from "@/utils/tournament";
+import type { TournamentEvent } from "@/types";
+import { eventHref, eventTitle, rounds } from "@/utils/tournament";
 
 const loaded = new Map<string, Promise<Dashboard | null>>();
 /** The numbers, in the page's language (the badges' titles), once per visit */
@@ -80,6 +81,7 @@ export default function Overview() {
           <p className="text-sm text-gray-600 mt-2 max-w-3xl">{t("account.overview.next.note")}</p>
         </section>
       )}
+      <StandingPart standings={d.standings} playerId={id} />
       {d.weeks.length > 0 && (
         <section className={PART}>
           <h2 className={H2}>{t("account.overview.weeks.title")}</h2>
@@ -101,7 +103,7 @@ const recordText = (t: I18n["t"], r: Record3) => (r.draws ? t("account.overview.
 
 function NextCard({ next, me }: { next: NextTournament; me: number }) {
   const i18n = useI18n();
-  const { t, plural, pct, signed, dateRange } = i18n;
+  const { t, plural, pct, signed, dateRange, date } = i18n;
   const days = Math.round((Date.parse(next.startDate) - Date.parse(today())) / 86_400_000);
   return (
     <article className="bg-white p-4 md:p-6">
@@ -160,6 +162,15 @@ function NextCard({ next, me }: { next: NextTournament; me: number }) {
                         </span>
                       </div>
                       <SplitBar chance={o.chance} />
+                      <p className="text-xs text-gray-600 mt-1 flex flex-wrap gap-x-3">
+                        <span>{o.met.last ? t("account.overview.next.met", { record: recordText(t, o.met), date: date(o.met.last) }) : t("account.overview.next.firstMeeting")}</span>
+                        {o.form !== null && (
+                          <span>
+                            {t("account.overview.next.form")}{" "}
+                            <span className={`tabular-nums ${toneClass(o.form)}`}>{signed(o.form, 0)}</span>
+                          </span>
+                        )}
+                      </p>
                     </li>
                   ))}
                 </ul>
@@ -244,6 +255,9 @@ function SeasonPart({ seasons, me }: { seasons: SeasonReview[]; me: number }) {
         <StatCard label={t("account.overview.season.events")} detail={s.teamMatches ? plural("account.overview.season.eventsDetail", s.teamMatches) : undefined}>
           {num(s.tournaments)}
         </StatCard>
+        <StatCard label={t("account.overview.season.close")} title={t("account.overview.season.closeHelp")} detail={t("account.overview.season.closeHelp")}>
+          {recordText(t, s.close)}
+        </StatCard>
       </dl>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         <div className="bg-white p-4">
@@ -265,6 +279,7 @@ function SeasonPart({ seasons, me }: { seasons: SeasonReview[]; me: number }) {
         <PeopleCard title={t("account.overview.season.partner")} people={s.partners} kind="together" me={me} />
         <PeopleCard title={t("account.overview.season.opponents")} people={s.opponents} kind="against" me={me} />
       </div>
+      {s.events.length > 0 && <SeasonTournaments events={s.events} />}
       {s.badges.length > 0 && (
         <div className="bg-white p-4 mt-4">
           <h3 className="text-sm text-gray-600 mb-3">{plural("account.overview.season.badges", s.badges.length)}</h3>
@@ -350,7 +365,16 @@ function CareerPart({ dashboard, me }: { dashboard: Dashboard; me: number }) {
         <StatCard label={t("account.overview.career.decider")} title={t("account.overview.season.deciderHelp")} detail={pct(rate(c.decider))}>
           {recordText(t, c.decider)}
         </StatCard>
+        <StatCard label={t("account.overview.career.close")} title={t("account.overview.season.closeHelp")} detail={pct(rate(c.close))}>
+          {recordText(t, c.close)}
+        </StatCard>
       </dl>
+      {(c.chemistry.length > 0 || c.strongest.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          {c.chemistry.length > 0 && <ChemistryCard chemistry={c.chemistry} />}
+          {c.strongest.length > 0 && <StrongestCard strongest={c.strongest} />}
+        </div>
+      )}
       {(c.partners.doubles.length > 0 || c.partners.mixed.length > 0 || c.nemeses.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
           <PeopleCard title={t("account.overview.career.partnersDoubles")} people={c.partners.doubles} kind="together" me={me} />
@@ -379,6 +403,180 @@ function PeopleCard({ title, help, people, kind, me }: { title: string; help?: s
         <p className="text-gray-400">–</p>
       )}
       {help && <p className="text-xs text-gray-500 mt-2">{help}</p>}
+    </div>
+  );
+}
+
+/** A signed number of points a match, coloured (performance against expectation) */
+function Perf({ perf }: { perf: number }) {
+  const { t, signed } = useI18n();
+  return <span className={`tabular-nums whitespace-nowrap ${toneClass(perf)}`}>{t("account.overview.career.perMatch", { perf: signed(perf, 1) })}</span>;
+}
+
+/** Where the member stands in each ranking, and their stonk (how many EloStonk squads picked them) */
+function StandingPart({ standings, playerId }: { standings: Standing[]; playerId: number }) {
+  const { t, num, signed, pools } = useI18n();
+  if (!standings.length) return <StonkCard playerId={playerId} alone />;
+  const gap = (a: number, b: number) => signed(a - b, 0);
+  return (
+    <section className={PART}>
+      <h2 className={H2}>{t("account.overview.standing.title")}</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        {standings.map((s) => (
+          <div key={s.pool} className="bg-white p-4 min-w-0">
+            <h3 className="text-sm text-gray-600 mb-1">{pools[s.pool]}</h3>
+            <p className="text-2xl font-semibold tabular-nums mb-2">{t("account.overview.standing.rank", { rank: num(s.rank), rating: num(s.rating) })}</p>
+            <ul className="text-sm space-y-1">
+              <li>
+                {s.above ? (
+                  <>
+                    {t("account.overview.standing.above")}{" "}
+                    <Link href={playerHref(s.above.id, s.pool)} className="font-semibold hover:text-blue-600">{s.above.name}</Link>
+                    {`, ${num(s.above.rating)} (${gap(s.above.rating, s.rating)})`}
+                  </>
+                ) : (
+                  t("account.overview.standing.top")
+                )}
+              </li>
+              {s.below && (
+                <li>
+                  {t("account.overview.standing.below")}{" "}
+                  <Link href={playerHref(s.below.id, s.pool)} className="font-semibold hover:text-blue-600">{s.below.name}</Link>
+                  {`, ${num(s.below.rating)} (${gap(s.below.rating, s.rating)})`}
+                </li>
+              )}
+              {s.club && s.clubRank && <li className="text-gray-700">{t("account.overview.standing.club", { rank: num(s.clubRank), count: num(s.clubRanked), club: s.club })}</li>}
+              <li className="text-gray-700">{s.nextClass ? t("account.overview.standing.nextClass", { points: num(s.nextClass.points), cls: s.nextClass.cls }) : t("account.overview.standing.topClass")}</li>
+            </ul>
+          </div>
+        ))}
+        <StonkCard playerId={playerId} />
+      </div>
+    </section>
+  );
+}
+
+/** How many EloStonk squads picked the member in the newest round that has any, and the points they earned them */
+function StonkCard({ playerId, alone = false }: { playerId: number; alone?: boolean }) {
+  const { t, pct, date, signed } = useI18n();
+  const { load } = useAccount();
+  const [row, setRow] = useState<{ round: string; picked_pct: number; points: number } | null | undefined>(undefined);
+  useEffect(() => {
+    let live = true;
+    void load().then(async (client) => {
+      const { data } = await client.from("stonk_ownership").select("round, picked_pct, points").eq("player_id", playerId).order("round", { ascending: false }).limit(1).maybeSingle<{ round: string; picked_pct: number; points: number }>();
+      if (live) setRow(data ? { ...data, picked_pct: Number(data.picked_pct), points: Number(data.points) } : null);
+    });
+    return () => {
+      live = false;
+    };
+  }, [load, playerId]);
+  if (row === undefined) return null;
+  const card = (
+    <div className="bg-white p-4 min-w-0">
+      <h3 className="text-sm text-gray-600 mb-1">{t("account.overview.stonk.title")}</h3>
+      {row ? (
+        <>
+          <p className="text-2xl font-semibold tabular-nums mb-1">{pct(row.picked_pct / 100)}</p>
+          <p className="text-sm text-gray-700">{t("account.overview.stonk.picked", { pct: pct(row.picked_pct / 100), date: date(row.round) })}</p>
+          <p className="text-sm">
+            {t("account.overview.stonk.earned")}{" "}
+            <span className={`tabular-nums ${toneClass(row.points)}`}>{signed(row.points, 1)}</span>
+          </p>
+        </>
+      ) : (
+        <p className="text-sm text-gray-700">{t("account.overview.stonk.none")}</p>
+      )}
+    </div>
+  );
+  return alone ? <section className={`${PART} max-w-sm`}>{card}</section> : card;
+}
+
+/** The season's tournaments: the record in each, and how far each event went (tournaments with a page) */
+function SeasonTournaments({ events }: { events: SeasonReview["events"] }) {
+  const i18n = useI18n();
+  const { t, pools } = i18n;
+  // The furthest step got through, named as the tournament page names it (rounds()), or the group stage
+  const outcome = (e: SeasonReview["events"][number]["events"][number]) => {
+    const { short } = rounds(i18n, { knockout: e.knockout, maxRounds: e.maxRounds, groups: Array.from({ length: e.groups }) } as unknown as TournamentEvent);
+    if (e.won && short.length) return short.at(-1)!;
+    return e.progress > 0 && short[e.progress - 1] ? short[e.progress - 1] : t("account.overview.season.groupStage");
+  };
+  return (
+    <div className="bg-white p-4 mt-4">
+      <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.season.tournaments")}</h3>
+      <ul>
+        {events.map((x) => (
+          <li key={`${x.cup2000Id ?? x.name}`} className="border-b border-gray-100 last:border-0 py-2">
+            <div className="flex flex-wrap justify-between gap-x-3">
+              {x.cup2000Id ? <Link href={tournamentHref(x.cup2000Id)} className="font-semibold hover:text-blue-600">{x.name}</Link> : <span className="font-semibold">{x.name}</span>}
+              <span className="tabular-nums">{recordText(t, x.record)}</span>
+            </div>
+            {x.events.length > 0 && (
+              <p className="text-sm text-gray-700 flex flex-wrap gap-x-3">
+                {x.events.map((e) => (
+                  <span key={`${e.className}-${e.pool}`} className={e.won ? "font-semibold" : ""}>
+                    {pools[e.pool]} {e.className}: {outcome(e)}
+                  </span>
+                ))}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Each partner's performance together against expectation */
+function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
+  const { t } = useI18n();
+  return (
+    <div className="bg-white p-4 min-w-0">
+      <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.career.chemistry")}</h3>
+      {(["doubles", "mixed"] as const).map((kind) => {
+        const list = chemistry.filter((c) => c.kind === kind);
+        return list.length ? (
+          <div key={kind} className="mb-2 last:mb-0">
+            <h4 className="text-xs uppercase text-gray-500">{t(`account.overview.career.chemistryKinds.${kind}`)}</h4>
+            <ol className="space-y-1">
+              {list.map((c) => (
+                <li key={c.id ?? c.name} className="flex justify-between items-baseline gap-x-3">
+                  <span className="min-w-0">
+                    {c.id ? <Link href={playerHref(c.id)} className="font-semibold hover:text-blue-600">{c.name}</Link> : <span className="font-semibold">{c.name}</span>}
+                    <span className="text-sm text-gray-600 whitespace-nowrap"> · {recordText(t, c)}</span>
+                  </span>
+                  <Perf perf={c.perf} />
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null;
+      })}
+      <p className="text-xs text-gray-500 mt-2">{t("account.overview.career.chemistryHelp")}</p>
+    </div>
+  );
+}
+
+/** Team matches against tournaments, and the tournament classes */
+function StrongestCard({ strongest }: { strongest: (Split & { key: string })[] }) {
+  const { t } = useI18n();
+  const label = (key: string) => (key === "teamMatches" || key === "tournaments" ? t(`account.overview.career.splits.${key}`) : t("account.overview.career.splits.class", { cls: key }));
+  return (
+    <div className="bg-white p-4 min-w-0">
+      <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.career.strongest")}</h3>
+      <ol className="space-y-1">
+        {strongest.map((x) => (
+          <li key={x.key} className="flex justify-between items-baseline gap-x-3">
+            <span className="min-w-0">
+              <span className="font-semibold">{label(x.key)}</span>
+              <span className="text-sm text-gray-600 whitespace-nowrap"> · {recordText(t, x)}</span>
+            </span>
+            <Perf perf={x.perf} />
+          </li>
+        ))}
+      </ol>
+      <p className="text-xs text-gray-500 mt-2">{t("account.overview.career.strongestHelp")}</p>
     </div>
   );
 }

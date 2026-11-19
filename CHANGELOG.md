@@ -8,10 +8,18 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
-## v1.36.1 (2026-11-19)
+## v1.36.2 (2026-11-19)
 
 - Your account's recent weeks show how far each rating really moved: in doubles with the pull towards your singles rating, and at the minimum rating (a loss there moves nothing), where it used to add up only the matches' own changes.
 - Your account's season in review lists your 3 most frequent partners that season, beside your 3 most played opponents.
+- Your account's next tournament shows your record against each player in your group, when you last met, and their form over the last 4 weeks.
+- A new "Where you stand" part on your account: your rank in each discipline, the players just above and below you, your rank in your club, how many points to the next class, and how many EloStonk squads picked you.
+- Your account's season in review shows your close matches and your tournaments that season, with how far you got in each event.
+- Your account's career shows your close matches, your partner chemistry (how you do with each partner against what your ratings predict) and where you're strongest: team matches or tournaments, and each tournament class.
+- Development: `pnpm dev` serves the site over https (`https://localhost:3000`), as the live site does.
+
+## v1.36.1 (2026-11-19)
+
 - EloStonk's player list shows each player's own three disciplines first (a woman's singles, doubles and mixed before a men's singles rating she may also have); points still count from every discipline they play.
 
 ## v1.36.0 (2026-11-19)

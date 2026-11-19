@@ -231,7 +231,10 @@
       "luck": "Trekningsflaks",
       "group": "Puljen din",
       "you": "Du",
-      "note": "Sjansen din mot hver ut fra ratingene nå. Trekningsflaks: over null hjelper trekningen deg, under null gjør den det vanskeligere, sammenlignet med en rettferdig trekning (som på turneringssiden)."
+      "note": "Sjansen din mot hver ut fra ratingene nå. Trekningsflaks: over null hjelper trekningen deg, under null gjør den det vanskeligere, sammenlignet med en rettferdig trekning (som på turneringssiden).",
+      "met": "Før: {record}, sist {date}",
+      "firstMeeting": "Første møte",
+      "form": "Form, 4 uker:"
     },
     "weeks": {
       "title": "De siste ukene dine",
@@ -262,7 +265,11 @@
         "one": "{count} prestasjon oppnådd",
         "other": "{count} prestasjoner oppnådd"
       },
-      "none": "Ingen kamper denne sesongen ennå."
+      "none": "Ingen kamper denne sesongen ennå.",
+      "close": "Jevne kamper",
+      "closeHelp": "Kamper der siste sett ble avgjort med 3 poeng eller mindre",
+      "tournaments": "Turneringene dine",
+      "groupStage": "puljespill"
     },
     "career": {
       "title": "Karriere og form",
@@ -279,12 +286,43 @@
       "against": "{wins}–{losses} mot",
       "partnersDoubles": "Vanligste doublemakkere",
       "partnersMixed": "Vanligste mixmakkere",
-      "nemeses": "Dine erkefiender"
+      "nemeses": "Dine erkefiender",
+      "close": "Jevne kamper, totalt",
+      "chemistry": "Makkerkjemi",
+      "chemistryHelp": "Poeng per kamp mot forventet med hver makker (5 kamper eller flere): over null spiller dere bedre sammen enn ratingene tilsier.",
+      "strongest": "Der du er sterkest",
+      "strongestHelp": "Poeng per kamp mot forventet: over null gjør du det bedre der enn ratingen din tilsier.",
+      "perMatch": "{perf} per kamp",
+      "splits": {
+        "teamMatches": "Lagkamper",
+        "tournaments": "Turneringer",
+        "class": "Klasse {cls}-turneringer"
+      },
+      "chemistryKinds": {
+        "doubles": "Double",
+        "mixed": "Mixed"
+      }
     },
     "result": {
       "win": "Vant",
       "loss": "Tapte",
       "draw": "Uavgjort"
+    },
+    "standing": {
+      "title": "Der du står",
+      "rank": "Nr. {rank} · {rating}",
+      "above": "Over deg:",
+      "below": "Under deg:",
+      "top": "Du er øverst",
+      "club": "Nr. {rank} av {count} i {club}",
+      "nextClass": "{points} til klasse {cls}",
+      "topClass": "I øverste klasse (E)"
+    },
+    "stonk": {
+      "title": "Din stonk",
+      "picked": "I {pct} av EloStonk-lagene (runden fra {date})",
+      "earned": "Poeng du ga dem:",
+      "none": "Ingen EloStonk-lag har valgt deg ennå."
     }
   }
 }
