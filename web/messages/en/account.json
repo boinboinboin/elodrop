@@ -58,6 +58,18 @@
     "confirmClearYes": "Yes, remove",
     "cancel": "Cancel"
   },
+  "notifications": {
+    "title": "Notifications",
+    "intro": "Get a notification on this device when a tournament draw on Elodrop includes you, as soon as it's published.",
+    "noClaim": "Choose who you are under \"This is me\" first: the notifications are about your player.",
+    "install": "On iPhone, notifications come to the installed app only: add Elodrop to your home screen, open it from there, and turn them on here.",
+    "unsupported": "This browser can't receive notifications.",
+    "denied": "Notifications are blocked for Elodrop in this browser's settings. Allow them there, then come back.",
+    "turnOn": "Turn on notifications on this device",
+    "turnOff": "Turn off on this device",
+    "on": "On for this device.",
+    "failed": "Notifications couldn't be turned on. Try again."
+  },
   "follow": {
     "follow": "Follow {name}",
     "unfollow": "Stop following {name}",

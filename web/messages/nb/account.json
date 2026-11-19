@@ -58,6 +58,18 @@
     "confirmClearYes": "Ja, fjern",
     "cancel": "Avbryt"
   },
+  "notifications": {
+    "title": "Varsler",
+    "intro": "Få et varsel på denne enheten når en trekning på Elodrop har deg med, så snart den publiseres.",
+    "noClaim": "Velg hvem du er under «Dette er meg» først: varslene gjelder spilleren din.",
+    "install": "På iPhone kommer varsler bare til den installerte appen: legg Elodrop til på hjemskjermen, åpne den derfra, og slå dem på her.",
+    "unsupported": "Denne nettleseren kan ikke motta varsler.",
+    "denied": "Varsler er blokkert for Elodrop i nettleserens innstillinger. Tillat dem der, og kom tilbake.",
+    "turnOn": "Slå på varsler på denne enheten",
+    "turnOff": "Slå av på denne enheten",
+    "on": "På for denne enheten.",
+    "failed": "Varslene kunne ikke slås på. Prøv igjen."
+  },
   "follow": {
     "follow": "Følg {name}",
     "unfollow": "Slutt å følge {name}",

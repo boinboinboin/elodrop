@@ -12,7 +12,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Download, ShareBox } from "@/components/SVG";
 import { BUTTON, toggleClass } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
-import { APP_DISPLAY, INSTALL_EVENT } from "@/utils/install";
+import { APP_DISPLAY, INSTALL_EVENT, isInstalled, isIos } from "@/utils/install";
 
 type Mode = "prompt" | "ios" | null;
 
@@ -27,10 +27,8 @@ const subscribe = (onChange: () => void) => {
     media.removeEventListener("change", onChange);
   };
 };
-// iPhone, or iPad (which says it's a Mac, but has touch)
-const isIos = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const mode = (): Mode => {
-  if (window.matchMedia(STANDALONE).matches || navigator.standalone) return null;
+  if (isInstalled()) return null;
   if (window.__installPrompt) return "prompt";
   return isIos() ? "ios" : null;
 };
