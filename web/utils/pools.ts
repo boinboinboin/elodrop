@@ -5,6 +5,13 @@ export const POOL_KEYS: Pool[] = ["men", "women", "mensDoubles", "womensDoubles"
 // Their names and short codes are in each language's text: i18n.pools, i18n.poolCodes (messages/i18n.ts)
 export const isPool = (value: unknown): value is Pool => typeof value === "string" && (POOL_KEYS as string[]).includes(value);
 
+/**
+ * The pools in a player's own order (as their page, pipeline/export.mjs POOL_ORDER): their gender's singles, doubles and
+ * mixed first, then the other gender's (some play them, and are rated in them too). Without a known gender, men's.
+ */
+export const poolsInOrder = (gender: "M" | "K" | null | undefined): Pool[] =>
+  gender === "K" ? ["women", "womensDoubles", "mixedDoubles", "men", "mensDoubles"] : ["men", "mensDoubles", "mixedDoubles", "women", "womensDoubles"];
+
 /** The doubles pools */
 export const DOUBLES_POOLS: Pool[] = ["mensDoubles", "womensDoubles", "mixedDoubles"];
 /** Singles: one player per side (the others are pairs) */

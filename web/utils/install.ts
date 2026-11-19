@@ -28,6 +28,11 @@ declare global {
  */
 export const APP_DISPLAY = "(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui), (display-mode: window-controls-overlay)";
 
+/** iPhone, or iPad (which says it's a Mac, but has touch) */
+export const isIos = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+/** Open as the installed app (iPhone's home-screen apps say so with navigator.standalone) */
+export const isInstalled = () => window.matchMedia(APP_DISPLAY).matches || !!navigator.standalone;
+
 /** Sent on window when the install offer comes or goes */
 export const INSTALL_EVENT = "elodrop:installable";
 

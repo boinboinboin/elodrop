@@ -17,6 +17,7 @@ import { useGrowingList } from "@/components/ui/useGrowingList";
 import { useI18n } from "@/messages/client";
 import type { Pool } from "@/types";
 import { normalize } from "@/utils/format";
+import { poolsInOrder } from "@/utils/pools";
 import { playerHref, tournamentHref } from "@/utils/hrefs";
 
 type Sort = "rating" | "form" | "last" | "picked";
@@ -98,11 +99,14 @@ export default function PlayerSearch({
                 <Link href={playerHref(p.id)} target="_blank" className="font-semibold hover:text-blue-600 break-words">{p.name}</Link>
                 <span className="block text-sm text-gray-600 truncate">
                   {p.club ?? ""}
-                  {Object.entries(p.ratings).map(([pool, r]) => (
-                    <span key={pool} className="ml-2 whitespace-nowrap tabular-nums">
-                      {poolCodes[pool as Pool]} {num(r!)}
-                    </span>
-                  ))}
+                  {/* Their own three disciplines first (a woman's men's singles rating, if any, after them) */}
+                  {poolsInOrder(p.gender)
+                    .filter((pool) => p.ratings[pool] !== undefined)
+                    .map((pool) => (
+                      <span key={pool} className="ml-2 whitespace-nowrap tabular-nums">
+                        {poolCodes[pool]} {num(p.ratings[pool]!)}
+                      </span>
+                    ))}
                 </span>
                 {p.upcoming[0] && (
                   <Link href={tournamentHref(p.upcoming[0].cup2000Id)} target="_blank" className="block text-xs text-gray-600 hover:text-blue-600 truncate">

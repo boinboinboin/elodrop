@@ -1,6 +1,6 @@
 "use client";
 
-// The account page's Settings tab: the nickname, "This is me", what they follow (to unfollow), their error reports,
+// The account page's Settings tab: the username, "This is me", notifications on this device, what they follow (to unfollow), their error reports,
 // signing out and deleting the account, one part under another.
 import { type FormEvent, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
@@ -8,6 +8,7 @@ import DeleteAccount from "@/components/account/DeleteAccount";
 import FollowingSettings from "@/components/account/FollowingSettings";
 import { ERROR, FIELD, HELP, LABEL, PART, SUBMIT } from "@/components/account/form";
 import MeSettings from "@/components/account/MeSettings";
+import NotificationSettings from "@/components/account/NotificationSettings";
 import MyReports from "@/components/account/MyReports";
 import { useI18n } from "@/messages/client";
 import { accountError, type Profile, USERNAME_LOCK_DAYS, USERNAME_PATTERN } from "@/utils/account";
@@ -69,6 +70,7 @@ export default function AccountSettings() {
         </form>
       </div>
       <MeSettings />
+      <NotificationSettings />
       <FollowingSettings />
       <MyReports />
       <div className={PART}>
