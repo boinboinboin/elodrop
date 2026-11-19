@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {
+    agentUpgrade: "security",
     // The stylesheet (Tailwind, ~11 KB compressed) in the page's <head> instead of a request the first paint waits
     // for (PageSpeed: "render-blocking requests"). Client-side navigations still load it as a file.
     inlineCss: true,
