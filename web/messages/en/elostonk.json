@@ -20,6 +20,7 @@
       "other": "in {count} hours"
     },
     "gone": "No longer pickable",
+    "invalid": "Can't be picked: {names}. A player must be 18 or older, and active (a match in the last 12 months) or rated in singles, doubles and mixed. Swap them out to save.",
     "captain": "Captain: counts twice",
     "makeCaptain": "Make {name} captain",
     "remove": "Take {name} out",

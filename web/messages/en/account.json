@@ -117,7 +117,7 @@
     "too_many_reports": "You've sent 3 reports in the last 90 days.",
     "player_reported": "This player has reports waiting already.",
     "squad_invalid": "A squad is 5 different players, one of them captain.",
-    "not_eligible": "One of the players can't be picked (under 18, or not active).",
+    "not_eligible": "One of the players can't be picked (under 18, or neither active nor rated in singles, doubles and mixed).",
     "no_profile": "Make your account first (your username).",
     "league_not_found": "No league has that code.",
     "league_full": "That league is full (100 members).",

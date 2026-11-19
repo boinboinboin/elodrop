@@ -20,6 +20,7 @@
       "other": "om {count} timer"
     },
     "gone": "Kan ikke velges lenger",
+    "invalid": "Kan ikke velges: {names}. En spiller må være 18 år eller eldre, og aktiv (en kamp de siste 12 månedene) eller ha rating i single, double og mix. Bytt ut før du lagrer.",
     "captain": "Kaptein: teller dobbelt",
     "makeCaptain": "Gjør {name} til kaptein",
     "remove": "Ta ut {name}",

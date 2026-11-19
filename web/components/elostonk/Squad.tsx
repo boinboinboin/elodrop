@@ -3,8 +3,10 @@
 // EloStonk's "My squad" tab: the squad for the next round (5 players, one the captain, counted twice), saved until it
 // locks (its Friday 00:00 in Norway; the database saves it for that round whatever the browser says), the round under
 // way (the squad that counts in it, and its points so far), the player search to fill the squad, and the member's
-// rounds so far. Not signed in: a way to sign in; signed in but without "This is me" or a nickname: the account page.
-import { useEffect, useMemo, useState } from "react";
+// rounds so far. A squad with players who can't be picked (no longer in the players' file, or refused by the database
+// when saving) names them in a warning and can't be saved until they're out. Not signed in: a way to sign in; signed
+// in but without "This is me" or a nickname: the account page.
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, SUBMIT } from "@/components/account/form";
 import PlayerSearch from "@/components/elostonk/PlayerSearch";
@@ -37,6 +39,10 @@ export default function Squad() {
   const [captain, setCaptain] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Players the database refused at the last save (not eligible there), and the names of picked players no longer in
+  // the players' file (from the game's database, which keeps them)
+  const [refused, setRefused] = useState<Set<number>>(new Set());
+  const [names, setNames] = useState<Map<number, string>>(new Map());
   const [done, setDone] = useState(false);
   const [owned, setOwned] = useState<Map<number, number>>(new Map());
   const [live, setLive] = useState<{ players: number[]; captain: number } | null>(null);
@@ -78,11 +84,28 @@ export default function Squad() {
   }, [status, nickname, load, current]);
 
   const picked = useMemo(() => new Set(draft), [draft]);
+
+  // The names of picked players no longer in the players' file
+  useEffect(() => {
+    if (status !== "ready" || !data) return;
+    const missing = draft.filter((id) => !data.byId.has(id) && !names.has(id));
+    if (!missing.length) return;
+    let alive = true;
+    void load().then(async (client) => {
+      const { data: rows } = await client.from("stonk_players").select("player_id, name").in("player_id", missing);
+      if (alive && rows?.length) setNames((old) => new Map([...old, ...(rows as { player_id: number; name: string }[]).map((r) => [r.player_id, r.name] as const)]));
+    });
+    return () => {
+      alive = false;
+    };
+  }, [status, data, draft, names, load]);
   if (status === "off") return null;
   if (!now || status === "loading" || (status === "ready" && (saved === undefined || !data))) return <p className="text-gray-600">{t("common.loading")}</p>;
   if (status !== "ready") return <p className="text-lg">{rich("elostonk.squad.signIn", { link: (text) => <Link href="/account" className={TEXT_LINK}>{text}</Link> })}</p>;
 
   const byId = data!.byId;
+  const nameOf = (id: number) => byId.get(id)?.name ?? names.get(id) ?? `#${id}`;
+  const invalid = draft.filter((id) => !byId.has(id) || refused.has(id));
   const changed = JSON.stringify(draft) !== JSON.stringify(saved?.players ?? []) || captain !== (saved?.captain ?? null);
   const ready = draft.length === SIZE && captain !== null && draft.includes(captain);
   const lock = lockOf(next);
@@ -106,7 +129,20 @@ export default function Squad() {
     const client = await load();
     const { error } = await client.from("stonk_picks").upsert({ user_id: profile.user_id, round: next, players: draft, captain }, { onConflict: "user_id,round" });
     setBusy(false);
-    if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
+    if (error) {
+      const code = accountError(error) ?? "unknown";
+      if (code === "not_eligible") {
+        // Which of them the database refuses, to name them in the warning
+        const { data: rows } = await client.from("stonk_players").select("player_id, name, eligible").in("player_id", draft);
+        const known = new Map(((rows as { player_id: number; name: string; eligible: boolean }[] | null) ?? []).map((r) => [r.player_id, r]));
+        const bad = draft.filter((id) => !known.get(id)?.eligible);
+        if (bad.length) {
+          setNames((old) => new Map([...old, ...[...known.values()].map((r) => [r.player_id, r.name] as const)]));
+          return setRefused(new Set(bad));
+        }
+      }
+      return setError(t(`account.errors.${code}`));
+    }
     setSaved({ round: next, players: draft, captain: captain! });
     setDone(true);
   };
@@ -126,14 +162,15 @@ export default function Squad() {
           {Array.from({ length: SIZE }, (_, i) => {
             const id = draft[i];
             const p = id ? byId.get(id) : undefined;
+            const bad = id ? invalid.includes(id) : false;
             return (
               <li key={i} className="bg-white flex items-center gap-3 px-3 py-2 min-h-14">
                 <span className="w-5 text-gray-400 tabular-nums">{i + 1}</span>
                 {id ? (
                   <>
                     <div className="flex-1 min-w-0">
-                      {p ? <Link href={playerHref(id)} target="_blank" className="font-semibold hover:text-blue-600 break-words">{p.name}</Link> : <span className="font-semibold">#{id}</span>}
-                      <span className="block text-sm text-gray-600 truncate">{p ? p.club : t("elostonk.squad.gone")}</span>
+                      <Link href={playerHref(id)} target="_blank" className={`font-semibold hover:text-blue-600 break-words ${bad ? "text-red-700" : ""}`}>{nameOf(id)}</Link>
+                      <span className={`block text-sm truncate ${bad ? "text-red-700" : "text-gray-600"}`}>{bad ? t("elostonk.squad.gone") : p?.club}</span>
                     </div>
                     {p && (
                       <span className="hidden sm:block">
@@ -148,12 +185,12 @@ export default function Squad() {
                         setDone(false);
                       }}
                       title={t("elostonk.squad.captain")}
-                      aria-label={t("elostonk.squad.makeCaptain", { name: p?.name ?? `#${id}` })}
+                      aria-label={t("elostonk.squad.makeCaptain", { name: nameOf(id) })}
                       className={`shrink-0 w-10 h-10 inline-flex items-center justify-center ${BUTTON} ${captain === id ? "bg-black text-white" : ""}`}
                     >
                       <Star filled={captain === id} className="text-lg" />
                     </button>
-                    <button type="button" onClick={() => remove(id)} aria-label={t("elostonk.squad.remove", { name: p?.name ?? `#${id}` })} className="shrink-0 w-10 h-10 inline-flex items-center justify-center text-gray-500 hover:text-black cursor-pointer">
+                    <button type="button" onClick={() => remove(id)} aria-label={t("elostonk.squad.remove", { name: nameOf(id) })} className="shrink-0 w-10 h-10 inline-flex items-center justify-center text-gray-500 hover:text-black cursor-pointer">
                       <Cross className="text-xl" />
                     </button>
                   </>
@@ -165,11 +202,23 @@ export default function Squad() {
           })}
         </ol>
         <div className="flex flex-wrap items-center gap-4">
-          <button type="button" disabled={busy || !ready || !changed} onClick={() => void save()} className={SUBMIT}>{t(busy ? "elostonk.squad.saving" : "elostonk.squad.save")}</button>
+          <button type="button" disabled={busy || !ready || !changed || invalid.length > 0} onClick={() => void save()} className={SUBMIT}>{t(busy ? "elostonk.squad.saving" : "elostonk.squad.save")}</button>
           <span className="text-sm text-gray-600" aria-live="polite">
             {done ? t("elostonk.squad.saved") : !ready ? t("elostonk.squad.need", { count: SIZE - draft.length }) : changed ? t("elostonk.squad.unsaved") : saved ? t("elostonk.squad.carries") : ""}
           </span>
         </div>
+        {invalid.length > 0 && (
+          <p role="alert" className={ERROR}>
+            {rich("elostonk.squad.invalid", {
+              names: invalid.map((id, i) => (
+                <Fragment key={id}>
+                  {i > 0 && ", "}
+                  <strong>{nameOf(id)}</strong>
+                </Fragment>
+              )),
+            })}
+          </p>
+        )}
         {error && <p role="alert" className={ERROR}>{error}</p>}
       </section>
 

@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.36.3 (2026-11-19)
+
+- EloStonk: inactive players can be picked too, as long as they're 18 or older and rated in singles, doubles and mixed.
+- EloStonk: when a squad has players who can't be picked, the warning names them, and they're marked in red in the squad, so you can see which to swap out.
+
 ## v1.36.2 (2026-11-19)
 
 - Your account's recent weeks show how far each rating really moved: in doubles with the pull towards your singles rating, and at the minimum rating (a loss there moves nothing), where it used to add up only the matches' own changes.

@@ -7,7 +7,8 @@
 // 90 % −90 (a draw: 0.5). That is what moves a rating, but on the same scale at every level: the rating change itself is
 // up to 3 times bigger for low ratings (rules.mjs, the current rating multiplier), which would make picking low-rated
 // players the whole game. Losses count, so points can be negative. Only players who can be picked are scored:
-// 18 or older this year (a known birth year) and active in a discipline (a match in the last 12 months).
+// 18 or older this year (a known birth year), and active in a discipline (a match in the last 12 months) or rated in
+// all three of their own gender's disciplines (singles, doubles and mixed), so a player back from a break can be picked before their first match.
 //
 //   elostonk/players.json         { minAge, rounds: [the last ROUNDS Fridays, newest first], tournaments: { cup2000Id:
 //                                  [name, startDate] } (drawn, not over), players: [[id, name, club, gender,
@@ -27,6 +28,18 @@ const ROUNDS = 8;
 const SCORED = 6;
 /** A round is final this many days after it ended */
 const FINAL_DAYS = 21;
+
+/**
+ * Rated in singles, doubles and mixed, in their own gender's disciplines (as the rankings: README "Men's and women's
+ * disciplines rank their own gender"), so a woman who has only played men's singles (when there were too few for
+ * women's singles) isn't rated in singles. An unknown gender rules nothing out.
+ */
+const OWN = { M: ["men", "mensDoubles"], K: ["women", "womensDoubles"] };
+function ratedInAll(entries, gender) {
+  if (!("mixedDoubles" in entries)) return false;
+  const [singles, doubles] = OWN[gender] ? OWN[gender].map((pool) => [pool]) : [["men", "women"], ["mensDoubles", "womensDoubles"]];
+  return singles.some((pool) => pool in entries) && doubles.some((pool) => pool in entries);
+}
 
 /** A day ("2026-11-20") moved by `n` days */
 const addDays = (day, n) => new Date(Date.parse(`${day}T00:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
@@ -55,7 +68,7 @@ export function stonkFiles({ byPlayer, matchesOf, birthYears, tournaments, entri
   for (const [id, entries] of byPlayer) {
     const born = birthYears[id];
     const list = Object.values(entries);
-    if (!born || born > youngest || !list.some((p) => p.active)) continue;
+    if (!born || born > youngest || !(list.some((p) => p.active) || ratedInAll(entries, list[0].gender))) continue;
     const perRound = new Map();
     const logs = matchesOf(id);
     for (const pool of Object.keys(entries)) {

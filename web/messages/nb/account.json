@@ -117,7 +117,7 @@
     "too_many_reports": "Du har sendt 3 rapporter de siste 90 dagene.",
     "player_reported": "Denne spilleren har allerede rapporter som venter.",
     "squad_invalid": "Et lag er 5 forskjellige spillere, én av dem kaptein.",
-    "not_eligible": "En av spillerne kan ikke velges (under 18, eller ikke aktiv).",
+    "not_eligible": "En av spillerne kan ikke velges (under 18, eller verken aktiv eller med rating i single, double og mix).",
     "no_profile": "Lag kontoen din først (brukernavnet ditt).",
     "league_not_found": "Ingen liga har den koden.",
     "league_full": "Den ligaen er full (100 medlemmer).",
