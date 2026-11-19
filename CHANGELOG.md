@@ -10,6 +10,8 @@ Every change merged into `main` gets an entry here, newest first.
 
 ## v1.36.1 (2026-11-19)
 
+- Your account's recent weeks show how far each rating really moved: in doubles with the pull towards your singles rating, and at the minimum rating (a loss there moves nothing), where it used to add up only the matches' own changes.
+- Your account's season in review lists your 3 most frequent partners that season, beside your 3 most played opponents.
 - EloStonk's player list shows each player's own three disciplines first (a woman's singles, doubles and mixed before a men's singles rating she may also have); points still count from every discipline they play.
 
 ## v1.36.0 (2026-11-19)

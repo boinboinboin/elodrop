@@ -3,9 +3,10 @@
 // (matches/<id>.json) and the tournaments with a draw. Only what the player page doesn't show already: the next
 // tournament they're drawn in, their recent weeks, each season's record and the career's records and form.
 // Language-free: the browser writes it out.
-import type { Achievement, History, Match, Player, Pool, Tournament, TournamentSummary } from "@/types";
+import type { Achievement, History, Match, Player, Pool, RatingEntry, Tournament, TournamentSummary } from "@/types";
+import { CLASS_CUTOFFS, CLASSES, type RatingClass } from "@/utils/classes";
 import { isSingles } from "@/utils/pools";
-import { DOUBLES_SCALE, expectedScore } from "@/utils/rating";
+import { DOUBLES_SCALE, expectedScore, minRating } from "@/utils/rating";
 
 /** A player as the overview names them */
 export interface Who {
@@ -19,7 +20,12 @@ export interface Record3 {
   draws: number;
 }
 /** A match with its discipline (the match lists are per discipline) */
-type PoolMatch = Match & { pool: Pool };
+/**
+ * A match with its discipline (the match lists are per discipline) and `moved`: how far the rating really moved with it,
+ * the next match's starting rating minus its own. That takes in the doubles' pull towards singles and the minimum
+ * ratings (400, doubles 550: a loss at the floor moves nothing), which its `change` alone doesn't.
+ */
+type PoolMatch = Match & { pool: Pool; moved: number };
 
 export interface NextEvent {
   className: string;
@@ -32,8 +38,19 @@ export interface NextEvent {
   winChance: number;
   luck: number | null;
   /** Their group, with the chance of beating each of its other entries */
-  group: { name: string; opponents: { players: Who[]; rating: number; chance: number }[] } | null;
+  group: { name: string; opponents: Opponent[] } | null;
 }
+/** A group opponent: their rating, the member's chance against them, their meetings before and their form */
+export interface Opponent {
+  players: Who[];
+  rating: number;
+  chance: number;
+  /** The member's record against them (any of the pair) in this discipline, and the last time they met */
+  met: Record3 & { last: string | null };
+  /** Their rating's change over the last 4 weeks in this discipline (a pair: the two's average; null: not known) */
+  form: number | null;
+}
+
 export interface NextTournament {
   cup2000Id: number;
   name: string;
@@ -48,7 +65,8 @@ export interface WeekGroup {
   name: string;
   cup2000Id: number | null;
   record: Record3;
-  /** The rating gained or lost in each discipline played */
+  /** The rating gained or lost in each discipline played: how far it really moved (the matches' `moved`: with the
+   * doubles' pull towards singles and the minimum ratings) */
   change: Partial<Record<Pool, number>>;
   /** The win with the lowest chance */
   bestWin: { opponents: Who[]; chance: number; pool: Pool } | null;
@@ -83,10 +101,51 @@ export interface SeasonReview {
   decider: Record3;
   tournaments: number;
   teamMatches: number;
-  partner: Partner | null;
+  /** Matches whose last set was decided by 3 points or fewer */
+  close: Record3;
+  /** The tournaments played that season, newest first */
+  events: SeasonTournament[];
+  /** The most frequent partners that season, top 3 (however few matches: a season can have few) */
+  partners: Partner[];
   opponents: Partner[];
   /** The badges earned that season, newest first */
   badges: BadgeView[];
+}
+
+/** A tournament in a season: the matches' record, and how far each event went when the tournament has a page */
+export interface SeasonTournament {
+  name: string;
+  cup2000Id: number | null;
+  record: Record3;
+  /**
+   * Each event's outcome, from the tournament's draw (only for tournaments with a page): the steps got through (the
+   * draw's result.progress: out of the group, each knockout round, winning) and the event's shape to name them by
+   */
+  events: { className: string; pool: Pool; progress: number; knockout: boolean; maxRounds: number; groups: number; won: boolean }[];
+}
+
+/** How a member plays: matches, record and performance (points a match: 100 × (result − chance), averaged) */
+export interface Split extends Record3 {
+  matches: number;
+  perf: number;
+}
+/** A doubles or mixed partner and how the two do together against expectation */
+export interface Chemistry extends Who, Split {
+  kind: "doubles" | "mixed";
+}
+
+/** Where the member stands in a discipline they're ranked in: the players either side, their club, the next class */
+export interface Standing {
+  pool: Pool;
+  rating: number;
+  rank: number;
+  above: { id: number; name: string; rating: number; rank: number } | null;
+  below: { id: number; name: string; rating: number; rank: number } | null;
+  club: string | null;
+  clubRank: number | null;
+  clubRanked: number;
+  /** The next better rating class and the points to it (null: in the best, E) */
+  nextClass: { cls: RatingClass; points: number } | null;
 }
 
 export interface Career {
@@ -98,6 +157,12 @@ export interface Career {
   partners: { doubles: Partner[]; mixed: Partner[] };
   /** The opponents they've lost to most (at least 3 losses), top 3 */
   nemeses: Partner[];
+  /** Matches whose last set was decided by 3 points or fewer */
+  close: Record3;
+  /** Doubles and mixed partners (at least 5 matches together), with the most matches first, top 3 each */
+  chemistry: Chemistry[];
+  /** Team matches against tournaments, and the tournament classes (A–E), with at least 5 matches each */
+  strongest: (Split & { key: "teamMatches" | "tournaments" | RatingClass })[];
   /** The last 10 matches, newest first */
   form: { day: string; pool: Pool; result: number; opponents: Who[]; score: string }[];
 }
@@ -107,6 +172,7 @@ export interface Dashboard {
   weeks: Week[];
   seasons: SeasonReview[];
   career: Career;
+  standings: Standing[];
   /** For the matches' links (their tournaments' pages) */
   tournamentLinks: Record<string, number>;
 }
@@ -126,6 +192,24 @@ const add = (r: Record3, result: number) => {
 const seasonOf = (day: string) => (+day.slice(5, 7) >= 7 ? +day.slice(0, 4) : +day.slice(0, 4) - 1);
 const sets = (score: string) => score.split(",").filter((s) => /\d/.test(s)).length;
 const who = (p: { id: number; name: string }): Who => ({ id: p.id, name: p.name });
+/** The last set decided by 3 points or fewer ("21-19, 18-21, 22-20") */
+const isClose = (score: string) => {
+  const [a, b] = (score.split(",").filter((x) => /\d/.test(x)).at(-1)?.match(/\d+/g) ?? []).map(Number);
+  return a !== undefined && b !== undefined && Math.abs(a - b) <= 3;
+};
+/** Matches, record and performance (points a match) of a list */
+function split(matches: PoolMatch[]): Split {
+  const r = empty();
+  let perf = 0;
+  for (const m of matches) {
+    add(r, m.result);
+    perf += 100 * (m.result - m.winChance);
+  }
+  return { ...r, matches: matches.length, perf: matches.length ? Math.round((perf / matches.length) * 10) / 10 : 0 };
+}
+/** A tournament match's class letter, from its event ("… (SEN A)" → A) */
+const classLetter = (event: string) => (/\(([^()]+)\)\s*$/.exec(event)?.[1].match(/(?:^|\s)([A-E])$/)?.[1] as RatingClass | undefined) ?? null;
+const MIN_SPLIT = 5;
 /** The Monday of a day's week */
 function monday(day: string): string {
   const d = new Date(`${day}T00:00:00Z`);
@@ -136,7 +220,14 @@ function monday(day: string): string {
 /** Every match of theirs, with its discipline, newest first (the same day: as listed) */
 function allMatches(byPool: Partial<Record<Pool, Match[]>>): PoolMatch[] {
   return (Object.entries(byPool) as [Pool, Match[]][])
-    .flatMap(([pool, list]) => list.map((m) => ({ ...m, pool })))
+    .flatMap(([pool, list]) =>
+      // Newest first: a match's rating is the one before it, so the one after it is the newer match's (the newest's:
+      // its change, kept above the minimum, and its pull)
+      list.map((m, i) => {
+        const after = i > 0 ? list[i - 1].rating : Math.max(minRating(!isSingles(pool)), m.rating + m.change) + (m.pull ?? 0);
+        return { ...m, pool, moved: after - m.rating };
+      }),
+    )
     .sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : 0));
 }
 
@@ -163,18 +254,21 @@ function ratingAt(history: History | null | undefined, day: string): number | nu
   return null;
 }
 
-function seasonReviews(player: Player, matches: PoolMatch[], viewBadge: ViewBadge): SeasonReview[] {
+function seasonReviews(player: Player, matches: PoolMatch[], viewBadge: ViewBadge, files: Map<number, Tournament>): SeasonReview[] {
+  const links = player.tournamentLinks ?? {};
   const seasons = [...new Set(matches.map((m) => seasonOf(m.day)))].sort((a, b) => b - a);
   return seasons.map((season) => {
     const list = matches.filter((m) => seasonOf(m.day) === season);
     const record = empty();
     const underdog = empty();
     const decider = empty();
+    const close = empty();
     const pools: SeasonReview["pools"] = {};
     for (const m of list) {
       add(record, m.result);
       if (m.winChance < 0.5) add(underdog, m.result);
       if (sets(m.score) >= 3) add(decider, m.result);
+      if (isClose(m.score)) add(close, m.result);
       const p = (pools[m.pool] ??= { ...empty(), start: null, end: null });
       add(p, m.result);
     }
@@ -184,7 +278,29 @@ function seasonReviews(player: Player, matches: PoolMatch[], viewBadge: ViewBadg
       pools[pool]!.start = ratingAt(history, `${season}-06-30`);
       pools[pool]!.end = ratingAt(history, `${season + 1}-06-30`);
     }
-    const partners = people(list, "partner").filter((p) => p.matches >= MIN_PARTNER);
+    const partners = people(list, "partner");
+    // The season's tournaments (newest first: the matches are), each with its events' outcomes where it has a page
+    const byTournament = new Map<string, PoolMatch[]>();
+    for (const m of list) {
+      const id = m.key?.match(/^T(\d+)/)?.[1];
+      if (!id) continue;
+      if (!byTournament.has(id)) byTournament.set(id, []);
+      byTournament.get(id)!.push(m);
+    }
+    const events: SeasonTournament[] = [...byTournament].map(([id, ms]) => {
+      const cup2000Id = links[id] ?? null;
+      const file = cup2000Id ? files.get(cup2000Id) : undefined;
+      const outcome: SeasonTournament["events"] = [];
+      for (const e of file?.events ?? []) {
+        if (!e.played) continue;
+        const entry = e.entries.find((x) => x.players.some((p) => p.id === player.id));
+        if (!entry) continue;
+        outcome.push({ className: e.className, pool: e.pool, progress: entry.result?.progress ?? 0, knockout: e.knockout, maxRounds: e.maxRounds, groups: e.groups.length, won: entry.result?.win === 1 });
+      }
+      const r = empty();
+      for (const m of ms) add(r, m.result);
+      return { name: eventName(ms[0].event), cup2000Id, record: r, events: outcome };
+    });
     return {
       season,
       record,
@@ -193,7 +309,9 @@ function seasonReviews(player: Player, matches: PoolMatch[], viewBadge: ViewBadg
       decider,
       tournaments: new Set(list.map((m) => m.key?.match(/^T(\d+)/)?.[1]).filter(Boolean)).size,
       teamMatches: new Set(list.map((m) => m.key?.match(/^L(\d+)/)?.[1]).filter(Boolean)).size,
-      partner: partners[0] ?? null,
+      close,
+      events,
+      partners: partners.slice(0, TOP),
       opponents: people(list, "opponent").slice(0, TOP),
       badges: (player.achievements ?? [])
         .filter((a) => seasonOf(a.date) === season)
@@ -208,11 +326,38 @@ function career(matches: PoolMatch[]): Career {
   const record = empty();
   const underdog = empty();
   const decider = empty();
+  const close = empty();
   for (const m of matches) {
     add(record, m.result);
     if (m.winChance < 0.5) add(underdog, m.result);
     if (sets(m.score) >= 3) add(decider, m.result);
+    if (isClose(m.score)) add(close, m.result);
   }
+  // Partners against expectation: per partner and kind, at least MIN_SPLIT matches, the most played first
+  const chemistry: Chemistry[] = [];
+  for (const kind of ["doubles", "mixed"] as const) {
+    const byPartner = new Map<number, { name: string; list: PoolMatch[] }>();
+    for (const m of matches) {
+      if (!m.partner || (kind === "mixed") !== (m.pool === "mixedDoubles")) continue;
+      if (!byPartner.has(m.partner.id)) byPartner.set(m.partner.id, { name: m.partner.name, list: [] });
+      byPartner.get(m.partner.id)!.list.push(m);
+    }
+    chemistry.push(
+      ...[...byPartner]
+        .filter(([, p]) => p.list.length >= MIN_SPLIT)
+        .sort((a, b) => b[1].list.length - a[1].list.length)
+        .slice(0, TOP)
+        .map(([id, p]) => ({ id, name: p.name, kind, ...split(p.list) })),
+    );
+  }
+  // Team matches against tournaments, and the tournament classes
+  const keyed = (key: Career["strongest"][number]["key"], list: PoolMatch[]) => ({ key, ...split(list) });
+  const tournamentMatches = matches.filter((m) => m.key?.startsWith("T"));
+  const strongest = [
+    keyed("teamMatches", matches.filter((m) => m.key?.startsWith("L"))),
+    keyed("tournaments", tournamentMatches),
+    ...CLASSES.map((c) => keyed(c, tournamentMatches.filter((m) => classLetter(m.event) === c))),
+  ].filter((s) => s.matches >= MIN_SPLIT);
   // Streaks over every discipline, oldest first
   let longest: Career["longestStreak"] = null;
   let run = 0;
@@ -241,6 +386,9 @@ function career(matches: PoolMatch[]): Career {
         .slice(0, TOP),
     },
     nemeses: losses.slice(0, TOP),
+    close,
+    chemistry,
+    strongest,
     form: matches.slice(0, FORM).map((m) => ({ day: m.day, pool: m.pool, result: m.result, opponents: m.opponents.map(who), score: m.score })),
   };
 }
@@ -274,7 +422,7 @@ function recentWeeks(matches: PoolMatch[], links: Record<string, number>): Week[
       week.groups.push(group);
     }
     add(group.record, m.result);
-    group.change[m.pool] = (group.change[m.pool] ?? 0) + m.change;
+    group.change[m.pool] = (group.change[m.pool] ?? 0) + m.moved;
     if (m.result === 1 && (!group.bestWin || m.winChance < group.bestWin.chance)) group.bestWin = { opponents: m.opponents.map(who), chance: m.winChance, pool: m.pool };
     group.matches.push(m);
   }
@@ -286,7 +434,16 @@ function recentWeeks(matches: PoolMatch[], links: Record<string, number>): Week[
 const eventName = (event: string) => event.replace(/\s*\([^()]*\)\s*$/, "");
 
 /** The tournaments with a draw, not over, that the player is entered in: their events, partners, seeds and groups */
-function nextTournaments(id: number, today: string, upcoming: Tournament[]): NextTournament[] {
+/** A player's rating change in a discipline over the last 4 weeks (their weekly history), null when not known */
+function formOf(player: Player | undefined, pool: Pool): number | null {
+  const ratings = player?.pools[pool]?.history?.ratings;
+  if (!ratings?.length) return null;
+  const now = ratings.at(-1);
+  const before = ratings.at(-5);
+  return now == null || before == null ? null : Math.round(now - before);
+}
+
+function nextTournaments(id: number, today: string, upcoming: Tournament[], matches: PoolMatch[], opponents: Map<number, Player>): NextTournament[] {
   const found: NextTournament[] = [];
   for (const t of upcoming) {
     const events: NextEvent[] = [];
@@ -311,7 +468,21 @@ function nextTournaments(id: number, today: string, upcoming: Tournament[]): Nex
                 name: group.name,
                 opponents: group.entries
                   .filter((i) => i !== index && !e.entries[i].withdrew)
-                  .map((i) => ({ players: e.entries[i].players.map((p) => ({ id: p.id, name: p.name })), rating: Math.round(e.entries[i].rating), chance: expectedScore(entry.rating, e.entries[i].rating, scale) })),
+                  .map((i) => {
+                    const ids = e.entries[i].players.map((p) => p.id).filter((x): x is number => !!x);
+                    // Their meetings before in this discipline (any of the pair), newest first
+                    const meetings = matches.filter((m) => m.pool === e.pool && m.opponents.some((o) => ids.includes(o.id)));
+                    const met = { ...empty(), last: meetings[0]?.day ?? null };
+                    for (const m of meetings) add(met, m.result);
+                    const forms = ids.map((x) => formOf(opponents.get(x), e.pool)).filter((f): f is number => f !== null);
+                    return {
+                      players: e.entries[i].players.map((p) => ({ id: p.id, name: p.name })),
+                      rating: Math.round(e.entries[i].rating),
+                      chance: expectedScore(entry.rating, e.entries[i].rating, scale),
+                      met,
+                      form: forms.length ? Math.round(forms.reduce((a, b) => a + b, 0) / forms.length) : null,
+                    };
+                  }),
               }
             : null,
       });
@@ -321,17 +492,53 @@ function nextTournaments(id: number, today: string, upcoming: Tournament[]): Nex
   return found.sort((a, b) => a.startDate.localeCompare(b.startDate));
 }
 
+/** Where the player stands in each discipline they're ranked in (the rankings: mixed doubles the player's gender's) */
+function standingsOf(player: Player, rankings: Partial<Record<Pool, RatingEntry[]>>): Standing[] {
+  const out: Standing[] = [];
+  for (const [pool, entry] of Object.entries(player.pools) as [Pool, NonNullable<Player["pools"][Pool]>][]) {
+    const list = rankings[pool];
+    const i = list?.findIndex((p) => p.id === player.id) ?? -1;
+    if (!list || i < 0 || entry.rank === null) continue;
+    const near = (p: RatingEntry | undefined) => (p ? { id: p.id, name: p.name, rating: Math.round(p.rating), rank: p.rank ?? 0 } : null);
+    const club = list[i].club ?? null;
+    const clubmates = club ? list.filter((p) => p.club === club) : [];
+    const rating = Math.round(entry.rating);
+    // The next better class: the lowest cutoff above the rating (CLASSES best first, as their cutoffs)
+    const next = CLASS_CUTOFFS.map((cutoff, c) => ({ cutoff, c })).filter((x) => x.cutoff > rating).at(-1);
+    out.push({
+      pool,
+      rating,
+      rank: entry.rank,
+      above: near(list[i - 1]),
+      below: near(list[i + 1]),
+      club,
+      clubRank: club ? clubmates.findIndex((p) => p.id === player.id) + 1 : null,
+      clubRanked: clubmates.length,
+      nextClass: next ? { cls: CLASSES[next.c], points: next.cutoff - rating } : null,
+    });
+  }
+  return out;
+}
+
 /** The tournaments to look in for the next one: with a draw, not cancelled, not over by `today` */
 export const upcomingSummaries = (all: TournamentSummary[], today: string) => all.filter((t) => !t.cancelled && t.startDate && (t.endDate ?? t.startDate) >= today);
 
-export function dashboard(player: Player, byPool: Partial<Record<Pool, Match[]>>, upcoming: Tournament[], today: string, viewBadge: ViewBadge = () => null): Dashboard {
+/** What the route loads besides the player: the rankings they're in, their next opponents, the season's tournaments */
+export interface DashboardData {
+  rankings?: Partial<Record<Pool, RatingEntry[]>>;
+  opponents?: Map<number, Player>;
+  tournaments?: Map<number, Tournament>;
+}
+
+export function dashboard(player: Player, byPool: Partial<Record<Pool, Match[]>>, upcoming: Tournament[], today: string, viewBadge: ViewBadge = () => null, data: DashboardData = {}): Dashboard {
   const matches = allMatches(byPool);
   const links = player.tournamentLinks ?? {};
   return {
-    next: nextTournaments(player.id, today, upcoming),
+    next: nextTournaments(player.id, today, upcoming, matches, data.opponents ?? new Map()),
     weeks: recentWeeks(matches, links),
-    seasons: seasonReviews(player, matches, viewBadge),
+    seasons: seasonReviews(player, matches, viewBadge, data.tournaments ?? new Map()),
     career: career(matches),
+    standings: standingsOf(player, data.rankings ?? {}),
     tournamentLinks: links,
   };
 }

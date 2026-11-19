@@ -90,7 +90,7 @@ export default function Overview() {
           </div>
         </section>
       )}
-      {d.seasons.length > 0 && <SeasonPart seasons={d.seasons} />}
+      {d.seasons.length > 0 && <SeasonPart seasons={d.seasons} me={id} />}
       <CareerPart dashboard={d} me={id} />
     </div>
   );
@@ -206,7 +206,7 @@ function WeekCard({ week, links }: { week: Week; links: Record<string, number> }
   );
 }
 
-function SeasonPart({ seasons }: { seasons: SeasonReview[] }) {
+function SeasonPart({ seasons, me }: { seasons: SeasonReview[]; me: number }) {
   const { t, plural, pct, num, pools, signed, date } = useI18n();
   const [picked, setPicked] = useState(seasons[0].season);
   const s = seasons.find((x) => x.season === picked) ?? seasons[0];
@@ -262,21 +262,8 @@ function SeasonPart({ seasons }: { seasons: SeasonReview[] }) {
             })}
           </ul>
         </div>
-        <div className="bg-white p-4">
-          <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.season.partner")}</h3>
-          {s.partner ? <PersonLine p={s.partner} kind="together" /> : <p className="text-gray-400">–</p>}
-
-        </div>
-        <div className="bg-white p-4">
-          <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.season.opponents")}</h3>
-          <ul className="space-y-1">
-            {s.opponents.map((o) => (
-              <li key={o.id}>
-                <PersonLine p={o} kind="against" />
-              </li>
-            ))}
-          </ul>
-        </div>
+        <PeopleCard title={t("account.overview.season.partner")} people={s.partners} kind="together" me={me} />
+        <PeopleCard title={t("account.overview.season.opponents")} people={s.opponents} kind="against" me={me} />
       </div>
       {s.badges.length > 0 && (
         <div className="bg-white p-4 mt-4">
