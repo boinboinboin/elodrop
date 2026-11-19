@@ -65,6 +65,8 @@ Signing in is optional: every page is the same for everyone and stays cached, an
 
 Locally: `pnpm dlx supabase start` from the repo root (Docker) runs the database with the migrations applied and prints its URL and anon key for `web/.env.local`; the emails, codes included, are at http://127.0.0.1:54324.
 
+Migrations go to production with `pnpm dlx supabase db push` (the project linked). **Never edit a migration that's been pushed:** one recorded as applied is never run again, so the edit silently never reaches production (as with `*_elostonk.sql`, caught up by `*_stonk_catch_up.sql`). Add a new migration instead.
+
 ## EloStonk
 
 The fantasy game (`/elostonk`, `components/elostonk/`; the rules in `pipeline/README.md`, "EloStonk"): members pick 5 players aged 18 or older, one the captain (counted twice), and score each round (Friday to Thursday) from how much better than expected their players do.

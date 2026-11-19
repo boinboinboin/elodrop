@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.1 (2026-11-19)
+
+- EloStonk: the nightly import of the pickable players and their points works again, and the leaderboards, statistics and leagues' tables read what the game's database now works out ahead (pipeline and database had come apart).
+
 ## v1.37.0 (2026-11-19)
 
 - New accounts get a short welcome right after they're made: choose who you are among the players (or skip it, if you're not a player), turn on notifications for your tournament draws, follow players by name, and pick your first EloStonk squad. Every step can be skipped, and all of it can be changed later.
