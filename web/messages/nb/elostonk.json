@@ -10,7 +10,7 @@
     "stats": "Statistikk",
     "rules": "Slik fungerer det"
   },
-  "rules": "**Laget ditt.** Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det.\n\n**Runder.** En runde går fra fredag til torsdag og låses kl. 14.00 på fredagen (norsk tid): laget du har da, spiller hele runden, også fredagens kamper. En helgs turneringer og lagkampene uka etter hører altså til samme runde.\n\n**Poeng.** Hver kamp en av spillerne dine spiller i runden, gir 100 × (resultatet − sjansen for å vinne den, fra Elodrops rating):\n- seier med 20 % sjanse: +80\n- seier med 90 % sjanse: +10\n- tap med 90 % sjanse: −90\n\nFavoritter får altså mindre enn underdoger som vinner, og skalaen er den samme på alle nivåer. Tap teller også, så en stonk kan falle. Flere kamper gir flere sjanser begge veier.\n\n**Når poengene kommer.** Poengene kommer med resultatene, natta etter hver kampdag; sene resultater kan fortsatt endre en runde i 3 uker, så de siste rundene er merket foreløpige.\n\n**Ligaer.** Lag en liga og inviter andre med lenken, for å ha en egen tabell ved siden av alles.\n\nEloStonk er gratis, uten innsats og uten premier.",
+  "rules": "**Laget ditt.** Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Høyst 2 kan være fra samme klubb, og laget må ha minst én mann og én kvinne. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det.\n\n**Runder.** En runde går fra fredag til torsdag og låses kl. 14.00 på fredagen (norsk tid): laget du har da, spiller hele runden, også fredagens kamper. En helgs turneringer og lagkampene uka etter hører altså til samme runde.\n\n**Poeng.** Hver kamp en av spillerne dine spiller i runden, gir 100 × (resultatet − sjansen for å vinne den, fra Elodrops rating):\n- seier med 20 % sjanse: +80\n- seier med 90 % sjanse: +10\n- tap med 90 % sjanse: −90\n\nFavoritter får altså mindre enn underdoger som vinner, og skalaen er den samme på alle nivåer. Tap teller også, så en stonk kan falle. Flere kamper gir flere sjanser begge veier.\n\n**Når poengene kommer.** Poengene kommer med resultatene, natta etter hver kampdag; sene resultater kan fortsatt endre en runde i 3 uker, så de siste rundene er merket foreløpige.\n\n**Ligaer.** Lag en liga og inviter andre med lenken, for å ha en egen tabell ved siden av alles.\n\nEloStonk er gratis, uten innsats og uten premier.",
   "squad": {
     "signIn": "<link>Logg inn</link> for å velge laget ditt. Tabellene og statistikken er åpne for alle.",
     "title": "Laget ditt for {date}",
@@ -21,6 +21,8 @@
     },
     "gone": "Kan ikke velges lenger",
     "invalid": "Kan ikke velges: {names}. En spiller må være 18 år eller eldre, og aktiv (en kamp de siste 12 månedene) eller ha rating i single, double og mix. Bytt ut før du lagrer.",
+    "clubLimit": "Høyst 2 spillere fra én klubb: {club} har {count}. Bytt ut én for å lagre.",
+    "genders": "Et lag må ha minst én mann og én kvinne. Bytt inn én for å lagre.",
     "captain": "Kaptein: teller dobbelt",
     "makeCaptain": "Gjør {name} til kaptein",
     "remove": "Ta ut {name}",
@@ -40,7 +42,19 @@
     "notInRound": "Du hadde ikke noe lag da denne runden ble låst.",
     "history": "Rundene dine",
     "roundOf": "Runden fra {date}",
-    "historyNote": "Oppdateres mandag morgen."
+    "historyNote": "Oppdateres mandag morgen.",
+    "recap": {
+      "best": "Beste runde",
+      "worst": "Dårligste runde",
+      "average": "Snitt per runde",
+      "season": "denne sesongen"
+    },
+    "rankChart": "Plasseringen din i sesongen etter hver runde",
+    "seasonRank": "Plassering i sesongen",
+    "managers": "lag",
+    "rankTip": "Runden fra {date}: {points}, sesongen {total}",
+    "roundRank": "Nr. {rank} av {of} i runden",
+    "yourSquad": "Laget ditt"
   },
   "search": {
     "title": "Finn spillere",
@@ -73,6 +87,7 @@
     "week": "Uke {week}",
     "chart": "Poengene til {name} de siste 8 rundene",
     "formTitle": "Poeng de siste 4 rundene",
+    "clubFull": "Kan ikke legge til {name}: laget ditt har allerede {max} fra {club}",
     "add": "Legg {name} til laget"
   },
   "board": {
@@ -88,7 +103,9 @@
     "points": "Poeng",
     "rounds": "Runder",
     "best": "Beste runde",
-    "updated": "Tabellene oppdateres én gang i uka, mandag morgen, med helgas resultater."
+    "updated": "Tabellene oppdateres én gang i uka, mandag morgen, med helgas resultater.",
+    "wins": "Seire",
+    "winsTitle": "Runder vunnet i ligaen"
   },
   "leagues": {
     "signIn": "<link>Logg inn</link> for å lage eller bli med i en liga.",
@@ -96,7 +113,6 @@
       "one": "{count} medlem",
       "other": "{count} medlemmer"
     },
-    "noPoints": "Ingen poeng denne sesongen ennå.",
     "owner": "eier",
     "copied": "Lenke kopiert",
     "invite": "Inviter med lenke",
@@ -109,7 +125,14 @@
     "createButton": "Lag liga",
     "join": "Bli med i en liga",
     "codeLabel": "Kode",
-    "joinButton": "Bli med"
+    "joinButton": "Bli med",
+    "lastWinner": "Runden fra {date}: {names} vant med {points}.",
+    "mostPicked": "Mest valgt i ligaen denne runden",
+    "picks": "{picks} av {of}",
+    "captains": {
+      "one": "kaptein én gang",
+      "other": "kaptein {count} ganger"
+    }
   },
   "stats": {
     "none": "Ingen runder ennå.",
@@ -124,5 +147,10 @@
     "unboughtHelp": "De beste spillerne denne runden som ingen lag hadde",
     "empty": "–",
     "updated": "Oppdateres hver morgen."
+  },
+  "teamOfRound": {
+    "title": "Rundens lag",
+    "yours": "ditt",
+    "none": "Ingen rundens lag ennå."
   }
 }

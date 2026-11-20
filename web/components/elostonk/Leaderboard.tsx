@@ -5,9 +5,11 @@
 // out once a week (the database's stonk_refresh), and only the top TOP read, with the member's own row below them when
 // they're further down: a small read whatever the number of players. A
 // nickname opens their squad in that round (the newest for the season and all time), with each player's points.
+// With `league`, a league's own tables (Leagues): its season, with the rounds each member won in the league, and its
+// rounds; no all time, and every member (at most 100) read.
 import { Fragment, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
-import { SquadLine } from "@/components/elostonk/Squad";
+import SquadLine from "@/components/elostonk/SquadLine";
 import { newestScoredRound, useNow, useStonkPlayers } from "@/components/elostonk/useStonk";
 import Badge from "@/components/ui/Badge";
 import LinkSelect from "@/components/ui/LinkSelect";
@@ -23,10 +25,11 @@ interface Row {
   points: number;
   rounds?: number;
   best?: number;
+  wins?: number;
   rank: number;
 }
 
-export default function Leaderboard() {
+export default function Leaderboard({ league }: { league?: number }) {
   const { t, num, signed, date } = useI18n();
   const { profile, load } = useAccount();
   const nickname = profile?.nickname ?? null;
@@ -64,7 +67,16 @@ export default function Leaderboard() {
     void load().then(async (client) => {
       let list: Row[] = [];
       let mine: Row | null = null;
-      if (view === "round") {
+      if (league !== undefined) {
+        if (view === "round") {
+          const { data } = await client.from("stonk_league_round_scores").select("nickname, points").eq("league_id", league).eq("round", round).order("points", { ascending: false });
+          const scores = ((data as { nickname: string; points: number }[] | null) ?? []).map((r) => ({ ...r, points: Number(r.points) }));
+          list = scores.map((r) => ({ ...r, rank: scores.filter((s) => s.points > r.points).length + 1 }));
+        } else {
+          const { data } = await client.from("stonk_league_table").select("nickname, points, rounds, best, rank, wins").eq("league_id", league).eq("season", season).order("rank");
+          list = (data as Row[] | null) ?? [];
+        }
+      } else if (view === "round") {
         const { data } = await client.from("stonk_round_scores").select("nickname, points").eq("round", round).order("points", { ascending: false }).limit(TOP);
         const scores = ((data as { nickname: string; points: number }[] | null) ?? []).map((r) => ({ ...r, points: Number(r.points) }));
         list = scores.map((r) => ({ ...r, rank: scores.filter((s) => s.points > r.points).length + 1 }));
@@ -89,7 +101,7 @@ export default function Leaderboard() {
     return () => {
       live = false;
     };
-  }, [load, view, round, season, nickname]);
+  }, [load, view, round, season, nickname, league]);
 
   const showSquad = async (nickname: string) => {
     if (open?.nickname === nickname) return setOpen(null);
@@ -101,10 +113,13 @@ export default function Leaderboard() {
   };
 
   const seasons = [...new Set(rounds.map(seasonOfRound))];
+  // A league's season table has its round wins too
+  const wins = league !== undefined && view !== "round";
+  const columns = view === "round" ? 3 : wins ? 6 : 5;
   return (
     <div>
       <div className="flex flex-wrap gap-2 mb-4">
-        {(["season", "round", "alltime"] as const).map((v) => (
+        {(league !== undefined ? (["season", "round"] as const) : (["season", "round", "alltime"] as const)).map((v) => (
           <button key={v} type="button" aria-pressed={view === v} onClick={() => setView(v)} className={toggleClass(view === v, "sm")}>{t(`elostonk.board.views.${v}`)}</button>
         ))}
       </div>
@@ -126,7 +141,7 @@ export default function Leaderboard() {
           className="mb-4 w-full sm:w-72"
         />
       )}
-      <p className="text-sm text-gray-600 mb-3">{t("elostonk.board.updated")}</p>
+      {league === undefined && <p className="text-sm text-gray-600 mb-3">{t("elostonk.board.updated")}</p>}
       {rows === null ? (
         <p className="text-gray-600">{t("common.loading")}</p>
       ) : !rows.length ? (
@@ -141,6 +156,7 @@ export default function Leaderboard() {
                 <th scope="col" className="py-2 px-3 font-normal text-right">{t("elostonk.board.points")}</th>
                 {view !== "round" && <th scope="col" className="py-2 px-3 font-normal text-right hidden sm:table-cell">{t("elostonk.board.rounds")}</th>}
                 {view !== "round" && <th scope="col" className="py-2 px-3 font-normal text-right hidden sm:table-cell">{t("elostonk.board.best")}</th>}
+                {wins && <th scope="col" className="py-2 px-3 font-normal text-right" title={t("elostonk.board.winsTitle")}>{t("elostonk.board.wins")}</th>}
               </tr>
             </thead>
             <tbody>
@@ -152,7 +168,7 @@ export default function Leaderboard() {
                   <Fragment key={r.nickname}>
                   {gap && (
                     <tr aria-hidden="true">
-                      <td colSpan={view === "round" ? 3 : 5} className="py-1 px-3 text-gray-400">…</td>
+                      <td colSpan={columns} className="py-1 px-3 text-gray-400">…</td>
                     </tr>
                   )}
                   <tr className={`${ROW} ${me ? "bg-gray-100" : ""}`}>
@@ -166,11 +182,12 @@ export default function Leaderboard() {
                     <td className={`py-2 px-3 text-right tabular-nums font-semibold whitespace-nowrap ${toneClass(r.points)}`}>{signed(r.points, 1)}</td>
                     {view !== "round" && <td className="py-2 px-3 text-right tabular-nums hidden sm:table-cell">{num(r.rounds ?? 0)}</td>}
                     {view !== "round" && <td className="py-2 px-3 text-right tabular-nums hidden sm:table-cell">{r.best === undefined ? "–" : signed(r.best, 1)}</td>}
+                    {wins && <td className="py-2 px-3 text-right tabular-nums">{num(r.wins ?? 0)}</td>}
                   </tr>
                   {/* Their squad, on a row of its own across the table */}
                   {shown && open && (
                     <tr className={ROW}>
-                      <td colSpan={view === "round" ? 3 : 5} className="px-3 pb-3 bg-gray-50">
+                      <td colSpan={columns} className="px-3 pb-3 bg-gray-50">
                         <p className="text-sm text-gray-600 my-2">{t("elostonk.squad.roundOf", { date: date(open.round) })}</p>
                         <SquadLine players={open.players} captain={open.captain} byId={data.byId} index={data.rounds.indexOf(open.round)} />
                       </td>

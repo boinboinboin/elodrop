@@ -3,19 +3,22 @@
 // EloStonk's leagues: a member's own leagues, each with its season table (the members' points this season) and its
 // members; making one (its maker joins it at once); joining one with its code, typed or from an invite link
 // (/elostonk?tab=leagues&join=<code>); sharing the link; leaving; and for the owner a new code (the old link stops
-// working). The database keeps the limits (supabase/migrations/*_elostonk.sql).
+// working). Each league shows who won its last round, its tables (Leaderboard: the season with round wins, and each
+// round, with the members' squads) and its most picked players in the round under way. The database keeps the limits
+// (supabase/migrations/*_elostonk.sql) and shows a league only to its members.
 import { parseAsString, useQueryState } from "nuqs";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { useAccount } from "@/components/account/AccountProvider";
+import Leaderboard from "@/components/elostonk/Leaderboard";
+import PlayerList from "@/components/elostonk/PlayerList";
 import { useNow } from "@/components/elostonk/useStonk";
 import { ERROR, FIELD, LABEL, SUBMIT } from "@/components/account/form";
-import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
-import { ROW, TEXT_LINK } from "@/components/ui/styles";
+import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { accountError } from "@/utils/account";
-import { toneClass } from "@/utils/format";
-import { currentRound, seasonOfRound } from "@/utils/rounds";
+import { currentRound } from "@/utils/rounds";
 
 interface League {
   id: number;
@@ -23,11 +26,45 @@ interface League {
   invite_code: string;
   owner: string | null;
 }
-interface TableRow {
+interface Score {
   league_id: number;
   nickname: string;
   points: number;
-  rank: number;
+}
+interface Pick {
+  league_id: number;
+  player_id: number;
+  name: string | null;
+  picks: number;
+  captains: number;
+}
+interface Read {
+  leagues: League[];
+  people: Person[];
+  /** The newest round with scores, and the members' scores in it */
+  last: string | null;
+  scores: Score[];
+  /** The members' picks in the round under way */
+  picks: Pick[];
+}
+
+/** The member's leagues, their members, the last round's scores and the round under way's picks */
+async function readLeagues(client: SupabaseClient, current: string): Promise<Read> {
+  const [l, p, newest, o] = await Promise.all([
+    client.from("stonk_leagues").select("id, name, invite_code, owner").order("created_at"),
+    client.from("stonk_league_people").select("league_id, nickname, owner").order("joined_at"),
+    client.from("stonk_round_scores").select("round").order("round", { ascending: false }).limit(1).maybeSingle<{ round: string }>(),
+    client.from("stonk_league_ownership").select("league_id, player_id, name, picks, captains").eq("round", current).order("picks", { ascending: false }),
+  ]);
+  const last = newest.data?.round ?? null;
+  const scores = last ? ((await client.from("stonk_league_round_scores").select("league_id, nickname, points").eq("round", last)).data as Score[] | null) ?? [] : [];
+  return {
+    leagues: (l.data as League[] | null) ?? [],
+    people: (p.data as Person[] | null) ?? [],
+    last,
+    scores: scores.map((x) => ({ ...x, points: Number(x.points) })),
+    picks: (o.data as Pick[] | null) ?? [],
+  };
 }
 interface Person {
   league_id: number;
@@ -36,35 +73,25 @@ interface Person {
 }
 
 export default function Leagues() {
-  const { t, plural, rich, href, signed } = useI18n();
+  const { t, plural, rich, href, signed, date, num } = useI18n();
   const { status, profile, load } = useAccount();
   const [join, setJoin] = useQueryState("join", parseAsString);
-  const [leagues, setLeagues] = useState<League[] | null>(null);
-  const [table, setTable] = useState<TableRow[]>([]);
-  const [people, setPeople] = useState<Person[]>([]);
+  const [read, setRead] = useState<Read | null>(null);
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<number | null>(null);
   const now = useNow();
-  const season = now ? seasonOfRound(currentRound(now)) : null;
+  const current = now ? currentRound(now) : null;
 
-  const read = useCallback(async () => {
-    if (season === null) return;
-    const client = await load();
-    const [l, tb, p] = await Promise.all([
-      client.from("stonk_leagues").select("id, name, invite_code, owner").order("created_at"),
-      client.from("stonk_league_table").select("league_id, nickname, points, rank").eq("season", season).order("rank"),
-      client.from("stonk_league_people").select("league_id, nickname, owner").order("joined_at"),
-    ]);
-    setLeagues((l.data as League[] | null) ?? []);
-    setTable(((tb.data as TableRow[] | null) ?? []).map((r) => ({ ...r, points: Number(r.points) })));
-    setPeople((p.data as Person[] | null) ?? []);
-  }, [load, season]);
+  const reread = useCallback(async () => {
+    if (current === null) return;
+    setRead(await readLeagues(await load(), current));
+  }, [load, current]);
 
   // Signed in: the leagues; an invite link: joined (once), then the link's code taken out of the address
   useEffect(() => {
-    if (status !== "ready" || season === null) return;
+    if (status !== "ready" || current === null) return;
     let live = true;
     void (async () => {
       const client = await load();
@@ -74,20 +101,13 @@ export default function Leagues() {
         if (error) setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
         void setJoin(null);
       }
-      const [l, tb, p] = await Promise.all([
-        client.from("stonk_leagues").select("id, name, invite_code, owner").order("created_at"),
-        client.from("stonk_league_table").select("league_id, nickname, points, rank").eq("season", season).order("rank"),
-        client.from("stonk_league_people").select("league_id, nickname, owner").order("joined_at"),
-      ]);
-      if (!live) return;
-      setLeagues((l.data as League[] | null) ?? []);
-      setTable(((tb.data as TableRow[] | null) ?? []).map((r) => ({ ...r, points: Number(r.points) })));
-      setPeople((p.data as Person[] | null) ?? []);
+      const data = await readLeagues(client, current);
+      if (live) setRead(data);
     })();
     return () => {
       live = false;
     };
-  }, [status, join, setJoin, load, season, t]);
+  }, [status, join, setJoin, load, current, t]);
 
   if (status === "off") return null;
   if (status !== "ready" || !profile) return <p className="text-lg">{rich("elostonk.leagues.signIn", { link: (text) => <Link href="/account" className={TEXT_LINK}>{text}</Link> })}</p>;
@@ -99,7 +119,7 @@ export default function Leagues() {
     const { error } = await client.from("stonk_leagues").insert({ name: name.trim(), owner: profile.user_id });
     if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
     setName("");
-    await read();
+    await reread();
   };
   const joinByCode = async (e: FormEvent) => {
     e.preventDefault();
@@ -108,17 +128,17 @@ export default function Leagues() {
     const { error } = await client.rpc("join_league", { code: code.trim() });
     if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
     setCode("");
-    await read();
+    await reread();
   };
   const leave = async (id: number) => {
     const client = await load();
     await client.from("stonk_league_members").delete().eq("league_id", id).eq("user_id", profile.user_id);
-    await read();
+    await reread();
   };
   const renew = async (id: number) => {
     const client = await load();
     await client.rpc("renew_league_code", { league: id });
-    await read();
+    await reread();
   };
   const share = async (league: League) => {
     const url = new URL(href(`/elostonk?tab=leagues&join=${league.invite_code}`), window.location.origin).toString();
@@ -136,37 +156,51 @@ export default function Leagues() {
   return (
     <div>
       {error && <p role="alert" className={`${ERROR} mb-4`}>{error}</p>}
-      {leagues === null ? (
+      {read === null ? (
         <p className="text-gray-600">{t("common.loading")}</p>
-      ) : !leagues.length ? (
+      ) : !read.leagues.length ? (
         <p className="text-gray-700 mb-6">{t("elostonk.leagues.none")}</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 mb-8">
-          {leagues.map((l) => {
-            const rows = table.filter((r) => r.league_id === l.id);
-            const members = people.filter((p) => p.league_id === l.id);
+          <p className="text-sm text-gray-600">{t("elostonk.board.updated")}</p>
+          {read.leagues.map((l) => {
+            const members = read.people.filter((p) => p.league_id === l.id);
             const mine = l.owner === profile.user_id;
+            // The last round's winners in the league (ties share it)
+            const scores = read.scores.filter((r) => r.league_id === l.id);
+            const best = scores.length ? Math.max(...scores.map((r) => r.points)) : null;
+            const winners = best === null ? [] : scores.filter((r) => r.points === best).map((r) => r.nickname);
+            const picks = read.picks.filter((p) => p.league_id === l.id).slice(0, 5);
             return (
               <article key={l.id} className="bg-white p-4 md:p-6 min-w-0">
                 <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 mb-3">
                   <h2 className="text-xl break-words">{l.name}</h2>
                   <span className="text-sm text-gray-600">{plural("elostonk.leagues.members", members.length)}</span>
                 </div>
-                {rows.length ? (
-                  <ol className="mb-4">
-                    {rows.map((r) => (
-                      <li key={r.nickname} className={`${ROW} flex justify-between gap-3 py-1.5 ${r.nickname === profile.nickname ? "font-semibold" : ""}`}>
-                        <span className="min-w-0 break-all">
-                          <span className="text-gray-600 tabular-nums mr-2">{r.rank}</span>
-                          {r.nickname}
-                          {r.nickname === profile.nickname && <Badge className="ml-2">{t("account.me.you")}</Badge>}
-                        </span>
-                        <span className={`tabular-nums ${toneClass(r.points)}`}>{signed(r.points, 1)}</span>
-                      </li>
-                    ))}
-                  </ol>
-                ) : (
-                  <p className="text-sm text-gray-600 mb-4">{t("elostonk.leagues.noPoints")}</p>
+                {winners.length > 0 && read.last && (
+                  <p className="mb-4">
+                    {rich("elostonk.leagues.lastWinner", {
+                      date: date(read.last, "dayMonth"),
+                      names: <strong className="break-all">{winners.join(", ")}</strong>,
+                      points: signed(best!, 1),
+                    })}
+                  </p>
+                )}
+                <div className="mb-4">
+                  <Leaderboard league={l.id} />
+                </div>
+                {picks.length > 0 && (
+                  <div className="mb-4">
+                    <PlayerList
+                      title={t("elostonk.leagues.mostPicked")}
+                      rows={picks.map((p) => ({
+                        id: p.player_id,
+                        name: p.name ?? `#${p.player_id}`,
+                        value: t("elostonk.leagues.picks", { picks: num(p.picks), of: num(members.length) }),
+                        detail: p.captains ? plural("elostonk.leagues.captains", p.captains) : undefined,
+                      }))}
+                    />
+                  </div>
                 )}
                 <p className="text-sm text-gray-600 mb-3 break-words">{members.map((m) => m.nickname + (m.owner ? ` (${t("elostonk.leagues.owner")})` : "")).join(", ")}</p>
                 <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">

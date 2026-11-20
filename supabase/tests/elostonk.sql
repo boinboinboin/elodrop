@@ -2,7 +2,7 @@
 -- Run with `pnpm dlx supabase test db` (the local stack running).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(32);
+select plan(46);
 
 insert into auth.users (id, email, created_at, aud, role) values
   ('00000000-0000-0000-0000-0000000000a1', 'a@example.com', now() - interval '40 days', 'authenticated', 'authenticated'),
@@ -11,10 +11,11 @@ insert into auth.users (id, email, created_at, aud, role) values
 insert into public.profiles (user_id, nickname, birth_year) values
   ('00000000-0000-0000-0000-0000000000a1', 'Alpha', 1990),
   ('00000000-0000-0000-0000-0000000000b2', 'Bravo', 1991);
--- Seven players, the seventh no longer pickable
-insert into public.stonk_players (player_id, name, eligible) values
-  (1, 'One', true), (2, 'Two', true), (3, 'Three', true), (4, 'Four', true),
-  (5, 'Five', true), (6, 'Six', true), (7, 'Seven', false);
+-- Ten players, the seventh no longer pickable; clubs A, B and C, and some without a club
+insert into public.stonk_players (player_id, name, club, gender, eligible) values
+  (1, 'One', 'A', 'M', true), (2, 'Two', 'A', 'K', true), (3, 'Three', 'B', 'M', true), (4, 'Four', null, 'K', true),
+  (5, 'Five', 'C', 'M', true), (6, 'Six', 'B', 'K', true), (7, 'Seven', 'A', 'M', false), (8, 'Eight', 'A', 'M', true),
+  (9, 'Nine', null, 'M', true), (10, 'Ten', null, 'K', true);
 
 create function pg_temp.as_user(id text) returns void language sql as $$
   select set_config('role', 'authenticated', true), set_config('request.jwt.claims', json_build_object('sub', id, 'role', 'authenticated')::text, true)
@@ -56,12 +57,21 @@ select throws_ok($$insert into stonk_picks (user_id, round, players, captain) va
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
 select throws_ok($$insert into stonk_picks (user_id, round, players, captain) values ('00000000-0000-0000-0000-0000000000c3', current_date, '{1,2,3,4,5}', 1)$$, 'P0001', 'no_profile', 'an account without a nickname can''t play');
 
+-- ---- Variety: at most 2 from one club, at least one man and one woman ----
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000b2');
+select throws_ok($$insert into stonk_picks (user_id, round, players, captain) values ('00000000-0000-0000-0000-0000000000b2', current_date, '{1,2,8,3,4}', 1)$$, 'P0001', 'too_many_from_club', '3 from one club are refused');
+select throws_ok($$insert into stonk_picks (user_id, round, players, captain) values ('00000000-0000-0000-0000-0000000000b2', current_date, '{1,3,5,8,9}', 1)$$, 'P0001', 'needs_both_genders', 'a squad of men only is refused');
+select throws_ok($$insert into stonk_picks (user_id, round, players, captain) values ('00000000-0000-0000-0000-0000000000b2', current_date, '{2,4,6,10,4}', 2)$$, 'P0001', 'squad_invalid', 'the players'' check comes first');
+select lives_ok($$insert into stonk_picks (user_id, round, players, captain) values ('00000000-0000-0000-0000-0000000000b2', current_date, '{4,9,10,1,3}', 1)$$, 'players without a club don''t count as one club');
+select lives_ok($$delete from stonk_picks where round = public.stonk_next_round()$$, 'and the squad is taken back');
+
 -- ---- A locked round: squads saved weeks ago, carried over, and scored ----
 select pg_temp.as_owner();
--- Alpha's squad saved for three rounds ago (as if then), Bravo's for two rounds ago
+-- Alpha's squad saved for three rounds ago (as if then, before the variety rules: 3 from club A), Bravo's for two
+-- rounds ago
 alter table public.stonk_picks disable trigger check_picks;
 insert into public.stonk_picks (user_id, round, players, captain) values
-  ('00000000-0000-0000-0000-0000000000a1', public.stonk_round_of(now()) - 21, '{1,2,3,4,5}', 1),
+  ('00000000-0000-0000-0000-0000000000a1', public.stonk_round_of(now()) - 21, '{1,2,8,4,5}', 1),
   ('00000000-0000-0000-0000-0000000000b2', public.stonk_round_of(now()) - 14, '{2,3,4,5,6}', 6);
 alter table public.stonk_picks enable trigger check_picks;
 insert into public.stonk_rounds (round, final) values (public.stonk_round_of(now()) - 14, true), (public.stonk_round_of(now()) - 7, false);
@@ -74,12 +84,19 @@ select public.stonk_refresh(true);
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000b2');
 select is((select points from stonk_round_scores where nickname = 'Alpha' and round = public.stonk_round_of(now()) - 14), 100.0, 'the captain counts twice (50 × 2)');
 select is((select points from stonk_round_scores where nickname = 'Bravo' and round = public.stonk_round_of(now()) - 14), -20.0, 'points can be negative (−10 × 2)');
-select is((select points from stonk_round_scores where nickname = 'Alpha' and round = public.stonk_round_of(now()) - 7), 45.0, 'a squad carries over to the next round (20 × 2 + 5)');
+select is((select points from stonk_round_scores where nickname = 'Alpha' and round = public.stonk_round_of(now()) - 7), 45.0, 'a squad carries over to the next round (20 × 2 + 5), one saved before the rules too');
 select is((select points from stonk_season_table where nickname = 'Alpha'), 145.0, 'the season adds the rounds up');
 select is((select rank from stonk_season_table where nickname = 'Alpha'), 1, 'and ranks them');
 select is((select count(*)::integer from stonk_picks), 1, 'others'' squads aren''t readable');
 select is((select count(*)::integer from stonk_locked_squads where round = public.stonk_next_round()), 0, 'nor anyone''s squad for a round not yet locked');
 select is((select picked_pct from stonk_ownership where player_id = 2 and round = public.stonk_round_of(now()) - 7), 100.0, 'a locked round''s picks are shown as shares');
+
+-- ---- Standings after each round ----
+select is((select total from stonk_standings where nickname = 'Alpha' and round = public.stonk_round_of(now()) - 7), 145.0, 'the season''s total after a round adds the rounds so far');
+select is((select total from stonk_standings where nickname = 'Bravo' and round = public.stonk_round_of(now()) - 7), -15.0, 'negative too (−20, then 5)');
+select is((select rank from stonk_standings where nickname = 'Bravo' and round = public.stonk_round_of(now()) - 14), 2, 'each round has its season rank');
+select is((select entries from stonk_standings where nickname = 'Bravo' and round = public.stonk_round_of(now()) - 14), 2, 'out of everyone who played it');
+select is((select round_rank from stonk_standings where nickname = 'Alpha' and round = public.stonk_round_of(now()) - 7), 1, 'and its rank in the round itself');
 
 -- ---- Hiding a nickname ----
 select pg_temp.as_owner();
@@ -98,6 +115,11 @@ select pg_temp.as_user('00000000-0000-0000-0000-0000000000b2');
 select is((select count(*)::integer from stonk_leagues), 0, 'a league is hidden from those not in it');
 select lives_ok($$select join_league(current_setting('test.code'))$$, 'joining with the code');
 select is((select count(*)::integer from stonk_league_table where season = (select max(season) from stonk_season_table)), 2, 'both are on the league''s table');
+select is((select wins from stonk_league_table where nickname = 'Alpha'), 2, 'with the rounds each won in the league');
+select is((select count(*)::integer from stonk_league_round_scores), 4, 'each round''s table in the league');
+select is((select picks from stonk_league_ownership where player_id = 2 and round = public.stonk_round_of(now()) - 7), 2, 'and who the league picked');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
+select is((select count(*)::integer from stonk_league_round_scores), 0, 'none of it for those not in the league');
 
 select * from finish();
 rollback;

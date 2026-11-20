@@ -4,10 +4,11 @@
 // search: utils/format.ts normalize), filtered by gender, discipline and "has an upcoming tournament" (drawn in one not
 // over: the pipeline knows from the draws; team matches can't be known ahead, so it's a filter, not a rule), sorted by
 // rating, form (the last 4 rounds), last round or how many picked them. Each with their stonk chart (the last 8 rounds)
-// and a button to add them to the squad. With the upcoming filter on, they're grouped by the week they play in (Monday to
+// and a button to add them to the squad (off for a club the squad already has 2 from: rules.ts). With the upcoming filter on, they're grouped by the week they play in (Monday to
 // Sunday, nearest first: this weekend, next weekend, …), a player drawn in several weeks in each of them.
 import { getISOWeek } from "date-fns";
 import { useMemo, useState } from "react";
+import { MAX_PER_CLUB } from "@/components/elostonk/rules";
 import Sparkline from "@/components/elostonk/Sparkline";
 import { bestRating, form, type StonkPlayer, useNow } from "@/components/elostonk/useStonk";
 import CheckToggle from "@/components/ui/CheckToggle";
@@ -44,6 +45,7 @@ export default function PlayerSearch({
   picked,
   owned,
   full,
+  clubs,
   onAdd,
 }: {
   players: StonkPlayer[];
@@ -52,6 +54,8 @@ export default function PlayerSearch({
   /** How many squads have each player in the round under way (%) */
   owned: Map<number, number>;
   full: boolean;
+  /** How many of the squad being made are from each club */
+  clubs: Map<string, number>;
   onAdd: (id: number) => void;
 }) {
   const { t, num, poolCodes, date, dateRange } = useI18n();
@@ -87,6 +91,9 @@ export default function PlayerSearch({
 
   const row = ({ p, tournaments }: (typeof rows)[number]) => {
     const inSquad = picked.has(p.id);
+    // Already the most from their club (rules.ts)
+    const clubFull = !inSquad && !!p.club && (clubs.get(p.club) ?? 0) >= MAX_PER_CLUB;
+    const off = !inSquad && (full || clubFull);
     return (
       <li key={p.id} className="flex items-center gap-3 px-3 py-2">
         <div className="flex-1 min-w-0">
@@ -114,10 +121,11 @@ export default function PlayerSearch({
         <span className="w-14 text-right tabular-nums text-sm" title={t("elostonk.search.formTitle")}>{form(p) > 0 ? "+" : ""}{num(Math.round(form(p)))}</span>
         <button
           type="button"
-          disabled={inSquad || full}
+          disabled={inSquad || off}
           onClick={() => onAdd(p.id)}
-          aria-label={t("elostonk.search.add", { name: p.name })}
-          className={`shrink-0 w-10 h-10 border border-black text-xl leading-none ${inSquad ? "bg-black text-white" : "hover:bg-black hover:text-white"} disabled:cursor-default ${!inSquad && full ? "opacity-30" : ""}`}
+          aria-label={clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : t("elostonk.search.add", { name: p.name })}
+          title={clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : undefined}
+          className={`shrink-0 w-10 h-10 border border-black text-xl leading-none ${inSquad ? "bg-black text-white" : off ? "" : "hover:bg-black hover:text-white"} disabled:cursor-default ${off ? "opacity-30" : ""}`}
         >
           {inSquad ? "✓" : "+"}
         </button>

@@ -2,17 +2,16 @@
 
 // EloStonk's statistics for a round that has started (newest first, any to pick), from everyone's locked squads: how
 // many played and their average and best score, the most picked and most captained players, the best picks (the
-// most points, with how many had them) and the best players nobody picked ("the stonks nobody bought").
+// most points, with how many had them), the team of the round (the best squad within the rules: TeamOfRound) and the
+// best players nobody picked ("the stonks nobody bought").
 import { useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
+import PlayerList from "@/components/elostonk/PlayerList";
+import TeamOfRound from "@/components/elostonk/TeamOfRound";
 import { newestScoredRound, useStonkPlayers } from "@/components/elostonk/useStonk";
-import Link from "@/components/ui/Link";
 import LinkSelect from "@/components/ui/LinkSelect";
 import StatCard from "@/components/ui/StatCard";
-import { ROW } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
-import { toneClass } from "@/utils/format";
-import { playerHref } from "@/utils/hrefs";
 import { currentRound } from "@/utils/rounds";
 
 interface Owned {
@@ -90,44 +89,24 @@ export default function Stats() {
         <StatCard label={t("elostonk.stats.average")}>{average === null ? "–" : signed(Math.round(average * 10) / 10, 1)}</StatCard>
         <StatCard label={t("elostonk.stats.best")}>{scores.length ? signed(Math.max(...scores), 1) : "–"}</StatCard>
       </dl>
+      {round && (
+        <div className="mb-6">
+          <TeamOfRound round={round} />
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <List title={t("elostonk.stats.mostPicked")} rows={top(owned, (o) => o.picks).map((o) => ({ id: o.player_id, name: nameOf(o.player_id, o.name), value: pct(o.picked_pct / 100) }))} />
-        <List title={t("elostonk.stats.mostCaptained")} rows={top(owned, (o) => o.captains).map((o) => ({ id: o.player_id, name: nameOf(o.player_id, o.name), value: num(o.captains) }))} />
-        <List
+        <PlayerList title={t("elostonk.stats.mostPicked")} rows={top(owned, (o) => o.picks).map((o) => ({ id: o.player_id, name: nameOf(o.player_id, o.name), value: pct(o.picked_pct / 100) }))} />
+        <PlayerList title={t("elostonk.stats.mostCaptained")} rows={top(owned, (o) => o.captains).map((o) => ({ id: o.player_id, name: nameOf(o.player_id, o.name), value: num(o.captains) }))} />
+        <PlayerList
           title={t("elostonk.stats.bestPicks")}
           rows={top(owned, (o) => o.points).map((o) => ({ id: o.player_id, name: nameOf(o.player_id, o.name), value: signed(o.points, 1), detail: t("elostonk.stats.pickedBy", { pct: pct(o.picked_pct / 100) }), tone: o.points }))}
         />
-        <List
+        <PlayerList
           title={t("elostonk.stats.unbought")}
           help={t("elostonk.stats.unboughtHelp")}
           rows={unpicked.map((u) => ({ id: u.player_id, name: nameOf(u.player_id), value: signed(u.points, 1), tone: u.points }))}
         />
       </div>
-    </div>
-  );
-}
-
-function List({ title, help, rows }: { title: string; help?: string; rows: { id: number; name: string; value: string; detail?: string; tone?: number }[] }) {
-  const { t } = useI18n();
-  return (
-    <div className="bg-white p-4 min-w-0">
-      <h3 className="text-sm text-gray-600 mb-2">{title}</h3>
-      {rows.length ? (
-        <ol>
-          {rows.map((r) => (
-            <li key={r.id} className={`${ROW} flex justify-between gap-3 py-1.5`}>
-              <span className="min-w-0">
-                <Link href={playerHref(r.id)} className="font-semibold hover:text-blue-600 break-words">{r.name}</Link>
-                {r.detail && <span className="block text-sm text-gray-600">{r.detail}</span>}
-              </span>
-              <span className={`tabular-nums whitespace-nowrap ${r.tone === undefined ? "" : toneClass(r.tone)}`}>{r.value}</span>
-            </li>
-          ))}
-        </ol>
-      ) : (
-        <p className="text-gray-400">{t("elostonk.stats.empty")}</p>
-      )}
-      {help && <p className="text-xs text-gray-500 mt-2">{help}</p>}
     </div>
   );
 }

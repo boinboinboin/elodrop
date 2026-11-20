@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.3 (2026-11-20)
+
+- EloStonk: a squad can have at most 2 players from one club, and needs at least one man and one woman. The squad picker shows what to fix, and players from a club you already have 2 from can't be added. Squads saved before keep playing until you change them.
+- EloStonk leagues: each league shows who won its last round, its season table with the rounds each member won, each round's table, the members' squads, and the league's most picked players this round.
+- EloStonk: your rounds show your best, worst and average round this season, a chart of your season rank after each round, and your rank in each round. Open a round to see your squad beside the team of the round: the best squad anyone could have picked within the rules.
+- EloStonk statistics show the team of the round.
+
 ## v1.37.2 (2026-11-20)
 
 - Draw notifications come as soon as the pipeline has published a new draw, also after a run in the day, instead of waiting for the night.

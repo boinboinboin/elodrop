@@ -88,6 +88,8 @@ export const ACCOUNT_ERRORS = [
   // EloStonk (supabase/migrations/*_elostonk.sql)
   "squad_invalid",
   "not_eligible",
+  "too_many_from_club",
+  "needs_both_genders",
   "no_profile",
   "league_not_found",
   "league_full",

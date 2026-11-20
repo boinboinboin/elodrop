@@ -3,13 +3,15 @@
 // EloStonk's squad picking: the squad for the next round (5 players, one the captain, counted twice), saved until it
 // locks (its Friday 14:00 in Norway; the database saves it for that round whatever the browser says), and the player
 // search to fill it. A squad with players who can't be picked (no longer in the players' file, or refused by the
-// database when saving) names them in a warning and can't be saved until they're out. Used by the game's "My squad"
+// database when saving) names them in a warning and can't be saved until they're out; so does one breaking the rules for
+// variety (rules.ts: at most 2 from one club, a man and a woman), its clubs' players marked. Used by the game's "My squad"
 // tab (Squad, with the round under way `between` them) and a new account's first steps (account/Welcome). For a
 // signed-in member with a profile only.
 import { Fragment, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, SUBMIT } from "@/components/account/form";
 import PlayerSearch from "@/components/elostonk/PlayerSearch";
+import { clubCounts, squadProblems } from "@/components/elostonk/rules";
 import Sparkline from "@/components/elostonk/Sparkline";
 import { useNow, useStonkPlayers } from "@/components/elostonk/useStonk";
 import { Cross, Star } from "@/components/SVG";
@@ -90,6 +92,11 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
   const byId = data.byId;
   const nameOf = (id: number) => byId.get(id)?.name ?? names.get(id) ?? `#${id}`;
   const invalid = draft.filter((id) => !byId.has(id) || refused.has(id));
+  const squad = draft.flatMap((id) => byId.get(id) ?? []);
+  const problems = squadProblems(squad, draft.length === SIZE);
+  const overClubs = new Set(problems.clubs);
+  const clubs = clubCounts(squad);
+  const broken = problems.clubs.length > 0 || problems.missing.length > 0;
   const changed = JSON.stringify(draft) !== JSON.stringify(saved?.players ?? []) || captain !== (saved?.captain ?? null);
   const ready = draft.length === SIZE && captain !== null && draft.includes(captain);
   const lock = lockOf(next);
@@ -145,6 +152,7 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
           const id = draft[i];
           const p = id ? byId.get(id) : undefined;
           const bad = id ? invalid.includes(id) : false;
+          const crowded = !!p?.club && overClubs.has(p.club);
           return (
             <li key={i} className="bg-white flex items-center gap-3 px-3 py-2 min-h-14">
               <span className="w-5 text-gray-400 tabular-nums">{i + 1}</span>
@@ -152,7 +160,7 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
                 <>
                   <div className="flex-1 min-w-0">
                     <Link href={playerHref(id)} target="_blank" className={`font-semibold hover:text-blue-600 break-words ${bad ? "text-red-700" : ""}`}>{nameOf(id)}</Link>
-                    <span className={`block text-sm truncate ${bad ? "text-red-700" : "text-gray-600"}`}>{bad ? t("elostonk.squad.gone") : p?.club}</span>
+                    <span className={`block text-sm truncate ${bad || crowded ? "text-red-700" : "text-gray-600"}`}>{bad ? t("elostonk.squad.gone") : p?.club}</span>
                   </div>
                   {p && (
                     <span className="hidden sm:block">
@@ -184,7 +192,7 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
         })}
       </ol>
       <div className="flex flex-wrap items-center gap-4">
-        <button type="button" disabled={busy || !ready || !changed || invalid.length > 0} onClick={() => void save()} className={SUBMIT}>{t(busy ? "elostonk.squad.saving" : "elostonk.squad.save")}</button>
+        <button type="button" disabled={busy || !ready || !changed || invalid.length > 0 || broken} onClick={() => void save()} className={SUBMIT}>{t(busy ? "elostonk.squad.saving" : "elostonk.squad.save")}</button>
         <span className="text-sm text-gray-600" aria-live="polite">
           {done ? t("elostonk.squad.saved") : !ready ? t("elostonk.squad.need", { count: SIZE - draft.length }) : changed ? t("elostonk.squad.unsaved") : saved ? t("elostonk.squad.carries") : ""}
         </span>
@@ -201,13 +209,17 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
           })}
         </p>
       )}
+      {problems.clubs.map((club) => (
+        <p key={club} role="alert" className={ERROR}>{rich("elostonk.squad.clubLimit", { club: <strong>{club}</strong>, count: clubs.get(club)! })}</p>
+      ))}
+      {problems.missing.length > 0 && <p role="alert" className={ERROR}>{t("elostonk.squad.genders")}</p>}
       {error && <p role="alert" className={ERROR}>{error}</p>}
     </section>
       {between}
     {/* The player search */}
     <section className="mb-10">
       <h2 className="text-2xl mb-3">{t("elostonk.search.title")}</h2>
-      <PlayerSearch players={data.players} picked={picked} owned={owned} full={draft.length >= SIZE} onAdd={add} />
+      <PlayerSearch players={data.players} picked={picked} owned={owned} full={draft.length >= SIZE} clubs={clubs} onAdd={add} />
     </section>
     </>
   );
