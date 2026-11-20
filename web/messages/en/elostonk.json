@@ -64,9 +64,13 @@
       "mixed": "Mixed"
     },
     "upcoming": "Only players with an upcoming tournament",
-    "upcomingHelp": "Drawn in a tournament that isn't over. Team matches can't be known ahead.",
+    "upcomingHelp": "Drawn in a tournament that isn't over, grouped by week, nearest first. Team matches can't be known ahead.",
     "count": "{count} players",
     "next": "Next: {name}, {date}",
+    "drawn": "{name}, {date}",
+    "thisWeekend": "This weekend",
+    "nextWeekend": "Next weekend",
+    "week": "Week {week}",
     "chart": "{name}'s points in the last 8 rounds",
     "formTitle": "Points over the last 4 rounds",
     "add": "Add {name} to your squad"

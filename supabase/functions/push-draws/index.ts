@@ -1,7 +1,7 @@
 // push-draws: tells members on their phones when a tournament draw on Elodrop first includes the player they've said is
-// them (README: "Notifications"). Called every 30 minutes through the night by the database's cron job (push-draws, in
-// supabase/migrations/*_push.sql), while the nightly run publishes draws; open to anyone (verify_jwt = false), as a
-// call that finds nothing new does nothing.
+// them (README: "Notifications"). Called by the pipeline as soon as a run has published new draws (pipeline.yml), and
+// every 30 minutes through the night by the database's cron job (push-draws, in supabase/migrations/*_push.sql) as a
+// fallback; open to anyone (verify_jwt = false), as a call that finds nothing new does nothing.
 //
 //   1. The tournaments with a draw that aren't over (the data bucket's tournaments/index.json), and of them those whose
 //      draw was fetched again since the last look (fetchedAt, remembered in push_seen): only those files are read.

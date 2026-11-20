@@ -64,9 +64,13 @@
       "mixed": "Mix"
     },
     "upcoming": "Bare spillere med en kommende turnering",
-    "upcomingHelp": "Trukket i en turnering som ikke er over. Lagkamper kan ikke vites på forhånd.",
+    "upcomingHelp": "Trukket i en turnering som ikke er over, gruppert etter uke, nærmeste først. Lagkamper kan ikke vites på forhånd.",
     "count": "{count} spillere",
     "next": "Neste: {name}, {date}",
+    "drawn": "{name}, {date}",
+    "thisWeekend": "Denne helgen",
+    "nextWeekend": "Neste helg",
+    "week": "Uke {week}",
     "chart": "Poengene til {name} de siste 8 rundene",
     "formTitle": "Poeng de siste 4 rundene",
     "add": "Legg {name} til laget"

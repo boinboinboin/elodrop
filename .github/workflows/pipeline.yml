@@ -20,7 +20,8 @@
 # write on both buckets), REVALIDATE_SECRET (as on the site), SANITY_WRITE_TOKEN (an Editor token
 # for the site's Sanity project; without it the tournaments aren't added to the Studio). Variables:
 # SITE_URL (e.g. https://example.com), R2_RAW_BUCKET (default elo-raw), R2_DATA_BUCKET (default
-# elo-data), SANITY_PROJECT_ID (as NEXT_PUBLIC_SANITY_PROJECT_ID on the site).
+# elo-data), SANITY_PROJECT_ID (as NEXT_PUBLIC_SANITY_PROJECT_ID on the site), SUPABASE_URL
+# (https://<project>.supabase.co, for the draws' notifications; without it they wait for the night's cron job).
 name: Pipeline
 
 on:
@@ -252,6 +253,19 @@ jobs:
           else node refresh-site.mjs --log sync.log ${{ steps.build.outputs.mode == 'draws' && '--prefix tournaments/' || '' }}; fi
           rm -f data/refresh-pending
           rclone deletefile "$RAW/refresh-pending" || echo "Couldn't remove the pending mark: the next run refreshes everything"
+
+      # Notifications for the draws just published (README: "Notifications"), right away, whenever the run is (a manual
+      # one in the day too), after the site's refresh so the draw is on the site when the notification opens it. The
+      # function needs no key; a failure doesn't fail the run, as the night's cron job (push-draws) calls it too.
+      # Without the SUPABASE_URL variable it's skipped with a warning on the run.
+      - name: Send notifications for new draws
+        if: steps.build.outputs.mode != 'none'
+        continue-on-error: true
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+        run: |
+          if [ -z "$SUPABASE_URL" ]; then echo "::warning title=Notifications not sent::Set the SUPABASE_URL variable (Settings → Secrets and variables → Actions → Variables); the night's cron job sends them later"; exit 0; fi
+          curl -fsS --max-time 120 -X POST -H "Content-Type: application/json" -d '{}' "$SUPABASE_URL/functions/v1/push-draws" || echo "::warning title=Notifications not sent::push-draws failed; the night's cron job tries again"
 
       # What changed in the Studio since the last check (sanity-revisions.mjs), every night whatever was
       # rebuilt, once per change: the clubs (on nearly every page), the badges (every player page) and

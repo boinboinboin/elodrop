@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.2 (2026-11-20)
+
+- Draw notifications come as soon as the pipeline has published a new draw, also after a run in the day, instead of waiting for the night.
+- EloStonk: with "Only players with an upcoming tournament" on, the players are grouped by the week they play in, this weekend first, then next weekend and so on, each with that week's tournament.
+
 ## v1.37.1 (2026-11-19)
 
 - EloStonk: the nightly import of the pickable players and their points works again, and the leaderboards, statistics and leagues' tables read what the game's database now works out ahead (pipeline and database had come apart).
