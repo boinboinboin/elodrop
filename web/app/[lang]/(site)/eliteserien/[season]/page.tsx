@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import Team from "@/components/clubs/Team";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
@@ -196,8 +197,6 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                     .map((tie: Loose, i: number) => {
                       const homeWon = tie.winner === 1;
                       const awayWon = tie.winner === 2;
-                      // Upsets are judged on the lineups played
-                      const upset = (homeWon && tie.played.win < 0.3) || (awayWon && tie.played.loss < 0.3);
                       return (
                         <tr key={i} className={ROW}>
                           <td className="py-2 px-4">
@@ -238,7 +237,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                                 })}
                               </span>
                             )}
-                            {upset && <span className="ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700">{t("eliteserien.review.ties.upset")}</span>}
+                            {tie.upset && <Badge className="ml-1 align-[0.07em]">{t("eliteserien.review.ties.upset")}</Badge>}
                           </td>
                         </tr>
                       );

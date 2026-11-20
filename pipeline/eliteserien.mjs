@@ -16,7 +16,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 // (The season and forecast modules import this one too: only functions are used across, so the cycle is harmless)
 import { forecastSeason, random } from "./eliteserien-forecast.mjs";
-import { applyPlayed, currentPlayers, loggedGame, seasonTies, sourceAt } from "./eliteserien-season.mjs";
+import { applyPlayed, currentPlayers, loggedGame, seasonTies, sourceAt, tieRecords } from "./eliteserien-season.mjs";
 import * as R from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -252,6 +252,30 @@ export function playedOdds(chances, walkovers) {
   });
   return odds;
 }
+
+// A tie is an upset when its winner had less than this chance of winning it with the lineups played
+export const TIE_UPSET = 0.3;
+/**
+ * A tie's odds with the lineups played, and whether it was an upset: one rule for the team match pages
+ * (team-matches.mjs) and Eliteserien (its results and seasons in review). `tie`: { games, goldenSet } as in
+ * data/league; `records`: its matches in data/league-games.json (rate.mjs; by index, and `golden`); `winner`: 1 home,
+ * 2 away, 0 draw. Rated matches count with their win chances and walkovers as certain wins for the side given them; a
+ * draw settled by a golden set, when one was played, with the golden set's chance (one set, from its players'
+ * ratings; when one has none yet, the set chance of that discipline's first rated match).
+ * Returns { odds: the home team's (null: no rated match), upset }.
+ */
+export function playedTie(tie, records = {}, winner) {
+  const rated = tie.games.flatMap((g, i) => (records[i] && !records[i].preview ? [{ discipline: g.discipline, chance: records[i].winChance }] : []));
+  const walkovers = [1, 2].map((side) => tie.games.filter((g) => g.walkover && g.winner === side).length);
+  let odds = rated.length ? playedOdds(rated.map((g) => g.chance), walkovers) : null;
+  if (odds && tie.goldenSet) {
+    const chance = records.golden?.winChance ?? R.setChance(rated.find((g) => g.discipline === tie.goldenSet.discipline)?.chance ?? 0.5);
+    odds = { ...odds, win: odds.win + odds.draw * chance, loss: odds.loss + odds.draw * (1 - chance), draw: 0 };
+  }
+  const upset = !!odds && ((winner === 1 && odds.win < TIE_UPSET) || (winner === 2 && odds.loss < TIE_UPSET));
+  return { odds, upset };
+}
+
 const slugify = (text) => text.toLowerCase().replace(/æ/g, "ae").replace(/ø/g, "o").replace(/å/g, "a").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // A team's strength from its odds against each other team: averages per tie, and the expected table points
@@ -323,7 +347,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // already in, has the snapshots from it on done again
   const historyFile = `${outDir}eliteserien-forecast-${KEY}.json`;
   const saved = test || !existsSync(historyFile) ? [] : JSON.parse(readFileSync(historyFile, "utf8"));
-  const run = (played, history) => forecastSeason({ teams, ref, replacement: source.replacement, groups, ties: played, history, chanceOf, rand: random() });
+  const run = (played, history) => forecastSeason({ teams, ref, replacement: source.replacement, groups, ties: played, history, chanceOf, recordsOf: tieRecords, rand: random() });
   // Kept: before the season, and the snapshots of the ties up to the first one not in yet (in the order played)
   const firstNew = ties.findIndex((t, i) => saved.find((h) => h.key === String(t.matchId))?.played !== i + 1);
   const keep = new Set(["preseason", ...ties.slice(0, firstNew < 0 ? ties.length : firstNew).map((t) => String(t.matchId))]);
@@ -377,7 +401,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         t.strength = strengthOf(h);
       }
       before.teams.sort((a, b) => b.strength.tablePoints - a.strength.tablePoints || b.strength.expected - a.strength.expected);
-      const pre = forecastSeason({ ...before, replacement: source.replacement, groups, ties: [], chanceOf, rand: random() });
+      const pre = forecastSeason({ ...before, replacement: source.replacement, groups, ties: [], chanceOf, recordsOf: tieRecords, rand: random() });
       writeFileSync(preseasonFile, JSON.stringify({ season: seasonLabel, rebuilt: `ratings before ${first}`, generatedAt: new Date().toISOString(), teams: before.teams.map((t, i) => ({ rank: i + 1, team: t.team, strength: t.strength, lineup: lineupOut(t.lineup) })), forecast: pre.forecast }, null, 1));
       if (!history.some((h) => h.key === "preseason")) history.unshift(pre.snapshot);
       out.history = history.map(({ next, ...h }) => h);

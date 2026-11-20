@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.4 (2026-11-20)
+
+- Eliteserien marks upsets by the same rule as the team match pages, so a tie is an upset in both places or in neither: won by a team that had less than a 30% chance with the lineups played. The results no longer judge it on the chances the night before, and the seasons in review no longer count matches left unplayed in a play-off tie.
+- Eliteserien's biggest upsets of the season are the matches marked as upsets on the team match pages (won with less than an even chance, between settled players), smallest chance first.
+
 ## v1.37.3 (2026-11-20)
 
 - EloStonk: a squad can have at most 2 players from one club, and needs at least one man and one woman. The squad picker shows what to fix, and players from a club you already have 2 from can't be added. Squads saved before keep playing until you change them.

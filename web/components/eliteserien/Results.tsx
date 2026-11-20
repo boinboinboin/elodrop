@@ -1,6 +1,6 @@
 // The season's results by day, newest first (pipeline/eliteserien-forecast.mjs): each tie a link to its page, the
 // teams (the winner bold), the score, and the chance the winner had the night before (a draw's chance for a draw), an
-// upset marked when it was under 30%.
+// upset marked as on the team match pages (under 30% with the lineups played).
 import Team from "@/components/clubs/Team";
 import { ArrowRight } from "@/components/SVG";
 import Badge from "@/components/ui/Badge";

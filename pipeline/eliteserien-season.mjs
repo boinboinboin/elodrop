@@ -126,6 +126,11 @@ export function loggedGame(tie, game) {
   return (logOf(game.side1[0]?.id)[POOL_OF[game.discipline]]?.all ?? []).find((m) => m.key === key) ?? null;
 }
 
+// A tie's matches as the team match pages have them (data/league-games.json, rate.mjs): by index, each with its win
+// chance and whether it was an upset, and the golden set's (`golden`)
+let leagueGames;
+export const tieRecords = (tie) => (leagueGames ??= read(`${DIR}data/league-games.json`).ties)[tie.matchId] ?? {};
+
 // Play-offs: a tie ends as soon as a team has won 5 matches, and a tie at 4-4 is decided by a
 // golden set in one discipline (the teams take turns striking disciplines). We take the golden
 // set to be played in the discipline whose top players or pairs (1st singles, the doubles, 1st

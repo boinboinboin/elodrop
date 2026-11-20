@@ -16,16 +16,13 @@
 //                       used first, with the clubs hosting there: for the site's venues in Sanity
 //                       (web/scripts/import-venues.mts)
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { lowestRatings, playedOdds, playerRatings } from "./eliteserien.mjs";
+import { lowestRatings, playedOdds, playedTie, playerRatings } from "./eliteserien.mjs";
 import { correctedTieGames } from "./rate.mjs";
 import * as R from "./rules.mjs";
 import { leagueLevel } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/team-matches`;
-// A tie is an upset when the winner had less than this chance of winning it with the lineups
-// played (as in the Eliteserien review)
-const TIE_UPSET = 0.3;
 const POOL_OF = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDoubles", WomensDoubles: "womensDoubles", MixedDoubles: "mixedDoubles" };
 
 // The rating a player brings to a discipline: singles, doubles (men's and women's) or mixed
@@ -104,22 +101,10 @@ for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".j
         upset: r?.upset ?? false,
       };
     });
-    // The tie's odds with the lineups played: rated matches with their win chances, walkovers as
-    // certain wins for the side given them; a draw settled by a golden set, when one was played,
-    // with the golden set's chance (one set, from its players' ratings; when one has none yet, the set
-    // chance of that discipline's first rated match)
-    const walkovers = [1, 2].map((side) => games.filter((g) => g.walkover && g.winner === side).length);
-    const chances = games.filter((g) => g.rated).map((g) => g.winChance);
-    let odds = chances.length ? playedOdds(chances, walkovers) : null;
+    // The tie's odds with the lineups played, and whether it was an upset (the same rule as Eliteserien's)
     const goldenRated = ratedGames.golden;
-    const goldenChance = tie.goldenSet
-      ? (goldenRated?.winChance ?? R.setChance(games.find((g) => g.pool === POOL_OF[tie.goldenSet.discipline] && g.rated)?.winChance ?? 0.5))
-      : null;
-    if (odds && tie.goldenSet) {
-      odds = { ...odds, win: odds.win + odds.draw * goldenChance, loss: odds.loss + odds.draw * (1 - goldenChance), draw: 0 };
-    }
     const winner = homeWon > awayWon ? 1 : homeWon < awayWon ? 2 : (tie.goldenSet?.winner ?? 0);
-    const upset = !!odds && ((winner === 1 && odds.win < TIE_UPSET) || (winner === 2 && odds.loss < TIE_UPSET));
+    const { odds, upset } = playedTie(tie, ratedGames, winner);
     const day = tie.time.slice(0, 10);
     const summary = {
       matchId: tie.matchId,

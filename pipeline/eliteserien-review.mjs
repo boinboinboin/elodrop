@@ -11,8 +11,8 @@
 // Writes data/eliteserien-<season>.json.
 import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
-import { SLOTS, SLOT_POOL, bestLineup, playedOdds, playerRatings, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
-import { GAME_SLOTS, POOL_OF, applyPlayed, currentPlayers, decided, goldenSet, isPlayoff, loggedGame, seasonTies, sourceAt } from "./eliteserien-season.mjs";
+import { SLOTS, SLOT_POOL, bestLineup, playedOdds, playedTie, playerRatings, readRoster, references, tablePoints, tieOdds, win } from "./eliteserien.mjs";
+import { GAME_SLOTS, POOL_OF, applyPlayed, currentPlayers, decided, goldenSet, isPlayoff, loggedGame, seasonTies, sourceAt, tieRecords } from "./eliteserien-season.mjs";
 import { sideRating } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -226,6 +226,9 @@ const tieResults = ties.map((tie) => {
     points: [tablePoints(homeWon), tablePoints(awayWon)],
     // The same with the lineups actually played (home team's view; walkovers as certain wins)
     played: oddsOut(played),
+    // Won by a team with less than a 30% chance with the lineups played, as on the team match pages (playedTie: the
+    // matches played only, a golden set with its own chance)
+    upset: playedTie(tie, tieRecords(tie), winner).upset,
     // Over the matches compared (no walkovers or unplayed matches)
     compared: games.length,
     expected: round2(games.reduce((sum, g) => sum + g.chance, 0)),

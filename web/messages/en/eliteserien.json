@@ -265,7 +265,7 @@
   },
   "results": {
     "title": "Results",
-    "intro": "Each tie with the chance the winner had the night before. An upset is a winner that had less than a 30% chance.",
+    "intro": "Each tie with the chance the winner had the night before. An upset is a tie won by a team that had less than a 30% chance with the lineups played, as on the team match pages.",
     "day": "{round}, {date}",
     "chanceBefore": "{team} had {chance}",
     "drawBefore": "A draw had {chance}",
@@ -278,7 +278,7 @@
     "above": "Above expectation",
     "below": "Below expectation",
     "upsets": "Biggest upsets",
-    "upsetsIntro": "Matches won with the smallest chance.",
+    "upsetsIntro": "Matches won with less than an even chance, between settled players (the upsets on the team match pages), smallest chance first.",
     "against": "against",
     "upsetChance": "{chance} chance"
   },

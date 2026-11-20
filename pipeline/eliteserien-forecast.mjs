@@ -13,7 +13,7 @@
 // - 8th is relegated; 7th plays the qualification against 1. divisjon teams.
 // - A player who played no match for the team in the regular season (Lillerunden and Storrunden) may not play in
 //   the play-offs. While a team has regular-season ties left, all its players might still play.
-import { SLOTS, SLOT_POOL, bestLineup, tablePoints, tieOdds, win } from "./eliteserien.mjs";
+import { SLOTS, SLOT_POOL, bestLineup, playedTie, tablePoints, tieOdds, win } from "./eliteserien.mjs";
 import { decided, goldenSet, isPlayoff } from "./eliteserien-season.mjs";
 
 export const SIMS = 20_000;
@@ -124,9 +124,10 @@ function lineupFrom(players, ref, replacement) {
  * The season so far and the forecast. `teams`: [{ team, players (playerRatings'), lineup }] with their best lineups
  * (bestLineup, `ref`); `groups`: the season's groups with their schedules; `ties`: the ties played (eliteserien-season.mjs);
  * `history`: the earlier snapshots ([{ key, ... }]); `chanceOf(tie, game)`: a game's win chance for side 1 from right
- * before it (null if not known). Returns { forecast, snapshot }.
+ * before it (null if not known); `recordsOf(tie)`: its matches as the team match pages have them (eliteserien-season.mjs,
+ * tieRecords), for its upsets. Returns { forecast, snapshot }.
  */
-export function forecastSeason({ teams, ref, replacement, groups, ties, history = [], chanceOf, rand = random() }) {
+export function forecastSeason({ teams, ref, replacement, groups, ties, history = [], chanceOf, recordsOf, rand = random() }) {
   const names = teams.map((t) => t.team);
   const byName = new Map(teams.map((t) => [t.team, t]));
   const regularGroup = groups.find((g) => !isPlayoff(g));
@@ -391,17 +392,20 @@ export function forecastSeason({ teams, ref, replacement, groups, ties, history 
     ties: list.map((tie) => {
       const score = [tie.games.filter((g) => g.winner === 1).length, tie.games.filter((g) => g.winner === 2).length];
       const winner = tieWinner(tie);
-      const odds = before(tie);
-      const chance = odds && winner ? (winner === tie.home ? odds.win : odds.loss) : null;
-      return { matchId: tie.matchId, time: tie.time, group: tie.group, home: tie.home, away: tie.away, score, winner: winner === tie.home ? 1 : winner === tie.away ? 2 : 0, goldenSet: !!tie.goldenSet, before: odds, upset: chance !== null && chance < 0.3 };
+      const side = winner === tie.home ? 1 : winner === tie.away ? 2 : 0;
+      // An upset as on the team match pages: judged on the lineups played, not on the chances the night before
+      const { upset } = playedTie(tie, recordsOf(tie), side);
+      return { matchId: tie.matchId, time: tie.time, group: tie.group, home: tie.home, away: tie.away, score, winner: side, goldenSet: !!tie.goldenSet, before: before(tie), upset };
     }),
   }));
 
-  // The season's players against expectation, and its biggest upsets (matches won with the smallest chance)
+  // The season's players against expectation, and its biggest upsets (the matches marked upsets on the team match
+  // pages, smallest chance first)
   const players = new Map();
   const upsets = [];
   for (const tie of ties) {
-    for (const game of tie.games) {
+    const records = recordsOf(tie);
+    for (const [i, game] of tie.games.entries()) {
       if (!game.winner || game.walkover) continue;
       const chance = chanceOf(tie, game);
       if (chance === null) continue;
@@ -415,7 +419,7 @@ export function forecastSeason({ teams, ref, replacement, groups, ties, history 
         }
       }
       const winnerChance = game.winner === 1 ? chance : 1 - chance;
-      if (winnerChance < 0.5) {
+      if (records[i]?.upset) {
         const [w, l] = game.winner === 1 ? [game.side1, game.side2] : [game.side2, game.side1];
         upsets.push({
           matchId: tie.matchId,

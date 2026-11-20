@@ -1,6 +1,6 @@
 // The season's players (pipeline/eliteserien-forecast.mjs): matches won against the wins expected from their ratings
 // right before each match, the 10 most above and below (players with at least 3 matches, or fewer early in the
-// season), and the biggest upsets: the matches won with the smallest chance, each a link to its tie.
+// season), and the biggest upsets: the matches marked upsets on the team match pages, smallest chance first, each a link to its tie.
 import Team from "@/components/clubs/Team";
 import Card from "@/components/ui/Card";
 import Link from "@/components/ui/Link";

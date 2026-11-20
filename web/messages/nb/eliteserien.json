@@ -265,7 +265,7 @@
   },
   "results": {
     "title": "Resultater",
-    "intro": "Hver lagkamp med sjansen vinneren hadde kvelden før. En overraskelse er en vinner som hadde under 30 % sjanse.",
+    "intro": "Hver lagkamp med sjansen vinneren hadde kvelden før. En overraskelse er en lagkamp vunnet av et lag som hadde under 30 % sjanse med oppstillingene som ble brukt, som på lagkampsidene.",
     "day": "{round}, {date}",
     "chanceBefore": "{team} hadde {chance}",
     "drawBefore": "Uavgjort hadde {chance}",
@@ -278,7 +278,7 @@
     "above": "Over forventning",
     "below": "Under forventning",
     "upsets": "Største overraskelser",
-    "upsetsIntro": "Kamper vunnet med minst sjanse.",
+    "upsetsIntro": "Kamper vunnet med under jevn sjanse, mellom etablerte spillere (overraskelsene på lagkampsidene), minst sjanse først.",
     "against": "mot",
     "upsetChance": "{chance} sjanse"
   },
