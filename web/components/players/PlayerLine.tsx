@@ -29,7 +29,10 @@ export default async function PlayerLine({ p, clubs, bold = false, rating = fals
     <span className={`flex flex-wrap items-baseline gap-x-1.5 ${right ? "justify-end text-right" : ""}`} title={club ?? undefined}>
       <span className="inline-flex items-center gap-1 self-center">
         <ClubLogo name={club} clubs={clubs} />
-        <Link href={playerHref(p.id, pool ?? undefined)} className={`link ${bold ? "font-semibold" : ""} ${muted ? "text-gray-600" : ""} hover:text-blue-600`}>{p.name}</Link>
+        {/* In a span, so the link stays inline in this flex row: its line on hover under each line of a name that wraps */}
+        <span className="min-w-0">
+          <Link href={playerHref(p.id, pool ?? undefined)} className={`link ${bold ? "font-semibold" : ""} ${muted ? "text-gray-600" : ""} hover:text-blue-600`}>{p.name}</Link>
+        </span>
       </span>
       <span className="text-sm whitespace-nowrap">
         {rating && p.rating !== undefined && <span className="text-gray-500 tabular-nums mr-1.5" title={t("upsets.card.ratingBefore")}>{p.rating}</span>}

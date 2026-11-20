@@ -111,7 +111,10 @@ export default async function HowItWorksPage() {
                   <li key={key}>
                     <a href={`#${key}`} className="link-host flex items-baseline gap-3 text-gray-700 hover:text-black">
                       <span className="font-mono text-xs" style={{ color: color(key) }}>{String(i + 1).padStart(2, "0")}</span>
-                      <span className="link-group">{t(`howItWorks.${key}.title`)}</span>
+                      {/* The line in an inline span inside the flex item, under each line of a title that wraps */}
+                      <span>
+                        <span className="link-group">{t(`howItWorks.${key}.title`)}</span>
+                      </span>
                     </a>
                   </li>
                 ))}

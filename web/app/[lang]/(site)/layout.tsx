@@ -112,8 +112,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <nav aria-label={t("layout.nav.about")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
             {ABOUT.map((l) => {
               const link = (
-                <Link key={l.href} href={l.href} className="link hover:text-black">
-                  {l.label}
+                // The line under the name only (not the version beside it), in an inline span: the link is a flex item
+                <Link key={l.href} href={l.href} className="link-host hover:text-black">
+                  <span className="link-group">{l.label}</span>
                   {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
                 </Link>
               );

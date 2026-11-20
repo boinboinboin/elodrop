@@ -338,8 +338,19 @@ html[data-theme="lightsout"] .dark-invert {
   @apply text-sm text-gray-500;
 }
 /* The match's tournament or league, under the opponents */
+/* The match's event, on a line of its own: inline (not a block), so its link's line on hover follows each line of a
+   name that wraps, as a block's would run once under the whole box. A line break before it after the opponents (not
+   after the partner's line, a block of its own, which ends a line already). In CSS rather than a wrapping element:
+   it's in every row of every player page */
 @utility match-event {
-  @apply block w-fit text-sm text-gray-600;
+  @apply text-sm text-gray-600;
+  &::before {
+    content: "\A";
+    white-space: pre;
+  }
+  :where(.block) + &::before {
+    content: none;
+  }
 }
 /* The match key for pipeline/corrections.txt, from small screens up; one click selects it for copying */
 @utility match-key {

@@ -141,7 +141,10 @@ export default async function TournamentPage({ params }: PageProps<"/[lang]/tour
         {/* The tournament's links, and the preview and share buttons at the end of the line */}
         <div className="mt-2 flex items-center justify-between gap-4">
           <p className="flex flex-wrap gap-x-6 gap-y-1">
-            <ExternalLink href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`}>{t("tournaments.page.cup2000")}</ExternalLink>
+            {/* In a span, so the link stays inline in this flex row: its line on hover under each line when it wraps */}
+            <span>
+              <ExternalLink href={`https://www.cup2000.dk/turnerings-system/Vis-turneringer/?tournamentid=${tour.cup2000Id}`}>{t("tournaments.page.cup2000")}</ExternalLink>
+            </span>
             {tour.portalenId && <span className="text-gray-600">{t("tournaments.page.portalen", { id: tour.portalenId })}</span>}
           </p>
           <ShareButtons path={tournamentHref(tour.cup2000Id)} image={`${tournamentHref(tour.cup2000Id)}/preview.png`} title={tour.name} kind="tournament" />

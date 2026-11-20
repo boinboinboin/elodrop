@@ -160,7 +160,8 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
             heading: (
               <h3 className="sticky top-(--header-offset) z-10 transition-[top] duration-200 -mx-4 px-4 py-2 mb-2 bg-stone-100 border-b border-gray-300 text-xl">
                 {ties[0].divisionSlug ? (
-                  <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="link inline-flex items-center gap-1 hover:text-blue-600">
+                  // Inline (not a flex box), so its line on hover follows each line of a name that wraps
+                  <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="link hover:text-blue-600">
                     {name} <ArrowRight className="text-base" />
                   </Link>
                 ) : (

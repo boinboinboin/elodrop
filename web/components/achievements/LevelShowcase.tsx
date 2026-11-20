@@ -96,7 +96,10 @@ export default function LevelShowcase({ levels, children }: { levels: ShowcaseLe
                   {l.art ? <img src={l.art} alt="" className={`w-6 h-6 object-contain shrink-0${l.artInvert ? " dark-invert" : ""}`} /> : <span aria-hidden="true" className="w-6 h-6 shrink-0" />}
                   {/* The title and the number of players: on two lines on a phone, one from md up */}
                   <span className="flex flex-col md:flex-row md:gap-2">
-                    <span className={l.i === current ? "underline decoration-1" : "link-group"}>{l.title}</span>
+                    {/* The line in an inline span inside the flex item, under each line of a title that wraps */}
+                    <span>
+                      <span className={l.i === current ? "underline decoration-1" : "link-group"}>{l.title}</span>
+                    </span>
                     <span className="font-mono">
                       <span className="hidden md:inline">· </span>
                       {l.players}

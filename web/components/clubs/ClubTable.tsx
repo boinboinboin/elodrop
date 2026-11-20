@@ -72,7 +72,8 @@ export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "
               <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                 <span className="flex items-center gap-3">
                   {entry?.[1] && <LogoImage src={entry[1]} size={8} invert={entry[2]} className="w-8 h-8" />}
-                  {entry ? <Link href={clubHref(entry[0], tab)} className="link hover:text-blue-600">{club}</Link> : club}
+                  {/* In a span, so the link stays inline in this flex row: its line on hover under each line of a name that wraps */}
+                  <span className="min-w-0">{entry ? <Link href={clubHref(entry[0], tab)} className="link hover:text-blue-600">{club}</Link> : club}</span>
                 </span>
               </td>
               <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">{combined ? signed(value, 2, "") : value}</td>

@@ -198,7 +198,10 @@ export default function Leagues() {
                     className="group link-host bg-white p-4 md:p-6 w-full h-full text-left grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 cursor-pointer transition-colors duration-200 hover:bg-gray-50"
                   >
                     <span className="min-w-0">
-                      <span className="link-group block w-fit max-w-full text-xl break-words group-hover:text-blue-600">{l.name}</span>
+                      <span className="block text-xl break-words group-hover:text-blue-600">
+                        {/* Inline, so its line on hover follows each line of a name that wraps */}
+                        <span className="link-group">{l.name}</span>
+                      </span>
                       <span className="block text-sm text-gray-600 mt-1">
                         {plural("elostonk.leagues.members", members)}
                         {place && (

@@ -12,6 +12,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 - The front page shows the site's numbers under its intro: players with a rating, matches rated (singles, doubles and mixed together), team matches and seasons. They replace the "players rated" line beside the rankings button. Four numbers sit in one row on a wide screen and in two rows of two on a phone.
 - The numbers block on the About page (and wherever it's used) can show the matches rated too. It's picked in the Studio. The count shows from the next nightly run.
+- The hover line under a link or a question that runs over two lines (on a phone, say) is drawn under each line, as under one line, instead of once under the whole block: the questions on Help & support, match events on player pages, player and club names, the Cup2000 link on tournaments and the team matches' group headings. The footer's What's new has the line under the name only, not the version beside it.
 - For running the pipeline: `rate.mjs` saves the number of matches rated in `ratings.json`, and `export.mjs` passes it on in `meta.json`.
 
 ## v1.37.6 (2026-11-20)
