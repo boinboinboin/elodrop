@@ -132,6 +132,19 @@
     "captains": {
       "one": "kaptein én gang",
       "other": "kaptein {count} ganger"
+    },
+    "back": "Alle ligaer",
+    "place": "Du er nr. {rank} med {points}",
+    "squadsTitle": "Lag",
+    "squads": "Lag, runden fra {date}",
+    "squadsNote": "Alles lag i runden som sist ble låst, med poengene så langt. Lagene vises når en runde låses: de neste {time}.",
+    "noSquads": "Ingen lag er låst ennå.",
+    "noSquad": "Uten lag den runden: {names}",
+    "table": "Tabell",
+    "membersTitle": "Medlemmer",
+    "hidden": {
+      "one": "og {count} med skjult kallenavn",
+      "other": "og {count} med skjulte kallenavn"
     }
   },
   "stats": {

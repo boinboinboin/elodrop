@@ -132,6 +132,19 @@
     "captains": {
       "one": "captain once",
       "other": "captain {count} times"
+    },
+    "back": "All leagues",
+    "place": "You're #{rank} with {points}",
+    "squadsTitle": "Squads",
+    "squads": "Squads, round of {date}",
+    "squadsNote": "Everyone's squad in the round that last locked, with its points so far. Squads are shown once a round locks: the next ones {time}.",
+    "noSquads": "No squads have locked yet.",
+    "noSquad": "No squad that round: {names}",
+    "table": "Table",
+    "membersTitle": "Members",
+    "hidden": {
+      "one": "and {count} with a hidden nickname",
+      "other": "and {count} with hidden nicknames"
     }
   },
   "stats": {

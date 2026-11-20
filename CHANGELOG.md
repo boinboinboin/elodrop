@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.5 (2026-11-20)
+
+- EloStonk leagues: click a league to open it. It shows every member's squad in the round that last locked (from Friday 14:00 the new round's, before it last week's), ranked by its points, then the league's tables, its most picked players, its members and the invite link. The back button takes you back to your leagues.
+- The list of leagues is shorter: each league with its members, your place in its table and who won its last round.
+
 ## v1.37.4 (2026-11-20)
 
 - Eliteserien marks upsets by the same rule as the team match pages, so a tie is an upset in both places or in neither: won by a team that had less than a 30% chance with the lineups played. The results no longer judge it on the chances the night before, and the seasons in review no longer count matches left unplayed in a play-off tie.
