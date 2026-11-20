@@ -119,7 +119,7 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: 
           {[a, b].map((player, i) => (
             <div key={player.id} className={i === 0 ? "order-1" : "order-3"}>
               <Swatch color={SIDE_COLORS[i]} className="w-8 h-1 mb-2" />
-              <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="hover:text-blue-600">{player.name}</Link></p>
+              <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="link hover:text-blue-600">{player.name}</Link></p>
               {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
             </div>
           ))}
@@ -182,7 +182,7 @@ async function AgainstThemselves({ player, clubs }: { player: Player; clubs: Rec
         {[0, 1].map((i) => (
           <div key={i} className={i === 0 ? "order-1" : "order-3"}>
             <Swatch color={SIDE_COLORS[i]} className="w-8 h-1 mb-2" />
-            <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="hover:text-blue-600">{player.name}</Link></p>
+            <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="link hover:text-blue-600">{player.name}</Link></p>
             {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
           </div>
         ))}

@@ -1,14 +1,33 @@
 {
   "metadata": {
     "title": "Your account",
-    "description": "Sign in to follow players and clubs, mark yourself and the tournaments you play, and vote on what Elodrop does next."
+    "description": "Sign in for your own overview, notifications when you're in a draw, players and clubs to follow, EloStonk and a vote on what Elodrop does next."
   },
   "button": {
     "signIn": "Sign in",
     "account": "Your account ({nickname})"
   },
+  "benefits": {
+    "title": "What you get",
+    "overview": { "title": "Your own overview", "text": "Say which player is you, and see your next tournament as soon as the draw is out (your group, your chances, your draw luck), your last weeks, each season in review, your career and where you stand." },
+    "notifications": { "title": "Draw notifications", "text": "A notification on your phone when a newly published draw includes you." },
+    "follow": { "title": "Follow players and clubs", "text": "Their ratings and the week's change on the front page." },
+    "elostonk": { "title": "EloStonk (beta)", "text": "Pick a squad of 5, make one your captain, and play in leagues with your friends." },
+    "ideas": { "title": "Ideas", "text": "Vote for what Elodrop does next, and suggest your own." },
+    "mistakes": { "title": "Fix mistakes about you", "text": "Report a wrong club, a match that isn't yours or a missing tournament from your own player page." },
+    "terms": "Free, and no password: we email you a code. Every page stays open to everyone, and you can delete your account at any time (<link>privacy</link>)."
+  },
+  "prompts": {
+    "card": {
+      "title": "Make Elodrop yours",
+      "description": "A free account adds things just for you.",
+      "link": "Sign in or create an account"
+    },
+    "player": "Is this you? <link>Sign in</link> for your own overview and a notification when you're in a draw.",
+    "draw": "<link>Sign in</link> to get a notification on your phone when you're in a draw."
+  },
   "signIn": {
-    "intro": "With an account you can follow players and clubs, mark which player is you, keep your tournaments in your calendar and vote on what comes next. The rankings and every page stay open to everyone.",
+    "intro": "Free, and every page stays open to everyone. An account adds things just for you.",
     "email": "Email",
     "sendCode": "Send me a code",
     "sending": "Sending…",

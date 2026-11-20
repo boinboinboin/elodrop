@@ -11,10 +11,10 @@ export default function SortButton({ active, onClick, label, sortTitle }: { acti
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1 cursor-pointer hover:text-black ${active ? "text-black" : ""}`}
+      className={`link-host inline-flex items-center gap-1 cursor-pointer hover:text-black ${active ? "text-black" : ""}`}
       title={active ? t("common.backToRankOrder") : sortTitle}
     >
-      {label}
+      <span className="link-group">{label}</span>
       <CaretDown className={`text-[0.7em] ${active ? "" : "opacity-30"}`} />
     </button>
   );

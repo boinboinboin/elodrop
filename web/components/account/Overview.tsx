@@ -108,7 +108,7 @@ function NextCard({ next, me }: { next: NextTournament; me: number }) {
   return (
     <article className="bg-white p-4 md:p-6">
       <h3 className="text-xl">
-        <Link href={tournamentHref(next.cup2000Id)} className="hover:text-blue-600">{next.name}</Link>
+        <Link href={tournamentHref(next.cup2000Id)} className="link hover:text-blue-600">{next.name}</Link>
       </h3>
       <p className="text-gray-600 mb-4">
         {dateRange(next.startDate, next.endDate)} · {days > 0 ? plural("account.overview.next.inDays", days) : t("account.overview.next.today")}
@@ -117,7 +117,7 @@ function NextCard({ next, me }: { next: NextTournament; me: number }) {
         {next.events.map((e) => (
           <div key={`${e.className}-${e.pool}`} className="border-t border-gray-200 pt-4">
             <h4 className="text-lg">
-              <Link href={eventHref(next.cup2000Id, e)} className="hover:text-blue-600">{eventTitle(i18n, e)}</Link>
+              <Link href={eventHref(next.cup2000Id, e)} className="link hover:text-blue-600">{eventTitle(i18n, e)}</Link>
             </h4>
             <p className="text-sm text-gray-600">
               {e.partner && (
@@ -155,7 +155,7 @@ function NextCard({ next, me }: { next: NextTournament; me: number }) {
                           {o.players.map((p, i) => (
                             <span key={p.id ?? p.name}>
                               {i > 0 && " / "}
-                              {p.id ? <Link href={p.id === me ? playerHref(p.id) : headToHeadHref(me, p.id, e.pool)} className="hover:text-blue-600">{p.name}</Link> : p.name}
+                              {p.id ? <Link href={p.id === me ? playerHref(p.id) : headToHeadHref(me, p.id, e.pool)} className="link hover:text-blue-600">{p.name}</Link> : p.name}
                             </span>
                           ))}{" "}
                           <span className="text-gray-600 tabular-nums">{o.rating}</span>
@@ -193,7 +193,7 @@ function WeekCard({ week, links }: { week: Week; links: Record<string, number> }
           <div key={`${g.kind}-${g.name}`}>
             <div className="flex flex-wrap items-baseline justify-between gap-x-4">
               <h4 className="text-lg">
-                {g.kind === "teamMatches" ? t("account.overview.weeks.teamMatches") : g.cup2000Id ? <Link href={tournamentHref(g.cup2000Id)} className="hover:text-blue-600">{g.name}</Link> : g.name}
+                {g.kind === "teamMatches" ? t("account.overview.weeks.teamMatches") : g.cup2000Id ? <Link href={tournamentHref(g.cup2000Id)} className="link hover:text-blue-600">{g.name}</Link> : g.name}
               </h4>
               <span className="text-xl font-semibold tabular-nums">{recordText(t, g.record)}</span>
             </div>
@@ -311,7 +311,7 @@ function PersonLine({ p, kind, me }: { p: { id: number | null; name: string; mat
   return (
     <span className="flex flex-wrap justify-between gap-x-3">
       {p.id ? (
-        <Link href={me && kind === "against" ? headToHeadHref(me, p.id) : playerHref(p.id)} className="font-semibold hover:text-blue-600">{p.name}</Link>
+        <Link href={me && kind === "against" ? headToHeadHref(me, p.id) : playerHref(p.id)} className="link font-semibold hover:text-blue-600">{p.name}</Link>
       ) : (
         <span className="font-semibold">{p.name}</span>
       )}
@@ -431,7 +431,7 @@ function StandingPart({ standings, playerId }: { standings: Standing[]; playerId
                 {s.above ? (
                   <>
                     {t("account.overview.standing.above")}{" "}
-                    <Link href={playerHref(s.above.id, s.pool)} className="font-semibold hover:text-blue-600">{s.above.name}</Link>
+                    <Link href={playerHref(s.above.id, s.pool)} className="link font-semibold hover:text-blue-600">{s.above.name}</Link>
                     {`, ${num(s.above.rating)} (${gap(s.above.rating, s.rating)})`}
                   </>
                 ) : (
@@ -441,7 +441,7 @@ function StandingPart({ standings, playerId }: { standings: Standing[]; playerId
               {s.below && (
                 <li>
                   {t("account.overview.standing.below")}{" "}
-                  <Link href={playerHref(s.below.id, s.pool)} className="font-semibold hover:text-blue-600">{s.below.name}</Link>
+                  <Link href={playerHref(s.below.id, s.pool)} className="link font-semibold hover:text-blue-600">{s.below.name}</Link>
                   {`, ${num(s.below.rating)} (${gap(s.below.rating, s.rating)})`}
                 </li>
               )}
@@ -509,7 +509,7 @@ function SeasonTournaments({ events }: { events: SeasonReview["events"] }) {
         {events.map((x) => (
           <li key={`${x.cup2000Id ?? x.name}`} className="border-b border-gray-100 last:border-0 py-2">
             <div className="flex flex-wrap justify-between gap-x-3">
-              {x.cup2000Id ? <Link href={tournamentHref(x.cup2000Id)} className="font-semibold hover:text-blue-600">{x.name}</Link> : <span className="font-semibold">{x.name}</span>}
+              {x.cup2000Id ? <Link href={tournamentHref(x.cup2000Id)} className="link font-semibold hover:text-blue-600">{x.name}</Link> : <span className="font-semibold">{x.name}</span>}
               <span className="tabular-nums">{recordText(t, x.record)}</span>
             </div>
             {x.events.length > 0 && (
@@ -543,7 +543,7 @@ function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
               {list.map((c) => (
                 <li key={c.id ?? c.name} className="flex justify-between items-baseline gap-x-3">
                   <span className="min-w-0">
-                    {c.id ? <Link href={playerHref(c.id)} className="font-semibold hover:text-blue-600">{c.name}</Link> : <span className="font-semibold">{c.name}</span>}
+                    {c.id ? <Link href={playerHref(c.id)} className="link font-semibold hover:text-blue-600">{c.name}</Link> : <span className="font-semibold">{c.name}</span>}
                     <span className="text-sm text-gray-600 whitespace-nowrap"> · {recordText(t, c)}</span>
                   </span>
                   <Perf perf={c.perf} />

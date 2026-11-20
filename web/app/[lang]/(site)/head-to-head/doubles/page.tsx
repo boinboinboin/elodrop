@@ -173,7 +173,7 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
               </p>
               {pair.map((player, j) => (
                 <div key={j} className="mb-2">
-                  <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="hover:text-blue-600">{player.name}</Link></p>
+                  <p className="text-lg sm:text-2xl"><Link href={playerHref(player.id)} className="link hover:text-blue-600">{player.name}</Link></p>
                   {player.club && <p className="text-gray-600"><Team name={player.club} clubs={clubs} size={5} /></p>}
                 </div>
               ))}

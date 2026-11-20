@@ -74,7 +74,7 @@ export default function ReportMistake({ playerId, pools }: { playerId: number; p
   if (!open)
     return (
       <p className="mt-4">
-        <button type="button" onClick={() => setOpen(true)} className="underline hover:text-blue-600">{t("account.report.open")}</button>
+        <button type="button" onClick={() => setOpen(true)} className="link-underlined hover:text-blue-600">{t("account.report.open")}</button>
       </p>
     );
 

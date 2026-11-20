@@ -272,7 +272,7 @@ export default async function EliteserienPage() {
                               const p = players.get(String(key));
                               return (
                                 <span key={String(key)}>
-                                  {p?.id ? <Link href={playerHref(p.id, SLOT_POOLS[s.type])} className="hover:text-blue-600">{p.name}</Link> : (p?.name ?? EMPTY)}
+                                  {p?.id ? <Link href={playerHref(p.id, SLOT_POOLS[s.type])} className="link hover:text-blue-600">{p.name}</Link> : (p?.name ?? EMPTY)}
                                   {i < l.players.length - 1 && <span className="text-gray-500"> + </span>}
                                 </span>
                               );
@@ -320,7 +320,7 @@ export default async function EliteserienPage() {
                             return (
                               <tr key={String(p.id ?? p.listName)} className={`${ROW} align-top`}>
                                 <td className="py-2 pr-2 sm:pr-4">
-                                  {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
+                                  {p.id ? <Link href={playerHref(p.id)} className="link hover:text-blue-600">{p.name}</Link> : p.name}
                                   {p.loanFrom && (
                                     <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 sm:whitespace-nowrap">{t("eliteserien.team.loanFrom", { club: p.loanFrom })}</span>
                                   )}

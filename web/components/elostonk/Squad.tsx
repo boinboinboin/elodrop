@@ -142,9 +142,9 @@ export default function Squad() {
               const shown = open?.round === r.round;
               return (
                 <li key={r.round}>
-                  <button type="button" aria-expanded={shown} onClick={() => void toggle(r.round)} className="w-full flex justify-between gap-4 px-3 py-2 text-left cursor-pointer hover:bg-gray-50">
+                  <button type="button" aria-expanded={shown} onClick={() => void toggle(r.round)} className="link-host w-full flex justify-between gap-4 px-3 py-2 text-left cursor-pointer hover:bg-gray-50">
                     <span className="min-w-0">
-                      {t("elostonk.squad.roundOf", { date: date(r.round) })}
+                      <span className="link-group">{t("elostonk.squad.roundOf", { date: date(r.round) })}</span>
                       {!r.final && <span className="text-sm text-gray-500"> · {t("elostonk.squad.provisional")}</span>}
                       {standing && <span className="block text-sm text-gray-600">{t("elostonk.squad.roundRank", { rank: num(standing.round_rank), of: num(standing.entries) })}</span>}
                     </span>

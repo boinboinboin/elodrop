@@ -97,7 +97,7 @@ export default function PlayerSearch({
     return (
       <li key={p.id} className="flex items-center gap-3 px-3 py-2">
         <div className="flex-1 min-w-0">
-          <Link href={playerHref(p.id)} target="_blank" className="font-semibold hover:text-blue-600 break-words">{p.name}</Link>
+          <Link href={playerHref(p.id)} target="_blank" className="link font-semibold hover:text-blue-600 break-words">{p.name}</Link>
           <span className="block text-sm text-gray-600 truncate">
             {p.club ?? ""}
             {/* Their own three disciplines first (a woman's men's singles rating, if any, after them) */}
@@ -110,7 +110,7 @@ export default function PlayerSearch({
               ))}
           </span>
           {tournaments.map((u) => (
-            <Link key={u.cup2000Id} href={tournamentHref(u.cup2000Id)} target="_blank" className="block text-xs text-gray-600 hover:text-blue-600 truncate">
+            <Link key={u.cup2000Id} href={tournamentHref(u.cup2000Id)} target="_blank" className="link block w-fit max-w-full text-xs text-gray-600 hover:text-blue-600 truncate">
               {t(upcoming ? "elostonk.search.drawn" : "elostonk.search.next", { name: u.name, date: date(u.startDate, "dayMonth") })}
             </Link>
           ))}

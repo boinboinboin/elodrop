@@ -156,9 +156,9 @@ export function Accordion({ items }: { items: { key: string; question: string; a
                 aria-expanded={isOpen}
                 aria-controls={`${id}-${item.key}-a`}
                 onClick={() => setOpen(isOpen ? null : item.key)}
-                className="group w-full flex items-center justify-between gap-4 py-4 text-left text-xl cursor-pointer hover:text-blue-600 transition-colors"
+                className="group link-host w-full flex items-center justify-between gap-4 py-4 text-left text-xl cursor-pointer hover:text-blue-600 transition-colors"
               >
-                {item.question}
+                <span className="link-group">{item.question}</span>
                 {/* A plus that turns into a cross */}
                 <motion.span aria-hidden="true" className="relative shrink-0 w-5 h-5" animate={{ rotate: isOpen ? 45 : 0 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
                   <span className="absolute left-0 top-1/2 w-5 h-0.5 -translate-y-1/2 bg-current" />
@@ -210,7 +210,7 @@ export function EmailLink({ user, domain, copyLabel, copiedLabel }: { user: stri
   if (!address) return <span className="text-2xl text-gray-400">…</span>;
   return (
     <span className="flex flex-wrap items-center gap-3">
-      <a href={`mailto:${address}`} className="text-2xl [overflow-wrap:anywhere] underline decoration-2 underline-offset-4 hover:text-blue-600">
+      <a href={`mailto:${address}`} className="text-2xl [overflow-wrap:anywhere] link-underlined hover:text-blue-600">
         {address}
       </a>
       <button

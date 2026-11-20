@@ -6,10 +6,12 @@ import KeyEggs from "@/components/easter-eggs/KeyEggs";
 import InstallApp from "@/components/layout/InstallApp";
 import Logo from "@/components/layout/Logo";
 import MenuButton from "@/components/layout/MenuButton";
+import NavGroup, { type NavEntry } from "@/components/layout/NavGroup";
 import NavigationProgress from "@/components/layout/NavigationProgress";
 import { PublishedOnly, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import SearchBar from "@/components/layout/SearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
+import { CaretDown } from "@/components/SVG";
 import UpdatedAt from "@/components/layout/UpdatedAt";
 import Badge from "@/components/ui/Badge";
 import ExternalLink from "@/components/ui/ExternalLink";
@@ -18,19 +20,30 @@ import { getI18n } from "@/messages/server";
 import { ACCOUNTS } from "@/utils/account";
 import { copyrightYears, getReleases } from "@/utils/changelog";
 
-const FOOTER_LINK = "underline hover:text-black";
+const FOOTER_LINK = "link-underlined hover:text-black";
 const VERSION = getReleases()[0]?.version;
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const { t, rich } = await getI18n();
-  const NAV = [
-    { href: "/rankings", label: t("layout.nav.rankings") },
-    { href: "/clubs", label: t("layout.nav.clubs") },
-    { href: "/eliteserien", label: t("layout.nav.eliteserien") },
-    { href: "/team-matches", label: t("layout.nav.teamMatches") },
+  // The site's pages: in groups (a dropdown each in the header, headings in the menu) and on their own
+  const NAV: NavEntry[] = [
+    {
+      label: t("layout.nav.players"),
+      links: [
+        { href: "/rankings", label: t("layout.nav.rankings") },
+        { href: "/head-to-head", label: t("layout.nav.headToHead") },
+        { href: "/upsets", label: t("layout.nav.upsets") },
+      ],
+    },
+    {
+      label: t("layout.nav.teams"),
+      links: [
+        { href: "/clubs", label: t("layout.nav.clubs") },
+        { href: "/eliteserien", label: t("layout.nav.eliteserien") },
+        { href: "/team-matches", label: t("layout.nav.teamMatches") },
+      ],
+    },
     { href: "/tournaments", label: t("layout.nav.tournaments") },
-    { href: "/upsets", label: t("layout.nav.upsets") },
-    { href: "/head-to-head", label: t("layout.nav.headToHead") },
     // The fantasy game, where the site has accounts (utils/account.ts)
     ...(ACCOUNTS ? [{ href: "/elostonk", label: t("layout.nav.elostonk"), badge: t("layout.nav.beta") }] : []),
   ];
@@ -60,13 +73,28 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <SiteHeader
         logo={<Logo />}
         nav={
-          <nav aria-label={t("layout.nav.label")} className="hidden xl:flex gap-x-5 text-gray-700 whitespace-nowrap">
-            {NAV.map((n) => (
-              <Link key={n.href} href={n.href} className="hover:text-black">
-                {n.label}
-                {n.badge && <Badge className="ml-1.5 align-middle">{n.badge}</Badge>}
-              </Link>
-            ))}
+          <nav aria-label={t("layout.nav.label")} className="hidden xl:flex items-center gap-x-6 text-gray-700 whitespace-nowrap">
+            {NAV.map((n) =>
+              "links" in n ? (
+                // It reads the URL (its current page), so its name alone stands in until that's known
+                <Suspense
+                  key={n.label}
+                  fallback={
+                    <span className="inline-flex items-center gap-1.5">
+                      {n.label} <CaretDown className="w-3 h-3" />
+                    </span>
+                  }
+                >
+                  <NavGroup label={n.label} links={n.links} />
+                </Suspense>
+              ) : (
+                // The line under the name only, not its tag ("Beta")
+                <Link key={n.href} href={n.href} className="link-host hover:text-black">
+                  <span className="link-group">{n.label}</span>
+                  {n.badge && <Badge className="ml-1.5 align-middle">{n.badge}</Badge>}
+                </Link>
+              ),
+            )}
           </nav>
         }
         search={<SearchBar />}
@@ -84,7 +112,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           <nav aria-label={t("layout.nav.about")} className="w-full flex flex-wrap items-center gap-x-5 gap-y-2 text-base text-gray-700">
             {ABOUT.map((l) => {
               const link = (
-                <Link key={l.href} href={l.href} className="hover:text-black">
+                <Link key={l.href} href={l.href} className="link hover:text-black">
                   {l.label}
                   {l.detail && <span className="ml-2 font-mono text-xs text-gray-500">{l.detail}</span>}
                 </Link>

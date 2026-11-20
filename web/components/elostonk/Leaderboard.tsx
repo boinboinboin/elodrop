@@ -174,7 +174,7 @@ export default function Leaderboard({ league }: { league?: number }) {
                   <tr className={`${ROW} ${me ? "bg-gray-100" : ""}`}>
                     <td className="py-2 px-3 tabular-nums text-gray-600">{r.rank}</td>
                     <td className="py-2 px-3">
-                      <button type="button" aria-expanded={open?.nickname === r.nickname} onClick={() => void showSquad(r.nickname)} className="font-semibold hover:text-blue-600 cursor-pointer text-left break-all">
+                      <button type="button" aria-expanded={open?.nickname === r.nickname} onClick={() => void showSquad(r.nickname)} className="link font-semibold hover:text-blue-600 cursor-pointer text-left break-all">
                         {r.nickname}
                       </button>
                       {me && <Badge className="ml-2">{t("account.me.you")}</Badge>}

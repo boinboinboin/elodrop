@@ -41,8 +41,8 @@ export async function RankingsGlimpse() {
             <li key={rankingHref(list.pool, list.gender)} className={`${ROW} py-1 flex items-baseline justify-between gap-3`}>
               {/* Two links on top of each other: each at least 24px tall, a size a finger can tap */}
               <span className="min-w-0">
-                <Link href={playerHref(player.id, list.pool)} className="inline-block font-semibold hover:text-blue-600">{player.name}</Link>
-                <Link href={rankingHref(list.pool, list.gender)} className="block w-fit py-0.5 text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
+                <Link href={playerHref(player.id, list.pool)} className="link inline-block font-semibold hover:text-blue-600">{player.name}</Link>
+                <Link href={rankingHref(list.pool, list.gender)} className="link block w-fit my-0.5 text-sm text-gray-600 hover:text-blue-600">{rankingListTitle(i18n, list)}</Link>
               </span>
               <span className="text-xl font-semibold tabular-nums">{Math.round(player.rating)}</span>
             </li>
@@ -111,7 +111,7 @@ export async function UpsetsGlimpse() {
     side.map((p, i) => (
       <span key={p.id}>
         {i > 0 && " / "}
-        <Link href={playerHref(p.id, upset.pool)} className="hover:text-blue-600">{p.name}</Link>
+        <Link href={playerHref(p.id, upset.pool)} className="link hover:text-blue-600">{p.name}</Link>
       </span>
     ));
   return (
@@ -152,7 +152,7 @@ export async function TournamentsGlimpse() {
   return (
     <>
       <Teaser>{t("home.tournaments.next")}</Teaser>
-      <Link href={tournamentHref(summary.cup2000Id)} className="text-lg font-semibold hover:text-blue-600">{summary.name}</Link>
+      <Link href={tournamentHref(summary.cup2000Id)} className="link text-lg font-semibold hover:text-blue-600">{summary.name}</Link>
       <p className="text-sm text-gray-600 tabular-nums">{dateRange(summary.startDate, summary.endDate)}</p>
       {luckiest && (
         <div className="mt-4 border-l-4 pl-3" style={{ borderColor: "var(--color-chart-5)" }}>

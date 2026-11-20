@@ -41,7 +41,7 @@ export default function FollowedTable({ players, me, unfollow = false }: { playe
           {rows.map(({ player, you }) => (
             <tr key={player.id} className={`${ROW} align-top`}>
               <th scope="row" className="py-2 pr-3 font-normal">
-                <Link href={playerHref(player.id)} className="font-semibold hover:text-blue-600 whitespace-nowrap">{player.name}</Link>
+                <Link href={playerHref(player.id)} className="link font-semibold hover:text-blue-600 whitespace-nowrap">{player.name}</Link>
                 {you && <Badge className="ml-2 align-middle">{t("account.me.you")}</Badge>}
                 {player.club && <span className="block text-sm text-gray-600 whitespace-nowrap">{player.club}</span>}
               </th>
@@ -50,7 +50,7 @@ export default function FollowedTable({ players, me, unfollow = false }: { playe
                 return (
                   <td key={c.key} className="py-2 px-2 text-right whitespace-nowrap">
                     {entry ? (
-                      <Link href={playerHref(player.id, entry.pool)} title={`${poolNames[entry.pool]}${entry.rank ? ` · #${num(entry.rank)}` : ""}`} className="hover:text-blue-600">
+                      <Link href={playerHref(player.id, entry.pool)} title={`${poolNames[entry.pool]}${entry.rank ? ` · #${num(entry.rank)}` : ""}`} className="link hover:text-blue-600">
                         <span className="text-lg font-semibold tabular-nums">{num(entry.rating)}</span>
                         <span className="block">
                           <WeekChange change={entry.change} />

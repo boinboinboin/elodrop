@@ -14,7 +14,7 @@ export default async function TieRow({ tie, clubs }: { tie: TeamMatchSummary; cl
     <li>
       <Link
         href={teamMatchHref(tie.matchId)}
-        className="group bg-white p-3 sm:px-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 transition-colors duration-200 hover:bg-gray-50"
+        className="group link-host bg-white p-3 sm:px-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 transition-colors duration-200 hover:bg-gray-50"
       >
         <span className="min-w-0">
           <Team name={tie.home} club={tie.homeClub} clubs={clubs} size={5} linked={false} className={tie.winner === 1 ? "font-semibold" : ""} />
@@ -29,7 +29,7 @@ export default async function TieRow({ tie, clubs }: { tie: TeamMatchSummary; cl
         </span>
         <span className="flex items-center gap-3">
           {tie.upset && <span className="hidden sm:inline" title={t("teamMatches.upsetTitle")}><Badge>{t("teamMatches.upset")}</Badge></span>}
-          <span className="inline-flex items-center gap-1 text-xl font-semibold tabular-nums group-hover:text-blue-600">
+          <span className="link-group inline-flex items-center gap-1 text-xl font-semibold tabular-nums group-hover:text-blue-600">
             {tie.score[0]}–{tie.score[1]} <ArrowRight />
           </span>
         </span>

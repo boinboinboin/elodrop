@@ -30,7 +30,7 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
           <ul className={s === 0 ? "mt-2 text-lg" : ""}>
             {side.map((p) => (
               <li key={p.id}>
-                <Link href={playerHref(p.id, upset.pool)} className={`${s === 0 ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>{" "}
+                <Link href={playerHref(p.id, upset.pool)} className={`link ${s === 0 ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>{" "}
                 <span className="text-sm text-gray-500 tabular-nums" title={t("upsets.card.ratingBefore")}>{p.rating}</span>
                 {p.change !== undefined && (
                   <span className={`text-sm font-semibold tabular-nums ${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>

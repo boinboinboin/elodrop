@@ -4,6 +4,7 @@
 import type { Metadata } from "next";
 import { ArrowRight } from "@/components/SVG";
 import FollowingCard from "@/components/account/FollowingCard";
+import SignUpCard from "@/components/account/SignUpCard";
 import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
 import { ClubsGlimpse, EliteserienGlimpse, HeadToHeadGlimpse, RankingsGlimpse, TournamentsGlimpse, UpsetsGlimpse } from "@/components/home/Glimpses";
 import HomeCard from "@/components/home/HomeCard";
@@ -90,6 +91,9 @@ export default async function Home() {
             </HomeCard>
           ))}
         </div>
+        {/* For a signed-out visitor: what an account gives you. Last on the page, since it appears only once the
+            browser knows, and so moves nothing in view (the signed-in's Following card is at the top) */}
+        <SignUpCard />
       </Section>
     </>
   );

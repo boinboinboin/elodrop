@@ -220,7 +220,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                             );
                           })}
                           <td className="py-2 px-4 text-right tabular-nums whitespace-nowrap">
-                            <Link href={teamMatchHref(tie.matchId)} className="underline hover:text-blue-600">{tie.score[0]}–{tie.score[1]}</Link>
+                            <Link href={teamMatchHref(tie.matchId)} className="link-underlined hover:text-blue-600">{tie.score[0]}–{tie.score[1]}</Link>
                             {!tie.playoff && (
                               <span className="text-sm text-gray-500" title={t("eliteserien.review.ties.tablePoints")}>
                                 {" "}
@@ -270,7 +270,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
                   {list.map((p: Loose) => (
                     <tr key={p.id} className={ROW}>
                       <td className="py-2 pr-4">
-                        <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>
+                        <Link href={playerHref(p.id)} className="link hover:text-blue-600">{p.name}</Link>
                         {/* A little room between the player's link and the club's, to tap either */}
                         <span className="block mt-0.5 text-sm text-gray-600"><Team name={p.team} clubs={clubs} size={4} /></span>
                       </td>
@@ -292,7 +292,7 @@ async function Content({ params }: Pick<PageProps<"/[lang]/eliteserien/[season]"
           <ul className="text-gray-700 list-disc pl-6">
             {data.changes.map((c: Loose) => (
               <li key={c.id}>
-                <Link href={playerHref(c.id)} className="hover:text-blue-600">{c.name}</Link>, <Team name={c.team} clubs={clubs} size={4} />: {c.change}
+                <Link href={playerHref(c.id)} className="link hover:text-blue-600">{c.name}</Link>, <Team name={c.team} clubs={clubs} size={4} />: {c.change}
               </li>
             ))}
           </ul>

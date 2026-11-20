@@ -50,7 +50,7 @@ async function Row({ tournament: tour }: { tournament: TournamentSummary }) {
   return (
     <li className="bg-white p-4 md:p-5 flex flex-wrap items-baseline justify-between gap-3">
       <div>
-        <Link href={tournamentHref(tour.cup2000Id)} className="text-xl hover:text-blue-600">{tour.name}</Link>
+        <Link href={tournamentHref(tour.cup2000Id)} className="link text-xl hover:text-blue-600">{tour.name}</Link>
         {tour.cancelled && (
           <span title={reason ?? undefined}>
             <Badge tone="red" className="ml-2 align-[0.18em]">{t("tournaments.list.notPlayed")}</Badge>

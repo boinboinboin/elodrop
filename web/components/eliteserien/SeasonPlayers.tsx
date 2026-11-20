@@ -24,7 +24,7 @@ export default async function SeasonPlayers({ forecast, clubs }: { forecast: Eli
     list.map((p, i) => (
       <span key={p.id}>
         {i > 0 && " / "}
-        <Link href={playerHref(p.id, pool)} className="hover:text-blue-600">{p.name}</Link>
+        <Link href={playerHref(p.id, pool)} className="link hover:text-blue-600">{p.name}</Link>
       </span>
     ));
   return (
@@ -47,7 +47,7 @@ export default async function SeasonPlayers({ forecast, clubs }: { forecast: Eli
                 {list.map((p) => (
                   <tr key={p.id} className={ROW}>
                     <td className="py-2 pr-4">
-                      <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link>
+                      <Link href={playerHref(p.id)} className="link hover:text-blue-600">{p.name}</Link>
                       <span className="block mt-0.5 text-sm text-gray-600"><Team name={p.team} clubs={clubs} size={4} /></span>
                     </td>
                     <td className="py-2 pr-4 text-right tabular-nums">{t("eliteserien.review.players.wonOf", { won: p.won, games: p.games })}</td>
@@ -73,7 +73,7 @@ export default async function SeasonPlayers({ forecast, clubs }: { forecast: Eli
                     <span className="font-mono text-xs text-gray-600 mr-2">{poolCodes[pool]}</span>
                     {names(u.winners, pool)} <span className="text-gray-500">{t("eliteserien.players.against")}</span> {names(u.losers, pool)}
                     <span className="block text-sm text-gray-600">
-                      <Link href={teamMatchHref(u.matchId)} className="hover:text-blue-600">{u.team} – {u.opponent}</Link> · {date(u.day, "dayMonth")} · <span className="tabular-nums">{u.score.replaceAll("/", "–").replaceAll(",", ", ")}</span>
+                      <Link href={teamMatchHref(u.matchId)} className="link hover:text-blue-600">{u.team} – {u.opponent}</Link> · {date(u.day, "dayMonth")} · <span className="tabular-nums">{u.score.replaceAll("/", "–").replaceAll(",", ", ")}</span>
                     </span>
                   </span>
                   <span className="tabular-nums font-semibold">{t("eliteserien.players.upsetChance", { chance: chance(u.chance) })}</span>

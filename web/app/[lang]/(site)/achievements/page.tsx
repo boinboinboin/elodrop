@@ -151,7 +151,7 @@ async function BadgeCard({ badge, stats, links }: { badge: Badge; stats: Achieve
             <ul className="space-y-1 mt-2">
               {latest.map((a) => (
                 <li key={a.id}>
-                  <Link href={playerHref(a.id)} className="hover:text-blue-600">{a.name}</Link>
+                  <Link href={playerHref(a.id)} className="link hover:text-blue-600">{a.name}</Link>
                   {a.club && <span className="text-sm text-gray-600"> · {a.club}</span>}
                   <span className="block text-sm text-gray-600">
                     <AwardLine award={a} links={links} as="span" />

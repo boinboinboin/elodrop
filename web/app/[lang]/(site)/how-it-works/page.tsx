@@ -109,9 +109,9 @@ export default async function HowItWorksPage() {
               <ol className="grid gap-2">
                 {PARTS.map((key, i) => (
                   <li key={key}>
-                    <a href={`#${key}`} className="flex items-baseline gap-3 text-gray-700 hover:text-black">
+                    <a href={`#${key}`} className="link-host flex items-baseline gap-3 text-gray-700 hover:text-black">
                       <span className="font-mono text-xs" style={{ color: color(key) }}>{String(i + 1).padStart(2, "0")}</span>
-                      {t(`howItWorks.${key}.title`)}
+                      <span className="link-group">{t(`howItWorks.${key}.title`)}</span>
                     </a>
                   </li>
                 ))}

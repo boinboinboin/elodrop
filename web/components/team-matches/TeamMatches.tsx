@@ -160,7 +160,7 @@ async function Content({ period: periodPromise, junior }: { period: Promise<stri
             heading: (
               <h3 className="sticky top-(--header-offset) z-10 transition-[top] duration-200 -mx-4 px-4 py-2 mb-2 bg-stone-100 border-b border-gray-300 text-xl">
                 {ties[0].divisionSlug ? (
-                  <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="inline-flex items-center gap-1 hover:text-blue-600">
+                  <Link href={teamDivisionHref(ties[0].season, ties[0].divisionSlug)} className="link inline-flex items-center gap-1 hover:text-blue-600">
                     {name} <ArrowRight className="text-base" />
                   </Link>
                 ) : (
@@ -197,10 +197,11 @@ async function Divisions({ season, divisions }: { season: number; divisions: Tea
             <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {list.map((d) => (
                 <li key={d.slug}>
-                  <Link href={teamDivisionHref(season, d.slug)} className="group bg-white p-3 sm:px-4 flex items-center justify-between gap-4 h-full transition-colors duration-200 hover:bg-gray-50">
+                  <Link href={teamDivisionHref(season, d.slug)} className="group link-host bg-white p-3 sm:px-4 flex items-center justify-between gap-4 h-full transition-colors duration-200 hover:bg-gray-50">
                     <span className="min-w-0">
+                      {/* The line under the division's name only, not its age group's tag */}
                       <span className="block group-hover:text-blue-600">
-                        {d.division}
+                        <span className="link-group">{d.division}</span>
                         {d.ageGroup !== "SEN" && <span className="ml-2 align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{d.ageGroup}</span>}
                       </span>
                       <span className="block text-sm text-gray-600">

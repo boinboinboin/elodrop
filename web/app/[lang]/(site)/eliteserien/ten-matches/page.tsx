@@ -152,9 +152,9 @@ async function Content() {
                           {team.rank.ten !== team.rank.eight && <span className="block text-sm text-gray-500">({team.rank.eight})</span>}
                         </td>
                         <td className="py-3 px-4">
-                          <a href={`#${teamId(team.team)}`} className="flex items-center gap-2 hover:text-blue-600">
+                          <a href={`#${teamId(team.team)}`} className="link-host flex items-center gap-2 hover:text-blue-600">
                             {clubs[team.team]?.logo && <LogoImage src={clubs[team.team].logo!} size={6} invert={clubs[team.team].logoInvert} className="w-6 h-6" />}
-                            {team.team}
+                            <span className="link-group">{team.team}</span>
                           </a>
                         </td>
                         <td className="py-3 px-4 text-right tabular-nums whitespace-nowrap">
@@ -270,7 +270,7 @@ async function Content() {
                                   const p = players.get(String(key));
                                   return (
                                     <span key={String(key)}>
-                                      {p?.id ? <Link href={playerHref(p.id, SLOT_POOLS[s.type])} className="hover:text-blue-600">{p.name}</Link> : p?.name}
+                                      {p?.id ? <Link href={playerHref(p.id, SLOT_POOLS[s.type])} className="link hover:text-blue-600">{p.name}</Link> : p?.name}
                                       {i < l.players.length - 1 && <span className="text-gray-500"> + </span>}
                                     </span>
                                   );
@@ -300,7 +300,7 @@ async function Content() {
                           {changed.map((p) => (
                             <tr key={String(p.id ?? p.name)} className={`${ROW} align-top`}>
                               <td className="py-2 pr-4">
-                                {p.id ? <Link href={playerHref(p.id)} className="hover:text-blue-600">{p.name}</Link> : p.name}
+                                {p.id ? <Link href={playerHref(p.id)} className="link hover:text-blue-600">{p.name}</Link> : p.name}
                                 {/* Under the name on phones, beside it from sm up */}
                                 {p.added && <span className="block w-fit mt-1 sm:inline sm:mt-0 sm:ml-1 sm:align-[0.07em] font-mono text-xs px-1.5 py-0.5 border border-gray-400 rounded text-gray-700 whitespace-nowrap">{t("eliteserien.tenMatches.team.added")}</span>}
                               </td>

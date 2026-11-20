@@ -72,7 +72,7 @@ export default function MeSettings() {
           <p>{rich("account.me.current", { link: (text) => <Link href={playerHref(playerId)} className={TEXT_LINK}>{text}</Link> }, { name: name ?? "…" })}</p>
           {asking !== "clear" && (
             // Clearing is free once the lock is over; during it, it leaves no one until it ends, so it's asked first
-            <button type="button" disabled={busy} onClick={() => (locked ? setAsking("clear") : void claim(null))} className="underline hover:text-blue-600 disabled:opacity-50">
+            <button type="button" disabled={busy} onClick={() => (locked ? setAsking("clear") : void claim(null))} className="link-underlined hover:text-blue-600 disabled:opacity-50">
               {t("account.me.clear")}
             </button>
           )}

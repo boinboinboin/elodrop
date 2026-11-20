@@ -5,6 +5,8 @@
   "manifestDescription": "Elo-ratinger for norsk badminton",
   "nav": {
     "label": "Hovedmeny",
+    "players": "Spillere",
+    "teams": "Lag",
     "rankings": "Rangeringer",
     "clubs": "Klubber",
     "eliteserien": "Eliteserien",

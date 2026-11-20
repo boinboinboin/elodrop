@@ -7,11 +7,11 @@
 // under its heading, which sticks to the list's top while its options scroll by; each group's options
 // With `onSelect` the options are buttons picking a value on the
 // page instead (a team to show), and close the list.
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef } from "react";
 import { CaretDown, Check } from "@/components/SVG";
 import Link from "@/components/ui/Link";
-import { BUTTON } from "@/components/ui/styles";
+import { BUTTON, dropdownItem, dropdownPanel } from "@/components/ui/styles";
+import { useDropdown } from "@/components/ui/useDropdown";
 
 export interface LinkOption {
   key: string;
@@ -36,34 +36,11 @@ export default function LinkSelect({
   onSelect?: (key: string) => void;
   className?: string;
 }) {
-  const [open, setOpen] = useState(false);
-  const [openedAt, setOpenedAt] = useState<string | null>(null);
-  const pathname = usePathname();
   const id = useId();
-  const root = useRef<HTMLDivElement>(null);
-  const button = useRef<HTMLButtonElement>(null);
   const list = useRef<HTMLUListElement>(null);
-  // Closed once the page changes (adjusted while rendering, not in an effect)
-  if (open && openedAt !== pathname) setOpen(false);
+  // Opened: the current option in view, for a long list
+  const { open, root, button, toggle, close } = useDropdown(() => list.current?.querySelector<HTMLElement>("[aria-current]")?.scrollIntoView({ block: "nearest" }));
   const selected = options.find((o) => o.key === current);
-
-  useEffect(() => {
-    if (!open) return;
-    // The current option in view, for a long list
-    list.current?.querySelector<HTMLElement>("[aria-current]")?.scrollIntoView({ block: "nearest" });
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setOpen(false);
-      button.current?.focus();
-    };
-    const onPointer = (e: PointerEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("pointerdown", onPointer);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open]);
 
   // The options in runs of the same group (ungrouped ones too), in their order
   const groups = options.reduce<{ group?: string; options: LinkOption[] }[]>((runs, o) => {
@@ -74,10 +51,10 @@ export default function LinkSelect({
   }, []);
   // An option; under a heading, scrolled into view below it (the heading's height)
   const item = (o: LinkOption, grouped: boolean) => {
-    const className = `w-full flex items-center justify-between gap-4 px-4 py-2 text-left whitespace-nowrap transition-colors duration-200 hover:bg-gray-50 cursor-pointer ${grouped ? "scroll-mt-9" : ""} ${o.key === current ? "font-semibold" : "text-gray-700 hover:text-black"}`;
+    const className = `${dropdownItem(o.key === current)} ${grouped ? "scroll-mt-9" : ""}`;
     const content = (
       <>
-        {o.label}
+        <span className="link-group">{o.label}</span>
         {o.key === current && <Check className="w-4 h-4" />}
       </>
     );
@@ -88,7 +65,7 @@ export default function LinkSelect({
             type="button"
             onClick={() => {
               onSelect(o.key);
-              setOpen(false);
+              close();
               button.current?.focus();
             }}
             className={className}
@@ -97,7 +74,7 @@ export default function LinkSelect({
             {content}
           </button>
         ) : (
-          <Link href={o.href ?? ""} scroll={false} onClick={() => setOpen(false)} className={className} aria-current={o.key === current ? "page" : undefined}>
+          <Link href={o.href ?? ""} scroll={false} onClick={close} className={className} aria-current={o.key === current ? "page" : undefined}>
             {content}
           </Link>
         )}
@@ -111,10 +88,7 @@ export default function LinkSelect({
       <button
         ref={button}
         type="button"
-        onClick={() => {
-          setOpen(!open);
-          setOpenedAt(pathname);
-        }}
+        onClick={toggle}
         className={`w-full flex items-center justify-between gap-3 px-4 py-2 text-left ${BUTTON}`}
         aria-expanded={open}
         aria-controls={id}
@@ -126,7 +100,7 @@ export default function LinkSelect({
       <div
         id={id}
         inert={!open}
-        className={`absolute left-0 top-[calc(100%+0.25rem)] z-30 min-w-full bg-white border border-gray-200 shadow-sm transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`}
+        className={`absolute left-0 top-[calc(100%+0.25rem)] z-30 min-w-full ${dropdownPanel(open)}`}
       >
         {/* (No top padding with groups: a group's heading sticks to the very top, not below the padding) */}
         <ul ref={list} className={`max-h-80 overflow-y-auto ${groups.some((g) => g.group) ? "pb-1" : "py-1"}`} aria-labelledby={`${id}-label`}>

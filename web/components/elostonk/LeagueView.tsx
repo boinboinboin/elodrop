@@ -115,7 +115,7 @@ export default function LeagueView({
   return (
     <div className="grid grid-cols-1 gap-6">
       <div>
-        <button type="button" onClick={onBack} className="inline-flex items-center gap-1 text-sm underline hover:text-blue-600 mb-3">
+        <button type="button" onClick={onBack} className="inline-flex items-center gap-1 text-sm link-underlined hover:text-blue-600 mb-3">
           <ArrowLeft /> {t("elostonk.leagues.back")}
         </button>
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -186,10 +186,10 @@ export default function LeagueView({
           {hidden > 0 && <span className="text-gray-600"> {plural("elostonk.leagues.hidden", hidden)}</span>}
         </p>
         <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-          <button type="button" onClick={onShare} className="underline hover:text-blue-600">{t(copied ? "elostonk.leagues.copied" : "elostonk.leagues.invite")}</button>
+          <button type="button" onClick={onShare} className="link-underlined hover:text-blue-600">{t(copied ? "elostonk.leagues.copied" : "elostonk.leagues.invite")}</button>
           <span className="text-gray-600">{t("elostonk.leagues.code", { code: league.invite_code })}</span>
-          {owned && <button type="button" onClick={onRenew} className="underline hover:text-blue-600">{t("elostonk.leagues.renew")}</button>}
-          <button type="button" onClick={onLeave} className="underline hover:text-blue-600">{t("elostonk.leagues.leave")}</button>
+          {owned && <button type="button" onClick={onRenew} className="link-underlined hover:text-blue-600">{t("elostonk.leagues.renew")}</button>}
+          <button type="button" onClick={onLeave} className="link-underlined hover:text-blue-600">{t("elostonk.leagues.leave")}</button>
         </div>
       </Card>
     </div>

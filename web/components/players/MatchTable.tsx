@@ -136,7 +136,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                       </span>
                     )}
                     {href ? (
-                      <Link href={href} className="match-event underline">{m.event}</Link>
+                      <Link href={href} className="match-event link-underlined">{m.event}</Link>
                     ) : (
                       <span className="match-event">{m.event}</span>
                     )}

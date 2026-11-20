@@ -22,7 +22,7 @@ export default async function Release({ release, color }: { release: ReleaseData
       {/* A coloured top edge on new features and the launch, a plain line on the rest */}
       <div aria-hidden="true" className="h-1 -mx-4 sm:-mx-5 md:-mx-6 mb-4 md:mb-5" style={{ background: feature || launch ? color : "var(--color-gray-200)" }} />
       <header className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
-        <a href={`#${releaseId(release)}`} className="font-mono text-sm text-gray-600 hover:text-black">v{release.version}</a>
+        <a href={`#${releaseId(release)}`} className="link font-mono text-sm text-gray-600 hover:text-black">v{release.version}</a>
         {launch ? (
           <Badge className="border-black! text-black!">{t("whatsNew.launch")}</Badge>
         ) : (

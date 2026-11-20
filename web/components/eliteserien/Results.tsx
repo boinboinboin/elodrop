@@ -25,7 +25,7 @@ export default async function Results({ forecast, clubs }: { forecast: Eliteseri
               const note = before && (tie.winner === 0 ? t("eliteserien.results.drawBefore", { chance: chance(before.draw) }) : t("eliteserien.results.chanceBefore", { team: tie.winner === 1 ? tie.home : tie.away, chance: chance(tie.winner === 1 ? before.win : before.loss) }));
               return (
                 <li key={tie.matchId}>
-                  <Link href={teamMatchHref(tie.matchId)} className="group bg-white p-3 sm:px-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 h-full transition-colors duration-200 hover:bg-gray-50">
+                  <Link href={teamMatchHref(tie.matchId)} className="group link-host bg-white p-3 sm:px-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 h-full transition-colors duration-200 hover:bg-gray-50">
                     <span className="min-w-0">
                       <Team name={tie.home} clubs={clubs} size={5} linked={false} className={tie.winner === 1 ? "font-semibold" : ""} />
                       <span className="text-gray-500 mx-1">–</span>
@@ -35,7 +35,7 @@ export default async function Results({ forecast, clubs }: { forecast: Eliteseri
                       </span>
                       {tie.upset && <span className="block mt-1"><Badge>{t("eliteserien.results.upset")}</Badge></span>}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-xl font-semibold tabular-nums group-hover:text-blue-600">
+                    <span className="link-group inline-flex items-center gap-1 text-xl font-semibold tabular-nums group-hover:text-blue-600">
                       {tie.score[0]}–{tie.score[1]} <ArrowRight />
                     </span>
                   </Link>

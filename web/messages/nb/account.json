@@ -1,14 +1,33 @@
 {
   "metadata": {
     "title": "Din konto",
-    "description": "Logg inn for å følge spillere og klubber, markere deg selv og turneringene du spiller, og stemme på hva Elodrop gjør videre."
+    "description": "Logg inn for din egen oversikt, varsler når du er med i en trekning, spillere og klubber å følge, EloStonk og en stemme om hva Elodrop gjør videre."
   },
   "button": {
     "signIn": "Logg inn",
     "account": "Din konto ({nickname})"
   },
+  "benefits": {
+    "title": "Dette får du",
+    "overview": { "title": "Din egen oversikt", "text": "Velg hvilken spiller som er deg, og se neste turnering så snart trekningen er ute (puljen din, sjansene dine, trekningsflaksen), de siste ukene, hver sesong oppsummert, karrieren din og hvor du står." },
+    "notifications": { "title": "Varsel om trekninger", "text": "Et varsel på mobilen når en ny trekning har deg med." },
+    "follow": { "title": "Følg spillere og klubber", "text": "Ratingene deres og ukens endring på forsiden." },
+    "elostonk": { "title": "EloStonk (beta)", "text": "Velg en tropp på 5, gjør én til kaptein, og spill i ligaer med vennene dine." },
+    "ideas": { "title": "Ideer", "text": "Stem på hva Elodrop gjør videre, og foreslå dine egne." },
+    "mistakes": { "title": "Rett feil om deg", "text": "Meld fra om feil klubb, en kamp som ikke er din eller en turnering som mangler, fra din egen spillerside." },
+    "terms": "Gratis, og uten passord: vi sender deg en kode på e-post. Alle sidene er fortsatt åpne for alle, og du kan slette kontoen når som helst (<link>personvern</link>)."
+  },
+  "prompts": {
+    "card": {
+      "title": "Gjør Elodrop til ditt",
+      "description": "En gratis konto gir deg ting bare for deg.",
+      "link": "Logg inn eller lag en konto"
+    },
+    "player": "Er dette deg? <link>Logg inn</link> for din egen oversikt og et varsel når du er med i en trekning.",
+    "draw": "<link>Logg inn</link> for å få et varsel på mobilen når du er med i en trekning."
+  },
   "signIn": {
-    "intro": "Med en konto kan du følge spillere og klubber, markere hvilken spiller som er deg, ha turneringene dine i kalenderen og stemme på hva som kommer. Rankingene og alle sidene er fortsatt åpne for alle.",
+    "intro": "Gratis, og alle sidene er fortsatt åpne for alle. En konto gir deg ting bare for deg.",
     "email": "E-post",
     "sendCode": "Send meg en kode",
     "sending": "Sender …",

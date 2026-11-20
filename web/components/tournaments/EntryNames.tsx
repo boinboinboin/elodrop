@@ -46,7 +46,7 @@ export default async function EntryNames({
                 </span>
               )}
               <span className="min-w-0">
-                {p.id ? <Link href={playerHref(p.id, pool)} className="hover:text-blue-600">{p.name}</Link> : p.name}
+                {p.id ? <Link href={playerHref(p.id, pool)} className="link hover:text-blue-600">{p.name}</Link> : p.name}
                 <span className={`ml-1.5 text-sm text-gray-500 tabular-nums whitespace-nowrap ${ratingBelow ? "max-sm:hidden" : ""}`} title={rating.title}>
                   {rating.text}
                   {changed}

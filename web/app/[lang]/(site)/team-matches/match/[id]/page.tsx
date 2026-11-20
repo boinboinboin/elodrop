@@ -276,5 +276,5 @@ async function HeadToHead({ g }: { g: TeamMatchGame }) {
       : a.length === 2 && b.length === 2 && new Set([...a, ...b]).size === 4
         ? doublesHeadToHeadHref(a, b, g.pool ?? undefined)
         : null;
-  return href && <Link href={href} className="text-xs text-gray-600 underline hover:text-blue-600 whitespace-nowrap">{t("teamMatches.match.headToHead")}</Link>;
+  return href && <Link href={href} className="text-xs text-gray-600 link-underlined hover:text-blue-600 whitespace-nowrap">{t("teamMatches.match.headToHead")}</Link>;
 }

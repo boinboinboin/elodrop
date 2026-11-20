@@ -5,6 +5,8 @@
   "manifestDescription": "Elo ratings for Norwegian badminton",
   "nav": {
     "label": "Main",
+    "players": "Players",
+    "teams": "Teams",
     "rankings": "Rankings",
     "clubs": "Clubs",
     "eliteserien": "Eliteserien",

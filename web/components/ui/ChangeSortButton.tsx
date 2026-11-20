@@ -18,7 +18,7 @@ export default function ChangeSortButton({ order, onClick }: { order: ChangeOrde
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1 cursor-pointer hover:text-black ${order ? "text-black" : ""}`}
+      className={`link inline-flex items-center gap-1 cursor-pointer hover:text-black ${order ? "text-black" : ""}`}
       title={t(order === null ? "common.changeSort.gain" : order === "gain" ? "common.changeSort.loss" : "common.backToRankOrder")}
     >
       <span aria-hidden="true">{order === "gain" ? "+" : order === "loss" ? "−" : "±"}</span>

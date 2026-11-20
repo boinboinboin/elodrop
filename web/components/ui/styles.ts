@@ -9,9 +9,16 @@ export const toggleClass = (active: boolean, size: "md" | "sm" = "md") =>
 /** A square icon button (carousel arrows) */
 export const ICON_BUTTON = `inline-flex items-center justify-center w-10 h-10 ${BUTTON} disabled:opacity-30 disabled:cursor-default disabled:hover:bg-transparent disabled:hover:text-inherit`;
 
-/** An underlined link in running text */
-export const TEXT_LINK = "underline hover:text-blue-600";
+/** A dropdown's box under its button (LinkSelect, the header's NavGroup), shown while open; placed by its caller */
+export const dropdownPanel = (open: boolean) =>
+  `bg-white border border-gray-200 shadow-sm transition-[opacity,translate] duration-200 ${open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"}`;
 
+/** A link or button in a dropdown's list, the current one bold (with a check beside it); its label in a `link-group` span */
+export const dropdownItem = (current: boolean) =>
+  `link-host w-full flex items-center justify-between gap-4 px-4 py-2 text-left whitespace-nowrap transition-colors duration-200 hover:bg-gray-50 cursor-pointer ${current ? "font-semibold" : "text-gray-700 hover:text-black"}`;
+
+/** An underlined link in running text: a faint line, the full one growing over it on hover (globals.css link-underlined) */
+export const TEXT_LINK = "link-underlined hover:text-blue-600";
 /**
  * A table header that stays at the top of the page while its table scrolls past, below the sticky header
  * (--header-offset: components/layout/SiteHeader.tsx), sliding up with it when it goes away on phones

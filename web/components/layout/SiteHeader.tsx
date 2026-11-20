@@ -102,7 +102,8 @@ export default function SiteHeader({ logo, nav, search, menu }: { logo: ReactNod
         >
           {search}
         </div>
-        <div className="ml-auto md:ml-0 flex gap-2">
+        {/* From md 8px from the search, as the buttons are from each other (the header's gap less 16px) */}
+        <div className="ml-auto md:-ml-4 flex gap-2">
           <InstallApp icon />
           <button
             ref={toggle}

@@ -94,7 +94,7 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                 return (
                   <tr key={w.week} className={`${ROW} align-top ${w.week === current.week ? "bg-gray-50" : ""}`}>
                     <td className="py-2 pl-2 pr-1 sm:px-4 whitespace-nowrap">{/* The ISO week number, "Week 41" (W41 on phones), the week's days on hover */}
-                      <Link href={upsetsHref(w.week)} className="hover:text-blue-600 tabular-nums" title={dateRange(w.week, addDays(w.week, 6))}>
+                      <Link href={upsetsHref(w.week)} className="link hover:text-blue-600 tabular-nums" title={dateRange(w.week, addDays(w.week, 6))}>
                         <span className="sm:hidden">{t("upsets.table.weekShort", { week: getISOWeek(parseISO(w.week)) })}</span>
                         <span className="max-sm:hidden">{t("upsets.table.weekNumber", { week: getISOWeek(parseISO(w.week)) })}</span>
                       </Link></td>

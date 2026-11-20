@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import LogoImage from "@/components/clubs/LogoImage";
 import { ArrowRight } from "@/components/SVG";
 import FollowButton from "@/components/account/FollowButton";
+import SignInPrompt from "@/components/account/SignInPrompt";
 import ReportMistake from "@/components/account/ReportMistake";
 import YouBadge from "@/components/account/YouBadge";
 import LineChart, { type ChartSeries } from "@/components/charts/LineChart";
@@ -122,7 +123,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           {player.club ? (
             <p className="flex items-center gap-3 text-2xl text-gray-700 min-w-0">
               {club?.logo && <LogoImage src={club.logo} size={10} invert={club.logoInvert} className="w-10 h-10" />}
-              {club ? <Link href={clubHref(club.slug)} className="hover:text-blue-600">{player.club}</Link> : player.club}
+              {club ? <Link href={clubHref(club.slug)} className="link hover:text-blue-600">{player.club}</Link> : player.club}
             </p>
           ) : (
             <span />
@@ -134,6 +135,8 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
         </div>
         <Achievements player={player} badges={badges} links={links} />
         {player.birthYear && <p className="text-gray-600 mt-2">{t("players.born", { year: player.birthYear })}</p>}
+        {/* Only for a signed-out visitor, in the browser */}
+        <SignInPrompt message="account.prompts.player" className="mt-2" />
         <p className="mt-4">
           <Link href={headToHeadHref(player.id)} className={TEXT_LINK}>{t("players.compare")} <ArrowRight /></Link>
         </p>
@@ -217,7 +220,7 @@ async function RivalList({ player, rivals, subtitle }: { player: Player; rivals:
     <>
       <p className="text-sm text-gray-600 mb-4">{subtitle}</p>
       <p className="text-2xl">
-        <Link href={playerHref(rival.opponent.id, mostMet(rival))} className="hover:text-blue-600">{rival.opponent.name}</Link>
+        <Link href={playerHref(rival.opponent.id, mostMet(rival))} className="link hover:text-blue-600">{rival.opponent.name}</Link>
         {rival.opponent.club && <span className="text-base text-gray-600"> · {rival.opponent.club}</span>}
       </p>
       <p className="text-gray-700 mt-1">
@@ -240,7 +243,7 @@ async function RivalList({ player, rivals, subtitle }: { player: Player; rivals:
           <ul className="mt-1">
             {others.map((r) => (
               <li key={r.opponent.id}>
-                <Link href={playerHref(r.opponent.id, mostMet(r))} className="hover:text-blue-600">{r.opponent.name}</Link>{" "}
+                <Link href={playerHref(r.opponent.id, mostMet(r))} className="link hover:text-blue-600">{r.opponent.name}</Link>{" "}
                 <span className="text-sm text-gray-600">
                   {r.opponent.club && `${r.opponent.club} · `}
                   {rich(
@@ -380,7 +383,7 @@ async function Discipline({ pool, p, player, links, first }: { pool: Pool; p: Pl
         </StatCard>
         {p.rank ? (
           <StatCard label={t("players.discipline.rank")} detail={mixed && t(p.gender === "K" ? "players.discipline.amongWomen" : "players.discipline.amongMen")}>
-            <Link href={rankingHref(pool, mixed ? p.gender : null)} className="hover:text-blue-600">{t("common.rankValue", { rank: p.rank })}</Link>
+            <Link href={rankingHref(pool, mixed ? p.gender : null)} className="link hover:text-blue-600">{t("common.rankValue", { rank: p.rank })}</Link>
           </StatCard>
         ) : (
           <div className="bg-white p-4">

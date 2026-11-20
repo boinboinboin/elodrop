@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.6 (2026-11-20)
+
+- The sign-in page lists what an account gives you: your own overview, draw notifications, following players and clubs, EloStonk, ideas and reporting mistakes about yourself. It also says it's free, needs no password and can be deleted at any time. (It no longer promises a tournament calendar, which there isn't.)
+- Signed out, you're shown what an account is for in a few more places: a card at the bottom of the front page, "Is this you?" on player pages, draw notifications on tournaments still to be played, and "Sign in" written out on the header's account button (on screens wider than a phone).
+- The header's links are grouped, to make room: Players (rankings, head to head, upsets) and Teams (clubs, Eliteserien, team matches) open a list of their pages, beside Tournaments and EloStonk. The menu lists them under the same headings. The search and the header's buttons are evenly spaced.
+- Links all over the site behave the same on hover: a line grows under them from left to right. The same goes for what opens or switches something (the header's groups, questions that open, sort buttons, rounds that unfold). On a name with a logo or a tag beside it ("Beta"), the line goes under the name only. Links in running text stay faintly underlined so they're seen as links, with the full line growing over it.
+
 ## v1.37.5 (2026-11-20)
 
 - EloStonk leagues: click a league to open it. It shows every member's squad in the round that last locked (from Friday 14:00 the new round's, before it last week's), ranked by its points, then the league's tables, its most picked players, its members and the invite link. The back button takes you back to your leagues.

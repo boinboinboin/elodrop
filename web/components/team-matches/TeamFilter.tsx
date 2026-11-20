@@ -104,7 +104,7 @@ function UrlTeamButton({ team, children }: { team: string; children: ReactNode }
         const top = list?.getBoundingClientRect().top;
         if (list && top !== undefined && (top < 0 || top > window.innerHeight * 0.75)) list.scrollIntoView({ behavior: "smooth", block: "start" });
       }}
-      className="text-left cursor-pointer transition-colors hover:text-blue-600"
+      className="link text-left cursor-pointer hover:text-blue-600"
     >
       {children}
     </button>

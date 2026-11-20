@@ -159,7 +159,7 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
               {id ? (
                 <>
                   <div className="flex-1 min-w-0">
-                    <Link href={playerHref(id)} target="_blank" className={`font-semibold hover:text-blue-600 break-words ${bad ? "text-red-700" : ""}`}>{nameOf(id)}</Link>
+                    <Link href={playerHref(id)} target="_blank" className={`link font-semibold hover:text-blue-600 break-words ${bad ? "text-red-700" : ""}`}>{nameOf(id)}</Link>
                     <span className={`block text-sm truncate ${bad || crowded ? "text-red-700" : "text-gray-600"}`}>{bad ? t("elostonk.squad.gone") : p?.club}</span>
                   </div>
                   {p && (

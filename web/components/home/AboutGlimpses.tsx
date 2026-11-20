@@ -53,7 +53,7 @@ export async function WhatsNewGlimpse() {
           return (
             <li key={r.version} className={`${ROW} py-2`}>
               <span className="flex items-center gap-2 text-sm text-gray-600">
-                <Link href={`/whats-new#${releaseId(r)}`} className="font-mono hover:text-black">v{r.version}</Link>
+                <Link href={`/whats-new#${releaseId(r)}`} className="link font-mono hover:text-black">v{r.version}</Link>
                 <KindBadge feature={isFeature(r)} />
                 <time dateTime={r.date} className="ml-auto">{date(r.date)}</time>
               </span>

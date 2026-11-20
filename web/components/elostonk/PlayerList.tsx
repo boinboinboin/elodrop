@@ -18,7 +18,7 @@ export default function PlayerList({ title, help, rows }: { title: string; help?
           {rows.map((r) => (
             <li key={r.id} className={`${ROW} flex justify-between gap-3 py-1.5`}>
               <span className="min-w-0">
-                <Link href={playerHref(r.id)} className="font-semibold hover:text-blue-600 break-words">{r.name}</Link>
+                <Link href={playerHref(r.id)} className="link font-semibold hover:text-blue-600 break-words">{r.name}</Link>
                 {r.detail && <span className="block text-sm text-gray-600">{r.detail}</span>}
               </span>
               <span className={`tabular-nums whitespace-nowrap ${r.tone === undefined ? "" : toneClass(r.tone)}`}>{r.value}</span>

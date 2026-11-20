@@ -45,7 +45,7 @@ export default function FollowingCard() {
                 <ul className="flex flex-wrap gap-x-4 gap-y-1">
                   {clubs.map((c) => (
                     <li key={c.slug}>
-                      <Link href={clubHref(c.slug)} className="hover:text-blue-600">{c.name}</Link>
+                      <Link href={clubHref(c.slug)} className="link hover:text-blue-600">{c.name}</Link>
                     </li>
                   ))}
                 </ul>

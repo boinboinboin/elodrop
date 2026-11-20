@@ -32,7 +32,7 @@ export default function FollowingSettings() {
           <ul>
             {clubs.map((c) => (
               <li key={c.slug} className="flex items-center justify-between gap-3 py-1 border-b border-gray-100 last:border-0">
-                <Link href={clubHref(c.slug)} className="font-semibold hover:text-blue-600 min-w-0">{c.name}</Link>
+                <Link href={clubHref(c.slug)} className="link font-semibold hover:text-blue-600 min-w-0">{c.name}</Link>
                 <UnfollowButton kind="club" target={c.slug} name={c.name} />
               </li>
             ))}

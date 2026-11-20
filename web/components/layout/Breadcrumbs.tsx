@@ -27,7 +27,7 @@ export default async function Breadcrumbs({ trail }: { trail: Crumb[] }) {
               <span aria-current="page" className="text-gray-900">{c.label}</span>
             ) : (
               <>
-                <Link href={c.href ?? "/"} className="hover:text-black">{c.label}</Link>
+                <Link href={c.href ?? "/"} className="link hover:text-black">{c.label}</Link>
                 <ChevronRight className="text-[0.8em] text-gray-400" />
               </>
             )}

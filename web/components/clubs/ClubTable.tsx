@@ -72,7 +72,7 @@ export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "
               <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
                 <span className="flex items-center gap-3">
                   {entry?.[1] && <LogoImage src={entry[1]} size={8} invert={entry[2]} className="w-8 h-8" />}
-                  {entry ? <Link href={clubHref(entry[0], tab)} className="hover:text-blue-600">{club}</Link> : club}
+                  {entry ? <Link href={clubHref(entry[0], tab)} className="link hover:text-blue-600">{club}</Link> : club}
                 </span>
               </td>
               <td className="py-3 pl-1.5 sm:pl-4 pr-1 sm:pr-1.5 text-right tabular-nums">{combined ? signed(value, 2, "") : value}</td>
@@ -83,7 +83,7 @@ export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "
                     {standing && (
                       <>
                         {standing[0]}
-                        <Link href={strongestClubsHref(POOL_KEYS[i])} className="block text-sm text-gray-600 hover:text-blue-600">{t("common.rankValue", { rank: standing[1] })}</Link>
+                        <Link href={strongestClubsHref(POOL_KEYS[i])} className="link block w-fit ml-auto text-sm text-gray-600 hover:text-blue-600">{t("common.rankValue", { rank: standing[1] })}</Link>
                       </>
                     )}
                   </td>
@@ -95,7 +95,7 @@ export default function ClubTable({ pool, pairs, rows, clubs }: { pool: Pool | "
                     <span key={i} className="block">
                       {slot.map(([id, name, rating], j) => (
                         <span key={id}>
-                          <Link href={playerHref(id, tab)} className="hover:text-blue-600">{name}</Link>{" "}
+                          <Link href={playerHref(id, tab)} className="link hover:text-blue-600">{name}</Link>{" "}
                           <span className="text-sm text-gray-500 tabular-nums">{rating}</span>
                           {j < slot.length - 1 && <span className="text-gray-500"> + </span>}
                         </span>

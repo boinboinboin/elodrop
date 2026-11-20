@@ -33,15 +33,17 @@ export const breakable = (name: string) =>
 
 export default function Team({ name, club, clubs, size = 6, stacked = false, linked = true, className = "", pool }: Props) {
   const entry = clubs[club ?? name];
+  const link = !!entry && linked;
   const inner = (
     <>
       {entry?.logo && <LogoImage src={entry.logo} size={size} invert={entry.logoInvert} />}
-      <span>{breakable(name)}</span>
+      {/* Linked, the line on hover goes under the name, not the logo */}
+      <span className={link ? "link-group" : undefined}>{breakable(name)}</span>
     </>
   );
   const classes = `inline-flex ${stacked ? "flex-col" : ""} items-center gap-1.5 align-middle ${className}`;
-  return entry && linked ? (
-    <Link href={clubHref(entry.slug, pool)} className={`${classes} hover:text-blue-600`}>
+  return link ? (
+    <Link href={clubHref(entry.slug, pool)} className={`link-host ${classes} hover:text-blue-600`}>
       {inner}
     </Link>
   ) : (

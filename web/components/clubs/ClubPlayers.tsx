@@ -106,7 +106,7 @@ function ClubPlayersView({ pool, rows, mixed, inactiveUrl, showInactive, onToggl
               setFailed(false);
               setAttempt(attempt + 1);
             }}
-            className="text-sm text-gray-600 underline cursor-pointer"
+            className="text-sm text-gray-600 link-underlined hover:text-blue-600 cursor-pointer"
           >
             {t("clubs.club.inactiveFailed")}
           </button>
@@ -135,7 +135,7 @@ function ClubPlayersView({ pool, rows, mixed, inactiveUrl, showInactive, onToggl
                   <tr key={id} className={`${ROW} hover:bg-gray-50 ${lastPlayed ? "text-gray-500" : ""}`}>
                     <td className="py-3 px-4 text-right text-gray-600 tabular-nums">{rank ?? EMPTY}</td>
                     <td className="py-3 px-4">
-                      <Link href={playerHref(id, pool)} className="hover:text-blue-600">{name}</Link>
+                      <Link href={playerHref(id, pool)} className="link hover:text-blue-600">{name}</Link>
                       {mixed && <span className="text-sm text-gray-600"> {t(gender === "K" ? "clubs.club.woman" : "clubs.club.man")}</span>}
                       {lastPlayed && <span className="block text-sm text-gray-500">{t("rankings.table.lastPlayed", { month: date(lastPlayed, "monthYear") })}</span>}
                     </td>

@@ -5,6 +5,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import SignInPrompt from "@/components/account/SignInPrompt";
 import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { MapPin } from "@/components/SVG";
@@ -146,6 +147,8 @@ export default async function TournamentPage({ params }: PageProps<"/[lang]/tour
           <ShareButtons path={tournamentHref(tour.cup2000Id)} image={`${tournamentHref(tour.cup2000Id)}/preview.png`} title={tour.name} kind="tournament" />
         </div>
         {tour.cancelled && <p className="mt-4 inline-block px-3 py-2 border border-red-700 text-red-700">{rich("tournaments.page.cancelled", { strong }, { reason: cancelledReason(i18n, tour.cancelled) })}</p>}
+        {/* Still to be played: draw notifications, for a signed-out visitor (in the browser) */}
+        {!tour.cancelled && tour.events.some((e) => !e.played) && <SignInPrompt message="account.prompts.draw" until={tour.endDate ?? tour.startDate} className="mt-4" />}
         {/* Two views: the event tables (default) and the tournament's summary */}
         <LinkTabs
           label={t("tournaments.page.views")}
@@ -211,7 +214,7 @@ async function Summary({ tour, clubs }: { tour: Tournament; clubs: Record<string
                         <span aria-hidden="true" className="w-5 shrink-0 text-right text-gray-500 tabular-nums">{i + 1}</span>
                         <div className="flex-1 min-w-0">
                           <EntryNames e={e} clubs={clubs} pool={tour.events[e.eventIndex]?.pool} />
-                          <Link href={eventHref(tour.cup2000Id, tour.events[e.eventIndex])} className="block text-sm text-gray-600 hover:text-blue-600">
+                          <Link href={eventHref(tour.cup2000Id, tour.events[e.eventIndex])} className="link block w-fit text-sm text-gray-600 hover:text-blue-600">
                             {e.eventLabel}{list.kind === "luck" && e.group ? ` · ${t("tournaments.summary.inGroup", { group: e.group })}` : ""}
                           </Link>
                         </div>

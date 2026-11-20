@@ -76,15 +76,15 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                   <td className="py-3 pl-2 sm:pl-4 pr-1.5 sm:pr-2 text-right text-gray-600 tabular-nums">{rank}</td>
                   <td className="py-3 pr-2 sm:pr-4 text-sm"><RankMovement rank={rank} previous={previous} /></td>
                   <td className="py-3 px-1.5 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                    <Link href={playerHref(id)} prefetch={false} className="hover:text-blue-600">{name}</Link>
+                    <Link href={playerHref(id)} prefetch={false} className="link hover:text-blue-600">{name}</Link>
                     <span className="block text-sm text-gray-600 sm:hidden">{club}</span>
                   </td>
                   <td className="py-3 px-4 text-gray-700 hidden sm:table-cell">
                     {club &&
                       (entry ? (
-                        <Link href={clubHref(entry[0])} prefetch={false} className="inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
+                        <Link href={clubHref(entry[0])} prefetch={false} className="link-host inline-flex items-center gap-1.5 align-middle hover:text-blue-600">
                           {entry[1] && <LogoImage src={entry[1]} size={5} invert={entry[2]} lazy className="w-5 h-5" />}
-                          <span>{club}</span>
+                          <span className="link-group">{club}</span>
                         </Link>
                       ) : (
                         club
@@ -98,12 +98,12 @@ export default function CombinedTable({ pools, rows, clubs, summary }: { pools: 
                       {/* The rating counted links to the player's page on that discipline */}
                       {entry ? (
                         entry[0] === null ? (
-                          <Link href={playerHref(id, pools[i])} prefetch={false} className="block text-gray-500 hover:text-blue-600" title={t("rankings.combined.inactiveTitle")}>
+                          <Link href={playerHref(id, pools[i])} prefetch={false} className="link inline-block text-gray-500 hover:text-blue-600" title={t("rankings.combined.inactiveTitle")}>
                             {entry[1]}
                             <span className="block text-sm">{t("rankings.combined.inactive")}</span>
                           </Link>
                         ) : (
-                          <Link href={playerHref(id, pools[i])} prefetch={false} className="block hover:text-blue-600">
+                          <Link href={playerHref(id, pools[i])} prefetch={false} className="link inline-block hover:text-blue-600">
                             {entry[1]}
                             <span className="block text-sm text-gray-600">{t("common.rankValue", { rank: entry[0] })}</span>
                           </Link>

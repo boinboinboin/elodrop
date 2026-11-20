@@ -4,59 +4,51 @@
 // screens too narrow for them in the header, below xl), the pages about the site, the colour theme and the language,
 // and installing the site as an app where it can be (InstallApp). On phones the menu is
 // a panel under the whole header; from md a dropdown under the button. It closes on a link (the next
-// page), a theme picked or Escape (focus back on the button), or a press outside it.
-import { usePathname } from "next/navigation";
-import { useEffect, useId, useRef, useState } from "react";
+// page), a theme picked or Escape (focus back on the button), or a press outside it. The header's groups of links
+// (NavGroup) are listed here under their headings.
+import { useId } from "react";
 import InstallApp from "@/components/layout/InstallApp";
 import LanguagePicker from "@/components/layout/LanguagePicker";
+import type { NavEntry, NavGroupEntry, NavLink } from "@/components/layout/NavGroup";
 import { usePublishedPages, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import ThemePicker from "@/components/layout/ThemePicker";
 import Badge from "@/components/ui/Badge";
 import Link from "@/components/ui/Link";
+import { useDropdown } from "@/components/ui/useDropdown";
 import { useI18n } from "@/messages/client";
 import { splitLanguage } from "@/messages/i18n";
 
-interface MenuLink {
-  href: string;
-  label: string;
+interface MenuLink extends NavLink {
   /** Small text after the label ("v1.15.0") */
   detail?: string;
-  /** A tag after the label ("Beta") */
-  badge?: string;
   /** A page written in the Studio: linked only once it's published (./PublishedPages.tsx) */
   page?: WrittenPageKey;
 }
 
-export default function MenuButton({ links, about: allAbout }: { links: MenuLink[]; about: MenuLink[] }) {
+export default function MenuButton({ links: entries, about: allAbout }: { links: NavEntry[]; about: MenuLink[] }) {
   const published = usePublishedPages();
   const about = allAbout.filter((l) => !l.page || published[l.page]);
-  const [open, setOpen] = useState(false);
-  const [openedAt, setOpenedAt] = useState<string | null>(null);
   const { t } = useI18n();
-  const pathname = usePathname();
+  const { open, root, button, pathname, toggle, close } = useDropdown();
   // The links are without a language; compared with the page's address without it ("/en/rankings" → "/rankings")
   const current = splitLanguage(pathname).path;
   const id = useId();
-  const root = useRef<HTMLDivElement>(null);
-  const button = useRef<HTMLButtonElement>(null);
-  // Closed once the page changes (adjusted while rendering, not in an effect)
-  if (open && openedAt !== pathname) setOpen(false);
-
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
-      setOpen(false);
-      button.current?.focus();
-    };
-    const onPointer = (e: PointerEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
-    document.addEventListener("keydown", onKey);
-    document.addEventListener("pointerdown", onPointer);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.removeEventListener("pointerdown", onPointer);
-    };
-  }, [open]);
+  // The site's pages: the single links first, then each group's under its heading (in the header, its dropdown)
+  const singles = entries.filter((e): e is MenuLink => !("links" in e));
+  const groups = entries.filter((e): e is NavGroupEntry => "links" in e);
+  const pageLink = (l: MenuLink) => (
+    <li key={l.href}>
+      <Link
+        href={l.href}
+        onClick={close}
+        className={`link-host flex items-center gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+        aria-current={current === l.href ? "page" : undefined}
+      >
+        <span className="link-group">{l.label}</span>
+        {l.badge && <Badge className="font-normal">{l.badge}</Badge>}
+      </Link>
+    </li>
+  );
 
   const line = "absolute left-1/2 w-5 h-0.5 -ml-2.5 bg-current transition-transform duration-200";
   return (
@@ -65,10 +57,7 @@ export default function MenuButton({ links, about: allAbout }: { links: MenuLink
       <button
         ref={button}
         type="button"
-        onClick={() => {
-          setOpen(!open);
-          setOpenedAt(pathname);
-        }}
+        onClick={toggle}
         className="relative w-[42px] h-[42px] border border-black transition-colors duration-200 hover:bg-black hover:text-white cursor-pointer"
         aria-expanded={open}
         aria-controls={id}
@@ -88,21 +77,13 @@ export default function MenuButton({ links, about: allAbout }: { links: MenuLink
       >
         <div className="base-container px-4 py-2 md:px-5 md:py-3">
           <nav aria-label={t("layout.nav.label")} className="xl:hidden">
-            <ul>
-              {links.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className={`flex items-center gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
-                    aria-current={current === l.href ? "page" : undefined}
-                  >
-                    {l.label}
-                    {l.badge && <Badge className="font-normal">{l.badge}</Badge>}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <ul>{singles.map(pageLink)}</ul>
+            {groups.map((g) => (
+              <section key={g.label} className="pt-4">
+                <h2 className="text-sm text-gray-600 mb-1">{g.label}</h2>
+                <ul>{g.links.map(pageLink)}</ul>
+              </section>
+            ))}
           </nav>
           <nav aria-label={t("layout.nav.about")} className="pt-4 xl:pt-1">
             <h2 className="text-sm text-gray-600 mb-1">{t("layout.nav.about")}</h2>
@@ -111,11 +92,11 @@ export default function MenuButton({ links, about: allAbout }: { links: MenuLink
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    onClick={() => setOpen(false)}
-                    className={`flex items-baseline gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
+                    onClick={close}
+                    className={`link-host flex items-baseline gap-2 py-3 text-lg md:text-base md:py-2 border-b border-gray-100 ${current === l.href ? "font-semibold" : "text-gray-700 hover:text-black"}`}
                     aria-current={current === l.href ? "page" : undefined}
                   >
-                    {l.label}
+                    <span className="link-group">{l.label}</span>
                     {l.detail && <span className="font-mono text-xs font-normal text-gray-500">{l.detail}</span>}
                   </Link>
                 </li>
@@ -127,14 +108,14 @@ export default function MenuButton({ links, about: allAbout }: { links: MenuLink
             {/* Picking a theme closes the menu, with focus back on its button */}
             <ThemePicker
               onPick={() => {
-                setOpen(false);
+                close();
                 button.current?.focus();
               }}
             />
           </section>
           <section className="pt-2 pb-2">
             <h2 className="text-sm text-gray-600 mb-2">{t("layout.menu.language")}</h2>
-            <LanguagePicker onPick={() => setOpen(false)} />
+            <LanguagePicker onPick={close} />
           </section>
           {/* Only where the site can be installed as an app and isn't open as one */}
           <InstallApp title={t("layout.menu.app")} className="pt-2 pb-2" />

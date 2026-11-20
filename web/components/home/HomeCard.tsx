@@ -26,11 +26,11 @@ export default function HomeCard({ href, title, description, link, colors, child
         ))}
       </div>
       <h3 className="text-2xl">
-        <Link href={href} className="hover:text-blue-600">{title}</Link>
+        <Link href={href} className="link hover:text-blue-600">{title}</Link>
       </h3>
       <p className="text-gray-700 mt-1 mb-5">{description}</p>
       <div className="flex-1">{children}</div>
-      <Link href={href} className="mt-6 self-start inline-flex items-center gap-2 font-semibold hover:text-blue-600">
+      <Link href={href} className="link mt-6 self-start inline-flex items-center gap-2 font-semibold hover:text-blue-600">
         {link} <ArrowRight />
       </Link>
     </article>
