@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.37.7 (2026-11-20)
+
+- The front page shows the site's numbers under its intro: players with a rating, matches rated (singles, doubles and mixed together), team matches and seasons. They replace the "players rated" line beside the rankings button. Four numbers sit in one row on a wide screen and in two rows of two on a phone.
+- The numbers block on the About page (and wherever it's used) can show the matches rated too. It's picked in the Studio. The count shows from the next nightly run.
+- For running the pipeline: `rate.mjs` saves the number of matches rated in `ratings.json`, and `export.mjs` passes it on in `meta.json`.
+
 ## v1.37.6 (2026-11-20)
 
 - The sign-in page lists what an account gives you: your own overview, draw notifications, following players and clubs, EloStonk, ideas and reporting mistakes about yourself. It also says it's free, needs no password and can be deleted at any time. (It no longer promises a tournament calendar, which there isn't.)

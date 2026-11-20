@@ -1162,7 +1162,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const score = (strengths, club) => Math.round((100 * poolNames.reduce((sum, pool) => sum + scale[pool](strengths[pool].get(club)), 0)) / poolNames.length);
     for (const c of clubs.combined) c.scoreChange = listedThen.has(c.club) ? (score(now, c.club) - score(then, c.club)) / 100 : null;
   }
-  writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
+  // matches: how many were rated, in every pool (the site's numbers: export.mjs meta.json)
+  writeFileSync(`${DIR}data/ratings.json`, JSON.stringify({ generatedAt: new Date().toISOString(), matches: games.length, pools: ratings, clubs, clubStrength: Object.fromEntries(Object.entries(CLUB_STRENGTH).map(([pool, c]) => [pool, { ...c, weights: slotWeights(c.slots) }])) }, null, 1));
 
   // Junior rankings (U19): the matches in junior classes and leagues (level.junior) rated again on
   // their own, with the same rules, so only results between juniors count. Ranked: everyone under 19

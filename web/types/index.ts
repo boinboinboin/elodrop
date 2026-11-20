@@ -307,6 +307,8 @@ export interface Meta {
   eliteserien: { current: string | null; seasons: string[] };
   tournamentLinks: Record<string, number>;
   players: number;
+  /** The matches rated, in every discipline (missing in exports from before it was added) */
+  matches?: number;
 }
 
 export interface UpsetPlayer extends PlayerRef {

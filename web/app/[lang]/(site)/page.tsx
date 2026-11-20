@@ -13,7 +13,8 @@ import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
 import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
-import { getMeta } from "@/data/meta";
+import SiteStats from "@/components/content/SiteStats";
+import { getSiteNumbers, SITE_NUMBERS } from "@/data/siteNumbers";
 import { getI18n } from "@/messages/server";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
 import { LAUNCH_YEAR } from "@/utils/changelog";
@@ -42,7 +43,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { t, lang, href } = await getI18n();
+  const i18n = await getI18n();
+  const { t, lang, href } = i18n;
+  const numbers = await getSiteNumbers();
   return (
     <>
       <JsonLd
@@ -60,11 +63,13 @@ export default async function Home() {
       <Section>
         <h1 className="h1">{hyphenate(t("home.title"))}</h1>
         <p className="text-2xl max-w-3xl mt-2">{t("home.intro")}</p>
+        {/* The site's numbers, as on the About page, but still (no count-up: the front page doesn't load the motion
+            library) */}
+        <SiteStats items={SITE_NUMBERS} numbers={numbers} i18n={i18n} wide className="mt-6" />
         <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link href="/rankings" className={`${BUTTON} inline-flex items-center gap-2 px-5 py-3 text-lg`}>
             {t("home.toRankings")} <ArrowRight />
           </Link>
-          <PlayersRated />
           <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorksLink")}</Link>
           {/* The site's preview image and sharing, at the end of the row */}
           <div className="ml-auto">
@@ -97,10 +102,4 @@ export default async function Home() {
       </Section>
     </>
   );
-}
-
-async function PlayersRated() {
-  const { t, num } = await getI18n();
-  const meta = await getMeta();
-  return meta ? <span className="text-gray-700">{t("home.playersRated", { count: num(meta.players) })}</span> : null;
 }

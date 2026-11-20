@@ -4,7 +4,7 @@
 //
 // export/
 //   meta.json                     generatedAt (ratings), updatedAt (this export), pool labels,
-//                                 Eliteserien seasons, tournament links
+//                                 Eliteserien seasons, tournament links, players and matches rated
 //   rankings/<pool>.json          ranked (active) players, best first
 //   rankings/<pool>-inactive.json players not ranked (no match in the last 12 months; not players of
 //                                 the other gender, see rules.mjs rankedIn)
@@ -234,6 +234,8 @@ write("meta.json", {
   // own, in players/<id>.json)
   tournamentLinks: Object.fromEntries(tournamentLinks),
   players: byPlayer.size,
+  // The matches rated, singles, doubles and mixed (rate.mjs), for the site's numbers on its written pages
+  matches: ratings.matches,
 });
 
 const total = manifest.reduce((s, f) => s + f.bytes, 0);

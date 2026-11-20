@@ -11,30 +11,19 @@ import type { Metadata } from "next";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import JsonLd from "@/components/seo/JsonLd";
 import Section from "@/components/ui/Section";
-import { getMeta } from "@/data/meta";
 import { getPage } from "@/data/sanity";
-import { getTeamMatchesIndex } from "@/data/teamMatches";
+import { getSiteNumbers } from "@/data/siteNumbers";
 import { getI18n } from "@/messages/server";
 import type { MessageKey } from "@/messages/i18n";
 import type { PageBlock } from "@/types";
 import { hyphenate } from "@/utils/hyphenate";
 import { pageMetadata } from "@/utils/metadata";
 import { Lead, MotionPage, Reveal, Title } from "@/components/ui/Motion";
-import PortableBody, { type SiteNumbers } from "./PortableBody";
+import PortableBody from "./PortableBody";
 import PreviewRefresh from "./PreviewRefresh";
 
 /** The pages written in the Studio: their texts in the messages before one is published */
 export type PageKey = "about" | "support" | "privacy";
-
-/** The site's numbers, for a stats block: players with a rating, team matches and their seasons */
-async function siteNumbers(): Promise<SiteNumbers> {
-  const [meta, index] = await Promise.all([getMeta(), getTeamMatchesIndex()]);
-  return {
-    players: meta?.players,
-    teamMatches: index?.seasons.reduce((n, s) => n + s.weeks.reduce((m, w) => m + w.ties, 0), 0),
-    seasons: index?.seasons.length,
-  };
-}
 
 /** The page's title and description for search results and link previews: as written, else from the messages */
 export async function contentPageMetadata(pageKey: PageKey): Promise<Metadata> {
@@ -52,7 +41,7 @@ export default async function ContentPage({ pageKey }: { pageKey: PageKey }) {
   const { t, lang, date } = i18n;
   const page = await getPage(pageKey, lang);
   const content: PageBlock[] = page?.content ?? [];
-  const numbers = content.some((b) => b._type === "stats") ? await siteNumbers() : {};
+  const numbers = content.some((b) => b._type === "stats") ? await getSiteNumbers() : {};
   const title = page?.title ?? t(`pages.${pageKey}.title` as MessageKey);
   const words = title.split(/\s+/).length;
   // Every FAQ's questions, for search engines (FAQPage)

@@ -21,6 +21,7 @@
   },
   "stats": {
     "players": "Spillere med rating",
+    "matches": "Kamper ratet",
     "teamMatches": "Lagspill",
     "seasons": "Sesonger"
   }

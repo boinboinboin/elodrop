@@ -154,6 +154,7 @@ const note = defineArrayMember({
 /** The site's numbers a stats block can show (counted in web/components/content/ContentPage.tsx) */
 export const SITE_STATS = [
   { title: "Players with a rating", value: "players" },
+  { title: "Matches rated (singles, doubles and mixed)", value: "matches" },
   { title: "Team matches", value: "teamMatches" },
   { title: "Seasons", value: "seasons" },
 ] as const;

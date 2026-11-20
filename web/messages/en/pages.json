@@ -21,6 +21,7 @@
   },
   "stats": {
     "players": "Players with a rating",
+    "matches": "Matches rated",
     "teamMatches": "Team matches",
     "seasons": "Seasons"
   }

@@ -5,18 +5,16 @@
 // Links: a site path ("/rankings") goes through Link (the page's language), a full address through ExternalLink.
 import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { ArrowRight } from "@/components/SVG";
-import StatCard from "@/components/ui/StatCard";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
+import type { SiteNumbers } from "@/data/siteNumbers";
 import type { I18n } from "@/messages/i18n";
 import type { PageBlock, RichText, SanityImage } from "@/types";
 import { PALETTE } from "@/utils/chart";
 import { sanityImageUrl, sanitySrcSet } from "@/utils/sanityImage";
 import { Accordion, CountUp, EmailLink, Reveal, Springy, WipeIn } from "@/components/ui/Motion";
-
-/** The site's numbers a stats block shows (sanity/schemas/page.ts SITE_STATS), counted by ContentPage */
-export type SiteNumbers = Partial<Record<"players" | "teamMatches" | "seasons", number>>;
+import SiteStats from "./SiteStats";
 
 type Block<T extends PageBlock["_type"]> = Extract<PageBlock, { _type: T }>;
 
@@ -178,19 +176,20 @@ function Email({ value, t }: { value: Block<"contact">; t: I18n["t"] }) {
   );
 }
 
+/** The numbers block: the site's numbers counting up, each tile fading up after the one before */
 function Stats({ value, numbers, i18n }: { value: Block<"stats">; numbers: SiteNumbers; i18n: I18n }) {
-  const items = (value.items ?? []).filter((key): key is keyof SiteNumbers => typeof numbers[key as keyof SiteNumbers] === "number");
-  if (!items.length) return null;
   return (
-    <dl className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {items.map((key, i) => (
+    <SiteStats
+      items={value.items ?? []}
+      numbers={numbers}
+      i18n={i18n}
+      value={(n) => <CountUp value={n} locale={i18n.locale} />}
+      wrap={(tile, key, i) => (
         <Reveal key={key} delay={i * 0.08}>
-          <StatCard label={i18n.t(`pages.stats.${key}`)}>
-            <CountUp value={numbers[key]!} locale={i18n.locale} />
-          </StatCard>
+          {tile}
         </Reveal>
-      ))}
-    </dl>
+      )}
+    />
   );
 }
 
