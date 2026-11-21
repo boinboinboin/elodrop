@@ -1,6 +1,8 @@
 # rclone filter of pipeline/data: the raw inputs kept in the raw bucket (see workflows/pipeline.yml).
 # Everything else in data/ is rebuilt by rate.mjs, eliteserien.mjs, upcoming.mjs and export.mjs.
 + /portalen/**
+# Profixio's tournaments of 2010-2014 (fetch-profixio.mjs, run once by hand; its saved pages stay local)
++ /profixio/*.json
 + /league/**
 + /ranking/**
 + /tournaments/**

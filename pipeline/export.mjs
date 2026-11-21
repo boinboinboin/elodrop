@@ -19,6 +19,8 @@
 //                                 RECENT_MATCHES newest matches (`all`) and how many there are (`count`),
 //                                 and their rivals over all disciplines, in singles and in doubles, and
 //                                 the badges they have earned (achievements.mjs)
+//                                 A merged player's other id (same-players.txt) is { id, mergedInto }: the site sends
+//                                 its page to the id kept.
 //   matches/<id>.json             one player's every match per pool, newest first (for "show all"
 //                                 and head to head)
 //   achievements.json             per badge: how many players have earned it (out of `players`, everyone with a
@@ -43,6 +45,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { achievements, achievementStats } from "./achievements.mjs";
 import { osloToday, stonkFiles } from "./elostonk.mjs";
 import { rankedIn } from "./rules.mjs";
+import { mergedIds } from "./same-players.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const DATA = `${DIR}data`;
@@ -159,6 +162,10 @@ for (const [id, entries] of byPlayer) {
   write(`matches/${id}.json`, { id, pools: Object.fromEntries(Object.keys(pools).map((pool) => [pool, matches[pool]?.all ?? []])) });
 }
 
+// A person with more than one id on badmintonportalen is one player (same-players.txt): their other ids' pages go to
+// the id kept
+for (const [other, kept] of mergedIds()) if (byPlayer.has(kept) && !byPlayer.has(other)) write(`players/${other}.json`, { id: other, mergedInto: kept });
+
 // The achievements page: per badge how many players have earned it, out of every player with a rating, and the newest
 // awards
 const named = new Map([...byPlayer].map(([id, entries]) => [id, { name: Object.values(entries)[0].name, club: Object.values(entries)[0].club }]));
@@ -261,6 +268,13 @@ write("meta.json", {
   players: byPlayer.size,
   // The matches rated, singles, doubles and mixed (rate.mjs), for the site's numbers on its written pages
   matches: ratings.matches,
+  // The seasons (July to June) with rated matches, from the first match's to this one: 2009/10 (Profixio's first
+  // tournament, April 2010) on
+  seasons: (() => {
+    const season = (day) => (+day.slice(5, 7) >= 7 ? +day.slice(0, 4) : +day.slice(0, 4) - 1);
+    const first = Object.values(ratings.pools).flat().reduce((min, p) => (p.firstPlayed && p.firstPlayed < min ? p.firstPlayed : min), generatedAt);
+    return season(generatedAt) - season(first) + 1;
+  })(),
 });
 
 const total = manifest.reduce((s, f) => s + f.bytes, 0);

@@ -1,18 +1,22 @@
 // One upset: who beat whom with what win chance, each player's rating before the match, the
 // rating gained or lost and their club; the score, discipline, event and day. The event links to its page: the
-// tournament's class (when the tournament has a page, `cup2000Id` from the export) or the team match.
+// tournament's class (when the tournament has a page, `cup2000Id` from the export) or the team match. Head to head
+// is linked when every player has a page (not one of Profixio's players without one).
 import Team from "@/components/clubs/Team";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, Upset } from "@/types";
 import { toneClass } from "@/utils/format";
-import { doublesHeadToHeadHref, headToHeadHref, playerHref } from "@/utils/hrefs";
+import PlayerName from "@/components/players/PlayerName";
+import { doublesHeadToHeadHref, headToHeadHref } from "@/utils/hrefs";
 import { matchHref } from "@/utils/tournament";
 
 export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?: number; clubs: Record<string, ClubEntry> }) {
   const { date, pct, signed, t } = await getI18n();
-  const ids = (side: Upset["winners"]) => side.map((p) => p.id);
+  const ids = (side: Upset["winners"]) => side.map((p) => p.id).filter((id) => id !== null);
+  // Head to head needs every player to have a page (Profixio's players not identified have none)
+  const withPages = [...upset.winners, ...upset.losers].every((p) => p.id !== null);
   // The match's event: the tournament's class page when it has one, or the team match
   const event = matchHref(upset, upset.cup2000Id);
   return (
@@ -29,8 +33,8 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
           {s === 1 && <p className="text-sm text-gray-600 mt-2">{t("upsets.card.beat")}</p>}
           <ul className={s === 0 ? "mt-2 text-lg" : ""}>
             {side.map((p) => (
-              <li key={p.id}>
-                <Link href={playerHref(p.id, upset.pool)} className={`link ${s === 0 ? "font-semibold" : ""} hover:text-blue-600`}>{p.name}</Link>{" "}
+              <li key={p.id ?? p.name}>
+                <PlayerName id={p.id} name={p.name} pool={upset.pool} className={s === 0 ? "font-semibold" : ""} linkClassName="link hover:text-blue-600" />{" "}
                 <span className="text-sm text-gray-500 tabular-nums" title={t("upsets.card.ratingBefore")}>{p.rating}</span>
                 {p.change !== undefined && (
                   <span className={`text-sm font-semibold tabular-nums ${toneClass(p.change)}`} title={t(p.change >= 0 ? "upsets.ratingGained" : "upsets.ratingLost")}>
@@ -51,13 +55,13 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
       <p className="mt-2 tabular-nums">{upset.score}</p>
       <p className="mt-auto pt-3 text-sm text-gray-600">
         {upset.poolLabel} · {event ? <Link href={event} className={TEXT_LINK}>{upset.event}</Link> : upset.event} · {date(upset.day)}
-        {upset.winners.length === 1 && (
+        {withPages && upset.winners.length === 1 && (
           <>
             {" · "}
-            <Link href={headToHeadHref(upset.winners[0].id, upset.losers[0].id, upset.pool)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
+            <Link href={headToHeadHref(upset.winners[0].id!, upset.losers[0].id!, upset.pool)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>
           </>
         )}
-        {upset.winners.length === 2 && upset.losers.length === 2 && (
+        {withPages && upset.winners.length === 2 && upset.losers.length === 2 && (
           <>
             {" · "}
             <Link href={doublesHeadToHeadHref(ids(upset.winners), ids(upset.losers), upset.pool)} className={TEXT_LINK}>{t("upsets.card.headToHead")}</Link>

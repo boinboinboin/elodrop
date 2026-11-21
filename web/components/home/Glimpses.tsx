@@ -1,11 +1,13 @@
 // The front page cards' glimpses of the site's pages (components/home/HomeCard.tsx), each from the
 // same data as its page, and each shown its own way: the number ones as a list, the strongest clubs
 // with their logos, the predicted Eliteserien table as bars, the week's biggest upset as one big
-// chance, the next tournament's luckiest draw, and the top two men head to head as a split bar.
+// chance, the next tournament's luckiest draw, and the top two men head to head as a split bar. Players are
+// linked through PlayerName.
 import { ArrowRight } from "@/components/SVG";
 import Team from "@/components/clubs/Team";
 import ChanceBar from "@/components/head-to-head/ChanceBar";
 import RankMovement from "@/components/rankings/RankMovement";
+import PlayerName from "@/components/players/PlayerName";
 import Link from "@/components/ui/Link";
 import { ROW, TEXT_LINK } from "@/components/ui/styles";
 import { getClubsFile } from "@/data/clubs";
@@ -109,9 +111,9 @@ export async function UpsetsGlimpse() {
   if (!latest || !upset) return <NoData />;
   const names = (side: typeof upset.winners) =>
     side.map((p, i) => (
-      <span key={p.id}>
+      <span key={p.id ?? p.name}>
         {i > 0 && " / "}
-        <Link href={playerHref(p.id, upset.pool)} className="link hover:text-blue-600">{p.name}</Link>
+        <PlayerName id={p.id} name={p.name} pool={upset.pool} linkClassName="link hover:text-blue-600" />
       </span>
     ));
   return (

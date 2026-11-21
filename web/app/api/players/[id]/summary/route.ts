@@ -23,8 +23,8 @@ export interface RecentMatch {
   event: string;
   /** Its team match's or tournament event's page, or null */
   href: string | null;
-  opponents: { id: number; name: string }[];
-  partner: { id: number; name: string } | null;
+  opponents: { id: number | null; name: string }[];
+  partner: { id: number | null; name: string } | null;
   /** 1 won, 0 lost, 0.5 drawn */
   result: number;
   score: string;

@@ -8,6 +8,16 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.0 (2026-11-22)
+
+- Tournaments from 2010 to 2014 are now rated too: about 7,700 matches from 49 tournaments kept on Profixio, from before badmintonportalen had tournament results, mostly in Trøndelag, Møre, Vestland and Nord-Norge. About 1,300 players' histories now go back to 2010, 377 of them players who only played then and now have a page of their own.
+- Profixio has names and clubs only, so its players are matched to badmintonportalen's by name, club and birth year. The few that can't be matched count for everyone they played, but have no page: they're shown by name, without a link, in match lists and upsets.
+- With these tournaments, singles ratings predict results a little better, most of all in 2014–2018. Today's ratings move by 1–3 points for the typical ranked player and under 15 for 9 in 10, more for some with few matches. Upsets go back to 2011.
+- Tournaments won in 2010–2014 count for the achievements too: 44 more "three disciplines at one tournament" badges. The front page, the footer, the achievements page and the site's description now say "since 2010" and name Profixio among the sources. The site's numbers count the seasons with rated matches (18, from 2009/10), not the team matches' seasons.
+- Players with more than one id on badmintonportalen (registered again, often under another club or name) are now one player: one rating, one history and one page, and the other ids' pages lead there. 245 players are merged, 8 of them from three or more ids.
+- Typing in the search at the top no longer scrolls the page up with every letter, and opening the search on a phone no longer jumps the page.
+- For the pipeline: `fetch-profixio.mjs` fetches the tournaments once, `profixio-players.mjs` matches the players on every run (with `profixio-identities.txt` by hand), players new in these tournaments start 200 points above their class (see the README and BENCHMARK.md), `same-players.txt` merges one person's ids, and `find-duplicates.mjs` lists the likely ones. Corrections now also take Profixio's match keys.
+
 ## v1.38.3 (2026-11-21)
 
 - Sign in with Google as well as with a code by email. It's the same account for the same address: if you've signed in with a Gmail address before, Google takes you to the account you have, with what you follow and your EloStonk squad. Typing a Gmail address offers Google instead of a code.

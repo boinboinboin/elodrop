@@ -92,6 +92,7 @@ jobs:
         with:
           path: |
             pipeline/data/portalen
+            pipeline/data/profixio/*.json
             pipeline/data/league
             pipeline/data/ranking
             pipeline/data/tournaments

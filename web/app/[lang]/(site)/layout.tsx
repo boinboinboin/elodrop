@@ -125,6 +125,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
             {rich("layout.footer.sources", {
               portalen: <ExternalLink href="https://badmintonportalen.no" className={FOOTER_LINK}>badmintonportalen.no</ExternalLink>,
               cup2000: <ExternalLink href="https://www.cup2000.dk" className={FOOTER_LINK}>Cup2000</ExternalLink>,
+              // The tournaments of 2010-2014 (pipeline/fetch-profixio.mjs)
+              profixio: <ExternalLink href="https://www.profixio.com/app/tournaments" className={FOOTER_LINK}>Profixio</ExternalLink>,
             })}
           </p>
           <UpdatedAt />

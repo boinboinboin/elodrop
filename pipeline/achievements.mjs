@@ -12,7 +12,7 @@
 // Usage: import { achievements } from "./achievements.mjs" (export.mjs), or
 //        node achievements.mjs   prints how many of each badge, and the senior NMs found
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { correctedMatches } from "./rate.mjs";
+import { correctedMatches, profixioTournaments } from "./rate.mjs";
 import { leagueLevel, SETTLED_FROM } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -235,13 +235,17 @@ export const PLAYER_RULES = {
   },
 };
 
-/** The results the rules use: every tournament on badmintonportalen with its event winners, and the weekly upsets */
+/**
+ * The results the rules use: every tournament on badmintonportalen, and Profixio's of 2010-2014 with their players
+ * identified as for the ratings (rate.mjs; players without a page have negative ids, and earn nothing shown), each with
+ * its event winners; and the weekly upsets
+ */
 export function readResults() {
   const dir = `${DIR}data/portalen`;
-  const tournaments = (existsSync(dir) ? readdirSync(dir) : [])
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => JSON.parse(readFileSync(`${dir}/${f}`, "utf8")))
-    .map((t) => ({ t, winners: eventWinners(t) }));
+  const tournaments = [
+    ...(existsSync(dir) ? readdirSync(dir) : []).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(`${dir}/${f}`, "utf8"))),
+    ...profixioTournaments(),
+  ].map((t) => ({ t, winners: eventWinners(t) }));
   const upsetsFile = `${DIR}data/upsets.json`;
   const upsets = existsSync(upsetsFile) ? JSON.parse(readFileSync(upsetsFile, "utf8")) : null;
   const teamDir = `${DIR}data/team-matches`;

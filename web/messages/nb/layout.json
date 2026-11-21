@@ -1,7 +1,7 @@
 {
   "siteName": "Elodrop",
   "titleTemplate": "%s · Elodrop",
-  "description": "Elodrop: Elo-ratinger i single og double for norsk badminton, fra alle turnerings- og seriekamper på badmintonportalen.no siden 2013.",
+  "description": "Elodrop: Elo-ratinger i single og double for norsk badminton, fra turnerings- og seriekamper siden 2010 på badmintonportalen.no, Cup2000 og Profixio.",
   "manifestDescription": "Elo-ratinger for norsk badminton",
   "nav": {
     "label": "Hovedmeny",
@@ -26,7 +26,7 @@
     "beta": "Beta"
   },
   "footer": {
-    "sources": "Resultater fra {portalen} og {cup2000}.",
+    "sources": "Resultater fra {portalen}, {cup2000} og {profixio}.",
     "updated": "Oppdatert {time}",
     "version": "v{version}",
     "rights": "© {years} {site}. Alle rettigheter reservert.",

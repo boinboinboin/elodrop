@@ -1,0 +1,274 @@
+# One person with more than one id on badmintonportalen, merged into one player (same-players.mjs):
+# one rating, one page; the other ids' pages lead to it. Read by rate.mjs on every run.
+#
+# One person per line, the id kept first (the one they play under now, or the one with the most
+# matches), then the others:
+#   <id kept>  <other id> [<other id> ...]   # note, without the name
+# Two ids checked and found to be different people, so find-duplicates.mjs doesn't list them again:
+#   <id> != <id>
+#
+# Candidates (two ids with matches, the same birth year and similar names) are listed by
+# find-duplicates.mjs.
+
+17190  47950                    # Sotra 2023-2025, Sotra 2022-2024
+17229  17142                    # Tromsø 2015-2020, Tromsø 2019-2019
+17366  23095                    # Sverige 2015-2023, Noklubb 2015-2023
+17415  47828                    # Oppegård IL 2018-2024, Haugerud 2022-2023
+17695  29825                    # Rana 2014-2015, Rana 2014-2015
+17718  29795 17717              # Grong 2025-2025, Grong 2014-2023, Grong 2015-2015
+17774  25143                    # Rissa 2015-2018, Rissa 2016-2016
+17816  29861                    # Stavanger 2014-2026, Stavanger 2014-2014
+17838  17482                    # Haugerud 2017-2026, Haugerud 2013-2016
+17960  52350                    # Herøy 2014-2014, Trondheim 2010-2010
+18042  47764                    # Tromsø 2014-2024, Tromsø 2022-2022
+18212  46398                    # Nesodden 2015-2020, Nesodden 2020-2020
+18275  26730                    # NTNUI 2016-2016, NTNUI 2014-2014
+18314  24340                    # Brodd 2015-2018, Brodd 2014-2015
+18390  48813                    # Vestre Aker 2022-2024, Vestre Aker 2022-2023
+18495  48329                    # Nøtterøy 2013-2025, Nøtterøy 2022-2024
+18654  21628                    # Sandefjord 2013-2024, BSI 2013-2014
+19568  24573                    # Porsgrunn 2019-2019, Porsgrunn 2014-2015
+19827  24631                    # Rørvik 2014-2026, Rørvik 2018-2022
+20371  43088                    # Karmøy 2025-2026, NTNUI 2016-2019
+20847  19884                    # Haugerud 2013-2024, OSI 2014-2017
+20900  17068                    # Nesna 2020-2020, Rana 2013-2013
+20917  44637                    # Berlevåg 2010-2024, Tromsø 2018-2018
+21164  23714                    # Herøy 2010-2013, Herøy 2012-2013
+21246  21245                    # Sotra 2012-2017, Sotra 2016-2016
+21379  23241   # Imås 2014-2024, Grimstad 2014-2015: played under both in 2014/15
+21493  21492                    # Bygdø 2013-2015, Bygdø 2015-2015
+21817  22199 42777              # NTNUI 2014-2016, NTNUI 2012-2013, NTNUI 2016-2016
+22239  47186                    # Lambertseter IF 2013-2023, Lambertseter IF 2021-2021
+22278  23501                    # Vestre Aker 2010-2017, NTNUI 2011-2015
+22834  24564                    # Rana 2013-2026, Rana 2013-2013
+23574  22960                    # Stavanger 2014-2019, Stavanger 2017-2018
+24163  45150                    # Mortensrud-Aker 2013-2025, Sangam 2020-2020
+24396  23622                    # Kolvereid 2014-2015, Rørvik 2011-2011
+24435  45066                    # Båtsfjord 2014-2019, Båtsfjord 2018-2018
+24580  35303                    # Herøy 2013-2025, Båtsfjord 2016-2016
+25278  24719   # Bergen 2013-2022, Djerv 2022: "B." for the middle name
+25368  23076                    # Leksvik 2013-2014, Rissa 2014-2014
+25563  18115                    # Herøy 2014-2025, Herøy 2014-2020
+29782  26712                    # NTNUI 2014-2015, NTNUI 2014-2014
+29826  18361                    # Rana 2014-2015, Rana 2014-2014
+29846  18950                    # Trondheim 2014-2023, Trondheim 2017-2017
+30025  17679                    # Djerv 2015-2016, Bergen 2013-2014
+30075  24126                    # Grimstad 2015-2015, Grong 2012-2012
+33267  23092                    # Tynset 2019-2024, Haugerud 2014-2014
+34255  24878                    # Imås IL 2015-2017, Grimstad 2014-2015
+34256  17216                    # Imås IL 2015-2025, Grimstad 2014-2015
+34257  30070                    # Imås IL 2015-2017, Grimstad 2015-2015
+34258  17217                    # Imås IL 2015-2017, Grimstad 2014-2015
+34259  22473                    # Imås IL 2015-2024, Grimstad 2013-2015
+35298  47831                    # Frogner 2015-2024, Haugerud 2022-2022
+35323  21006                    # BSI 2015-2016, Vestre Aker 2013-2014
+36512  36534                    # Flatås 2016-2026, Frankrike (UPAL) 2015-2015
+36513  31186                    # Grong 2015-2018, Grong 2015-2016
+38582  20433                    # NTNUI 2016-2016, Stavanger 2013-2013
+38678  25130                    # Askøy 2016-2016, Askøy 2013-2014
+42733  20826                    # Bærum 2016-2022, Bærum 2014-2014
+42778  23929                    # NTNUI 2016-2020, Djerv 2013-2013
+42798  24055                    # Haugerud 2016-2019, Nordbyhagen 2014-2014
+42799  19602                    # Haugerud 2016-2020, Nordbyhagen 2014-2014
+42917  21994                    # Sotra 2016-2026, Sotra 2016-2016
+42956  22839                    # Imås IL 2017-2023, Grimstad 2013-2014
+42968  38576                    # Sotra 2016-2018, Sotra 2016-2017
+43133  25085                    # Moss 2016-2018, Rørvik 2014-2014
+43276  45162                    # Slagen 2016-2024, Nøtterøy 2019-2019
+43280  44467                    # Stovner 2016-2024, Sangam 2017-2017
+43292  18398                    # Askim 2016-2018, Askim 2014-2016
+43312  30013                    # Sandefjord 2016-2025, Sandefjord 2015-2018
+43404  32243                    # Ålesund 2016-2023, Bergen 2015-2015
+43481  23228                    # Strømmen 2016-2026, Nordbyhagen 2014-2014
+43505  43290                    # Haugerud 2016-2022, Haugerud 2016-2016
+43551  24253                    # Stanghelle IL 2017-2017, Mandal 2014-2014
+43591  17959                    # Kristiansand 2017-2018, Sandnessjøen 2014-2014
+43594  48101                    # Sandefjord 2017-2026, Moss 2011-2022
+43617  19721                    # NTNUI 2017-2017, Askøy 2010-2014
+43629  17238                    # Klæbu 2017-2017, Ålesund 2014-2015
+43637  18016                    # Mehamn 2017-2017, Mehamn 2014-2017
+43772  43936                    # Stovner 2017-2024, Strømmen 2017-2018
+43830  43844                    # Strømmen 2017-2026, Sangam 2017-2018
+43991  22637                    # Bergen 2017-2026, Bergen 2013-2016
+44086  24296                    # Drammen 2017-2018, Sandefjord 2012-2014
+44099  17798                    # Sandefjord 2022-2023, NTNUI 2013-2013
+44131  23119                    # Imås IL 2017-2017, Grimstad 2010-2014
+44196  30153                    # Ålesund 2017-2018, Ålesund 2015-2015
+44209  21932                    # Ålesund 2017-2026, Ålesund 2014-2016
+44229  24228                    # Stavanger 2017-2019, OSI 2014-2014
+44272  43755                    # Sangam 2017-2018, Stovner Tamil 2017-2017
+44293  43756                    # Sangam 2017-2018, Stovner Tamil 2017-2017
+44366  43660                    # Båtsfjord 2017-2017, Båtsfjord 2017-2017
+44454  43256                    # Sangam 2017-2023, Stovner Tamil 2017-2017
+44465  44510                    # Sangam 2017-2018, Sangam 2017-2017
+44485  43787                    # Sangam 2018-2018, Stovner Tamil 2017-2017
+44489  43826                    # Sangam 2018-2018, Stovner Tamil 2017-2017
+44690  22933                    # Asker 2018-2019, NTNUI 2014-2015
+44693  47938                    # Mortensrud-Aker 2018-2025, Strømmen 2022-2023
+44694  44695                    # Tromsø 2019-2019, Tromsø 2018-2018
+44724  43467                    # Grimstad 2018-2019, Haugerud 2016-2016
+44887  43363                    # Stovner 2018-2026, Strømmen 2016-2018
+44956  21477                    # NTNUI 2018-2026, Stavanger 2013-2017
+44973  21273                    # NTNUI 2018-2018, Drøbak 2011-2015
+45032  35291                    # Askøy 2018-2019, Askøy 2015-2017
+45081  17411                    # Ålesund 2018-2020, Ålesund 2014-2014
+45083  43770                    # Strømmen 2020-2020, Sangam 2017-2020
+45153  19448                    # Grimstad 2018-2026, Grimstad 2013-2013
+45233  44359                    # Haugerud 2018-2019, Haugerud 2017-2018
+45240  43264                    # Stavanger 2018-2026, Stavanger 2017-2022
+45341  43581                    # Askøy 2019-2019, Askøy 2017-2017
+45342  43799                    # Askøy 2019-2019, Askøy 2017-2017
+45434  26621                    # Djerv 2019-2019, Bergen 2014-2014
+45439  36531                    # Ålesund 2019-2026, Ullevål 2015-2015
+45758  24448                    # OSI 2019-2026, Haugerud 2013-2016
+45787  35285                    # Tana 2020-2024, Tana 2015-2019
+45795  17293                    # Lambertseter IF 2019-2025, Haugerud 2013-2014
+45944  21851                    # OSI 2019-2019, OSI 2019-2019
+45946  17481                    # Strømmen 2020-2025, Haugerud 2013-2017
+46029  44238                    # Frogner 2019-2019, Strømmen 2018-2019
+46035  29907                    # Haugerud 2019-2019, Bygdø 2014-2016
+46149  36293                    # Ålesund 2020-2020, Rollon 2015-2018
+46150  36294                    # Ålesund 2020-2020, Rollon 2018-2018
+46228  44364                    # Lambertseter IF 2020-2024, Haugerud 2017-2020
+46251  44011                    # Askøy 2020-2020, Askøy 2017-2017
+46318  44103                    # Drammen 2020-2020, Haugesund 2017-2017
+46329  36304                    # Ålesund 2020-2020, Rollon 2015-2017
+46342  19043                    # Bergen 2020-2026, Bergen 2015-2016
+46364  19477                    # Hammerfest 2020-2020, Kirkenes 2015-2018
+46373  36299                    # Ålesund 2020-2020, Rollon 2016-2018
+46392  42931                    # Bergen 2020-2022, Bergen 2016-2016
+46394  44683                    # Karmøy 2020-2022, Karmøy 2018-2018
+46454  18020                    # Lambertseter IF 2020-2020, Grimstad 2014-2015
+46577  46578                    # Tana 2021-2022, Tana 2020-2020
+46775  19320                    # Strømmen 2021-2021, Fron 2016-2016
+46826  26700                    # Ålesund 2021-2026, Ålesund 2014-2014
+46889  45102 47841              # Strømmen 2021-2026, Sangam 2018-2019, Haugerud 2022-2024
+46899  44372                    # Strømmen 2021-2021, Strømmen 2017-2020
+46900  45208                    # Strømmen 2021-2026, Strømmen 2018-2020
+46964  49273                    # Hadsel 2021-2026, Sortland 2025-2025
+47105  17905                    # Mortensrud-Aker 2021-2024, Haugerud 2013-2014
+47281  23300                    # Bærum 2021-2023, Bygdø 2013-2018
+47355  38602                    # Haugerud 2021-2023, Haugerud 2016-2016
+47437  47438                    # Klemetsrud 2022-2022, Klemetsrud 2022-2022
+47454  43934                    # I.L Ros 2022-2022, Asker 2017-2020
+47584  21232                    # Hamar 2022-2022, Haugerud 2010-2016
+47765  29974                    # Tromsø 2022-2022, Tromsø 2015-2020
+47766  43569                    # Tromsø 2022-2022, Tromsø 2017-2019
+47823  45939                    # Klemetsrud 2022-2022, Haugerud 2019-2019
+47829  43364 44854              # Haugerud 2023-2025, Strømmen 2016-2017, Strømmen 2018-2018
+47840  45105 46822              # Mortensrud-Aker 2022-2026, Sangam 2019-2020, Strømmen 2021-2021
+47850  45848                    # Lambertseter IF 2022-2022, Lambertseter IF 2019-2019
+47913  38557                    # Kirkenes 2022-2026, Tana 2016-2020
+47919  46862                    # Bergen 2022-2022, Djerv 2021-2022
+47996  46332                    # Lambertseter IF 2022-2022, Oppegård IL 2020-2020
+48084  17249                    # Trondheim 2022-2026, Klæbu 2013-2019
+48126  45595                    # Mortensrud-Aker 2022-2024, Sangam 2020-2020
+48127  48283                    # Stavanger 2022-2023, Stavanger 2022-2022
+48213  17805                    # NTNUI 2022-2026, Kragerø 2014-2015
+48281  45355                    # BSI 2022-2026, Tromsø 2019-2020
+48349  17576                    # Nøtterøy 2022-2022, Sandefjord 2013-2021
+48389  47083                    # Stovner 2022-2024, Sangam 2021-2022
+48401  48577                    # Sangam 2022-2026, Sangam 2022-2025
+48443  47135                    # Haugerud 2022-2024, Sangam 2021-2022
+48455  45999                    # Trondheim 2023-2026, Trondheim 2019-2023
+48505  24273                    # Haugerud 2022-2024, Haugerud 2013-2014
+48513  17672                    # Mandal 2022-2024, Mandal 2014-2017
+48552  23417                    # I.L Ros 2024-2024, Haugerud 2015-2019
+48567  48409                    # Sangam 2023-2025, Sangam 2023-2023
+48700  40739                    # BSI 2023-2026, Bergen 2016-2016
+48715  46178                    # Kristiansand 2023-2023, Kristiansand 2019-2022
+48725  24542                    # Bygdø 2023-2026, Haugerud 2013-2013
+48855  19318                    # OSI 2023-2026, Karmøy 2013-2013
+48903  24406                    # Rørvik 2023-2023, Rørvik 2017-2017
+48977  44639                    # Klæbu 2023-2026, Klæbu 2018-2019
+48999  49045                    # Bygdø 2023-2025, Bygdø 2023-2024
+49000  45463 49046              # Bygdø 2023-2025, Bygdø 2019-2019, Bygdø 2023-2023
+49037  19380                    # Klæbu 2023-2026, Klæbu 2023-2023
+49052  49259 49220              # Mortensrud-Aker 2023-2024, Haugerud 2023-2023, Stovner 2023-2023
+49054  48471                    # Mortensrud-Aker 2023-2025, Mortensrud-Aker 2023-2024
+49073  21611                    # Drammen 2023-2024, Ullevål 2013-2022
+49162  43810                    # Strømmen 2023-2023, Sangam 2017-2017
+49186  48594                    # Sangam 2023-2024, Sangam 2022-2023
+49200  25553                    # Stavanger 2023-2024, Sandefjord 2014-2015
+49262  47266                    # Stovner 2023-2024, Sangam 2021-2021
+49263  30059                    # NTNUI 2023-2025, Høvdingen 2015-2015
+49264  23650                    # NTNUI 2023-2023, Moss 2014-2015
+49330  47001                    # Asker 2023-2026, Karmøy 2021-2021
+49337  43109                    # Gullvikmoen 2023-2026, Slagen 2016-2020
+49393  25372                    # Rissa 2023-2023, Leksvik 2013-2022
+49414  24686                    # Bergen 2023-2026, Ålesund 2012-2016
+49419  18840                    # Bergen 2023-2026, Bergen 2013-2014
+49431  32251                    # BSI 2023-2023, Bergen 2015-2015
+49527  50086                    # Mandal 2023-2024, Mandal 2024-2024
+49700  43108                    # OSI 2024-2026, Slagen 2016-2019
+49812  19537                    # Båtsfjord 2024-2026, Båtsfjord 2019-2021
+49874  21240                    # Harstad 2024-2025, Harstad 2014-2014
+50067  50068                    # Hamar 2024-2026, Hamar 2024-2024
+50194  22206                    # Sola 2024-2024, NTNUI 2014-2015
+50407  23091                    # NTNUI 2024-2025, NTNUI 2015-2024
+50476  19750                    # Båtsfjord 2024-2024, Båtsfjord 2010-2015
+50521  47301                    # Trondheim 2024-2024, Kristiansand 2021-2021
+50570  51472                    # Asker 2024-2026, Asker 2025-2025
+50593  23525                    # Gullvikmoen 2024-2025, Bodø 2014-2014
+50612  19060                    # Hamar 2025-2025, Hamar 2024-2024
+50619  47292                    # Sangam 2025-2025, Sangam 2021-2021
+50664  43558                    # Hadsel 2025-2025, Tromsø 2017-2019
+50695  50567                    # Imås IL 2025-2026, Imås IL 2024-2024
+50713  50555                    # Kristiansand 2025-2026, Kristiansand 2024-2024
+50721  19767                    # Grimstad 2026-2026, Grimstad 2014-2015
+50722  19768                    # Grimstad 2026-2026, Grimstad 2014-2015
+50743  44216                    # Strømmen 2025-2025, Strømmen 2017-2019
+50744  44217                    # Strømmen 2025-2025, Strømmen 2017-2019
+50853  23462                    # Frøya 2025-2025, Grong 2014-2014
+50856  33262                    # NTNUI 2025-2025, Bergen 2015-2015
+50916  44479                    # Stovner 2025-2025, Strømmen 2018-2018
+50944  51194                    # Rørvik 2025-2026, Rørvik 2025-2025
+50951  20222                    # Bodø 2025-2025, Sandnessjøen 2014-2017
+50968  24942                    # Ullevål 2026-2026, Haugerud 2019-2021
+51002  48992                    # Asker 2025-2026, Frogner 2023-2023
+51177  19022                    # Hamar 2025-2026, Pillarguri 2015-2017
+51366  18785                    # Båtsfjord 2025-2025, Båtsfjord 2014-2020
+51372  29996 29954              # Båtsfjord 2025-2025, Båtsfjord 2015-2015, Båtsfjord 2016-2016
+51382  49761                    # NTNUI 2025-2026, Tromsøstudentenes IL 2025-2025
+51440  18414                    # Båtsfjord 2025-2026, Båtsfjord 2014-2015
+51544  44090                    # Ullevål 2025-2026, Bygdø 2017-2019
+51599  50739                    # Imås IL 2026-2026, Imås IL 2025-2025
+51613  50319                    # Trondheim 2025-2025, NTNUI 2024-2024
+51635  48917                    # Asker 2025-2026, Bærum 2023-2023
+51691  50133                    # Tromsøstudentenes IL 2026-2026, Tromsøstudentenes IL 2024-2025
+51766  44343                    # Kristiansand 2026-2026, I.L Ros 2017-2021
+51815  46910                    # Djerv 2013-2026, Djerv 2021-2021
+51847  18143                    # NTNUI 2026-2026, Vestre Aker 2014-2015
+51968  21286                    # Kristiansand 2026-2026, Kristiansand 2014-2023
+51969  48118                    # Frøya 2026-2026, Frøya 2022-2023
+51970  49978                    # Frøya 2026-2026, Frøya 2024-2024
+51975  44849                    # Båtsfjord 2026-2026, Båtsfjord 2018-2020
+51976  18017                    # Alta 2026-2026, Mehamn 2014-2017
+52012  49010                    # Trondheim 2026-2026, Frøya 2023-2025
+52014  50987                    # Klæbu 2026-2026, Orkanger 2025-2025
+52059  45579                    # Båtsfjord 2026-2026, Båtsfjord 2019-2021
+52069  43314                    # Lambertseter IF 2026-2026, Haugerud 2016-2017
+52102  21138                    # Berlevåg 2025-2025, Berlevåg 2014-2017
+52172  23795                    # Hammerfest 2026-2026, Båtsfjord 2015-2016
+52222  46829                    # Strømmen 2026-2026, Strømmen 2021-2023
+52283  18764                    # Oppegård IL 2026-2026, Sandefjord 2011-2020
+52319  51852                    # Kirkenes 2026-2026, Tromsøstudentenes IL 2026-2026
+52403  50136                    # Tromsøstudentenes IL 2026-2026, Tromsøstudentenes IL 2024-2024
+52427  49123                    # Sykkylven 2026-2026, Norborg 2023-2026
+
+# Checked: different people
+16984 != 30061
+17156 != 42863
+18115 != 18534
+18534 != 25563
+20330 != 24065
+22290 != 34279
+22399 != 20491
+24346 != 24696
+24346 != 44765
+24696 != 44765
+30151 != 43652
+45351 != 48327
+45508 != 46834
+45554 != 50668
+48422 != 48420

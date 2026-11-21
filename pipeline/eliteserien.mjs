@@ -18,6 +18,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { forecastSeason, random } from "./eliteserien-forecast.mjs";
 import { applyPlayed, currentPlayers, loggedGame, seasonTies, sourceAt, tieRecords } from "./eliteserien-season.mjs";
 import * as R from "./rules.mjs";
+import { samePlayer } from "./same-players.mjs";
+
 
 const DIR = new URL(".", import.meta.url).pathname;
 export const SEASON = "2026/2027";
@@ -81,7 +83,8 @@ export function readRoster(file = ROSTER) {
     const team = line.match(/^\[(.+)\]$/);
     if (team) teams.push({ team: team[1], players: [] });
     const m = line.match(/^([MK])\s+(\d+|-)\s+(.+?)(?:\s*\|\s*loan\s+(.+))?$/);
-    if (m) teams.at(-1).players.push({ gender: m[1], id: m[2] === "-" ? null : +m[2], listName: m[3], loanFrom: m[4] ?? null });
+    // A merged player's other id (same-players.txt) is read as the id kept
+    if (m) teams.at(-1).players.push({ gender: m[1], id: m[2] === "-" ? null : samePlayer(+m[2]), listName: m[3], loanFrom: m[4] ?? null });
   }
   return teams;
 }
