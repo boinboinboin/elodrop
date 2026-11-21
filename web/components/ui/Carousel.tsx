@@ -6,6 +6,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useSyncExternalStore, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "@/components/SVG";
+import Dots from "@/components/ui/Dots";
 import { ICON_BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 
@@ -37,23 +38,15 @@ export default function Carousel({ slides, label }: { slides: ReactNode[]; label
         </div>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2">
-        {/* Each dot is a 24px button (a size a finger can tap) around the small dot that shows; on the narrowest
-            phones ten of them and the arrows don't fit on one line, so they wrap */}
-        <div className="flex flex-wrap min-w-0 -mx-1.5" role="group" aria-label={t("common.carousel.positions")}>
-          {count > 1 &&
-            Array.from({ length: count }, (_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => api?.scrollTo(i)}
-                className="group w-6 h-6 flex items-center justify-center cursor-pointer"
-                aria-label={t("common.carousel.position", { position: i + 1, count })}
-                aria-current={i === current ? "true" : undefined}
-              >
-                <span aria-hidden="true" className={`w-2.5 h-2.5 rounded-full transition-colors duration-200 ${i === current ? "bg-black" : "bg-gray-300 group-hover:bg-gray-500"}`} />
-              </button>
-            ))}
-        </div>
+        {/* On the narrowest phones ten dots and the arrows don't fit on one line, so the dots wrap */}
+        <Dots
+          role="group"
+          aria-label={t("common.carousel.positions")}
+          count={count > 1 ? count : 0}
+          current={current}
+          onSelect={(i) => api?.scrollTo(i)}
+          button={(i) => ({ "aria-label": t("common.carousel.position", { position: i + 1, count }), "aria-current": i === current ? "true" : undefined })}
+        />
         <div className="flex gap-2">
           <button type="button" onClick={() => api?.scrollPrev()} disabled={current === 0} className={ICON_BUTTON} aria-label={t("common.carousel.previous")}>
             <ArrowLeft />

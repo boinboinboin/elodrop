@@ -89,6 +89,26 @@
     "strongestGroup": "pulje {number} ({rating})",
     "order": "Rekkefølge"
   },
+  "bracket": {
+    "tab": "Turneringstre",
+    "intro": "Hver kamp i sluttspillet, med resultatet når den er spilt. Før det: hver sides sjanse for å vinne, fra ratingene. En overraskelse er en kamp vunnet med under 30 % sjanse.",
+    "rounds": "Runder",
+    "places": "{from}.–{to}. plass",
+    "groupWinner": "Vinner av pulje {group}",
+    "groupPlace": "Nr. {rank} i pulje {group}",
+    "bestOfRank": "Beste nr. {rank} fra puljene",
+    "winnerOf": "Vinner av {match}",
+    "loserOf": "Taper av {match}",
+    "match": "kamp {no}",
+    "matchNo": "Kamp {no}",
+    "bye": "Frirunde",
+    "walkover": "w.o.",
+    "walkoverTitle": "Vant på walkover",
+    "third": "Kamp om 3. plass",
+    "upset": "Overraskelse",
+    "upsetTitle": "Vant med {chance} sjanse",
+    "chance": "{first} {firstChance} – {secondChance} {second}"
+  },
   "legend": {
     "outOfGroup": "Videre fra puljen",
     "outOfGroupText": "Sjansen til å bli høyt nok plassert i puljen til å nå utslagsrunden.",

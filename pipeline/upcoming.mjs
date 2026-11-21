@@ -46,7 +46,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { call, text } from "./portalen.mjs";
 import { fetchTournamentInfo, service, unescape, parsePlayer } from "./fetch-tournament.mjs";
-import { maxRounds, seedCount, simulate } from "./draw-sim.mjs";
+import { maxRounds, seedCount, simulate, stageLevels } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
 import { EVENTS, analysesByPortalen, knownAs, missingResults, normalize, recheckDue } from "./cup2000-results.mjs";
@@ -242,7 +242,11 @@ function parseEvent(pages) {
           return ref ? { [ref[1].toLowerCase() === "winner" ? "winnerOf" : "loserOf"]: ref[2] } : null;
         });
         [m[8], m[9]].forEach((position, i) => position >= 0 && seen.set(position, { no, won: m[5] === i + 1 }));
-        matches.push({ no, sides });
+        // For the bracket (bracketOf): each side's entry where the draw names it (a played draw names the player who
+        // came through, also where the side is "winner of match 12"), the winner (0: not played) and the score
+        // (side 1's points first); the simulation reads only `no` and `sides`
+        const at = [m[8], m[9]].map((position) => slotAt.get(position) ?? null);
+        matches.push({ no, sides, at, winner: m[5] === 1 || m[5] === 2 ? m[5] : 0, score: m[3] ?? "" });
       }
     }
     if (!stages.has(page.stage)) stages.set(page.stage, { title: page.stageTitle, matches: [] });
@@ -540,6 +544,51 @@ function lockedEntries(lock, className, discipline, entries) {
 // A locked entry's draw luck (without withdrawals, added again on top)
 const drawLuck = ({ draw, withdrawals, ...luck }) => ({ ...luck, score: draw ?? luck.score });
 
+// An event's knockout stages for the site's bracket (/tournaments/<id>/<class>/<pool>/bracket), the main one first.
+// Each stage's matches from its final down, in draw order (a match before its feeders, side 1's feeders before side
+// 2's, so each round lists its matches top to bottom), then any not leading to the final (a play-off for third,
+// `third`). Each match: its round (0 the final, 1 the semi-finals and so on; null outside the tree), its sides, `from`:
+// the match each side comes from (its winner; null for one that starts here), the winner (1 or 2; 0 not played yet), the sets from side 1 (none for a walkover) and `chance`: side 1's chance from the
+// ratings (the analysis's, so a locked event's from before the start), when both entries are known, also once played
+// (the upsets). A side is { entry } where the draw names it, else where it comes from: { group (its number), rank },
+// { bestOfRank }, { winnerOf } or { loserOf } (a match number); null for a bye. Rebuilt from the draw on every run,
+// so the results come in during the tournament.
+function bracketOf(event, ratings, pool) {
+  const stages = [...event.stages.filter((s) => s.main), ...event.stages.filter((s) => !s.main)];
+  return stages.map((stage) => {
+    const { level, finalNo, thirdNo } = stageLevels(stage);
+    const byNo = new Map(stage.matches.map((m) => [m.no, m]));
+    const tree = [];
+    const visit = (no) => {
+      const m = byNo.get(no);
+      if (!m || tree.includes(m)) return;
+      tree.push(m);
+      for (const src of m.sides) if (src?.winnerOf !== undefined) visit(src.winnerOf);
+    };
+    if (finalNo !== null) visit(finalNo);
+    const side = (src, at) =>
+      at !== null ? { entry: at } : !src ? null : src.slot !== undefined ? { entry: src.slot } : src.group !== undefined ? { group: event.groups[src.group]?.number ?? src.group + 1, rank: src.rank } : src;
+    const match = (m) => {
+      const sides = m.sides.map((src, i) => side(src, m.at?.[i] ?? null));
+      const [a, b] = sides.map((s) => s?.entry);
+      const walkover = /w\.?\s*o/i.test(m.score ?? "");
+      return {
+        no: m.no,
+        round: level.get(m.no) ?? null,
+        ...(m.no === thirdNo ? { third: true } : {}),
+        sides,
+        // The match each side comes from (its winner), also once the side names the player: the tree's lines
+        from: m.sides.map((src) => src?.winnerOf ?? null),
+        winner: m.winner ?? 0,
+        sets: walkover ? [] : [...(m.score ?? "").matchAll(/(\d+)\s*[/-]\s*(\d+)/g)].map(([, x, y]) => [+x, +y]),
+        walkover,
+        chance: a !== undefined && b !== undefined ? round(R.expectedScore(ratings[a], ratings[b], pool)) : null,
+      };
+    };
+    return { title: stage.title, main: stage.main, places: stage.places ?? null, matches: [...tree, ...stage.matches.filter((m) => !tree.includes(m))].map(match) };
+  });
+}
+
 function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, previous = null) {
   const unmatched = [];
   const day = info.startDate ?? today;
@@ -621,6 +670,8 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
       groups: event.groups.map((g) => ({ name: g.name, number: g.number, entries: g.slots, rating: Math.round(g.slots.reduce((s, e) => s + ratings[e], 0) / g.slots.length) })),
       knockout: event.stages.length > 0,
       stages: event.stages.map((s) => ({ title: s.title, main: s.main, places: s.places })),
+      // The knockout's matches, for the bracket view (bracketOf)
+      ...(event.stages.length ? { bracket: bracketOf(event, ratings, pool) } : {}),
       maxRounds: maxRounds(event),
       singleGroup,
       noLuck,

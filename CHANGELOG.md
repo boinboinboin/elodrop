@@ -8,6 +8,16 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.38.0 (2026-11-21)
+
+- Tournament brackets: every event with a knockout has a Bracket tab beside the table's orders, with every match of the knockout, the winners and the sets.
+  - On a large screen it's the full tree, each round a column.
+  - On a phone it's round by round: the round's name between arrows ("‹ Quarter-finals ›") with a dot per round under it. Swipe sideways, use the arrows, or tap a dot to jump to a round.
+  - Before a match is played, each side's chance of winning from the ratings. Once it's played, an upset mark when the winner had less than a 30% chance.
+  - A side not known yet says where it comes from: a group's winner, the best runner-up, or the winner of a named match.
+  - Every stage is there: the main knockout, a B play-off, the X classes' placing matches and the play-off for third.
+- For running the pipeline: `upcoming.mjs` exports each event's knockout matches (`bracket`) from the Cup2000 draw on every run, so the bracket fills in while a tournament is played.
+
 ## v1.37.7 (2026-11-20)
 
 - The front page shows the site's numbers under its intro: players with a rating, matches rated (singles, doubles and mixed together), team matches and seasons. They replace the "players rated" line beside the rankings button. Four numbers sit in one row on a wide screen and in two rows of two on a phone.

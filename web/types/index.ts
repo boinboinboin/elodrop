@@ -665,8 +665,50 @@ export interface TournamentEvent {
   final?: { winner: number; runnerUp: number; walkover: boolean; sets: [number, number][] } | null;
   /** Played: the rating each of the winner's players gained or lost in the tournament's week (null: no rating before) */
   winnerRatingChange?: (number | null)[] | null;
+  /** The knockout stages' matches, the main stage first (missing without a knockout, and in older exports) */
+  bracket?: BracketStage[];
   entries: Entry[];
   unknownPlaceholders: string[];
+}
+
+/**
+ * A side of a bracket match (pipeline/upcoming.mjs bracketOf): the entry where the draw names it, else where it comes
+ * from (a group place, by the group's number; the best of a place over the groups; the winner or loser of a match, by
+ * its number); null a bye
+ */
+export type BracketSide =
+  | { entry: number }
+  | { group: number; rank: number }
+  | { bestOfRank: number }
+  | { winnerOf: string }
+  | { loserOf: string }
+  | null;
+
+export interface BracketMatch {
+  /** Cup2000's match number */
+  no: string;
+  /** 0 the final, 1 the semi-finals and so on; null outside the stage's tree (a play-off for third, `third`) */
+  round: number | null;
+  third?: boolean;
+  sides: [BracketSide, BracketSide];
+  /** The match each side comes from (its winner), also once the side names the player; null for one that starts here */
+  from: [string | null, string | null];
+  /** 1 or 2; 0 not played yet */
+  winner: 0 | 1 | 2;
+  /** Each set's points, side 1's first (none for a walkover or before it's played) */
+  sets: [number, number][];
+  walkover: boolean;
+  /** Side 1's chance from the ratings, when both entries are known (null otherwise) */
+  chance: number | null;
+}
+
+/** A knockout stage: its matches from the final down, in draw order (a match before its feeders, side 1's first) */
+export interface BracketStage {
+  title: string;
+  main: boolean;
+  /** The places it decides ("5–8 plassen"), or null */
+  places: [number, number] | null;
+  matches: BracketMatch[];
 }
 
 export interface LuckSums {

@@ -1,7 +1,7 @@
 // The logic of the tournament page (app/(site)/tournaments/[id]/[[...path]]): how events are ordered and described,
-// their rounds, the orders of the event table and the numbering of final standings.
+// their rounds, the orders of the event table, the numbering of final standings and the bracket's layout.
 import { createI18n, DEFAULT_LANGUAGE, type I18n } from "@/messages/i18n";
-import type { Entry, Pool, Tournament, TournamentEvent } from "@/types";
+import type { BracketMatch, BracketSide, BracketStage, Entry, Pool, Tournament, TournamentEvent } from "@/types";
 import { teamMatchHref, tournamentHref } from "./hrefs";
 import { isSingles } from "./pools";
 import { byRating } from "./sort";
@@ -64,9 +64,96 @@ export function pickView(t: Tournament, path: string[]): { view: "summary" } | {
   const [cls, pool, order = null, ...rest] = path;
   if (!pool || rest.length) return null;
   const event = t.events.findIndex((e) => classSlug(e.className) === cls && e.pool === pool);
-  // The orders' keys are the same in every language; only their names differ
-  if (event < 0 || (order && !(order in orders(createI18n(DEFAULT_LANGUAGE), t.events[event])))) return null;
+  // The orders' keys are the same in every language; only their names differ. The bracket is a view of its own
+  // (BRACKET), for an event with a knockout
+  if (event < 0) return null;
+  if (order && !(order === BRACKET ? hasBracket(t.events[event]) : order in orders(createI18n(DEFAULT_LANGUAGE), t.events[event]))) return null;
   return { view: "events", event, order };
+}
+
+// ---- The bracket (components/tournaments/Bracket.tsx) ----
+
+/** The bracket's view in an event's path: /tournaments/<id>/<class>/<pool>/bracket */
+export const BRACKET = "bracket";
+
+/** An event with a knockout to show as a bracket (none in exports from before it was added) */
+export const hasBracket = (e: TournamentEvent) => !!e.bracket?.some((s) => s.matches.length);
+
+/** A match won with a smaller chance than this is an upset, as for team matches (pipeline/eliteserien.mjs TIE_UPSET) */
+export const UPSET_CHANCE = 0.3;
+
+/** Where a match sits in its stage's full bracket: its round, and its place in units of the first round's matches */
+export interface BracketCell {
+  match: BracketMatch;
+  round: number;
+  /** The first unit (0 at the top) and how many it covers: its two feeders each cover half */
+  start: number;
+  span: number;
+  /** Which of its sides come from a match in the tree (the lines to their feeders) */
+  fed: [boolean, boolean];
+}
+
+/**
+ * A stage laid out as a full bracket, from its final: each match placed over the units its feeders take (a side
+ * without a feeder, a bye or a player placed in a later round, leaves its half empty), so a match sits halfway
+ * between its two feeders also where the draw has byes. `rounds`: each round's matches top to bottom, the first round
+ * first; `extra`: the matches outside the tree (a play-off for third).
+ */
+export function bracketLayout(stage: BracketStage): { top: number; units: number; cells: BracketCell[]; rounds: BracketMatch[][]; extra: BracketMatch[] } {
+  const byNo = new Map(stage.matches.map((m) => [m.no, m]));
+  const feeder = (no: string | null) => (no ? byNo.get(no) : undefined);
+  const final = stage.matches.find((m) => m.round === 0);
+  const top = Math.max(0, ...stage.matches.map((m) => m.round ?? 0));
+  const units = 2 ** top;
+  const cells: BracketCell[] = [];
+  const place = (match: BracketMatch, round: number, start: number, span: number) => {
+    const feeders = (match.from ?? [null, null]).map(feeder);
+    cells.push({ match, round, start, span, fed: [!!feeders[0], !!feeders[1]] });
+    feeders.forEach((f, i) => f && round < top && place(f, round + 1, start + (i * span) / 2, span / 2));
+  };
+  if (final) place(final, 0, 0, units);
+  const placed = new Set(cells.map((c) => c.match));
+  const rounds = Array.from({ length: top + 1 }, (_, r) =>
+    cells
+      .filter((c) => c.round === top - r)
+      .sort((a, b) => a.start - b.start)
+      .map((c) => c.match),
+  );
+  return { top, units, cells, rounds, extra: stage.matches.filter((m) => !placed.has(m)) };
+}
+
+/** A round's name, by how far from the final it is: "Final", "Semi-finals", "Last 16", or "Round 2" beyond the named ones */
+export function roundTitle({ t }: I18n, round: number, top: number): string {
+  const key = ROUND_KEYS[round];
+  const name = key ? t(`tournaments.rounds.short.${key}`) : t("tournaments.rounds.round", { number: top - round + 1 });
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/** A stage's name: the places it decides ("5.–6. plass"), else its title on Cup2000 after the class ("Puljevinner finale") */
+export function stageTitle({ t }: I18n, stage: BracketStage, event: TournamentEvent): string {
+  if (stage.places) return t("tournaments.bracket.places", { from: stage.places[0], to: stage.places[1] });
+  const after = stage.title.split(event.className).at(-1)?.trim();
+  return after || stage.title;
+}
+
+/** An entry's players by their last names, "Aas/Berg", for naming a match in another match's side */
+const surnames = (e: Entry) => e.players.map((p) => p.name.split(" ").at(-1)).join("/");
+
+/**
+ * Where a side not known yet comes from: "Winner of group 3", "No. 2 in group 1", "Best no. 2 of the groups", "Winner
+ * of Aas – Berg" (the match's players, when they're known; else its number), "Bye"
+ */
+export function sideLabel(i18n: I18n, side: BracketSide, event: TournamentEvent, stage: BracketStage): string {
+  const { t } = i18n;
+  if (!side) return t("tournaments.bracket.bye");
+  if ("group" in side) return side.rank === 1 ? t("tournaments.bracket.groupWinner", { group: side.group }) : t("tournaments.bracket.groupPlace", { rank: side.rank, group: side.group });
+  if ("bestOfRank" in side) return t("tournaments.bracket.bestOfRank", { rank: side.bestOfRank });
+  if ("entry" in side) return surnames(event.entries[side.entry]);
+  const no = "winnerOf" in side ? side.winnerOf : side.loserOf;
+  const from = stage.matches.find((m) => m.no === no);
+  const known = from?.sides.every((s) => s && "entry" in s);
+  const match = known ? from!.sides.map((s) => surnames(event.entries[(s as { entry: number }).entry])).join(" – ") : t("tournaments.bracket.match", { no });
+  return t("winnerOf" in side ? "tournaments.bracket.winnerOf" : "tournaments.bracket.loserOf", { match });
 }
 
 /** No draw luck: a single group (everyone plays everyone) or just two entries (one match) */

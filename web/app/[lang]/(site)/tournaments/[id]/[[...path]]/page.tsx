@@ -1,7 +1,7 @@
 // One tournament's draws, draw luck and, once played, how the predictions turned out
 // (pipeline/upcoming.mjs). Two views: the events (/tournaments/<id> the first, /<class>/<pool> another,
-// /<class>/<pool>/<order> in another table order) and the summary (/tournaments/<id>/summary). Each
-// is a static page, rendered on its first visit and cached until the next data update.
+// /<class>/<pool>/<order> in another table order, /<class>/<pool>/bracket its knockout as a bracket) and the summary
+// (/tournaments/<id>/summary). Each is a static page, rendered on its first visit and cached until the next data update.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
@@ -10,6 +10,7 @@ import PoolName from "@/components/format/PoolName";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { MapPin } from "@/components/SVG";
 import JsonLd from "@/components/seo/JsonLd";
+import Bracket from "@/components/tournaments/Bracket";
 import EntryNames from "@/components/tournaments/EntryNames";
 import EventResult, { EventFavourite } from "@/components/tournaments/EventResult";
 import PredictionStats from "@/components/tournaments/PredictionStats";
@@ -38,6 +39,7 @@ import { isSingles } from "@/utils/pools";
 import { hyphenate } from "@/utils/hyphenate";
 import {
   type Order,
+  BRACKET,
   allEntries,
   cancelledReason,
   entryCount,
@@ -45,6 +47,7 @@ import {
   eventsByClass,
   eventTitle,
   formatDescription,
+  hasBracket,
   noLuck,
   onlyWinners,
   orders,
@@ -73,8 +76,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/tournament
   const tour = id !== null ? await getTournament(id) : null;
   if (!tour) return { title: t("tournaments.metadata.tournament") };
   const dates = tour.startDate ? `, ${dateRange(tour.startDate, tour.endDate)}` : "";
-  // Each view and event is its own page; an event in another table order (a third part) is the same event
-  const canonical = [tournamentHref(tour.cup2000Id), ...(path ?? []).slice(0, 2).map((part) => decodeURIComponent(part))].join("/");
+  // Each view and event is its own page; an event in another table order (a third part) is the same event, but its
+  // bracket a page of its own
+  const parts = (path ?? []).map((part) => decodeURIComponent(part));
+  const canonical = [tournamentHref(tour.cup2000Id), ...parts.slice(0, parts[2] === BRACKET ? 3 : 2)].join("/");
   return pageMetadata(i18n, {
     title: tour.name,
     description: t("seo.descriptions.tournament", { name: tour.name, dates }),
@@ -292,6 +297,9 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
   const available = orders(i18n, event);
   const keys = Object.keys(available) as Order[];
   const order: Order = requestedOrder && requestedOrder in available ? (requestedOrder as Order) : keys[0];
+  // The bracket: a view beside the table's orders, for an event with a knockout (its own page)
+  const bracket = hasBracket(event);
+  const showBracket = bracket && requestedOrder === BRACKET;
   const grouped = event.groups.length > 1;
   const groupColumn = grouped && order !== "group";
   const numbered = order === "standings";
@@ -353,53 +361,58 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
       {winner && <EventResult event={event} winner={winner} clubs={clubs} />}
       {favourite && topRated && <EventFavourite event={event} favourite={favourite} topRated={topRated} clubs={clubs} />}
 
-      <dl className="grid gap-2 md:grid-cols-[auto_1fr] md:gap-x-6 mb-6 max-w-4xl text-gray-700">
-        {knockoutColumn && (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.outOfGroup")}</dt>
-            <dd>{t(onlyWinners(event) ? "tournaments.legend.outOfGroupOnlyWinners" : "tournaments.legend.outOfGroupText")}</dd>
-          </>
-        )}
-        <dt className="font-semibold">{t("tournaments.legend.winsEvent")}</dt>
-        <dd>{t(event.knockout ? "tournaments.legend.winsEventKnockout" : "tournaments.legend.winsEventGroup")}</dd>
-        {single ? (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.wins")}</dt>
-            <dd>{t("tournaments.legend.winsText", { max })}</dd>
-          </>
-        ) : placement ? (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.placement")}</dt>
-            <dd>{t("tournaments.legend.placementText", { count: event.entries.length })}</dd>
-          </>
-        ) : (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.rounds")}</dt>
-            <dd>{t("tournaments.legend.roundsText", { max, steps: steps.join(", ") })}</dd>
-          </>
-        )}
-        {!single && (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.luck")}</dt>
-            <dd>
-              {t(placement ? "tournaments.legend.luckPlacement" : "tournaments.legend.luckRounds")}
-              {withdrawals && ` ${t("tournaments.legend.luckWithdrawals")}`}
-            </dd>
-          </>
-        )}
-        {!single && (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.seeds")}</dt>
-            <dd>{seedsText(i18n, event, tour.rankingVersion)}</dd>
-          </>
-        )}
-        {played && (
-          <>
-            <dt className="font-semibold">{t("tournaments.legend.result")}</dt>
-            <dd>{t(single ? "tournaments.legend.resultSingle" : placement ? "tournaments.legend.resultPlacement" : "tournaments.legend.resultRounds")}</dd>
-          </>
-        )}
-      </dl>
+      {showBracket && <p className="mb-6 max-w-4xl text-gray-700">{t("tournaments.bracket.intro")}</p>}
+
+      {/* The table's columns explained (not with the bracket) */}
+      {!showBracket && (
+        <dl className="grid gap-2 md:grid-cols-[auto_1fr] md:gap-x-6 mb-6 max-w-4xl text-gray-700">
+          {knockoutColumn && (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.outOfGroup")}</dt>
+              <dd>{t(onlyWinners(event) ? "tournaments.legend.outOfGroupOnlyWinners" : "tournaments.legend.outOfGroupText")}</dd>
+            </>
+          )}
+          <dt className="font-semibold">{t("tournaments.legend.winsEvent")}</dt>
+          <dd>{t(event.knockout ? "tournaments.legend.winsEventKnockout" : "tournaments.legend.winsEventGroup")}</dd>
+          {single ? (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.wins")}</dt>
+              <dd>{t("tournaments.legend.winsText", { max })}</dd>
+            </>
+          ) : placement ? (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.placement")}</dt>
+              <dd>{t("tournaments.legend.placementText", { count: event.entries.length })}</dd>
+            </>
+          ) : (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.rounds")}</dt>
+              <dd>{t("tournaments.legend.roundsText", { max, steps: steps.join(", ") })}</dd>
+            </>
+          )}
+          {!single && (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.luck")}</dt>
+              <dd>
+                {t(placement ? "tournaments.legend.luckPlacement" : "tournaments.legend.luckRounds")}
+                {withdrawals && ` ${t("tournaments.legend.luckWithdrawals")}`}
+              </dd>
+            </>
+          )}
+          {!single && (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.seeds")}</dt>
+              <dd>{seedsText(i18n, event, tour.rankingVersion)}</dd>
+            </>
+          )}
+          {played && (
+            <>
+              <dt className="font-semibold">{t("tournaments.legend.result")}</dt>
+              <dd>{t(single ? "tournaments.legend.resultSingle" : placement ? "tournaments.legend.resultPlacement" : "tournaments.legend.resultRounds")}</dd>
+            </>
+          )}
+        </dl>
+      )}
 
       {toughest.length > 0 && (
         <p className="text-sm text-gray-600 mb-4">
@@ -407,53 +420,61 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
         </p>
       )}
 
-      {keys.length > 1 && (
+      {/* The table's orders, and the bracket beside them */}
+      {(keys.length > 1 || bracket) && (
         <LinkTabs
           label={t("tournaments.event.order")}
           size="sm"
           className="flex flex-wrap gap-2 mb-4"
-          current={order}
-          tabs={keys.map((key) => ({ key, href: eventHref(tour.cup2000Id, event, key), label: available[key] }))}
+          current={showBracket ? BRACKET : order}
+          tabs={[
+            ...keys.map((key) => ({ key, href: eventHref(tour.cup2000Id, event, key), label: available[key] })),
+            ...(bracket ? [{ key: BRACKET, href: eventHref(tour.cup2000Id, event, BRACKET), label: t("tournaments.bracket.tab") }] : []),
+          ]}
         />
       )}
 
-      {/* On phones the numbers go under each entry's names (EntryRow); from tablet width up, the table */}
-      <div className="bg-white overflow-x-auto">
-        <table className="w-full text-left">
-          <thead className="text-sm text-gray-600 border-b border-gray-200">
-            <tr>
-              {numbered && <th scope="col" className="py-2 pl-2 sm:pl-4 pr-0 font-normal text-right">{t("tournaments.table.place")}</th>}
-              <th scope="col" className="py-2 px-2 sm:px-4 font-normal">{t(isSingles(event.pool) ? "common.table.player" : "tournaments.table.pair")}</th>
-              {groupColumn && <th scope="col" className={head}>{t("tournaments.table.group")}</th>}
-              <th scope="col" className={head} title={t("tournaments.table.ratingTitle")}>{t("common.table.rating")}</th>
-              {knockoutColumn && <th scope="col" className={head} title={t("tournaments.table.outOfGroupTitle")}>{t("tournaments.legend.outOfGroup")}</th>}
-              <th scope="col" className={head} title={t(single ? "tournaments.table.winsEventTitle" : "tournaments.table.winsEventTitleFair")}>{t("tournaments.legend.winsEvent")}</th>
-              {single ? (
-                <th scope="col" className={head} title={t("tournaments.table.winsTitle")}>{t("tournaments.legend.wins")} {ofMax(max)}</th>
-              ) : placement ? (
-                <th scope="col" className={head} title={t("tournaments.table.placementTitle")}>{t("tournaments.legend.placement")} {ofMax(event.entries.length)}</th>
-              ) : (
-                <th scope="col" className={head} title={t("tournaments.table.roundsTitle")}>{t("tournaments.legend.rounds")} {max ? ofMax(max) : null}</th>
+      {showBracket ? (
+        <Bracket event={event} clubs={clubs} />
+      ) : (
+        // On phones the numbers go under each entry's names (EntryRow); from tablet width up, the table
+        <div className="bg-white overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="text-sm text-gray-600 border-b border-gray-200">
+              <tr>
+                {numbered && <th scope="col" className="py-2 pl-2 sm:pl-4 pr-0 font-normal text-right">{t("tournaments.table.place")}</th>}
+                <th scope="col" className="py-2 px-2 sm:px-4 font-normal">{t(isSingles(event.pool) ? "common.table.player" : "tournaments.table.pair")}</th>
+                {groupColumn && <th scope="col" className={head}>{t("tournaments.table.group")}</th>}
+                <th scope="col" className={head} title={t("tournaments.table.ratingTitle")}>{t("common.table.rating")}</th>
+                {knockoutColumn && <th scope="col" className={head} title={t("tournaments.table.outOfGroupTitle")}>{t("tournaments.legend.outOfGroup")}</th>}
+                <th scope="col" className={head} title={t(single ? "tournaments.table.winsEventTitle" : "tournaments.table.winsEventTitleFair")}>{t("tournaments.legend.winsEvent")}</th>
+                {single ? (
+                  <th scope="col" className={head} title={t("tournaments.table.winsTitle")}>{t("tournaments.legend.wins")} {ofMax(max)}</th>
+                ) : placement ? (
+                  <th scope="col" className={head} title={t("tournaments.table.placementTitle")}>{t("tournaments.legend.placement")} {ofMax(event.entries.length)}</th>
+                ) : (
+                  <th scope="col" className={head} title={t("tournaments.table.roundsTitle")}>{t("tournaments.legend.rounds")} {max ? ofMax(max) : null}</th>
+                )}
+                {!single && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal">{t("tournaments.legend.luck")}</th>}
+                {played && <th scope="col" className={head}>{t("tournaments.legend.result")}</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {tableRows(i18n, event, order).map((row, i) =>
+                "header" in row ? (
+                  <tr key={`h${i}`} className="bg-gray-50 border-b border-gray-200">
+                    <th scope="colgroup" colSpan={columns} className="py-2 px-2 sm:px-4 text-left font-semibold">
+                      {row.header} {row.detail && <span className="font-normal text-sm text-gray-600">· {row.detail}</span>}
+                    </th>
+                  </tr>
+                ) : (
+                  <EntryRow key={i} entry={row.entry} place={row.place} event={event} order={order} clubs={clubs} columns={{ numbered, groupColumn, knockoutColumn }} maxLuck={maxLuck} short={short} />
+                ),
               )}
-              {!single && <th scope="col" className="hidden sm:table-cell py-2 px-4 font-normal">{t("tournaments.legend.luck")}</th>}
-              {played && <th scope="col" className={head}>{t("tournaments.legend.result")}</th>}
-            </tr>
-          </thead>
-          <tbody>
-            {tableRows(i18n, event, order).map((row, i) =>
-              "header" in row ? (
-                <tr key={`h${i}`} className="bg-gray-50 border-b border-gray-200">
-                  <th scope="colgroup" colSpan={columns} className="py-2 px-2 sm:px-4 text-left font-semibold">
-                    {row.header} {row.detail && <span className="font-normal text-sm text-gray-600">· {row.detail}</span>}
-                  </th>
-                </tr>
-              ) : (
-                <EntryRow key={i} entry={row.entry} place={row.place} event={event} order={order} clubs={clubs} columns={{ numbered, groupColumn, knockoutColumn }} maxLuck={maxLuck} short={short} />
-              ),
-            )}
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
+      )}
     </Section>
   );
 }

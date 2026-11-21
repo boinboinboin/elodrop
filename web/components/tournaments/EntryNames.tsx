@@ -2,7 +2,8 @@
 // without one in this discipline. With `ratingBelow`, phones show each rating on its own line under
 // the name and club (narrow boxes), wider screens beside the name. `changes`: each player's rating
 // gained or lost (in the tournament's week), shown after their rating. `pool`: the event's discipline, which the
-// players' pages open on.
+// players' pages open on. `compact`: the names and logos only, each name on one line (the club and the full name on
+// hover), for a bracket's match.
 import LogoImage from "@/components/clubs/LogoImage";
 import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
@@ -16,12 +17,14 @@ export default async function EntryNames({
   ratingBelow = false,
   changes,
   pool,
+  compact = false,
 }: {
   e: Pick<Entry, "players">;
   clubs: Record<string, ClubEntry>;
   ratingBelow?: boolean;
   changes?: (number | null)[] | null;
   pool?: Pool;
+  compact?: boolean;
 }) {
   const { signed, t } = await getI18n();
   return (
@@ -41,20 +44,23 @@ export default async function EntryNames({
                 centred on the first line */}
             <span className="flex gap-1.5">
               {club?.logo && (
-                <span className="h-[1lh] flex items-center shrink-0">
+                <span className="h-[1lh] flex items-center shrink-0" title={compact ? (p.club ?? undefined) : undefined}>
                   <LogoImage src={club.logo} size={4} invert={club.logoInvert} lazy className="w-4 h-4" />
                 </span>
               )}
-              <span className="min-w-0">
+              {/* Compact: on one line, cut short with … where it's too long (the full name on hover) */}
+              <span className={`min-w-0 ${compact ? "truncate" : ""}`} title={compact ? p.name : undefined}>
                 {p.id ? <Link href={playerHref(p.id, pool)} className="link hover:text-blue-600">{p.name}</Link> : p.name}
-                <span className={`ml-1.5 text-sm text-gray-500 tabular-nums whitespace-nowrap ${ratingBelow ? "max-sm:hidden" : ""}`} title={rating.title}>
-                  {rating.text}
-                  {changed}
-                </span>
+                {!compact && (
+                  <span className={`ml-1.5 text-sm text-gray-500 tabular-nums whitespace-nowrap ${ratingBelow ? "max-sm:hidden" : ""}`} title={rating.title}>
+                    {rating.text}
+                    {changed}
+                  </span>
+                )}
               </span>
             </span>
-            {p.club && <span className={`block text-sm text-gray-600 ${club?.logo ? "pl-5.5" : ""}`}>{p.club}</span>}
-            {ratingBelow && (
+            {p.club && !compact && <span className={`block text-sm text-gray-600 ${club?.logo ? "pl-5.5" : ""}`}>{p.club}</span>}
+            {ratingBelow && !compact && (
               <span className={`sm:hidden block text-sm text-gray-500 tabular-nums ${club?.logo ? "pl-5.5" : ""}`} title={rating.title}>{rating.text}{changed}</span>
             )}
           </span>

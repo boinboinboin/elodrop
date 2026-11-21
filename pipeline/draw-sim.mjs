@@ -101,8 +101,9 @@ export function maxRounds(event) {
 }
 
 // A knockout stage's levels: its final 0 (the match the most other matches lead to), the matches
-// feeding it 1, and so on; `thirdNo`: a play-off for third (both sides losers of level-1 matches)
-function stageLevels(stage) {
+// feeding it 1, and so on; `thirdNo`: a play-off for third (both sides losers of level-1 matches). Also the
+// rounds of upcoming.mjs's bracket
+export function stageLevels(stage) {
   const byNo = new Map(stage.matches.map((m) => [m.no, m]));
   const feeders = (m) => m.sides.reduce((sum, src) => sum + (src?.winnerOf !== undefined && byNo.has(src.winnerOf) ? 1 + feeders(byNo.get(src.winnerOf)) : 0), 0);
   const fed = new Set(stage.matches.flatMap((m) => m.sides.map((src) => src?.winnerOf)).filter(Boolean));

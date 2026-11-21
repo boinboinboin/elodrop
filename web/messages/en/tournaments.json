@@ -89,6 +89,26 @@
     "strongestGroup": "group {number} ({rating})",
     "order": "Order"
   },
+  "bracket": {
+    "tab": "Bracket",
+    "intro": "Every knockout match, with its result once it's played. Before then, each side's chance of winning from the ratings. An upset is a match won with less than a 30% chance.",
+    "rounds": "Rounds",
+    "places": "Places {from}–{to}",
+    "groupWinner": "Winner of group {group}",
+    "groupPlace": "No. {rank} in group {group}",
+    "bestOfRank": "Best no. {rank} of the groups",
+    "winnerOf": "Winner of {match}",
+    "loserOf": "Loser of {match}",
+    "match": "match {no}",
+    "matchNo": "Match {no}",
+    "bye": "Bye",
+    "walkover": "w.o.",
+    "walkoverTitle": "Won by walkover",
+    "third": "Play-off for third",
+    "upset": "Upset",
+    "upsetTitle": "Won with a {chance} chance",
+    "chance": "{first} {firstChance} – {secondChance} {second}"
+  },
   "legend": {
     "outOfGroup": "Out of group",
     "outOfGroupText": "The chance of finishing high enough in the group to reach the knockout.",
