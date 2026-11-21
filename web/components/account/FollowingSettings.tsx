@@ -1,7 +1,9 @@
 "use client";
 
 // The account page's overview of what the user follows: every followed player in the same table as the front page's
-// card (their own player first), each with a cross to stop following, and the followed clubs, likewise.
+// card (their own player first), each with a cross to stop following, all of what's new with them (FollowedNews: their
+// draws coming up, their latest results, the clubs' next and last team matches), and the followed clubs to manage.
+import { FollowedClubMatches, FollowedDraws, FollowedResults } from "@/components/account/FollowedNews";
 import FollowedTable from "@/components/account/FollowedTable";
 import { PART } from "@/components/account/form";
 import UnfollowButton from "@/components/account/UnfollowButton";
@@ -24,8 +26,15 @@ export default function FollowingSettings() {
       ) : !players.length && !me ? (
         <p className="text-gray-600">{t("account.following.empty")}</p>
       ) : (
-        <FollowedTable players={players} me={me} unfollow />
+        <>
+          <FollowedTable players={players} me={me} unfollow />
+          {/* All of what's new with them: every draw coming up and every result of the last two weeks */}
+          <FollowedDraws players={players} me={me} />
+          <FollowedResults players={players} me={me} />
+        </>
       )}
+      {/* The clubs' next two team matches and last three */}
+      <FollowedClubMatches clubs={clubs} fixtures={2} results={3} />
       {clubs.length > 0 && (
         <>
           <h3 className="text-xl mt-6 mb-2">{t("account.following.clubs")}</h3>

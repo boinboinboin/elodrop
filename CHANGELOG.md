@@ -8,6 +8,15 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.38.1 (2026-11-21)
+
+- Following does more. Besides your followed players' ratings, the front page's Following card and your account page now show:
+  - **Coming up**: who of them (and you) is drawn in a tournament soon, the event and their chance of winning it.
+  - **Latest results**: their matches of the last two weeks, with the score, the rating change and an upset mark.
+  - **Clubs**: each followed club's next team match and its last result.
+- The card shows a few of each, the account page all of them.
+- For running the pipeline: `export.mjs` writes `tournaments/drawn.json` (who is drawn in a tournament not over yet), and `team-matches.mjs` writes `team-matches/clubs.json` (each club's next fixtures and last results this season).
+
 ## v1.38.0 (2026-11-21)
 
 - Tournament brackets: every event with a knockout has a Bracket tab beside the table's orders, with every match of the knockout, the winners and the sets.

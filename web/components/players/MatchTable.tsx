@@ -20,7 +20,7 @@ import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
 import { playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
-import { matchHref } from "@/utils/tournament";
+import { matchEventHref } from "@/utils/tournament";
 
 interface Props {
   matches: Match[];
@@ -37,12 +37,6 @@ interface Props {
 }
 
 const SORTS = ["date", "gain", "loss"] as const;
-
-/** A league match's team match page, or a tournament match's event page (or the tournament's) when its tournament has a draw-luck page */
-function matchEventHref(m: Match, links: Record<string, number> | undefined, pool: Pool | undefined) {
-  const id = m.key?.match(/^T(\d+)/)?.[1];
-  return matchHref(m, id ? links?.[id] : undefined, pool);
-}
 
 export default function MatchTable({ matches: newest, title, subtitle, limit, sortable = false, embedded = false, showMargin = false, pool, tournamentLinks, more }: Props) {
   const { chance, date, num, signed, t } = useI18n();

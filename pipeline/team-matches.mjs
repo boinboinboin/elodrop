@@ -12,6 +12,7 @@
 //   divisions/<season>/<slug>.json  one division (or series) in a season: its groups, each with
 //                       its team matches, its official standings and its power ranking (the teams by the strength of the
 //                       players who played for them that season, their best lineup)
+//   clubs.json          each club's next fixtures and last results this season (the Following card)
 //   venues.json         every hall team matches were played in (badmintonportalen's free text), most
 //                       used first, with the clubs hosting there: for the site's venues in Sanity
 //                       (web/scripts/import-venues.mts)
@@ -252,6 +253,44 @@ for (const s of seasons) {
   }));
 }
 writeFileSync(`${OUT}/index.json`, JSON.stringify({ generatedAt: new Date().toISOString(), seasons, latest: weeks.length ? weekFile(weeks[0]) : null }));
+
+// Each club's team matches this season, for the Following card and the account page (web/components/account): its
+// next fixtures (from the groups' schedules, today on) and its last results, a few of each, by the club's name (as the
+// ties' homeClub and awayClub; teams of several clubs left out). Read by the browser straight from the data bucket.
+{
+  const FIXTURES = 2;
+  const RESULTS = 3;
+  const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Oslo" });
+  const season = Math.max(0, ...ties.map((t) => t.summary.season));
+  const clubs = {};
+  const add = (team, key, item) => {
+    if (team.includes("/")) return;
+    const club = (clubs[clubOf(team)] ??= { fixtures: [], results: [] });
+    club[key].push(item);
+  };
+  for (const file of readdirSync(`${DIR}data/league`).filter((f) => f.endsWith(".json"))) {
+    const group = read(`${DIR}data/league/${file}`);
+    if (group.season !== season) continue;
+    for (const t of group.schedule ?? []) {
+      if (!t.time || t.time.slice(0, 10) < today) continue;
+      const [home, away] = [teamName(t.home), teamName(t.away)];
+      const fixture = { matchId: t.matchId, time: t.time, home, away, division: group.division, divisionSlug: slugs.get(divisionKey(group)) ?? null };
+      add(home, "fixtures", fixture);
+      add(away, "fixtures", fixture);
+    }
+  }
+  for (const { summary: s } of ties) {
+    if (s.season !== season) continue;
+    const result = { matchId: s.matchId, day: s.day, home: s.home, away: s.away, division: s.division, divisionSlug: s.divisionSlug, score: s.score, winner: s.winner, upset: s.upset };
+    add(s.home, "results", result);
+    add(s.away, "results", result);
+  }
+  for (const club of Object.values(clubs)) {
+    club.fixtures = club.fixtures.sort((a, b) => a.time.localeCompare(b.time)).slice(0, FIXTURES);
+    club.results = club.results.sort((a, b) => b.day.localeCompare(a.day) || b.matchId - a.matchId).slice(0, RESULTS);
+  }
+  writeFileSync(`${OUT}/clubs.json`, JSON.stringify({ generatedAt: new Date().toISOString(), season, clubs }));
+}
 
 // The halls: { name, ties, hosts: { club: ties } } (the host: the arranging club, else the home team's)
 const halls = new Map();

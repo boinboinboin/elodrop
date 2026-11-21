@@ -31,15 +31,17 @@
 //   team-matches/weeks/<Monday>.json  that week's team matches
 //   team-matches/<matchId>.json   one team match with its individual matches
 //   team-matches/divisions/<season>/<slug>.json  one division: its groups' team matches, standings and power rankings
+//   team-matches/clubs.json       each club's next fixtures and last results this season (team-matches.mjs)
 //   tournaments/index.json        tournaments with a draw, and the predictions' evaluation
 //   tournaments/<Cup2000 id>.json
+//   tournaments/drawn.json        who is drawn in a tournament not over yet, by player
 //   gender-gap.json               how women's ratings compare with men's (gender-gap.mjs)
 //   elostonk/players.json, elostonk/rounds/<Friday>.json  the EloStonk game's players and points (elostonk.mjs)
 //   manifest.json                 every file with its size and hash (written last)
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { achievements, achievementStats } from "./achievements.mjs";
-import { stonkFiles } from "./elostonk.mjs";
+import { osloToday, stonkFiles } from "./elostonk.mjs";
 import { rankedIn } from "./rules.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -209,6 +211,29 @@ if (existsSync(`${DATA}/team-matches`)) {
 write("tournaments/index.json", tournaments);
 if (existsSync(`${DATA}/upcoming`)) {
   for (const f of readdirSync(`${DATA}/upcoming`).filter((f) => f.endsWith(".json"))) write(`tournaments/${f}`, read(`upcoming/${f}`));
+}
+
+// Who is drawn in a tournament not over yet (the same ones as EloStonk's upcoming), for the Following card and the
+// account page (web/components/account/useFollowed.ts): by player id, each event they're in, [Cup2000 id, class,
+// discipline, chance of winning it] (as its event page shows; not for a player who withdrew), and the tournaments'
+// [name, first day, last day]. Read by the browser straight from the data bucket: no page reads it.
+{
+  const today = osloToday();
+  const drawn = { generatedAt, tournaments: {}, players: {} };
+  for (const t of [...(tournaments.tournaments ?? [])].sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))) {
+    if (t.cancelled || !t.startDate || (t.endDate ?? t.startDate) < today) continue;
+    for (const e of optional(`upcoming/${t.cup2000Id}.json`)?.events ?? []) {
+      for (const entry of e.entries) {
+        if (entry.withdrew) continue;
+        for (const p of entry.players) {
+          if (!p.id) continue;
+          (drawn.players[p.id] ??= []).push([t.cup2000Id, e.className, e.pool, Math.round(entry.actual.win * 1000) / 1000]);
+          drawn.tournaments[t.cup2000Id] ??= [t.name, t.startDate, t.endDate ?? t.startDate];
+        }
+      }
+    }
+  }
+  write("tournaments/drawn.json", drawn);
 }
 
 if (existsSync(`${DATA}/gender-gap.json`)) write("gender-gap.json", read("gender-gap.json"));

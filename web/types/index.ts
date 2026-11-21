@@ -756,6 +756,49 @@ export interface TournamentSummary extends Omit<Tournament, "events" | "unmatche
   missing?: number;
 }
 
+/**
+ * Who is drawn in a tournament not over yet (pipeline/export.mjs tournaments/drawn.json), for the Following card: the
+ * tournaments' [name, first day, last day], and by player id each event they're in, [Cup2000 id, class, discipline,
+ * chance of winning it]
+ */
+export interface DrawnFile {
+  generatedAt: string;
+  tournaments: Record<string, [string, string, string]>;
+  players: Record<string, [number, string, Pool, number][]>;
+}
+
+/** A club's next team match (pipeline/team-matches.mjs team-matches/clubs.json); `time` a day, or a day and a time */
+export interface ClubFixture {
+  matchId: number;
+  time: string;
+  home: string;
+  away: string;
+  division: string;
+  /** Its division's page this season, null before the division has a team match played */
+  divisionSlug: string | null;
+}
+
+/** One of a club's last team matches */
+export interface ClubResult {
+  matchId: number;
+  day: string;
+  home: string;
+  away: string;
+  division: string;
+  divisionSlug: string;
+  score: [number, number];
+  /** 1 home, 2 away, 0 a draw */
+  winner: 0 | 1 | 2;
+  upset: boolean;
+}
+
+/** Each club's next fixtures and last results this season, by the club's name, for the Following card */
+export interface ClubTeamMatchesFile {
+  generatedAt: string;
+  season: number;
+  clubs: Record<string, { fixtures: ClubFixture[]; results: ClubResult[] }>;
+}
+
 export interface TournamentsIndex {
   generatedAt: string;
   evaluation: Evaluation;

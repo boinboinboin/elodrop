@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import type { PlayerSummary } from "@/app/api/players/[id]/summary/route";
 import { useAccount } from "@/components/account/AccountProvider";
 import { useI18n } from "@/messages/client";
+import type { ClubTeamMatchesFile, DrawnFile } from "@/types";
 import { loadSearchIndex } from "@/utils/search";
 
 const summaries = new Map<number, Promise<PlayerSummary | null>>();
@@ -51,6 +52,45 @@ export function useFollowedPlayers(): { players: PlayerSummary[] | null; me: Pla
 
   return { players, me, meId };
 }
+
+// The Following card's two shared files: who is drawn in a tournament soon, and each club's next and last team matches.
+// Read once per visit, only by a member following someone, straight from the data bucket (Cloudflare's traffic from R2
+// is free; as EloStonk's players, useStonk.ts), or, without its address (local development), from the site's routes.
+const files = new Map<string, Promise<unknown>>();
+function loadFile<T>(path: string, local: string): Promise<T | null> {
+  const url = process.env.NEXT_PUBLIC_DATA_URL ? `${process.env.NEXT_PUBLIC_DATA_URL}/${path}` : local;
+  if (!files.has(url))
+    files.set(
+      url,
+      fetch(url)
+        .then((res) => (res.ok ? res.json() : null))
+        .catch(() => {
+          // Tried again on the next look
+          files.delete(url);
+          return null;
+        }),
+    );
+  return files.get(url) as Promise<T | null>;
+}
+
+function useFile<T>(enabled: boolean, path: string, local: string): T | null {
+  const [file, setFile] = useState<T | null>(null);
+  useEffect(() => {
+    if (!enabled) return;
+    let live = true;
+    loadFile<T>(path, local).then((f) => live && setFile(f));
+    return () => {
+      live = false;
+    };
+  }, [enabled, path, local]);
+  return enabled ? file : null;
+}
+
+/** Who is drawn in a tournament not over yet (tournaments/drawn.json); null while it loads, or when `enabled` is false */
+export const useDrawn = (enabled: boolean) => useFile<DrawnFile>(enabled, "tournaments/drawn.json", "/api/following/drawn");
+
+/** Each club's next fixtures and last results this season (team-matches/clubs.json), likewise */
+export const useClubTeamMatches = (enabled: boolean) => useFile<ClubTeamMatchesFile>(enabled, "team-matches/clubs.json", "/api/following/clubs");
 
 /** The followed clubs with their names, by name */
 export function useFollowedClubs(): { slug: string; name: string }[] {

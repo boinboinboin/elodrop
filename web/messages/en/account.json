@@ -111,7 +111,7 @@
   },
   "following": {
     "title": "Following",
-    "description": "You and the players you follow, with their ratings and how they moved last week.",
+    "description": "You and the players and clubs you follow: their ratings and how they moved last week, their draws coming up and their latest results.",
     "empty": "Follow players with the star on their page, and they show up here.",
     "link": "Manage on your account page",
     "clubs": "Clubs",
@@ -126,7 +126,19 @@
     "more": {
       "one": "{count} more on your account page",
       "other": "{count} more on your account page"
-    }
+    },
+    "comingUp": "Coming up",
+    "toWin": "{chance} to win",
+    "toWinTitle": "Chance of winning the event, from the draw and the ratings",
+    "latest": "Latest results",
+    "won": "beat {opponents}",
+    "lost": "lost to {opponents}",
+    "drew": "drew with {opponents}",
+    "upset": "Upset",
+    "upsetTitle": "Won with less than a 30% chance",
+    "next": "Next",
+    "last": "Last",
+    "noTeamMatches": "No team matches this season."
   },
   "danger": {
     "title": "Danger zone",

@@ -55,6 +55,16 @@ export function matchHref(m: { key?: string; event: string; pool?: Pool | null }
 }
 
 /**
+ * A player's match's page (their MatchTable, the Following card's latest results): a league match's team match page, or
+ * a tournament match's event page (or the tournament's) when its tournament has a draw-luck page (`links`: the player
+ * file's tournamentLinks, badmintonportalen id → Cup2000 id)
+ */
+export function matchEventHref(m: { key?: string; event: string; pool?: Pool | null }, links: Record<string, number> | undefined, pool: Pool | undefined) {
+  const id = m.key?.match(/^T(\d+)/)?.[1];
+  return matchHref(m, id ? links?.[id] : undefined, pool);
+}
+
+/**
  * What a tournament page shows, from its path after the id: [] the first event, ["summary"] the
  * summary, [class, pool] or [class, pool, order] an event. Null for a path that doesn't exist.
  */

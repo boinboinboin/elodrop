@@ -111,7 +111,7 @@
   },
   "following": {
     "title": "Følger",
-    "description": "Deg og spillerne du følger, med ratingen deres og hvordan den endret seg forrige uke.",
+    "description": "Deg og spillerne og klubbene du følger: ratingen og hvordan den endret seg forrige uke, trekningene som kommer og de siste resultatene.",
     "empty": "Følg spillere med stjernen på siden deres, så dukker de opp her.",
     "link": "Administrer på kontosiden din",
     "clubs": "Klubber",
@@ -126,7 +126,19 @@
     "more": {
       "one": "{count} til på kontosiden din",
       "other": "{count} til på kontosiden din"
-    }
+    },
+    "comingUp": "Snart",
+    "toWin": "{chance} sjanse for å vinne",
+    "toWinTitle": "Sjansen for å vinne klassen, fra trekningen og ratingene",
+    "latest": "Siste resultater",
+    "won": "slo {opponents}",
+    "lost": "tapte for {opponents}",
+    "drew": "spilte uavgjort mot {opponents}",
+    "upset": "Overraskelse",
+    "upsetTitle": "Vant med under 30 % sjanse",
+    "next": "Neste",
+    "last": "Sist",
+    "noTeamMatches": "Ingen lagkamper denne sesongen."
   },
   "danger": {
     "title": "Faresone",

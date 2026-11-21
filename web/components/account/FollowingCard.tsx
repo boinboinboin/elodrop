@@ -1,18 +1,19 @@
 "use client";
 
 // The front page's card for a signed-in user: their own player (the one they've said is them) and the players they
-// follow, in a table of their singles, doubles and mixed ratings with the change since last week (FollowedTable), and
-// the clubs they follow. Filled in the browser, so the front page stays the same for everyone; nothing for anyone not
+// follow, in a table of their singles, doubles and mixed ratings with the change since last week (FollowedTable), then
+// a few of what's new with them (FollowedNews): their draws soon, their latest results, and the followed clubs' next and
+// last team matches. Filled in the browser, so the front page stays the same for everyone; nothing for anyone not
 // signed in or following no one. At most MAX players; the rest are on the account page, where they're managed.
 import { useAccount } from "@/components/account/AccountProvider";
+import { FollowedClubMatches, FollowedDraws, FollowedResults } from "@/components/account/FollowedNews";
 import FollowedTable from "@/components/account/FollowedTable";
 import { useFollowedClubs, useFollowedPlayers } from "@/components/account/useFollowed";
-import HomeCard, { Teaser } from "@/components/home/HomeCard";
+import HomeCard from "@/components/home/HomeCard";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { PALETTE } from "@/utils/chart";
-import { clubHref } from "@/utils/hrefs";
 
 /** At most this many followed players on the card */
 const MAX = 4;
@@ -39,18 +40,13 @@ export default function FollowingCard() {
               </p>
             )}
             {!players.length && <p className="mt-3 text-gray-600">{t("account.following.empty")}</p>}
-            {clubs.length > 0 && (
-              <div className="mt-4">
-                <Teaser>{t("account.following.clubs")}</Teaser>
-                <ul className="flex flex-wrap gap-x-4 gap-y-1">
-                  {clubs.map((c) => (
-                    <li key={c.slug}>
-                      <Link href={clubHref(c.slug)} className="link hover:text-blue-600">{c.name}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* A few of what's new: their draws soon, their latest results, the clubs' next and last team matches; side by
+                side on a wide screen */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-x-8">
+              <FollowedDraws players={players} me={me} limit={4} />
+              <FollowedResults players={players} me={me} limit={4} />
+              <FollowedClubMatches clubs={clubs} />
+            </div>
           </>
         )}
       </HomeCard>

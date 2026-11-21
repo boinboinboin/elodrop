@@ -1,6 +1,9 @@
 // League team matches (pipeline/team-matches.mjs): the weeks, each week's team matches, each team match and each season's divisions
-import type { TeamMatch, TeamMatchesIndex, TeamMatchWeek, TeamDivision } from "@/types";
+import type { ClubTeamMatchesFile, TeamMatch, TeamMatchesIndex, TeamMatchWeek, TeamDivision } from "@/types";
 import { load } from "./load";
+
+/** Each club's next fixtures and last results (the Following card's, loaded in the browser; this one for local development) */
+export const getClubTeamMatches = async () => load<ClubTeamMatchesFile>("team-matches/clubs.json");
 
 /** The national divisions' region (Eliteserien, the national finals): shown as "National" */
 export const NATIONAL = "Norges Badminton Forbund";
