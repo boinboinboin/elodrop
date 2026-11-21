@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.38.2 (2026-11-21)
+
+- On a tournament page, switching to another class or discipline keeps the view you're in: the bracket, or the table in the same order (by group, by rating, final standings). Where the other event doesn't have that view (no knockout, or not played yet), it opens on its default.
+- A test page left in by mistake in v1.38.1 (`/preview-following`) is gone.
+
 ## v1.38.1 (2026-11-21)
 
 - Following does more. Besides your followed players' ratings, the front page's Following card and your account page now show:

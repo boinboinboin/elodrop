@@ -54,6 +54,7 @@ import {
   pickView,
   rounds,
   tableRows,
+  viewIn,
 } from "@/utils/tournament";
 
 const strong = (text: ReactNode) => <strong className="font-semibold">{text}</strong>;
@@ -322,7 +323,8 @@ async function Events({ tour, clubs, eventIndex, requestedOrder }: { tour: Tourn
               {events.map(({ i, e }) => (
                 <Link
                   key={i}
-                  href={eventHref(tour.cup2000Id, e)}
+                  // In the view shown (a table order, the bracket) where the other event has it, else its default
+                  href={eventHref(tour.cup2000Id, e, viewIn(i18n, e, showBracket ? BRACKET : order))}
                   // Another event of the tournament, where the visitor is (as LinkTabs)
                   scroll={false}
                   className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 border border-black transition-colors duration-200 ${i === eventIndex ? "bg-black text-white" : "hover:bg-black hover:text-white"}`}

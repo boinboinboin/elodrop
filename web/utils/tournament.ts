@@ -89,6 +89,14 @@ export const BRACKET = "bracket";
 /** An event with a knockout to show as a bracket (none in exports from before it was added) */
 export const hasBracket = (e: TournamentEvent) => !!e.bracket?.some((s) => s.matches.length);
 
+/**
+ * A view of an event (a table order or the bracket) for another event: kept when that event has it, so moving between
+ * events keeps the view; else undefined, its default (no bracket without a knockout, no final standings before it's
+ * played)
+ */
+export const viewIn = (i18n: I18n, e: TournamentEvent, view: string): string | undefined =>
+  (view === BRACKET ? hasBracket(e) : view in orders(i18n, e)) ? view : undefined;
+
 /** A match won with a smaller chance than this is an upset, as for team matches (pipeline/eliteserien.mjs TIE_UPSET) */
 export const UPSET_CHANCE = 0.3;
 
