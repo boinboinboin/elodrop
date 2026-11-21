@@ -5,12 +5,15 @@
 // the installed app too, where a link in the email would open the browser instead), or Google where it's set up
 // (NEXT_PUBLIC_SUPABASE_GOOGLE). Asking for a code needs Cloudflare Turnstile's check passed first (Turnstile.tsx), so
 // bots can't. The account itself is made after, with the age gate (CreateProfile).
+// Google and a code by email reach the same account for the same address (Supabase links them by the email), so a
+// Gmail address is offered Google instead.
 // Beside the form, what an account gives you (AccountBenefits).
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import AccountBenefits from "@/components/account/AccountBenefits";
 import { useAccount } from "@/components/account/AccountProvider";
 import { ERROR, FIELD, LABEL, SUBMIT } from "@/components/account/form";
 import Turnstile, { TURNSTILE_SITE_KEY } from "@/components/account/Turnstile";
+import { Google } from "@/components/SVG";
 import Card from "@/components/ui/Card";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -18,6 +21,12 @@ import { useI18n } from "@/messages/client";
 import { MIN_AGE, refusedRecently } from "@/utils/account";
 
 const GOOGLE = process.env.NEXT_PUBLIC_SUPABASE_GOOGLE === "1";
+const GMAIL = /@(gmail|googlemail)\.com$/i;
+// What Google's sign-in leaves in the address when it comes back without a session: an error (cancelled, refused), or
+// a code that couldn't be swapped for one (the page shows the sign-in again only then; AccountProvider)
+const RETURN_PARAMS = ["code", "error", "error_code", "error_description"];
+const returnParams = (url: URL) => [url.searchParams, new URLSearchParams(url.hash.slice(1))].some((p) => RETURN_PARAMS.some((k) => p.has(k)));
+const googleFailed = () => GOOGLE && returnParams(new URL(window.location.href));
 
 export default function SignIn() {
   const { t, rich, href } = useI18n();
@@ -26,12 +35,21 @@ export default function SignIn() {
   const [sent, setSent] = useState(false);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => (googleFailed() ? t("account.signIn.googleFailed") : null));
   // Turnstile's token (null until passed), and a count of the widgets used: each token is good for one request
   const [captcha, setCaptcha] = useState<string | null>(null);
   const [check, setCheck] = useState(0);
   // The age gate refused a birth date here in the last day (CreateProfile): why the sign-in is gone
   const [refused] = useState(refusedRecently);
+
+  // Google's leftovers out of the address, so a reload doesn't show the error again
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (!returnParams(url)) return;
+    for (const k of RETURN_PARAMS) url.searchParams.delete(k);
+    url.hash = "";
+    window.history.replaceState(window.history.state, "", url.toString());
+  }, []);
 
   const send = async (e: FormEvent) => {
     e.preventDefault();
@@ -74,6 +92,17 @@ export default function SignIn() {
             <div>
               <label htmlFor="account-email" className={LABEL}>{t("account.signIn.email")}</label>
               <input id="account-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={FIELD} />
+              {GOOGLE && GMAIL.test(email.trim()) && (
+                <p aria-live="polite" className="mt-2 text-gray-700">
+                  {rich("account.signIn.gmail", {
+                    google: (text) => (
+                      <button type="button" onClick={() => void google()} className={TEXT_LINK}>
+                        {text}
+                      </button>
+                    ),
+                  })}
+                </p>
+              )}
             </div>
             {TURNSTILE_SITE_KEY && <Turnstile key={check} onToken={setCaptcha} />}
             <button type="submit" disabled={busy || (!!TURNSTILE_SITE_KEY && !captcha)} className={SUBMIT}>{t(busy ? "account.signIn.sending" : "account.signIn.sendCode")}</button>
@@ -115,7 +144,10 @@ export default function SignIn() {
         {GOOGLE && !sent && (
           <>
             <p className="text-gray-600 my-4">{t("account.signIn.or")}</p>
-            <button type="button" onClick={() => void google()} className={SUBMIT}>{t("account.signIn.google")}</button>
+            <button type="button" onClick={() => void google()} className={`${SUBMIT} inline-flex items-center gap-3`}>
+              <Google className="text-xl" />
+              {t("account.signIn.google")}
+            </button>
           </>
         )}
       </div>

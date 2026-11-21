@@ -38,6 +38,8 @@
     "otherEmail": "Bruk en annen e-post",
     "or": "eller",
     "google": "Fortsett med Google",
+    "gmail": "Gmail? <google>Fortsett med Google</google> i stedet: ingen kode, og det er samme konto.",
+    "googleFailed": "Innloggingen med Google gikk ikke gjennom. Prøv igjen, eller logg inn med en kode på e-post.",
     "sendFailed": "Koden kunne ikke sendes. Sjekk adressen, eller prøv igjen om et minutt.",
     "codeFailed": "Den koden virket ikke. Sjekk den, eller send en ny."
   },

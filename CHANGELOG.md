@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.38.3 (2026-11-21)
+
+- Sign in with Google as well as with a code by email. It's the same account for the same address: if you've signed in with a Gmail address before, Google takes you to the account you have, with what you follow and your EloStonk squad. Typing a Gmail address offers Google instead of a code.
+- Coming back from Google's sign-in now signs you in (the address's code was never used), and a sign-in cancelled or refused at Google says so.
+
 ## v1.38.2 (2026-11-21)
 
 - On a tournament page, switching to another class or discipline keeps the view you're in: the bracket, or the table in the same order (by group, by rating, final standings). Where the other event doesn't have that view (no knockout, or not played yet), it opens on its default.

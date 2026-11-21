@@ -38,6 +38,8 @@
     "otherEmail": "Use another email",
     "or": "or",
     "google": "Continue with Google",
+    "gmail": "Gmail? <google>Continue with Google</google> instead: no code needed, and it's the same account.",
+    "googleFailed": "Signing in with Google didn't go through. Try again, or sign in with a code by email.",
     "sendFailed": "The code couldn't be sent. Check the address, or try again in a minute.",
     "codeFailed": "That code didn't work. Check it, or send a new one."
   },

@@ -34,10 +34,15 @@ const AccountContext = createContext<Account | null>(null);
 let clientPromise: Promise<SupabaseClient> | null = null;
 const loadClient = () => (clientPromise ??= import("@/utils/supabase").then((m) => m.getSupabase()));
 
-/** Whether this browser has a session (signed in here, or in another tab: the storage event) */
+/**
+ * Whether this browser has a session (signed in here, or in another tab: the storage event), or is coming back from
+ * Google's sign-in with one to make: a `code` in the address and the verifier signInWithOAuth left (PKCE). Supabase,
+ * once loaded, swaps the code for the session and takes it out of the address.
+ */
 const hasStoredSession = () => {
   try {
-    return localStorage.getItem(STORAGE_KEY) !== null;
+    if (localStorage.getItem(STORAGE_KEY) !== null) return true;
+    return new URLSearchParams(window.location.search).has("code") && localStorage.getItem(`${STORAGE_KEY}-code-verifier`) !== null;
   } catch {
     return false;
   }

@@ -9,6 +9,7 @@ export { Cross } from "./Cross";
 export { Download } from "./Download";
 export { External } from "./External";
 export { Female } from "./Female";
+export { Google } from "./Google";
 export { MapPin } from "./MapPin";
 export { Picture } from "./Picture";
 export { Male } from "./Male";
