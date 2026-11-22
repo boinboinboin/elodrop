@@ -443,7 +443,8 @@ export function collectGames({ profixio = process.env.PROFIXIO } = {}) {
         day: t.startDate,
         source: `T${t.tournamentId}`,
         order: roundStage(m.round) * 100000 + i,
-        level: R.tournamentLevel(m.className),
+        // Profixio's (tournament ids "P…") read with its own junior classes (rules.mjs profixioLevel)
+        level: (String(t.tournamentId).startsWith("P") ? R.profixioLevel : R.tournamentLevel)(m.className),
         event: `${t.name} (${m.className})`,
       });
       if (g) games.push(g);

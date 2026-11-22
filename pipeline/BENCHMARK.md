@@ -429,10 +429,40 @@ Singles is better in every season, most in the first ones; doubles is about the 
 | --- | ---: |
 | at their class's start | +0.8 ±0.4 / +0.8 ±0.7 |
 | 100 above it | −1.6 ±0.4 / −0.7 ±0.7 |
-| **200 above it (adopted)** | **−2.8 ±0.5 / −0.6 ±0.8** |
+| **200 above it (adopted in v1.39.0; 300 since [round 10](#round-10-after-the-tournaments-of-20072014))** | **−2.8 ±0.5 / −0.6 ±0.8** |
 | 300 above it | −3.4 ±0.6 / +0.3 ±0.9 (2014/15 doubles +12.2) |
 
 **Classes**, at their class's start: the senior classes read as SEN A to E as written (+0.8 / +0.8) predicted better than one level lower, A as SEN B (+2.0 / +3.0), or as unknown classes at the lowest level (+9.3 / +13.3). The cross-region weight on these matches made no difference (with or without, +0.8 / +0.8).
+
+## Round 10: after the tournaments of 2007–2014
+
+v1.39.2 added Profixio's tournaments of 2007–2014 (479 with results, 91,528 matches, from January 2008; [README](README.md#profixio-tournaments-20072014)), so round 10 tested again the settings they touch, on the data of 23 November 2026, each one on the rules of the time (Profixio start bonus 200, its junior classes without a letter at the lowest level, the not playing penalty's floor 1850). Change in log loss, thousandths with a 95% interval (columns as in [rounds 4–8](#rounds-48-the-tuned-rules)), and the seasons since 2017/18 better / worse beyond the interval (of 20):
+
+| Config | All S | All D | Settled S | Settled D | Top S | Top D | Holdout S | Holdout D | Seasons better / worse |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Profixio bonus 0 | +2.2 ±0.7 | +0.7 ±1.2 | +2.3 ±0.7 | +1.1 ±1.4 | +0.9 ±1.4 | −1.5 ±1.9 | +3.1 ±0.7 | +2.2 ±1.3 | 0 / 17 |
+| Profixio bonus 100 | +0.9 ±0.4 | +0.1 ±0.6 | +1.0 ±0.3 | +0.4 ±0.7 | +0.3 ±0.6 | −0.9 ±0.9 | +1.4 ±0.3 | +0.8 ±0.6 | 0 / 12 |
+| **Profixio bonus 300** | **−0.7 ±0.3** | **+0.1 ±0.6** | **−0.7 ±0.3** | **−0.3 ±0.5** | **−0.2 ±0.5** | **+0.8 ±0.8** | **−1.0 ±0.3** | **−0.3 ±0.5** | **12 / 0** |
+| Profixio bonus 400 | −1.1 ±0.5 | +0.6 ±1.1 | −1.2 ±0.5 | −0.4 ±1.0 | −0.2 ±0.9 | +1.8 ±1.4 | −1.8 ±0.5 | −0.2 ±1.0 | 12 / 0 |
+| Profixio bonus 500 | −1.2 ±0.5 | +0.8 ±1.3 | −1.3 ±0.6 | −0.3 ±1.2 | −0.2 ±1.0 | +2.2 ±1.6 | −2.0 ±0.5 | −0.1 ±1.1 | 12 / 0 |
+| "U15" read as A (bonus 200) | −0.3 ±0.3 | +0.2 ±0.9 | −0.4 ±0.3 | −0.5 ±0.7 | ±0.0 ±0.6 | +0.4 ±0.9 | −0.8 ±0.2 | −0.3 ±0.5 | 9 / 2 |
+| "U15" read as B (bonus 200) | −0.1 ±0.1 | −0.1 ±0.2 | −0.1 ±0.1 | −0.2 ±0.2 | ±0.0 ±0.2 | +0.1 ±0.3 | −0.3 ±0.1 | −0.2 ±0.2 | 9 / 0 |
+| "U15" read as B, bonus 300 | −0.7 ±0.3 | +0.1 ±0.7 | −0.8 ±0.4 | −0.5 ±0.8 | −0.1 ±0.7 | +1.0 ±1.0 | −1.4 ±0.3 | −0.3 ±0.7 | 12 / 0 |
+| No not playing penalty | ±0.0 ±0.2 | +0.1 ±0.2 | −0.1 ±0.2 | +0.2 ±0.2 | +0.1 ±0.6 | +0.4 ±0.4 | +0.1 ±0.2 | +0.2 ±0.2 | 1 / 0 |
+| Floor 1450 | +0.7 ±0.5 | +0.1 ±0.8 | +1.4 ±0.7 | +0.7 ±1.2 | +1.1 ±1.9 | −0.4 ±1.9 | +0.5 ±0.5 | −0.3 ±0.6 | 1 / 3 |
+| Floor 1650 | +0.1 ±0.2 | −0.1 ±0.3 | +0.3 ±0.3 | +0.1 ±0.5 | −0.2 ±0.9 | −0.5 ±0.8 | ±0.0 ±0.2 | −0.3 ±0.2 | 2 / 1 |
+| **Floor 1750** | **±0.0 ±0.1** | **−0.1 ±0.1** | **+0.1 ±0.2** | **±0.0 ±0.2** | **−0.1 ±0.4** | **−0.2 ±0.3** | **±0.0 ±0.1** | **−0.1 ±0.1** | **2 / 0** |
+| Floor 1950 | ±0.0 ±0.1 | +0.1 ±0.1 | ±0.0 ±0.1 | ±0.0 ±0.1 | +0.1 ±0.4 | +0.2 ±0.2 | ±0.0 ±0.1 | +0.1 ±0.1 | 0 / 0 |
+| Floor 2050 | ±0.0 ±0.1 | +0.1 ±0.1 | ±0.0 ±0.2 | +0.1 ±0.2 | +0.1 ±0.5 | +0.2 ±0.3 | ±0.0 ±0.1 | +0.1 ±0.1 | 1 / 0 |
+| Floor 2250 | ±0.0 ±0.2 | +0.1 ±0.1 | −0.1 ±0.2 | +0.1 ±0.2 | +0.1 ±0.6 | +0.3 ±0.4 | +0.1 ±0.1 | +0.1 ±0.1 | 1 / 0 |
+
+- **Profixio start bonus:** more helps singles all the way to 500, but doubles less from 300, most on the top doubles games. **300** is better than 200 in singles in every subset and in 12 of the 20 season columns, worse in none.
+- **Profixio's junior classes without a letter** ("U15", 17,240 games, mostly before 2010; only ever beside a beginners' class "U15 N", so the age group's main class): read as **B**, a little better than at the lowest level (as unknown classes are) and never worse; read as A, worse in two seasons. `rules.mjs`: `profixioLevel`.
+- **The not playing penalty's floor** matters little: from 1650 to 1875 within half a thousandth of each other (1850 and 1875 a little worse in doubles than 1750, 1650 a little better in doubles and worse in singles), and a penalty at all within the noise, as in round 9. **1750**, in the middle.
+
+**Adopted (v1.39.4):** the start bonus 300, "U15" as B and the floor 1750. Against the rules before round 10 (in `benchmark.mjs`), those are +0.7 ±0.3 / ±0.0 ±0.7 (all games, singles / doubles), +0.8 ±0.4 / +0.5 ±0.8 settled, +0.3 ±0.7 / −0.7 ±1.0 top, +1.4 ±0.3 / +0.5 ±0.7 holdout, and worse in 12 of 20 season columns, better in none. The class cut-offs were worked out again from the new ratings: E 1875, A 1500, B 1150, C 800 (they were 1800, 1450, 1125, 775; README, "Rating classes").
+
+The configs are written through the hooks: `floor`, `profixioBonus`, and `levelOf` (a game read at another level; `profixioAsWritten` in `benchmark.mjs` gives the classes as written).
 
 ## Full results
 

@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.4 (2026-11-23)
+
+- The ratings are tuned for the tournaments of 2007–2014: players new in a Profixio tournament start 300 points above their class's start rating (was 200), Profixio's junior classes written without a letter ("U15") count as B rather than the lowest class, and a top rating decays after a year away above 1750 (was 1850). Together they predict slightly better: in 12 of 20 comparisons by season (singles and doubles since 2017/18), and worse in none.
+- The rating classes are worked out again from the new ratings: E from 1875, A from 1500, B from 1150, C from 800 (were 1800, 1450, 1125 and 775), so a player's class can change once now.
+- On your account page, partner chemistry ranks every partner you've played with more than once, and where you're strongest every tournament class as written ("SEN A", "U17 A", "O35 A"; they were only senior class letters, with junior A counted as A), both best first: the five best, and the rest under "Show all" (they were the three most played partners and a fixed order).
+- For the pipeline: `benchmark.mjs` can read games at another level (`levelOf`), and BENCHMARK.md has round 10.
+
 ## v1.39.3 (2026-11-22)
 
 - The front page, the site's description, How it works and the achievements say the results go back to 2008, not 2010, now that Profixio's tournaments from 2008 are rated; How it works no longer says they're mostly from the north and west.

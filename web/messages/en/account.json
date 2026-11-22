@@ -339,14 +339,15 @@
       "nemeses": "Your nemeses",
       "close": "Close matches, all time",
       "chemistry": "Partner chemistry",
-      "chemistryHelp": "Points a match against expectation with each partner (5 matches or more): above zero, you play better together than your ratings say.",
+      "chemistryHelp": "Points a match against expectation with each partner you've played with more than once: above zero, you play better together than your ratings say.",
+      "showAll": "Show all {count}",
       "strongest": "Where you're strongest",
       "strongestHelp": "Points a match against expectation: above zero, you do better there than your rating says.",
       "perMatch": "{perf} a match",
       "splits": {
         "teamMatches": "Team matches",
         "tournaments": "Tournaments",
-        "class": "Class {cls} tournaments"
+        "class": "{cls} tournaments"
       },
       "chemistryKinds": {
         "doubles": "Doubles",

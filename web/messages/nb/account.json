@@ -339,14 +339,15 @@
       "nemeses": "Dine erkefiender",
       "close": "Jevne kamper, totalt",
       "chemistry": "Makkerkjemi",
-      "chemistryHelp": "Poeng per kamp mot forventet med hver makker (5 kamper eller flere): over null spiller dere bedre sammen enn ratingene tilsier.",
+      "chemistryHelp": "Poeng per kamp mot forventet med hver makker du har spilt med mer enn én gang: over null spiller dere bedre sammen enn ratingene tilsier.",
+      "showAll": "Vis alle {count}",
       "strongest": "Der du er sterkest",
       "strongestHelp": "Poeng per kamp mot forventet: over null gjør du det bedre der enn ratingen din tilsier.",
       "perMatch": "{perf} per kamp",
       "splits": {
         "teamMatches": "Lagkamper",
         "tournaments": "Turneringer",
-        "class": "Klasse {cls}-turneringer"
+        "class": "{cls}-turneringer"
       },
       "chemistryKinds": {
         "doubles": "Double",

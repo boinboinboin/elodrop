@@ -2,21 +2,22 @@
 // points, the same cut-offs in every discipline, so a rating is the same class everywhere. They are the mean
 // rating of the active players plus 2.5, 1.5 and 0.5 standard deviations (E, A, B) and minus 0.5 (C), rounded
 // to 25; D is the rest. Mean and standard deviation are over the five disciplines, each counting equally (they
-// spread alike: means 936–975, standard deviations 323–348). The ratings are skewed (a long tail at the top),
+// spread alike: means 957–1002, standard deviations 341–372). The ratings are skewed (a long tail at the top),
 // so this gives a pyramid of about 2/6/17/39/36% in each discipline. Worked out by pipeline/class-cutoffs.mjs
-// once a season and fixed for it, so a player's class only changes with their own rating. As in
+// once a season and fixed for it, so a player's class only changes with their own rating (worked out again in
+// November 2026, when the tournaments of 2007–2014 and round 10 of the benchmark moved the ratings). As in
 // pipeline/README.md "Rating classes".
 
 export type RatingClass = "E" | "A" | "B" | "C" | "D";
 
 export const CLASSES: RatingClass[] = ["E", "A", "B", "C", "D"];
 
-/** The lowest rating of E, A, B and C, in every discipline (2026/2027, from November 2026's ratings) */
-export const CLASS_CUTOFFS = [1800, 1450, 1125, 775] as const;
+/** The lowest rating of E, A, B and C, in every discipline (2026/2027, from the ratings of 23 November 2026) */
+export const CLASS_CUTOFFS = [1875, 1500, 1150, 800] as const;
 
 /**
  * A rating's class (for the senior ratings: junior rankings are on their own scale). By the rating as shown
- * (rounded), so a player shown at 1800 is in E everywhere
+ * (rounded), so a player shown at 1875 is in E everywhere
  */
 export function classOf(rating: number): RatingClass {
   const i = CLASS_CUTOFFS.findIndex((cutoff) => Math.round(rating) >= cutoff);
