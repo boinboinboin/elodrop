@@ -400,6 +400,40 @@ On the games of returning players rated 1650+ before the break (364 in singles, 
 
 **Upward instead of down.** What helps is the opposite of a penalty: ratings below 1150 moving up towards 1150 while the player doesn't play (half-life 5 years, after 3 months: −9.3 in singles and −5.1 in doubles on all games since 2017/18, better in 19 of 20 seasons). The shorter the grace period, the bigger the gain (−19.3 and −9.6 with none), so it isn't about breaks: juniors improve faster than their ratings follow, even between matches. Worth testing next, as a change to how junior ratings move.
 
+## Profixio tournaments (2010–2014)
+
+The tournaments of 2010 to spring 2014 on Profixio (7,743 matches, mostly regional; see the [README](README.md#profixio-tournaments-20102014)) were added in v1.39.0. Run with the current rules on every badmintonportalen game, and scored on the same games from 2014/15 on (242,536), the change in log loss when the Profixio matches are rated before them (thousandths, 95% interval, clustered by tournament and tie as above):
+
+| Games | Log loss without | Only matches with every player identified | Every match (adopted) |
+| --- | ---: | ---: | ---: |
+| 2014/15 singles | 0.4978 | −6.2 ±4.5 | −7.5 ±4.6 |
+| 2014/15 doubles | 0.4746 | +3.9 ±7.8 | +0.8 ±7.6 |
+| 2015/16 singles | 0.4783 | −4.8 ±1.8 | −5.9 ±1.9 |
+| 2015/16 doubles | 0.4452 | −0.4 ±3.2 | −0.5 ±3.4 |
+| 2016/17 singles | 0.4837 | −4.6 ±1.3 | −5.4 ±1.4 |
+| 2016/17 doubles | 0.4366 | −2.1 ±2.8 | −2.8 ±3.0 |
+| 2017/18 singles | 0.4777 | −3.7 ±1.0 | −4.2 ±1.1 |
+| 2017/18 doubles | 0.4332 | −2.0 ±1.9 | −2.5 ±2.0 |
+| 2023/24 singles | 0.4694 | −1.3 ±0.4 | −1.5 ±0.4 |
+| 2024/25 singles | 0.4908 | −1.1 ±0.4 | −1.2 ±0.4 |
+| 2025/26 singles | 0.4830 | −0.6 ±0.2 | −0.7 ±0.3 |
+| 2025/26 doubles | 0.4388 | −0.8 ±0.6 | −0.8 ±0.6 |
+| All singles | 0.4843 | −2.4 ±0.5 | −2.8 ±0.5 |
+| All doubles | 0.4430 | −0.3 ±0.8 | −0.6 ±0.8 |
+
+Singles is better in every season, most in the first ones; doubles is about the same. "Every match" rates the players not identified as one player per name (they have no page); leaving out their matches, which takes half of each of those games' players' results away, is a little worse.
+
+**Start rating.** It needs the players new in these tournaments to start higher than their class's start rating (`PROFIXIO_START_BONUS`, as foreign players do), as their first class, in a regional tournament, says less about them. All games, singles / doubles:
+
+| Players new in a Profixio tournament | Every match |
+| --- | ---: |
+| at their class's start | +0.8 ±0.4 / +0.8 ±0.7 |
+| 100 above it | −1.6 ±0.4 / −0.7 ±0.7 |
+| **200 above it (adopted)** | **−2.8 ±0.5 / −0.6 ±0.8** |
+| 300 above it | −3.4 ±0.6 / +0.3 ±0.9 (2014/15 doubles +12.2) |
+
+**Classes**, at their class's start: the senior classes read as SEN A to E as written (+0.8 / +0.8) predicted better than one level lower, A as SEN B (+2.0 / +3.0), or as unknown classes at the lowest level (+9.3 / +13.3). The cross-region weight on these matches made no difference (with or without, +0.8 / +0.8).
+
 ## Full results
 
 Output of `node benchmark.mjs` on 2026-10-26 (log loss: current in full, others as the change in thousandths).

@@ -156,7 +156,7 @@ export const SITE_STATS = [
   { title: "Players with a rating", value: "players" },
   { title: "Matches rated (singles, doubles and mixed)", value: "matches" },
   { title: "Team matches", value: "teamMatches" },
-  { title: "Seasons", value: "seasons" },
+  { title: "Seasons with rated matches", value: "seasons" },
 ] as const;
 export type SiteStat = (typeof SITE_STATS)[number]["value"];
 const stats = defineArrayMember({

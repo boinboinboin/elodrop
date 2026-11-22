@@ -393,8 +393,9 @@ function PeopleCard({ title, help, people, kind, me }: { title: string; help?: s
       <h3 className="text-sm text-gray-600 mb-2">{title}</h3>
       {people.length ? (
         <ol className="space-y-1">
+          {/* Players without a page (id null) by name */}
           {people.map((p) => (
-            <li key={p.id}>
+            <li key={p.id ?? p.name}>
               <PersonLine p={p} kind={kind} me={me} />
             </li>
           ))}

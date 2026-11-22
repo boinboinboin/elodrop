@@ -191,7 +191,10 @@ const add = (r: Record3, result: number) => {
 /** The season a day is in: it starts in July (as pipeline/rate.mjs) */
 const seasonOf = (day: string) => (+day.slice(5, 7) >= 7 ? +day.slice(0, 4) : +day.slice(0, 4) - 1);
 const sets = (score: string) => score.split(",").filter((s) => /\d/.test(s)).length;
-const who = (p: { id: number; name: string }): Who => ({ id: p.id, name: p.name });
+const who = (p: { id: number | null; name: string }): Who => ({ id: p.id, name: p.name });
+// A player in a match, as one person: by id, or by name for players without a page (id null: not
+// identified in a Profixio tournament, 2010-2014)
+const personKey = (p: { id: number | null; name: string }) => p.id ?? `name:${p.name}`;
 /** The last set decided by 3 points or fewer ("21-19, 18-21, 22-20") */
 const isClose = (score: string) => {
   const [a, b] = (score.split(",").filter((x) => /\d/.test(x)).at(-1)?.match(/\d+/g) ?? []).map(Number);
@@ -233,14 +236,14 @@ function allMatches(byPool: Partial<Record<Pool, Match[]>>): PoolMatch[] {
 
 /** The people most played with (doubles partners) or against, with their record together or against */
 function people(matches: PoolMatch[], side: "partner" | "opponent"): Partner[] {
-  const by = new Map<number, Partner>();
+  const by = new Map<number | string, Partner>();
   for (const m of matches) {
     const list = side === "partner" ? (m.partner ? [m.partner] : []) : m.opponents;
     for (const p of list) {
-      const e = by.get(p.id) ?? { id: p.id, name: p.name, matches: 0, ...empty() };
+      const e = by.get(personKey(p)) ?? { id: p.id, name: p.name, matches: 0, ...empty() };
       e.matches++;
       add(e, m.result);
-      by.set(p.id, e);
+      by.set(personKey(p), e);
     }
   }
   return [...by.values()].sort((a, b) => b.matches - a.matches || b.wins - a.wins);
@@ -336,18 +339,19 @@ function career(matches: PoolMatch[]): Career {
   // Partners against expectation: per partner and kind, at least MIN_SPLIT matches, the most played first
   const chemistry: Chemistry[] = [];
   for (const kind of ["doubles", "mixed"] as const) {
-    const byPartner = new Map<number, { name: string; list: PoolMatch[] }>();
+    const byPartner = new Map<number | string, { id: number | null; name: string; list: PoolMatch[] }>();
     for (const m of matches) {
       if (!m.partner || (kind === "mixed") !== (m.pool === "mixedDoubles")) continue;
-      if (!byPartner.has(m.partner.id)) byPartner.set(m.partner.id, { name: m.partner.name, list: [] });
-      byPartner.get(m.partner.id)!.list.push(m);
+      const key = personKey(m.partner);
+      if (!byPartner.has(key)) byPartner.set(key, { id: m.partner.id, name: m.partner.name, list: [] });
+      byPartner.get(key)!.list.push(m);
     }
     chemistry.push(
       ...[...byPartner]
         .filter(([, p]) => p.list.length >= MIN_SPLIT)
         .sort((a, b) => b[1].list.length - a[1].list.length)
         .slice(0, TOP)
-        .map(([id, p]) => ({ id, name: p.name, kind, ...split(p.list) })),
+        .map(([, p]) => ({ id: p.id, name: p.name, kind, ...split(p.list) })),
     );
   }
   // Team matches against tournaments, and the tournament classes
@@ -471,7 +475,7 @@ function nextTournaments(id: number, today: string, upcoming: Tournament[], matc
                   .map((i) => {
                     const ids = e.entries[i].players.map((p) => p.id).filter((x): x is number => !!x);
                     // Their meetings before in this discipline (any of the pair), newest first
-                    const meetings = matches.filter((m) => m.pool === e.pool && m.opponents.some((o) => ids.includes(o.id)));
+                    const meetings = matches.filter((m) => m.pool === e.pool && m.opponents.some((o) => o.id !== null && ids.includes(o.id)));
                     const met = { ...empty(), last: meetings[0]?.day ?? null };
                     for (const m of meetings) add(met, m.result);
                     const forms = ids.map((x) => formOf(opponents.get(x), e.pool)).filter((f): f is number => f !== null);

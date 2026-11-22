@@ -9,16 +9,16 @@
 // "T7075 ...") links to that event (its class, "... (SEN X)", and the matches' `pool`). With `more`,
 // `matches` are only the newest and "show all" loads the rest from `more.url` (the player page).
 // Each opponent and partner is shown with the club they played for at the time, and links to their page on the
-// match's discipline. The rows' and cells' styling is in a few classes set once (match-rows and the others in
+// match's discipline (PlayerName: a player without a page, from Profixio's tournaments, is plain text). The rows' and cells' styling is in a few classes set once (match-rows and the others in
 // app/globals.css), not on every cell: a player page holds up to 25 rows per table, and its size is what storing it
 // costs.
 import { useState } from "react";
+import PlayerName from "@/components/players/PlayerName";
 import Link from "@/components/ui/Link";
 import { BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
-import { playerHref } from "@/utils/hrefs";
 import { sortByDesc } from "@/utils/sort";
 import { matchEventHref } from "@/utils/tournament";
 
@@ -116,15 +116,15 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                   </td>
                   <td className="break-words">
                     {m.opponents.map((o, i) => (
-                      <span key={o.id}>
-                        <Link href={playerHref(o.id, m.pool ?? pool)}>{o.name}</Link> <span className="match-note tabular-nums">{o.rating}</span>
+                      <span key={o.id ?? o.name}>
+                        <PlayerName id={o.id} name={o.name} pool={m.pool ?? pool} /> <span className="match-note tabular-nums">{o.rating}</span>
                         <PlayedFor club={o.club} />
                         {i < m.opponents.length - 1 && <span className="text-gray-500"> / </span>}
                       </span>
                     ))}
                     {m.partner && (
                       <span className="block text-sm text-gray-600">
-                        {t("players.matches.with")} <Link href={playerHref(m.partner.id, m.pool ?? pool)}>{m.partner.name}</Link>{" "}
+                        {t("players.matches.with")} <PlayerName id={m.partner.id} name={m.partner.name} pool={m.pool ?? pool} />{" "}
                         <span className="text-gray-500 tabular-nums">{m.partner.rating}</span>
                         <PlayedFor club={m.partner.club} />
                       </span>

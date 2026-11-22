@@ -1,6 +1,6 @@
 # Elodrop
 
-Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from every tournament and league result on [badmintonportalen.no](https://badmintonportalen.no) since 2013, with rankings, player and club pages, head to head, the biggest upsets, Eliteserien team strengths and reviews, and draw luck in tournaments.
+Elo ratings for Norwegian badminton: singles, doubles and mixed doubles from tournament and league results since 2010 on [badmintonportalen.no](https://badmintonportalen.no), [Cup2000](https://www.cup2000.dk) and, for 2010–2014, [Profixio](https://www.profixio.com/app/tournaments), with rankings, player and club pages, head to head, the biggest upsets, Eliteserien team strengths and reviews, and draw luck in tournaments.
 
 - `pipeline/`: the rating pipeline (Node scripts): fetches the results, rates them and exports the data the site reads. [`pipeline/README.md`](pipeline/README.md) is the full specification of the ratings and every feature.
 - `web/`: the site (Next.js 16, React 19, TypeScript, Tailwind CSS v4), with the club content in Sanity.

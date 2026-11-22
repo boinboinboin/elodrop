@@ -3,6 +3,7 @@
 // teams as they actually played (the list, plus players who played without being on it), ratings from right
 // before a day (weekly histories), each match's win chance from the match logs, and the play-offs' golden set.
 import { readdirSync, readFileSync } from "node:fs";
+import { withSamePlayers } from "./same-players.mjs";
 import { lowestRatings, rankingPoints } from "./eliteserien.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
@@ -28,7 +29,8 @@ export function seasonTies(season) {
     .map((f) => read(`${DIR}data/league/${f}`))
     .filter((g) => /^eliteserien \d{4}\//i.test(g.division));
   const ties = groups
-    .flatMap((g) => g.ties.map((t) => ({ ...t, group: g.group, day: t.time.slice(0, 10), home: teamName(t.home), away: teamName(t.away) })))
+    // A merged player's other ids (same-players.txt) as the id kept, as rate.mjs reads them
+    .flatMap((g) => g.ties.map((t) => ({ ...t, games: t.games.map(withSamePlayers), ...(t.goldenSet && { goldenSet: withSamePlayers(t.goldenSet) }), group: g.group, day: t.time.slice(0, 10), home: teamName(t.home), away: teamName(t.away) })))
     .sort((a, b) => a.time.localeCompare(b.time) || a.matchId - b.matchId);
   return { groups: groups.map((g) => ({ division: g.division, group: g.group, schedule: g.schedule ?? null })), ties };
 }

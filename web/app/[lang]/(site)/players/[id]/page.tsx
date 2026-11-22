@@ -3,7 +3,7 @@
 // rank, peak, matches, rating history, match list and highlights (biggest wins and losses, rating
 // gains and drops).
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { ReactNode } from "react";
 import LogoImage from "@/components/clubs/LogoImage";
 import { ArrowRight } from "@/components/SVG";
@@ -92,6 +92,8 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   // player's own data changes (the badges' rarity is loaded in the browser: BadgeStrip)
   const [player, clubs, badges] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang)]);
   if (!player) notFound();
+  // A merged id (one person with two ids on badmintonportalen): their page is the id kept
+  if (player.id !== id) permanentRedirect(href(playerHref(player.id)));
   const club = player.club ? clubs[player.club] : null;
   const pools = Object.entries(player.pools) as [Pool, PlayerPool][];
   // The player's own tournament links; an export from before they were: everyone's, from meta.json

@@ -5,7 +5,8 @@ export type Pool = "men" | "women" | "mensDoubles" | "womensDoubles" | "mixedDou
 export type Gender = "M" | "K";
 
 export interface PlayerRef {
-  id: number;
+  /** null for a player without a page: not identified in a Profixio tournament (2010-2014) */
+  id: number | null;
   name: string;
   rating: number;
   /** In a match: the club they played for at the time (missing in exports from before it was added) */
@@ -113,7 +114,8 @@ export interface Match {
 /** A rival (pipeline/rate.mjs): the opponent with the closest matches, over all disciplines, in singles or in doubles */
 export interface Rival {
   /** With their club now */
-  opponent: Pick<PlayerRef, "id" | "name" | "club">;
+  /** Players without a page are never rivals */
+  opponent: Pick<PlayerRef, "name" | "club"> & { id: number };
   matches: number;
   wins: number;
   draws: number;
@@ -309,6 +311,8 @@ export interface Meta {
   players: number;
   /** The matches rated, in every discipline (missing in exports from before it was added) */
   matches?: number;
+  /** The seasons with rated matches, from the first (2009/10) to the current one (missing in older exports) */
+  seasons?: number;
 }
 
 export interface UpsetPlayer extends PlayerRef {

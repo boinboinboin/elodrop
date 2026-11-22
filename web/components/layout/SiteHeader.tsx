@@ -69,9 +69,10 @@ export default function SiteHeader({ logo, nav, search, menu }: { logo: ReactNod
     };
   }, []);
 
-  // Opened: straight into the search field
+  // Opened: straight into the search field. Without scrolling to it: the header is on screen, and the browser would
+  // scroll the page up anyway (the field is in the sticky header, which it takes for scrolled past; app/globals.css)
   useEffect(() => {
-    if (searching) header.current?.querySelector<HTMLInputElement>("#site-search")?.focus();
+    if (searching) header.current?.querySelector<HTMLInputElement>("#site-search")?.focus({ preventScroll: true });
   }, [searching]);
 
   return (

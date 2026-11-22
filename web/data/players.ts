@@ -2,8 +2,15 @@
 import type { Match, Player, Pool } from "@/types";
 import { load } from "./load";
 
+/**
+ * A player's file. A person with more than one id on badmintonportalen is one player
+ * (pipeline/same-players.txt): their other ids' files only say which id they were merged into, and
+ * that player is returned instead (`id` then differs from the one asked for: the page redirects).
+ */
 export async function getPlayer(id: number): Promise<Player | null> {
-  return load<Player>(`players/${id}.json`);
+  const file = await load<Player | { id: number; mergedInto: number }>(`players/${id}.json`);
+  if (file && "mergedInto" in file) return load<Player>(`players/${file.mergedInto}.json`);
+  return file;
 }
 
 /**

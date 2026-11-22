@@ -2,8 +2,10 @@
 // Usage: node rate.mjs
 // Also importable: collectGames() and computeRatings(games, inactivity) for tuning.
 //
-// Reads data/portalen/*.json, data/league/*.json, and the matches played so far in tournaments not
-// yet on badmintonportalen from their Cup2000 draws (cup2000-results.mjs).
+// Reads data/portalen/*.json, data/league/*.json, the matches played so far in tournaments not
+// yet on badmintonportalen from their Cup2000 draws (cup2000-results.mjs), and the tournaments of
+// 2010 to 2014 from Profixio (data/profixio/*.json, fetch-profixio.mjs), whose players are identified
+// on every run (profixio-players.mjs). Players not identified there are rated, but have no page.
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
 // data/matches/<id>.json (each player's matches and biggest wins and losses per pool, and their rivals
@@ -11,7 +13,10 @@
 // (the combined rankings of singles, doubles and mixed doubles, men and women, also for juniors).
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import * as R from "./rules.mjs";
-import { provisionalTournaments } from "./cup2000-results.mjs";
+import { createHash } from "node:crypto";
+import { provisionalTournaments, normalize } from "./cup2000-results.mjs";
+import { identifyAll } from "./profixio-players.mjs";
+import { samePlayer, withSamePlayers } from "./same-players.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 // Rating pool per discipline. Every pool is rated separately.
@@ -209,9 +214,12 @@ function readCorrections() {
   text.split("\n").forEach((raw, i) => {
     const line = raw.split("#")[0].trim();
     if (!line) return;
-    const m = line.match(/^([TL]\d+(?:\.\d+)?)\s+([\d+]+)\s+vs\s+([\d+]+)\s+(walkover|remove|score\s+\S+|winner\s+[12])$/i);
+    // Keys: T<tournament id> (TP<id> for Profixio's), L<tie id>; player ids negative for Profixio's
+    // players without a page, and a merged player's other ids (same-players.txt) read as the id kept
+    const m = line.match(/^([TL]P?\d+(?:\.\d+)?)\s+([-\d+]+)\s+vs\s+([-\d+]+)\s+(walkover|remove|score\s+\S+|winner\s+[12])$/i);
     if (!m) return console.warn(`corrections.txt line ${i + 1}: can't read "${raw.trim()}"`);
-    const [, source, ids1, ids2, action] = m;
+    const [source, ids1, ids2] = [m[1], ...[m[2], m[3]].map((ids) => ids.split("+").map((id) => samePlayer(+id)).join("+"))];
+    const action = m[4];
     corrections.set(canonical(source, ids1, ids2), { line: i + 1, text: raw.trim(), ids1, action: action.toLowerCase().split(/\s+/), used: false });
   });
   return corrections;
@@ -245,7 +253,8 @@ function correctedList(source, matches) {
     correctionsRead = true;
   }
   const seen = new Map();
-  return matches.map((m) => {
+  return matches.map((match) => {
+    const m = withSamePlayers(match);
     let key = source;
     if (m.side1.length && m.side2.length) {
       const pair = canonical(source, sideIds(m.side1), sideIds(m.side2));
@@ -347,7 +356,9 @@ const complete = (pool, sides) => sides.every((side) => side.length === (DOUBLES
 // (a walkover, no result, or removed in corrections.txt: shown not played) whose sides are complete is
 // returned as a preview instead (`preview: true`): not rated, only its chance from the ratings before it
 // (computeRatings' `previews`).
-function toGame(original, meta) {
+function toGame(match, meta) {
+  // A person with more than one id is rated under the one kept (same-players.txt)
+  const original = withSamePlayers(match);
   const pool = POOLS[original.discipline];
   if (!pool) return null;
   // Number repeated meetings of the same sides in the same tournament or tie
@@ -394,14 +405,37 @@ let regionOf;
 // A club's regional association (after collectGames), or null for foreign clubs and combined teams
 export const clubRegion = (club) => regionOf?.(club) ?? null;
 
-export function collectGames() {
+// The tournaments of 2010 to 2014 from Profixio (fetch-profixio.mjs), with their players identified
+// (profixio-players.mjs). A player not identified is one player per name, with a negative id (from
+// the name's hash): rated, as their results count for everyone they met, but without a page
+// (`anonymous`). For testing, PROFIXIO=off leaves the tournaments out and PROFIXIO=identified keeps
+// only the matches whose players are all identified (BENCHMARK.md, "Profixio tournaments").
+export function profixioTournaments(mode = "all") {
+  const dir = `${DIR}data/profixio`;
+  if (mode === "off" || !existsSync(dir)) return [];
+  const tournaments = readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .sort()
+    .map((f) => JSON.parse(readFileSync(`${dir}/${f}`, "utf8")));
+  identifyAll(tournaments);
+  const id = (p) => p.id ?? -parseInt(createHash("sha256").update(normalize(p.name)).digest("hex").slice(0, 12), 16);
+  for (const t of tournaments) {
+    if (mode === "identified") t.matches = t.matches.filter((m) => [...m.side1, ...m.side2].every((p) => p.id));
+    for (const m of t.matches) for (const p of [...m.side1, ...m.side2]) p.id = id(p);
+  }
+  return tournaments;
+}
+// A player without a page: not identified in a Profixio tournament
+export const anonymous = (id) => id < 0;
+
+export function collectGames({ profixio = process.env.PROFIXIO } = {}) {
   regionOf = regionLookup();
   corrections = readCorrections();
   suspicious.length = 0;
   checked.clear();
   meetings.clear();
   const games = [];
-  for (const t of [...readDir("portalen"), ...provisionalTournaments()]) {
+  for (const t of [...readDir("portalen"), ...provisionalTournaments(), ...profixioTournaments(profixio)]) {
     t.matches.forEach((m, i) => {
       const g = toGame(m, {
         day: t.startDate,
@@ -466,7 +500,8 @@ const RETURN_MATCHES = 5;
 // kappa, doublesKappa (base K-factor for doubles), doublesSplit ("rd" or "equal": how a doubles
 // side's rating change is shared between the partners), levelWeight(level), juniorK(level) (or a number for every junior match),
 // marginWeight(sets, s, game), crossRegionK, minRating(pool) (no rating, start or after a match, goes
-// below it), foreignBonus (null: foreign players start at their class's start), doublesPull
+// below it), foreignBonus (null: foreign players start at their class's start), profixioBonus (the
+// same for players new in a Profixio tournament, 2010-2014), doublesPull
 // (null: off), homeAdvantage(game) (rating points added to side 1, the home team in league ties),
 // afterMatch(player, game, players) (after each match's update) and ratingPeriod(game) (a key: games
 // with the same key are rated from the ratings before the first and updated together). inactivity.floor
@@ -493,6 +528,7 @@ export function computeRatings(
     crossRegionK = R.CROSS_REGION_K,
     minRating = R.minRatingOf,
     foreignBonus = R.FOREIGN_START_BONUS,
+    profixioBonus = R.PROFIXIO_START_BONUS,
     doublesPull = R.DOUBLES_PULL,
     homeAdvantage,
     afterMatch,
@@ -540,18 +576,20 @@ export function computeRatings(
     const singles = (SINGLES_OF[pool] ?? []).map((sp) => players[sp].get(side.id)).filter(Boolean).sort((a, b) => b.matches - a.matches)[0];
     return singles ? R.doublesSeed(singles.rating) : null;
   }
-  // The class's start rating; players from foreign clubs (no Norwegian region) start higher
-  function classStart(level, pool, side) {
+  // The class's start rating; players from foreign clubs (no Norwegian region), and players new in a
+  // Profixio tournament (match keys "TP…"), start higher
+  function classStart(level, pool, side, source) {
     const start = startRating(level, pool);
     const foreign = foreignBonus != null && side.club && !side.club.includes("/") && regionOf(side.club) === null;
-    return foreign ? Math.min(R.P0, start + foreignBonus * R.unitOf(pool)) : start;
+    const bonus = source.startsWith("TP") ? Math.max(profixioBonus ?? 0, foreign ? foreignBonus : 0) : foreign ? foreignBonus : 0;
+    return bonus ? Math.min(R.P0, start + bonus * R.unitOf(pool)) : start;
   }
 
   function getPlayer(pool, side, level, day, source) {
     let p = players[pool].get(side.id);
     if (!p) {
       // seedRating(pool, side, level, players) can override the start rating (experiments)
-      const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? classStart(level, pool, side));
+      const start = Math.max(minRating(pool), seedRating?.(pool, side, level, players) ?? singlesSeed(pool, side) ?? classStart(level, pool, side, source));
       const week = weekStart(day);
       p = { id: side.id, pool, rating: start, rd: rdMax(pool), rdDay: day, start, peak: start, matches: 0, wins: 0, draws: 0, losses: 0, firstPlayed: day, firstWeek: week, nextWeek: week, weekly: [], weeklyExact: [], weeklyMatches: [], log: [], clubs: [], returning: 0 };
       players[pool].set(side.id, p);
@@ -663,7 +701,7 @@ export function computeRatings(
       if (winner.e < 0.5) {
         // rating: before the match; change: what the match gained or cost them
         const refs = (side) => side.players.map((p, j) => ({
-          id: p.id, name: p.name, rating: Math.round(p.rating), change: Math.round(side.changes[j] * 10) / 10, club: p.clubs.at(-1)?.[1] ?? null,
+          id: anonymous(p.id) ? null : p.id, name: p.name, rating: Math.round(p.rating), change: Math.round(side.changes[j] * 10) / 10, club: p.clubs.at(-1)?.[1] ?? null,
         }));
         if (!upsets.has(week)) upsets.set(week, []);
         upsets.get(week).push({
@@ -689,7 +727,8 @@ export function computeRatings(
 
     if (keepWeekly) {
       // club: the club the player played for at the time (their club history, as for the upsets)
-      const ref = (p) => ({ id: p.id, name: p.name, rating: Math.round(p.rating), club: p.clubs.at(-1)?.[1] ?? null });
+      // id null for a player without a page (shown without a link)
+      const ref = (p) => ({ id: anonymous(p.id) ? null : p.id, name: p.name, rating: Math.round(p.rating), club: p.clubs.at(-1)?.[1] ?? null });
       for (const side of perSide) {
         side.players.forEach((p, j) => {
           p.log.push({
@@ -866,7 +905,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     // can't tell how men's ratings compare to women's. Players of unknown gender get no rank there.
     const separate = pool === "mixedDoubles";
     const ranks = {};
-    ratings[pool] = list.map((player) => {
+    // Players without a page (anonymous) aren't listed, ranked or counted anywhere
+    ratings[pool] = list.filter((player) => !anonymous(player.id)).map((player) => {
       const p = Object.fromEntries(Object.entries(player).filter(([key]) => !INTERNAL.has(key)));
       const active = R.isActive(p.lastPlayed, today);
       const gender = genderOf(p.id);
@@ -881,7 +921,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       };
     });
     // clubs: [week index, club] from the week the player started playing for that club
-    weekly[pool] = Object.fromEntries(list.map((p) => [p.id, { from: p.firstWeek, ratings: p.weekly, clubs: p.clubs }]));
+    weekly[pool] = Object.fromEntries(list.filter((p) => !anonymous(p.id)).map((p) => [p.id, { from: p.firstWeek, ratings: p.weekly, clubs: p.clubs }]));
   }
 
   // Strongest clubs: weighted average of each club's best ranked players or pairs (CLUB_STRENGTH).
@@ -988,7 +1028,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       const offset = weekIndex(p.firstWeek);
       const playedWeeks = [...new Set(p.log.map((m) => weekIndex(m.day)))].sort((a, b) => a - b);
       // Only players ranked in the pool by gender count for the weekly ranks and club strengths
-      if (!R.rankedIn(pool, genderOf(p.id))) continue;
+      if (!R.rankedIn(pool, genderOf(p.id)) || anonymous(p.id)) continue;
       const gender = pool === "mixedDoubles" ? genderOf(p.id) : null;
       let played = 0; // index into playedWeeks of the last week played up to w
       let club = 0; // index into p.clubs
@@ -1370,7 +1410,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     const meetings = Object.entries(players)
       .filter(([pool]) => pools.includes(pool))
       .flatMap(([pool, map]) =>
-        (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.map((o) => ({ ...m, pool, opponent: o }))),
+        (map.get(id)?.log ?? []).filter((m) => m.margin !== null).flatMap((m) => m.opponents.filter((o) => o.id !== null).map((o) => ({ ...m, pool, opponent: o }))),
       );
     const byOpponent = Map.groupBy(meetings, (m) => m.opponent.id);
     return [...byOpponent.values()]
@@ -1403,6 +1443,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const matches = new Map();
   for (const [pool, map] of Object.entries(players)) {
     for (const p of map.values()) {
+      if (anonymous(p.id)) continue;
       const strip = (list) => list.map(({ settled: _, margin: __, ...m }) => m);
       const biggest = (result, sign) =>
         strip(p.log.filter((m) => m.settled && m.result === result).sort((x, y) => sign * (x.winChance - y.winChance) || y.day.localeCompare(x.day)).slice(0, BIGGEST_MATCHES));

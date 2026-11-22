@@ -1,6 +1,6 @@
 // Each week's biggest upsets (pipeline/rate.mjs): the newest week's top 10, and the biggest upset of
 // every week of its year. /upsets/<Monday> shows another week and /upsets/<year> that year's newest
-// (app/(site)/upsets/[period]); each is a static page.
+// (app/(site)/upsets/[period]); each is a static page. Upsets go back to 2011 (Profixio's tournaments).
 import { getISOWeek, parseISO } from "date-fns";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -100,9 +100,9 @@ async function Content({ period: periodPromise }: { period: Promise<string | nul
                       </Link></td>
                     {/* One player per line, "beat" between the sides; on phones the chance under the event */}
                     <td className="py-2 px-2 sm:px-4 max-sm:[overflow-wrap:anywhere]">
-                      {u.winners.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} bold pool={u.pool} />)}
+                      {u.winners.map((p) => <PlayerLine key={p.id ?? p.name} p={p} clubs={clubs} bold pool={u.pool} />)}
                       <span className="block text-sm text-gray-600">{t("upsets.table.beat")}</span>
-                      {u.losers.map((p) => <PlayerLine key={p.id} p={p} clubs={clubs} pool={u.pool} />)}
+                      {u.losers.map((p) => <PlayerLine key={p.id ?? p.name} p={p} clubs={clubs} pool={u.pool} />)}
                       <span className="block mt-1 text-sm text-gray-600">
                         {u.score} · {pools[u.pool]} · {eventLink ? <Link href={eventLink} className={TEXT_LINK}>{u.event}</Link> : u.event}
                       </span>

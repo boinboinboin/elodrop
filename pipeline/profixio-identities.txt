@@ -1,0 +1,67 @@
+# Profixio's players (the tournaments of 2010-2014, fetch-profixio.mjs) identified by hand. Read by
+# profixio-players.mjs only, before identities.txt (which Cup2000's draws use too, so a common name
+# given here doesn't claim every later player of that name).
+#
+# A player, by the name's hash (keeping names out of the repository: print it with
+#   node cup2000-results.mjs --hash "First Last"):
+#   <name hash>  <badmintonportalen player id>   # note, without the name
+#   <name hash>  = <name hash>                   # the same player as another Profixio name (one
+#                                                  player, without a page if that name has none)
+# A club as Profixio writes it (an abbreviation or a typo), and badmintonportalen's name for it:
+#   club <Profixio's club> = <badmintonportalen's club>
+
+club Askø = Askøy
+club BBK = Bergen
+club Djrv = Djerv
+club HIF = Haugerud
+club HoBK = Horten
+club Kris = Kristiansand
+club Kristiansan = Kristiansand
+club Krkn = Kirkenes
+
+85abfc6414c4e379  25278                # Bergen, 2012-2014: a typo
+bcb39f073e4fa5d7  23271                # Bergen
+38a7e469e4399bbc  21379                # Grimstad, 2012-2014
+71d39f890c880e46  22757                # Grong: a typo
+3e038426c3136f0d  18198                # Grong
+fa0defae6b883c37  21709                # Grong: a later surname
+f4d9325b255c9005  18922                # Grong
+4c5827920db5bd64  23713                # Herøy: a typo
+5ebcca584b66d730  17937                # Herøy: a typo
+a5e9ca8a179e0131  17945                # Herøy: a typo
+991f7f289d12f53b  17936                # Herøy: a typo
+24403dc964d1048c  19834                # Herøy: a typo
+5c6c5c92c9dc2f36  20224                # Herøy: a typo
+32abab62f0014579  18594                # Karmøy: a later surname
+f523b3b2acc2cf4b  18594                # Karmøy: the same name cut short (Strilaslaget 2011)
+2a9e9f10372db20f  21672                # Kolvereid: a later surname
+f0140c8cff561600  20611                # Kristiansand: a later surname
+6a1403c11f6ca512  17585                # Kristiansand: a later surname
+6b3749aa2bc7f79c  24579                # Leksvik: a later name
+13cc7930a7c5134b  24052                # Mandal: a later name
+34aae292c57934b1  20494                # no club given
+5880690b3da6988c  18722                # no club given: a later surname
+34f0e04c7a8c50e5  19880                # no club given
+9f327418d360d180  22375                # no club given
+ff79badc157c1b79  23619                # no club given: a typo
+9802da005c77a0fc  24424                # Rissa: a typo
+3d1521d2fd6ffabc  24425                # Rissa: a typo
+a560d0cd7ccb85a5  22875                # Rissa: a later surname
+95f16c8a5dece09b  21464                # Rørvik: a typo
+2f1da1e2d73215b0  17758                # Sola: a typo
+25f8ab11efd23039  24779                # Sotra: a typo
+e351f0e56c2bfd06  21232                # Tromsøstudentenes IL
+5fb797a080f6e86f  24517                # Verdal: a typo
+69820b151c098d88  24617                # Verdal: a typo
+bfffcfd126925f75  18529                # Ålesund: a typo
+99983ad931a37afb  21996                # Ålesund: a typo
+8d71bda43cdf74bf  17295                # Ålesund
+87040426e3e6ea55  17553                # Ålesund: a typo
+56c55b09c2bd7320  = 26f7cd59fef96622   # Askøy, Fana Cup 2010: initials
+e7b9c3eafb883e3b  = 82b2415322108e96   # Askøy, 2011/12: a typo
+4e6b6b27d0ed1dfd  = f28a576ef3932945   # Djerv, Fana Cup 2010: initials
+27a0bad08f19e698  = 3aabc1566849d5c9   # Haugerud, Færder Smashen 2010: initials
+2825c0670b9fae31  = 6f554f00c8e0d7d5   # Horten, Mossetreffen 2010
+3d5bad8a82aacd44  = 1e62447258b1d6d7   # Klæbu: initials
+5ae777d4df6dcecd  = ec1c2e6810dc7497   # Kirkenes, Mehamn Smashen 2010: initials
+884111dc6182e3c4  = ea70287996faa0d5   # Sweden, AOT 2010: initials

@@ -378,6 +378,12 @@ body {
   --header-offset: 67px;
   scroll-padding-top: var(--header-offset);
 }
+/* Not while something in the header has focus: the browser would take the search field, in the sticky header, for hidden
+   under the header, and scroll the page up with every letter typed to show it (the header comes along, so it does
+   it again) */
+:root:has(header :focus) {
+  scroll-padding-top: 0;
+}
 /* md: 48rem */
 @media (width >= 48rem) {
   :root {
