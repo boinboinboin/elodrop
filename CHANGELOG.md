@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.1 (2026-11-22)
+
+- More tournaments from 2010 to 2014: many of Profixio's tournaments aren't on its tournament list or in its search, only at their own address, so they were missed. 426 of them from 2010 to August 2014 are now fetched too, from all over the country, once `fetch-profixio.mjs` is run again.
+- For the pipeline: `profixio-unlisted.txt` lists those tournaments (`<slug> <first day> <id>  # name`), 622 with the 196 from before 2010, which are skipped while `FROM` is 2010-01-01. `fetch-profixio.mjs` adds them to Profixio's list and checks each one's address and id. 102 of them are team series, which give no matches yet (their pages list club against club ties, not the games).
+
 ## v1.39.0 (2026-11-22)
 
 - Tournaments from 2010 to 2014 are now rated too: about 7,700 matches from 49 tournaments kept on Profixio, from before badmintonportalen had tournament results, mostly in Trøndelag, Møre, Vestland and Nord-Norge. About 1,300 players' histories now go back to 2010, 377 of them players who only played then and now have a page of their own.
