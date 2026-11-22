@@ -8,6 +8,13 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.2 (2026-11-22)
+
+- Far more of the years before badmintonportalen are rated: 479 tournaments kept on Profixio from January 2008 to the summer of 2014, about 91,500 matches from all over the country, where there were 49 tournaments and 7,700 matches from 2010. Most of them aren't on Profixio's own list; a contributor found them. 1,683 more players get a page of their own, and today's ratings move by a few points for the typical ranked player (under 40 for 9 in 10), more for some with a long history and few matches since.
+- Matches recorded on Profixio with only the sets won, not their points (many tournaments of 2012), count now: they were taken for walkovers, 389 of them in the tournaments rated before.
+- Players in these tournaments are matched more carefully: a name with a typo ("Kennet" for Kenneth) is matched within the same club, and a name with initials ("S. Jørgensen") only to a player of the same club, so players of the older tournaments who stopped before 2013 are no longer given to someone else of the same initials. About 430 more names are matched by hand (initials, typos, names cut short or without a later surname: "Iris Carrascal" is Iris Carrascal Simonsen), the clubs Profixio abbreviates are read as the clubs they are ("BMIL" is Vestre Aker, "BMK" BMK Boston), and players registered twice on badmintonportalen count as one (46 more such players are merged into one page each). Players not found are joined where they're one person under two names ("M. Thunem" and Michael Thunem), so they're rated as one.
+- For the pipeline: `profixio-unlisted.txt` lists the tournaments missing from Profixio's list (left out: team series, tournaments without results, the Swedish ones, tests and copies), and `fetch-profixio.mjs` fetches them, skipping team series and saving the pages it checks.
+
 ## v1.39.1 (2026-11-22)
 
 - For the pipeline: the traffic watch runs again. Its check for challenged networks quiet for 30 days asked Vercel for more rows than it allows (30 days in hours), so every run stopped there; ranges that long are now asked in days.

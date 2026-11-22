@@ -1,10 +1,12 @@
-// Fetch the tournaments played on Profixio (profixio.com) from 2010 to the summer of 2014, before
+// Fetch the tournaments played on Profixio (profixio.com) from 2007 to the summer of 2014, before
 // badmintonportalen has tournament results (September 2014). A one-time import: the association has
 // moved on to Cup2000 and badmintonportalen, so these never change.
 // Usage: node fetch-profixio.mjs [--offline] [--only <slug>]
 //
 // 1. The list of Norwegian badminton tournaments (Livewire: the list loads 12 at a time as it's
-//    scrolled; one call with a larger `limit` gives them all).
+//    scrolled; one call with a larger `limit` gives them all), and the tournaments Profixio keeps off
+//    that list, in profixio-unlisted.txt: many of 2007-2014 are on no list or search, only at their
+//    address (or /app/<id>), such as North Sea Cup 2012 and Fana Cup 2013.
 // 2. For each tournament from FROM to TO, its pages are saved as they are in data/profixio/raw/<slug>/:
 //    the day pages (every match, 15 a page, with its class, players, set scores and winner), the class
 //    pages (the group matches, under each group's heading; knockout matches aren't on them and their
@@ -26,7 +28,7 @@ const OUT = `${DIR}data/profixio`;
 const RAW = `${OUT}/raw`;
 const BASE = "https://www.profixio.com/app";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36";
-const FROM = "2010-01-01";
+const FROM = "2007-01-01"; // Profixio's first badminton tournaments are from the autumn of 2007
 const TO = "2014-08-31"; // badmintonportalen's tournament results start in September 2014
 const DELAY_MS = 400;
 const MAX_ATTEMPTS = 5;
@@ -91,6 +93,37 @@ async function listTournaments() {
       };
     })
     .filter((t) => t.slug && t.date);
+}
+
+// 1b. The unlisted tournaments (profixio-unlisted.txt: "<slug> <first day> <id>  # name"), in the
+// list's shape. The day and id are the file's (a one-day tournament's page links no days); the page is
+// read for the name, and to check the address, that its id is the file's and that it isn't a team
+// series ("er_serie": club against club, without the players or their scores). The pages are saved
+// (data/profixio/raw/unlisted/<slug>.html), so a re-run doesn't fetch them again.
+async function unlistedTournaments(listed) {
+  const file = `${DIR}profixio-unlisted.txt`;
+  if (!existsSync(file)) return [];
+  const have = new Set(listed.map((t) => t.slug));
+  const rows = (await readFile(file, "utf8"))
+    .split("\n")
+    .map((l) => l.replace(/#.*/, "").trim().split(/\s+/))
+    .filter(([slug, date, id]) => slug && /^\d{4}-\d\d-\d\d$/.test(date ?? "") && /^\d+$/.test(id ?? "") && !have.has(slug))
+    .filter(([, date]) => date >= FROM && date <= TO); // no request for the ones outside the range
+  await mkdir(`${RAW}/unlisted`, { recursive: true });
+  const found = [];
+  for (const [slug, date, id] of rows) {
+    try {
+      const html = unescape(await save(`${RAW}/unlisted`, slug, `${BASE}/${slug}`));
+      const pageId = html.match(/"turnering_id":(\d+)/)?.[1];
+      if (!pageId || !html.includes(`/app/${slug}/`)) throw new Error("no tournament at this address");
+      if (pageId !== id) throw new Error(`its page has id ${pageId}, the file ${id}`);
+      if (/"er_serie":true/.test(html)) throw new Error("a team series, without the players");
+      found.push({ id: +id, slug, name: text(html.match(/<title>([\s\S]*?)- Profixio/)?.[1] ?? slug), date, matchCount: 0 });
+    } catch (e) {
+      console.warn(`profixio-unlisted.txt: ${slug} left out: ${e.message}`);
+    }
+  }
+  return found;
 }
 
 // 2. A tournament's pages, saved as they are. Paginated pages are fetched until the next one isn't linked.
@@ -305,7 +338,9 @@ async function readTournament(t) {
         continue;
       }
       const round = noPage ? "Pulje 1" : (groups.get(m.id) ?? knockout.get(m.id) ?? "Sluttspill");
-      const walkover = !m.sets.length;
+      // A walkover has no sets won (0-0, with a winner). Some tournaments (many in 2012) give only the sets won
+      // ("2 1"), not their points: played, rated without a score (as a typical margin)
+      const walkover = !m.sets.length && !(m.setsWon[0] + m.setsWon[1] > 0);
       matches.push({
         className: className(full, code),
         discipline,
@@ -323,6 +358,8 @@ async function readTournament(t) {
   // Group stages first, then the knockout rounds up to the final, as badmintonportalen lists them
   const stage = (r) => (/^pulje/i.test(r) ? 0 : r === "Sluttspill" ? 1 : r === "Finale" ? 5 : r === "Semifinaler" ? 4 : r === "Kvartfinaler" ? 3 : 2);
   matches.sort((a, b) => stage(a.round) - stage(b.round));
+  const setsOnly = matches.filter((m) => !m.walkover && !m.score).length;
+  if (setsOnly) warnings.push(`${t.slug}: ${setsOnly} of ${matches.length} matches have only the sets won, no points`);
   const dates = matches.map((m) => m.date).sort();
   if (t.matchCount && Math.abs(byId.size - t.matchCount) > 0) warnings.push(`${t.slug}: ${byId.size} matches on the day pages, the list says ${t.matchCount}`);
   return {
@@ -346,6 +383,7 @@ let list;
 if (offline) list = JSON.parse(await readFile(`${RAW}/tournaments.json`, "utf8"));
 else {
   list = await listTournaments();
+  list.push(...(await unlistedTournaments(list)));
   await writeFile(`${RAW}/tournaments.json`, JSON.stringify(list, null, 1));
 }
 const wanted = list.filter((t) => t.date >= FROM && t.date <= TO && (!only || t.slug === only));

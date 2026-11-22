@@ -13,20 +13,29 @@
 //   3. a name with all the words of the other, in any order (Profixio's "Bård Vegard Grande" for
 //      "Bård Grande", "Julian Wanvik" for "Julian Wanvik Hagen", "Lenning Elias" for "Elias Lenning"),
 //      only if exactly one could have played and is from the same club;
-//   4. initials (Færder Smashen and Fana Cup 2010 write "T. Treff (SaBK)"): the full words and a word
-//      starting with each initial, if exactly one could have played, or exactly one whose club fits
-//      the abbreviation;
-//   5. a name not identified in a tournament (not found, or ambiguous) that is identified as one
+//   4. a typo: a name one letter off ("Kennet Sanglay" for "Kenneth Sanglay"), two in a longer one
+//      ("Alexander Drzewiecki"), its words starting with the same letters, only if exactly one could have
+//      played and is from the same club;
+//   5. initials (Færder Smashen and Fana Cup 2010 write "T. Treff (SaBK)"): the full words and a word
+//      starting with each initial, if exactly one could have played; with a club given, exactly one from
+//      that club or one its abbreviation fits (in 2007-2010 the one player left of some initials is often
+//      someone else, who stopped before badmintonportalen's results start);
+//   6. a name not identified in a tournament (not found, or ambiguous) that is identified as one
 //      player only in the others is that player, if it has no club there or one of the same clubs.
 // Anyone else is left unidentified (id null). The report lists them with the ambiguous and the
 // loosely matched (3., 4.), the most matches first, for checking; unidentified.txt lists the
 // names not identified anywhere, by club, to fill in by hand (into profixio-identities.txt).
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { normalize, knownAs, nameHash } from "./cup2000-results.mjs";
+import { samePlayer } from "./same-players.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
 const GENDER = { MensSingles: "M", MensDoubles: "M", WomensSingles: "K", WomensDoubles: "K" };
+
+// A club as Profixio writes it, but for case and spaces: not normalized, which would make "ÅBK"
+// (Ålesund) "ABK" (Asker)
+const clubKey = (club) => (club ?? "").toLowerCase().replace(/\s+/g, " ").trim();
 
 // profixio-identities.txt: players by their name's hash (an id, or "= <hash>": the same player as
 // that Profixio name) and clubs ("club <Profixio's> = <badmintonportalen's>")
@@ -38,7 +47,7 @@ function handIdentities() {
   for (const raw of existsSync(file) ? readFileSync(file, "utf8").split("\n") : []) {
     const line = raw.replace(/#.*/, "").trim();
     const club = line.match(/^club\s+(.+?)\s*=\s*(.+)$/);
-    if (club) clubs.set(normalize(club[1]), club[2].trim());
+    if (club) clubs.set(clubKey(club[1]), club[2].trim());
     else if (/^[0-9a-f]{16}\s+=\s*[0-9a-f]{16}$/.test(line)) sameAs.set(line.slice(0, 16), line.slice(-16));
     else if (/^[0-9a-f]{16}\s+\d+$/.test(line)) ids.set(line.slice(0, 16), +line.split(/\s+/)[1]);
   }
@@ -50,7 +59,27 @@ const words = (n) => n.split(" ").filter(Boolean);
 const within = (a, b) => {
   const [x, y] = [words(a), words(b)];
   const [small, large] = x.length <= y.length ? [x, y] : [y, x];
-  return small.length >= 2 && small.every((w) => large.includes(w));
+  // Not initials ("s jorgensen" isn't within "solvar s flaten jorgensen"): those are step 5
+  return small.length >= 2 && small.every((w) => w.length > 1 && large.includes(w));
+};
+
+// The letters to add, remove or change to make one name the other
+const editDistance = (a, b) => {
+  let row = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const next = [i];
+    for (let j = 1; j <= b.length; j++) next[j] = Math.min(row[j] + 1, next[j - 1] + 1, row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    row = next;
+  }
+  return row[b.length];
+};
+// A typo: one letter off ("kennet sanglay" and "kenneth sanglay"), two in a longer name ("alexander
+// drzewiecki" and "aleksander drzewiecki"), with as many words, each starting with the same letter (not
+// "elin solberg" and "malin solberg")
+const typo = (a, b) => {
+  const [x, y] = [words(a), words(b)];
+  if (a === b || x.length < 2 || x.length !== y.length || x.some((w, i) => w[0] !== y[i][0])) return false;
+  return editDistance(a, b) <= (a.length >= 12 ? 2 : 1);
 };
 
 // A club's abbreviation ("SaBK", "Krkn", "HoBK") fits a club name ("sandefjord", "kirkenes",
@@ -67,15 +96,17 @@ const abbreviates = (abbreviation, club) => {
 // the newest result's), names (normalized), gender, clubs (normalized), born }
 function knownPlayers(displayNames) {
   const players = new Map();
+  // A person with more than one id (same-players.txt) is one candidate, under the id kept
   const player = (id) => {
+    id = samePlayer(id);
     if (!players.has(id)) players.set(id, { id, name: null, names: new Set(), gender: null, genders: new Set(), clubs: new Set(), born: null });
     return players.get(id);
   };
   for (const p of readJson(`${DIR}data/players.json`)) {
     const q = player(p.id);
-    q.name = p.name;
+    if (p.id === q.id || !q.name) q.name = p.name;
     q.names.add(normalize(p.name));
-    q.gender = p.gender ?? null;
+    q.gender ??= p.gender ?? null;
     if (p.club) q.clubs.add(normalize(p.club));
   }
   const addSides = (m) => {
@@ -104,7 +135,8 @@ function knownPlayers(displayNames) {
 }
 
 // Profixio's club ("Ålesund Badmintonklubb") as badmintonportalen's short name, normalized
-// ("alesund"), from the club list's full names, else the longest known club name it starts with; and
+// ("alesund"), from the club list's full names, else the longest known club name it starts with, else
+// the one club a name cut short starts ("Kristia"); and
 // that name as badmintonportalen writes it ("Ålesund"), or null if it isn't one
 function clubResolver(players, displayNames) {
   const aliases = new Map();
@@ -118,7 +150,9 @@ function clubResolver(players, displayNames) {
   const resolve = (club) => {
     const n = normalize(club ?? "");
     if (!n) return null;
-    if (!cache.has(n)) cache.set(n, aliases.get(n) ?? known.find((c) => n === c || n.startsWith(`${c} `)) ?? n);
+    // else the one club a name cut short is the start of ("kristia", "haugesun")
+    const cut = () => { const fits = n.length >= 4 ? known.filter((c) => c.startsWith(n)) : []; return fits.length === 1 ? fits[0] : null; };
+    if (!cache.has(n)) cache.set(n, aliases.get(n) ?? known.find((c) => n === c || n.startsWith(`${c} `)) ?? cut() ?? n);
     return cache.get(n);
   };
   return { resolve, display: (club) => displayNames.get(resolve(club)) ?? null };
@@ -140,7 +174,7 @@ export function identifyAll(tournaments) {
     for (const m of t.matches) {
       for (const p of [...m.side1, ...m.side2]) {
         p.name = sameName(p.name);
-        p.club = hand.clubs.get(normalize(p.club ?? "")) ?? p.club;
+        p.club = hand.clubs.get(clubKey(p.club)) ?? p.club;
       }
     }
   }
@@ -196,7 +230,7 @@ export function identifyAll(tournaments) {
     const sameClub = (id) => resolved && [...players.get(id).clubs].some((c) => c === resolved || resolved.startsWith(`${c} `) || c.startsWith(`${resolved} `));
     let decision;
     const fixed = hand.ids.get(nameHash(name)) ?? knownAs(name);
-    if (fixed) decision = { id: fixed, how: "by hand" };
+    if (fixed) decision = { id: samePlayer(fixed), how: "by hand" };
     else {
       const exact = sameGender([...(byName.get(n) ?? [])].filter(could));
       const exactClub = exact.filter(sameClub);
@@ -207,7 +241,14 @@ export function identifyAll(tournaments) {
         const [first, last] = [words(n)[0], words(n).at(-1)];
         const sharing = [...(byWord.get(first) ?? [])].filter((id) => byWord.get(last)?.has(id));
         const loose = sameGender(sharing.filter((id) => [...players.get(id).names].some((k) => within(n, k))).filter(could)).filter(sameClub);
+        // A typo in either word: everyone sharing the first or the last word
+        const misspelt = () => {
+          const near = [...new Set([...(byWord.get(first) ?? []), ...(byWord.get(last) ?? [])])].filter((id) => [...players.get(id).names].some((k) => typo(n, k)));
+          return sameGender(near.filter(could)).filter(sameClub);
+        };
+        const typos = loose.length ? [] : misspelt();
         if (loose.length === 1) decision = { id: loose[0], how: "all words of the name and club", candidates: loose };
+        else if (typos.length === 1) decision = { id: typos[0], how: "a typo and club", candidates: typos };
         else if (words(n).some((w) => w.length === 1)) {
           // Initials ("T. Treff", "K. Hellum", clubs as "SaBK"): everyone whose name has the full words and
           // a word starting with each initial, the first name first; more than one: the one whose club
@@ -219,11 +260,15 @@ export function identifyAll(tournaments) {
             return kw[0][0] === words(n)[0][0] && words(n).every((w) => (w.length > 1 ? kw.includes(w) : kw.some((x) => x !== kw.at(-1) && x[0] === w)));
           };
           const fits = sameGender(pool.filter((id) => [...players.get(id).names].some(initialsFit)).filter(could));
-          const abbreviated = fits.filter((id) => [...players.get(id).clubs].some((c) => abbreviates(club, c)));
+          // With a club given, only a player of that club: initials say little, and the older tournaments
+          // (2007-2010) have many players who stopped before badmintonportalen's results start (2013), so the
+          // one player left of those initials is often someone else ("S. Jørgensen" of five clubs)
+          const clubbed = fits.filter((id) => sameClub(id) || [...players.get(id).clubs].some((c) => abbreviates(club, c)));
           decision =
-            fits.length === 1 ? { id: fits[0], how: "initials", candidates: fits }
-            : abbreviated.length === 1 ? { id: abbreviated[0], how: "initials and club", candidates: abbreviated }
-            : { id: null, how: fits.length ? "ambiguous" : "not found", candidates: fits };
+            !normalize(club ?? "") ? (fits.length === 1 ? { id: fits[0], how: "initials", candidates: fits } : { id: null, how: fits.length ? "ambiguous" : "not found", candidates: fits })
+            : clubbed.length === 1 ? { id: clubbed[0], how: "initials and club", candidates: clubbed }
+            : clubbed.length ? { id: null, how: "ambiguous", candidates: clubbed }
+            : { id: null, how: "not found", candidates: fits };
         } else decision = { id: null, how: "not found" };
       }
     }
@@ -315,6 +360,7 @@ export function identifyAll(tournaments) {
     summary,
     "",
     ...section("Identified by the words of the name and club only: check these", (q) => q.how.has("all words of the name and club")),
+    ...section("Identified by a typo in the name and club: check these", (q) => q.how.has("a typo and club")),
     ...section("Identified by initials: check these", (q) => q.how.has("initials") || q.how.has("initials and club")),
     ...section("More than one player of that name", (q) => q.how.has("ambiguous")),
     ...section("Not found", (q) => q.how.has("not found")),
@@ -333,7 +379,7 @@ export function identifyAll(tournaments) {
   };
   const width = Math.max(...notFound.map((q) => q.name.length));
   const fillIn = [
-    "Players not identified in Profixio's tournaments of 2010-2014 (fetch-profixio.mjs)",
+    "Players not identified in Profixio's tournaments of 2007-2014 (fetch-profixio.mjs)",
     "",
     'After a player\'s "=", write their badmintonportalen player id, or their name as it is on',
     "badmintonportalen. Leave the ones you don't know empty, and the rest of the line as it is.",

@@ -268,8 +268,8 @@ write("meta.json", {
   players: byPlayer.size,
   // The matches rated, singles, doubles and mixed (rate.mjs), for the site's numbers on its written pages
   matches: ratings.matches,
-  // The seasons (July to June) with rated matches, from the first match's to this one: 2009/10 (Profixio's first
-  // tournament, April 2010) on
+  // The seasons (July to June) with rated matches, from the first match's to this one: 2007/08 (Profixio's first
+  // tournament with results, January 2008) on
   seasons: (() => {
     const season = (day) => (+day.slice(5, 7) >= 7 ? +day.slice(0, 4) : +day.slice(0, 4) - 1);
     const first = Object.values(ratings.pools).flat().reduce((min, p) => (p.firstPlayed && p.firstPlayed < min ? p.firstPlayed : min), generatedAt);
