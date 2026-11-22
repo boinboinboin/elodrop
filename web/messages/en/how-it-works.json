@@ -157,7 +157,7 @@
   },
   "data": {
     "title": "Where the results come from",
-    "p1": "Every tournament and league result on <portalen>badmintonportalen.no</portalen>: league matches since 2013, tournaments since 2014. Before that, the tournaments of 2010 to 2014 kept on <profixio>Profixio</profixio>, mostly in Trøndelag, Møre, Vestland and Nord-Norge. While a tournament is being played, its matches come from the draw on <cup2000>Cup2000</cup2000>, and the final results replace them once they're in.",
+    "p1": "Every tournament and league result on <portalen>badmintonportalen.no</portalen>: league matches since 2013, tournaments since 2014. Before that, the tournaments of 2008 to 2014 kept on <profixio>Profixio</profixio>, from all over the country. While a tournament is being played, its matches come from the draw on <cup2000>Cup2000</cup2000>, and the final results replace them once they're in.",
     "p2": "Walkovers don't count, and scores that can't be right are corrected by hand.",
     "nerd1": "A 21-0, 21-0 result (15-0, 15-0 from 2026/27, when sets went to 15) counts as a walkover. Scores impossible for the season's set format are listed every night with the most likely intended score, and fixed in a corrections file that survives refetching the data. The first two seasons are a warm-up: most players get their first rated match in 2014/15. Profixio has names and clubs only, so its players are matched to badmintonportalen's by name, club and birth year; the few it can't match still count for everyone they played, but have no page.",
     "nerd2": "The nightly run fetches only what can have changed and rebuilds only what's needed; the whole site is refreshed after every weekend."

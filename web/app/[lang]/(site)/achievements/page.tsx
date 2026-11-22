@@ -14,7 +14,7 @@ import { Lead, MotionPage, Reveal, Title } from "@/components/ui/Motion";
 import Section from "@/components/ui/Section";
 import { getAchievementStats } from "@/data/achievements";
 import { getMeta } from "@/data/meta";
-import { getBadges } from "@/data/sanity";
+import { getBadges, getHandGivenBadges } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { Achievement, AchievementStats, Badge } from "@/types";
 import { playerHref } from "@/utils/hrefs";
@@ -53,7 +53,8 @@ const atLevel = (badge: Badge, level: number | undefined): Achievement[] => (lev
 
 export default async function AchievementsPage() {
   const { t, lang } = await getI18n();
-  const [badges, stats, meta] = await Promise.all([getBadges(lang), getAchievementStats(), getMeta()]);
+  const [earnable, handGiven, stats, meta] = await Promise.all([getBadges(lang), getHandGivenBadges(lang), getAchievementStats(), getMeta()]);
+  const badges = [...earnable, ...handGiven];
   // The rarest first (fewest players), hand-given ones too; not one taken off this page in the Studio, nor
   // one whose rule the data doesn't have (left in the Studio after its rule was removed)
   const sorted = badges

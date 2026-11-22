@@ -2,7 +2,8 @@
 // only, as badmintonportalen players. First, profixio-identities.txt (written by hand) gives a
 // club's abbreviation or typo its badmintonportalen name ("BBK" is Bergen), and a name the Profixio
 // name of the same player ("B. Josgård" is Benny Josgård). Then a player is looked up in this order:
-//   1. profixio-identities.txt, then identities.txt (by the name's hash), as for Cup2000 draws;
+//   1. profixio-identities.txt (by the name's hash; a line can hold for men's or women's events and one
+//      club alone, for a name two players share), then identities.txt, as for Cup2000 draws;
 //   2. the same name: everyone known by it on badmintonportalen, from the player register
 //      (data/players.json) and the names in its tournament and league results (data/portalen,
 //      data/league), that could have played the match: in a junior class (U15 is everyone born in the
@@ -43,6 +44,7 @@ function handIdentities() {
   const ids = new Map();
   const sameAs = new Map();
   const clubs = new Map();
+  const scoped = new Map(); // name hash -> [{ id, gender ("M", "K" or null), club (as written, or null) }]
   const file = `${DIR}profixio-identities.txt`;
   for (const raw of existsSync(file) ? readFileSync(file, "utf8").split("\n") : []) {
     const line = raw.replace(/#.*/, "").trim();
@@ -50,8 +52,17 @@ function handIdentities() {
     if (club) clubs.set(clubKey(club[1]), club[2].trim());
     else if (/^[0-9a-f]{16}\s+=\s*[0-9a-f]{16}$/.test(line)) sameAs.set(line.slice(0, 16), line.slice(-16));
     else if (/^[0-9a-f]{16}\s+\d+$/.test(line)) ids.set(line.slice(0, 16), +line.split(/\s+/)[1]);
+    else {
+      // Only in men's or women's events, and/or only for one club: a name two players share
+      const only = line.match(/^([0-9a-f]{16})\s+(\d+)(?:\s+(men|women))?(?:\s+@\s*(.+))?$/);
+      if (only && (only[3] || only[4])) {
+        const list = scoped.get(only[1]) ?? [];
+        list.push({ id: +only[2], gender: only[3] === "men" ? "M" : only[3] === "women" ? "K" : null, club: only[4]?.trim() ?? null });
+        scoped.set(only[1], list);
+      }
+    }
   }
-  return { ids, sameAs, clubs };
+  return { ids, sameAs, clubs, scoped };
 }
 // One name's words all in the other's, in any order: "bard vegard grande" and "bard grande",
 // "julian wanvik" and "julian wanvik hagen", "lenning elias" and "elias lenning"
@@ -214,7 +225,7 @@ export function identifyAll(tournaments) {
     const n = normalize(name);
     const gender = genderOf(n);
     const age = +(className.match(/^U(\d+)/)?.[1] ?? 0);
-    const key = [n, club, age, season].join("|");
+    const key = [n, club, age, season, GENDER[discipline] ?? ""].join("|");
     if (decisions.has(key)) return decisions.get(key);
     const could = (id) => {
       const p = players.get(id);
@@ -229,7 +240,9 @@ export function identifyAll(tournaments) {
     const resolved = clubOf(club);
     const sameClub = (id) => resolved && [...players.get(id).clubs].some((c) => c === resolved || resolved.startsWith(`${c} `) || c.startsWith(`${resolved} `));
     let decision;
-    const fixed = hand.ids.get(nameHash(name)) ?? knownAs(name);
+    // By hand: in these events and this club alone, else everywhere
+    const only = hand.scoped.get(nameHash(name))?.find((s) => (!s.gender || s.gender === GENDER[discipline]) && (!s.club || clubOf(s.club) === resolved));
+    const fixed = only?.id ?? hand.ids.get(nameHash(name)) ?? knownAs(name);
     if (fixed) decision = { id: samePlayer(fixed), how: "by hand" };
     else {
       const exact = sameGender([...(byName.get(n) ?? [])].filter(could));

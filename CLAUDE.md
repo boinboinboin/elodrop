@@ -42,7 +42,7 @@ Keep the site as cheap to run as possible (Vercel ISR writes and functions, R2 w
 
 - The pipeline refreshes only the data files it uploaded (one cache tag per file, `web/data/load.ts`; `pipeline/refresh-site.mjs`). Don't refresh everything, and don't add time-based `cacheLife` to data reads.
 - Pages that exist by the thousand (players, team matches) must not read a file that changes with every run (`meta.json`, `achievements.json`): load that in the browser from a cached API route (as `/api/updated`, `/api/achievement-stats`), or put what the page needs in its own file.
-- Sanity content on thousands of pages (clubs, badges, halls) is refreshed by the nightly run when it changed (`pipeline/sanity-revisions.mjs`), not by the webhook.
+- Sanity content on thousands of pages (clubs, badges earned by a rule, halls) is refreshed by the nightly run when it changed (`pipeline/sanity-revisions.mjs`), not by the webhook. Content on a handful of pages gets its own tag, so the webhook can refresh it at once (a hand-given badge: one tag per player).
 - Before adding a page type, a sitemap entry or a large component, weigh how many pages, how often they change and how big they are.
 - Ask the owner before trading freshness for cost: a refresh expires pages at once (`{ expire: 0 }`), so the first visit after an update is fresh.
 

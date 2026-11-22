@@ -3,7 +3,7 @@
     "title": "Prestasjoner"
   },
   "title": "Prestasjoner",
-  "intro": "Spillere får prestasjoner for det de har gjort på banen: tre klasser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2010 teller.",
+  "intro": "Spillere får prestasjoner for det de har gjort på banen: tre klasser vunnet i én turnering, norgesmesterskap og ukas største overraskelser. Alle resultater siden 2008 teller.",
   "players": {
     "one": "{count} spiller",
     "other": "{count} spillere"

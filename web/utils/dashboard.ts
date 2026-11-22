@@ -193,7 +193,7 @@ const seasonOf = (day: string) => (+day.slice(5, 7) >= 7 ? +day.slice(0, 4) : +d
 const sets = (score: string) => score.split(",").filter((s) => /\d/.test(s)).length;
 const who = (p: { id: number | null; name: string }): Who => ({ id: p.id, name: p.name });
 // A player in a match, as one person: by id, or by name for players without a page (id null: not
-// identified in a Profixio tournament, 2010-2014)
+// identified in a Profixio tournament, 2008-2014)
 const personKey = (p: { id: number | null; name: string }) => p.id ?? `name:${p.name}`;
 /** The last set decided by 3 points or fewer ("21-19, 18-21, 22-20") */
 const isClose = (score: string) => {

@@ -17,6 +17,7 @@ import { createHash } from "node:crypto";
 import { provisionalTournaments, normalize } from "./cup2000-results.mjs";
 import { identifyAll } from "./profixio-players.mjs";
 import { samePlayer, withSamePlayers } from "./same-players.mjs";
+import { withTidyNames } from "./names.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 // Rating pool per discipline. Every pool is rated separately.
@@ -254,7 +255,8 @@ function correctedList(source, matches) {
   }
   const seen = new Map();
   return matches.map((match) => {
-    const m = withSamePlayers(match);
+    // Merged ids as the id kept, names as they're written (names.mjs: "lasse hansen" → "Lasse Hansen")
+    const m = withTidyNames(withSamePlayers(match));
     let key = source;
     if (m.side1.length && m.side2.length) {
       const pair = canonical(source, sideIds(m.side1), sideIds(m.side2));
@@ -357,8 +359,8 @@ const complete = (pool, sides) => sides.every((side) => side.length === (DOUBLES
 // returned as a preview instead (`preview: true`): not rated, only its chance from the ratings before it
 // (computeRatings' `previews`).
 function toGame(match, meta) {
-  // A person with more than one id is rated under the one kept (same-players.txt)
-  const original = withSamePlayers(match);
+  // A person with more than one id is rated under the one kept (same-players.txt); names as they're written (names.mjs)
+  const original = withTidyNames(withSamePlayers(match));
   const pool = POOLS[original.discipline];
   if (!pool) return null;
   // Number repeated meetings of the same sides in the same tournament or tie

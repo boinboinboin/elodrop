@@ -1,7 +1,7 @@
 {
   "siteName": "Elodrop",
   "titleTemplate": "%s · Elodrop",
-  "description": "Elodrop: singles and doubles Elo ratings for Norwegian badminton, from tournament and league results since 2010 on badmintonportalen.no, Cup2000 and Profixio.",
+  "description": "Elodrop: singles and doubles Elo ratings for Norwegian badminton, from tournament and league results since 2008 on badmintonportalen.no, Cup2000 and Profixio.",
   "manifestDescription": "Elo ratings for Norwegian badminton",
   "nav": {
     "label": "Main",

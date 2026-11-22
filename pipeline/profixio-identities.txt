@@ -1,4 +1,4 @@
-# Profixio's players (the tournaments of 2010-2014, fetch-profixio.mjs) identified by hand. Read by
+# Profixio's players (the tournaments of 2007-2014, fetch-profixio.mjs) identified by hand. Read by
 # profixio-players.mjs only, before identities.txt (which Cup2000's draws use too, so a common name
 # given here doesn't claim every later player of that name).
 #
@@ -7,6 +7,9 @@
 #   <name hash>  <badmintonportalen player id>   # note, without the name
 #   <name hash>  = <name hash>                   # the same player as another Profixio name (one
 #                                                  player, without a page if that name has none)
+#   <name hash>  <id>  women @ <club>             # only in women's events (or men), and/or only for
+#                                                  that club (badmintonportalen's name): a name two
+#                                                  players share ("M. Halvorsen" in Bygdø)
 # A club as Profixio writes it (an abbreviation or a typo), and badmintonportalen's name for it:
 #   club <Profixio's club> = <badmintonportalen's club>
 
@@ -1243,3 +1246,6 @@ f48dd41eef9eca45  24075                # Sandnessjøen: the name cut short
 06748694ddc87187  19588                # Stavanger: a typo
 74c8e0719ff5fa25  19588                # Brodd: C/K
 705c19ea2a6f1b73  23853                # Bergen: the name cut short
+
+# A name two players share: by event and club
+b191ce462554b5c6  19819  women @ Bygdø   # Bygdø, 2008-2010: women's events (a man of that name plays men's doubles there)

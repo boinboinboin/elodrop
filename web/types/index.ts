@@ -5,7 +5,7 @@ export type Pool = "men" | "women" | "mensDoubles" | "womensDoubles" | "mixedDou
 export type Gender = "M" | "K";
 
 export interface PlayerRef {
-  /** null for a player without a page: not identified in a Profixio tournament (2010-2014) */
+  /** null for a player without a page: not identified in a Profixio tournament (2008-2014) */
   id: number | null;
   name: string;
   rating: number;

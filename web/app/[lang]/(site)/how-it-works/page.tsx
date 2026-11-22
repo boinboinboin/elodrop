@@ -331,7 +331,7 @@ export default async function HowItWorksPage() {
                 {rich("howItWorks.data.p1", {
                   portalen: (text) => <ExternalLink href="https://badmintonportalen.no">{text}</ExternalLink>,
                   cup2000: (text) => <ExternalLink href="https://www.cup2000.dk">{text}</ExternalLink>,
-                  // The tournaments of 2010-2014 (pipeline/fetch-profixio.mjs)
+                  // The tournaments of 2008-2014 (pipeline/fetch-profixio.mjs)
                   profixio: (text) => <ExternalLink href="https://www.profixio.com/app/tournaments">{text}</ExternalLink>,
                 })}
               </p>

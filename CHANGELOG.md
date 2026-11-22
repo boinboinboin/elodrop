@@ -8,6 +8,14 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.3 (2026-11-22)
+
+- The front page, the site's description, How it works and the achievements say the results go back to 2008, not 2010, now that Profixio's tournaments from 2008 are rated; How it works no longer says they're mostly from the north and west.
+- Players' names written all in lower case or in capitals on badmintonportalen ("lasse hansen", "EIRIK EGGEN") are shown with capitals as names are written ("Lasse Hansen", "Eirik Eggen"), on their pages, in match lists, rankings, search and draws.
+- A badge given by hand shows on the player's page as soon as it's published in the Studio, not the next night: only the pages of the players given it (or taken from) are refreshed.
+- The national champions of 2009 get their badge: Profixio's "NM2009" wasn't recognised as an NM. The junior NMs on Profixio ("NM Jr") are no longer taken for senior ones (they gave no badges).
+- For the pipeline: `names.mjs` tidies the names; the nightly check of the Studio refreshes a hand-given badge's players alone, as a safety net for the webhook.
+
 ## v1.39.2 (2026-11-22)
 
 - Far more of the years before badmintonportalen are rated: 479 tournaments kept on Profixio from January 2008 to the summer of 2014, about 91,500 matches from all over the country, where there were 49 tournaments and 7,700 matches from 2010. Most of them aren't on Profixio's own list; a contributor found them. 1,683 more players get a page of their own, and today's ratings move by a few points for the typical ranked player (under 40 for 9 in 10), more for some with a long history and few matches since.

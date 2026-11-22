@@ -157,7 +157,7 @@
   },
   "data": {
     "title": "Hvor resultatene kommer fra",
-    "p1": "Alle turnerings- og seriekamper på <portalen>badmintonportalen.no</portalen>: seriekamper siden 2013, turneringer siden 2014. Før det, turneringene fra 2010 til 2014 som ligger på <profixio>Profixio</profixio>, mest i Trøndelag, Møre, Vestland og Nord-Norge. Mens en turnering spilles kommer kampene fra trekningen på <cup2000>Cup2000</cup2000>, og de endelige resultatene erstatter dem når de er inne.",
+    "p1": "Alle turnerings- og seriekamper på <portalen>badmintonportalen.no</portalen>: seriekamper siden 2013, turneringer siden 2014. Før det, turneringene fra 2008 til 2014 som ligger på <profixio>Profixio</profixio>, fra hele landet. Mens en turnering spilles kommer kampene fra trekningen på <cup2000>Cup2000</cup2000>, og de endelige resultatene erstatter dem når de er inne.",
     "p2": "Walkover teller ikke, og resultater som ikke kan stemme rettes for hånd.",
     "nerd1": "Et resultat på 21-0, 21-0 (15-0, 15-0 fra 2026/27, da settene gikk til 15) regnes som walkover. Resultater som er umulige for sesongens settformat listes hver natt med det mest sannsynlige tiltenkte resultatet, og rettes i en rettelsesfil som overlever ny henting av dataene. De to første sesongene er en oppvarming: de fleste spillere får sin første ratede kamp i 2014/15. Profixio har bare navn og klubber, så spillerne der kobles til badmintonportalens etter navn, klubb og fødselsår; de få som ikke kan kobles teller fortsatt for alle de spilte mot, men har ingen side.",
     "nerd2": "Nattkjøringen henter bare det som kan ha endret seg og bygger bare på nytt det som trengs; hele nettsiden oppdateres etter hver helg."

@@ -1,5 +1,5 @@
 // A player's name in a match or an upset: a link to their page, or plain text for a player without
-// one (id null: not identified in a Profixio tournament, 2010-2014, see pipeline/profixio-players.mjs).
+// one (id null: not identified in a Profixio tournament, 2008-2014, see pipeline/profixio-players.mjs).
 // `className` styles the name either way, `linkClassName` only the link.
 import Link from "@/components/ui/Link";
 import type { Pool } from "@/types";

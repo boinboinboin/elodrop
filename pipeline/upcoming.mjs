@@ -50,6 +50,7 @@ import { maxRounds, seedCount, simulate, stageLevels } from "./draw-sim.mjs";
 import { AGE_GROUPS, LISTS, rankingList, versions } from "./ranking-lists.mjs";
 import * as R from "./rules.mjs";
 import { EVENTS, analysesByPortalen, knownAs, missingResults, normalize, recheckDue } from "./cup2000-results.mjs";
+import { tidyName } from "./names.mjs";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const OUT = `${DIR}data/upcoming`;
@@ -626,7 +627,7 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
         // Mixed doubles pairs are listed man first, as on badmintonportalen
         const male = pool === "men" || pool === "mensDoubles" || (pool === "mixedDoubles" && i === 0);
         const player = id ? (rated[pool].get(id) ?? rated.men.get(id) ?? rated.women.get(id) ?? rated.mensDoubles.get(id) ?? rated.womensDoubles.get(id) ?? rated.mixedDoubles.get(id)) : null;
-        return { id, name: player?.name ?? p.name, club: p.club, matchedBy: source, ...ratingOf(id, pool, level, male, day) };
+        return { id, name: tidyName(player?.name ?? p.name), club: p.club, matchedBy: source, ...ratingOf(id, pool, level, male, day) };
       });
       return { players, rating: Math.round(R.sideRating(players.map((p) => p.rating))) };
     });

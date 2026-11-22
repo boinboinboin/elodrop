@@ -11,8 +11,12 @@ export const VENUES_TAG = "sanity:venues";
 export const TOURNAMENTS_TAG = "sanity:tournaments";
 /** One tournament checked in the Studio, by its Cup2000 id: its own pages */
 export const tournamentTag = (cup2000Id: number) => `${TOURNAMENTS_TAG}:${cup2000Id}`;
-/** The players' badges (title, description, art, the players given one by hand): every player page, so refreshed by the nightly run when they changed, not the Sanity webhook */
+/** The badges earned by the pipeline's rules (title, description, art): every player page, so refreshed by the nightly run when they changed, not the Sanity webhook */
 export const BADGES_TAG = "sanity:badges";
+/** The badges given by hand, all of them: the achievements page */
+export const HAND_BADGES_TAG = "sanity:badges:given";
+/** One player's badges given by hand: their own page, so the Sanity webhook refreshes a hand-given badge's players at once */
+export const playerBadgesTag = (id: number) => `${BADGES_TAG}:player:${id}`;
 /** The pages written in the Studio (About, Help & support, Privacy) */
 export const PAGES_TAG = "sanity:pages";
 /** Their keys: their addresses on the site (/about) and their documents' ids (page-about-nb) */

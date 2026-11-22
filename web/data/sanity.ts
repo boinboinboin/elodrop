@@ -7,16 +7,17 @@
 // only the pages using it (app/api/revalidate picks the tag from the Sanity webhook's changed document). Clubs (names,
 // logos) are on nearly every page; halls (with the clubs' home halls) only on tournament and team match pages; a
 // tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited, so the
-// clubs', the badges' and the halls' tags are left for the nightly run, which refreshes each only when one of them has
-// changed (pipeline/sanity-revisions.mjs), not the webhook. A written page (About, Help & support) is on its own page in
-// each language, so the webhook refreshes it at once. Cached until a tag is revalidated ("max"), not by time.
+// clubs', the earned badges' and the halls' tags are left for the nightly run, which refreshes each only when one of
+// them has changed (pipeline/sanity-revisions.mjs), not the webhook. A written page (About, Help & support) is on its
+// own page in each language, and a badge given by hand on its players' pages alone (a tag per player), so the webhook
+// refreshes those at once. Cached until a tag is revalidated ("max"), not by time.
 import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
 import clubsJson from "@/content/clubs.json";
 import type { Language } from "@/messages/i18n";
 import type { Badge, ClubEntry, PageBlock, Venue, WrittenPage } from "@/types";
 import { sanityImageUrl } from "@/utils/sanityImage";
-import { BADGES_TAG, CLUBS_TAG, PAGES_TAG, pageTag, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG, WRITTEN_PAGES, type WrittenPageKey } from "./sanityTags";
+import { BADGES_TAG, CLUBS_TAG, HAND_BADGES_TAG, PAGES_TAG, pageTag, playerBadgesTag, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG, WRITTEN_PAGES, type WrittenPageKey } from "./sanityTags";
 
 const fromJson = (): ClubEntry[] => (clubsJson as ClubEntry[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null }));
 
@@ -136,27 +137,22 @@ export async function getApprovedTournament(cup2000Id: number): Promise<Tourname
   return result ? { organiser: result.organiser ?? null, venue: result.venue ?? null } : null;
 }
 
-/**
- * The players' badges (sanity/schemas/badge.ts): each with its rule's key (pipeline/achievements.mjs; null: given by
- * hand to `players`), its text in the page's language (else the other's) and its art, cropped as set in the Studio
- * (none without Sanity). Only the player pages read them
- */
-export async function getBadges(lang: Language): Promise<Badge[]> {
-  "use cache";
-  cacheTag(SANITY_TAG, BADGES_TAG);
-  cacheLife("max");
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-  if (!projectId) return [];
-  type Text = { title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null };
-  type Row = Text & { id: string; key: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null; listed: boolean; levels: (Text & { level: number | null; art: SanityLogo | null })[] | null };
-  const art = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop, "invert": ${field}.invertInDark })`;
-  const result = await query<Row[]>(
+type BadgeText = { title: string | null; titleEn: string | null; description: string | null; descriptionEn: string | null };
+type BadgeRow = BadgeText & { id: string; key: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null; listed: boolean; levels: (BadgeText & { level: number | null; art: SanityLogo | null })[] | null };
+const badgeArt = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop, "invert": ${field}.invertInDark })`;
+
+/** The published badges that `filter` (GROQ) picks, both languages, by title */
+async function badgeRows(projectId: string, filter: string): Promise<BadgeRow[]> {
+  return query<BadgeRow[]>(
     projectId,
-    `*[_type == "badge" && !(_id in path("drafts.**"))] | order(title asc) { "id": _id, key, "listed": listed != false, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${art("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${art("art")} } }`,
+    `*[_type == "badge" && !(_id in path("drafts.**")) && ${filter}] | order(title asc) { "id": _id, key, "listed": listed != false, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${badgeArt("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${badgeArt("art")} } }`,
   );
-  // The page's language, else the other's
+}
+
+/** Badges in the page's language (else the other's), without the ones with no title */
+function toBadges(rows: BadgeRow[], lang: Language): Badge[] {
   const pick = (no: string | null, en: string | null) => (lang === "en" ? en || no : no || en) ?? null;
-  return result.flatMap((b) => {
+  return rows.flatMap((b) => {
     const title = pick(b.title, b.titleEn);
     if (!title) return [];
     const levels = (b.levels ?? [])
@@ -165,6 +161,42 @@ export async function getBadges(lang: Language): Promise<Badge[]> {
       .sort((x, y) => x.level - y.level);
     return [{ id: b.id, key: b.key ?? null, title, description: pick(b.description, b.descriptionEn), about: pick(b.about, b.aboutEn), art: logoUrl(b.art), ...inverted(b.art, "artInvert"), players: b.players ?? [], listed: b.listed, levels }];
   });
+}
+
+/**
+ * The badges earned by the pipeline's rules (sanity/schemas/badge.ts with a `key`: pipeline/achievements.mjs), their
+ * text in the page's language (else the other's) and their art, cropped as set in the Studio (none without Sanity).
+ * On every player page, so refreshed by the nightly run when one changed (BADGES_TAG), not the Sanity webhook
+ */
+export async function getBadges(lang: Language): Promise<Badge[]> {
+  "use cache";
+  cacheTag(SANITY_TAG, BADGES_TAG);
+  cacheLife("max");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  return projectId ? toBadges(await badgeRows(projectId, "defined(key)"), lang) : [];
+}
+
+/** Every badge given by hand (no `key`: to the players listed in the Studio), for the achievements page (HAND_BADGES_TAG) */
+export async function getHandGivenBadges(lang: Language): Promise<Badge[]> {
+  "use cache";
+  cacheTag(SANITY_TAG, HAND_BADGES_TAG);
+  cacheLife("max");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  return projectId ? toBadges(await badgeRows(projectId, "!defined(key)"), lang) : [];
+}
+
+/** The hand-given badges one player has, both languages: one entry per player (playerBadgesTag), so a badge given or taken refreshes only its players' pages at once */
+async function handBadgeRowsOf(id: number): Promise<BadgeRow[]> {
+  "use cache";
+  cacheTag(SANITY_TAG, playerBadgesTag(id));
+  cacheLife("max");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  return projectId && Number.isInteger(id) ? badgeRows(projectId, `!defined(key) && ${id} in players`) : [];
+}
+
+/** The badges given by hand to one player, in the page's language (with each badge's players, for its rarity) */
+export async function getPlayerHandBadges(id: number, lang: Language): Promise<Badge[]> {
+  return toBadges(await handBadgeRowsOf(id), lang);
 }
 
 /** The images in a written page: address, size, crop and description */

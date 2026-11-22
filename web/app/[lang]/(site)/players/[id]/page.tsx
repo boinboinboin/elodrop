@@ -31,7 +31,7 @@ import { TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
-import { getBadges, getClubMap } from "@/data/sanity";
+import { getBadges, getClubMap, getPlayerHandBadges } from "@/data/sanity";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
@@ -89,8 +89,10 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   const id = parseId((await params).id);
   if (id === null) notFound();
   // Neither meta.json nor achievements.json, which change with every run: the page is built again only when the
-  // player's own data changes (the badges' rarity is loaded in the browser: BadgeStrip)
-  const [player, clubs, badges] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang)]);
+  // player's own data changes (the badges' rarity is loaded in the browser: BadgeStrip), or a badge is given to them by
+  // hand or taken (their own tag: data/sanity.ts getPlayerHandBadges)
+  const [player, clubs, earnable, handGiven] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang), getPlayerHandBadges(id, i18n.lang)]);
+  const badges = [...handGiven, ...earnable];
   if (!player) notFound();
   // A merged id (one person with two ids on badmintonportalen): their page is the id kept
   if (player.id !== id) permanentRedirect(href(playerHref(player.id)));

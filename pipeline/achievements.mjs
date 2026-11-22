@@ -20,11 +20,12 @@ const POOLS = { MensSingles: "men", WomensSingles: "women", MensDoubles: "mensDo
 const KIND = { men: "singles", women: "singles", mensDoubles: "doubles", womensDoubles: "doubles", mixedDoubles: "mixed" };
 
 // The senior national championships (NM), by their title on badmintonportalen: "Kristiansand: NM
-// 2014", "NBF: NM Senior (Bygdøhus)", "Kristiansand: RT 17 + NM Senior"; not the junior, U23,
-// veteran or team championships, or a cancelled one. Only their senior classes count. Tournaments the
-// titles get wrong are added or left out by badmintonportalen id here.
-const NM = /\bNM\b|norgesmesterskap/i;
-const NOT_SENIOR_NM = /junior|\bu\s*-?\s*23\b|veteran|for lag|avlyst/i;
+// 2014", "NBF: NM Senior (Bygdøhus)", "Kristiansand: RT 17 + NM Senior"; and on Profixio (2009-2014):
+// "NM2009", "NM SENIOR 2010"; not the junior ("NM Jr 2010"), U23, veteran or team championships, or a
+// cancelled one. Only their senior classes count. Tournaments the titles get wrong are added or left
+// out by badmintonportalen id here.
+const NM = /\bNM(?![a-zæøå])|norgesmesterskap/i;
+const NOT_SENIOR_NM = /junior|\bjr\b|\bu\s*-?\s*23\b|veteran|for lag|avlyst/i;
 const NM_SENIOR_EXTRA = new Set([]);
 const NM_SENIOR_EXCLUDE = new Set([]);
 export const isSeniorNM = (t) => !NM_SENIOR_EXCLUDE.has(t.tournamentId) && (NM_SENIOR_EXTRA.has(t.tournamentId) || (NM.test(t.title ?? t.name) && !NOT_SENIOR_NM.test(t.title ?? t.name)));
