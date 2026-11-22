@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.1 (2026-11-22)
+
+- For the pipeline: the traffic watch runs again. Its check for challenged networks quiet for 30 days asked Vercel for more rows than it allows (30 days in hours), so every run stopped there; ranges that long are now asked in days.
+
 ## v1.39.0 (2026-11-22)
 
 - Tournaments from 2010 to 2014 are now rated too: about 7,700 matches from 49 tournaments kept on Profixio, from before badmintonportalen had tournament results, mostly in Trøndelag, Møre, Vestland and Nord-Norge. About 1,300 players' histories now go back to 2010, 377 of them players who only played then and now have a page of their own.
