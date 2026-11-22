@@ -1,0 +1,625 @@
+# Profixio tournaments up to August 2014 that are not on its tournament list or in its search, so the
+# list fetch-profixio.mjs reads misses them. Their pages are only at their address, or at
+# https://www.profixio.com/app/<id>. <slug> <first day> <id>  # name on Profixio
+bm_lagserie_0708                         2007-11-17  816    # BM Lagserie 0708: team series 2007/08, club against club only; Profixio dates its rounds 2018-11-17 to 2019-03-16
+bmls_o2_0708                             2007-12-20  942    # BMLS O2 0702
+bmls_m1_0708                             2007-12-21  944    # BMLS M1 0708
+bmls_m2_0708                             2007-12-21  943    # BMLS m2 0708
+bmls_u13ov_0708                          2007-12-21  945    # BMLS U13ov 0708
+blodslitet2007                           2007-12-29  947    # Blodslitet 2007
+oslocup                                  2008-01-05  973    # OsloCup
+dobbelstikket2008                        2008-01-13  992    # Dobbelstikket
+km2008sorvest                            2008-01-25  994    # KM 2008 Sør Vest
+bmls_rog2_0708                           2008-02-14  1105   # BMLS Rog2 0708
+bmls_rogu13_0708                         2008-02-14  1106   # BMLS Rog U13 0708
+veterannm08                              2008-03-01  1077   # Veteran-NM 2008
+nesna                                    2008-03-07  1141   # Nesna S-marsen
+fosentreffen08                           2008-03-08  1147   # Fosentreffen 2008
+stvg_u19_2008                            2008-03-08  1029   # Stavanger Ranking U19
+ubm2008                                  2008-03-28  999    # UBM 2008
+lsbm_elite_sluttspill_08                 2008-04-03  1291   # Elite sluttspill 08
+nmjr2008                                 2008-04-11  1000   # NM Jr 2008
+broddvarstikket2008                      2008-04-12  1176   # Vårstikket
+vaarblomsten2008                         2008-04-19  1208   # Vårblomsten 2008
+kilklubbmsk2008                          2008-04-20  1340   # KLubbmesterskap KIL 08
+ottaopen_2008                            2008-04-25  1134   # Otta Open 2008
+fanacup08                                2008-04-26  1199   # Fana Cup 2008
+mehamnsmashen08_1                        2008-04-26  1309   # Mehamn Smashen
+nokkerosa08                              2008-04-26  1172   # Nøkkerosa Cup
+u23nm2008                                2008-04-26  1152   # U23 NM
+bm_demo                                  2008-05-08  1365   # Vårblomsten 2008
+frognerkyllingen2008                     2008-05-24  1330   # Frognerkyllingen 2008
+leksvik_hall_open_08                     2008-05-25  1377   # Leksvik Hall Open 2008
+atlanticocean2008                        2008-05-30  1385   # Atlantic Ocean Tournament
+msn_2008                                 2008-06-13  1331   # Midsommernatt
+frognerreiret2008                        2008-06-22  1429   # Frognerreiret 2008
+knutliland2008                           2008-07-24  1493   # Knut Liland Køpp
+ghc_2008                                 2008-08-16  1542   # Gammelhøna Cup 2008
+rktest1                                  2008-08-30  1586   # RKTest1
+ottaranking2008                          2008-09-06  1514   # Otta Ranking 2008
+tabyopen                                 2008-09-06  1481   # SGP 1
+us                                       2008-09-06  1581   # Ungdomspretten
+rissa_cc_2008                            2008-09-20  1588   # Rissa Clearcup 2008
+slagentreffen2008                        2008-09-20  1578   # Slagentreffen 2008
+mehamnsmashen08_2                        2008-09-27  1629   # Mehamn Smashen 08
+helgelandscup2008                        2008-10-03  1605   # Helgelands Cup 2008
+haugaland_seniors2008                    2008-10-04  1591   # Haugaland Seniors
+haugaland_youths2008                     2008-10-05  1592   # Haugaland Youths
+bm_ls_1div_ost_0809                      2008-10-11  1783   # BM LS 1div Øst 0809
+bm_ls_u13_ost_0809                       2008-10-11  1785   # BM LS U13 Øst 0809
+bm_ls_u15_ost_0809                       2008-10-11  1786   # BM LS U15 øST 0809
+bodoopen2008                             2008-10-11  1689   # Bodø Cup 2008
+bm_ls_2div_ost_0809                      2008-10-12  1784   # BM LS 2div Øst 0809
+mossetreffen2008                         2008-10-12  1632   # Mossetreffen2008
+askeropen2008                            2008-10-18  1607   # AskerOpen2008
+askerferskefjes2008                      2008-10-19  1604   # AskerFerskeFjes2008
+frognerhona2008                          2008-10-25  1517   # Frognerhøna 2008
+polarsirkelcup08                         2008-10-25  1609   # Polarsirkel Cup
+stavangeropen2008                        2008-10-25  1746   # Stavanger Open 2008
+treffpunkt2008                           2008-10-25  1708   # Treffpunkt 2008
+tronderdroppen_2008                      2008-10-31  1754   # Trønderdroppen 2008
+bm_ls_1div_vest_0809                     2008-11-01  1877   # BM LS 1div Vest 0809
+hadselsmashen                            2008-11-01  1651   # Hadselsmashen 08
+hadselsmashen2008                        2008-11-01  1904   # Hadselsmashen 2008
+ls_elite_0809                            2008-11-01  1782   # LS Elite 08_09
+bm_ls_2div_hord_0809                     2008-11-02  1878   # BM LS 2div Hord 0809
+marfloga                                 2008-11-07  1855   # Marfloga
+polarcup2008                             2008-11-07  1915   # Polarsirkel Cup
+spartreffet                              2008-11-08  1865   # Spartreffet 2008
+stavangerrankingu15u19                   2008-11-08  1781   # Stavanger Ranking 15/19 2008
+vestlandsmesterskapet2008                2008-11-15  1656   # Vestlandsmesterskapet2008
+nsc2008                                  2008-11-22  1594   # North Sea Cup 2008
+sabkferskefjes2008                       2008-11-22  1895   # Sandefjord Ferske Fjes 2008
+loomis                                   2008-11-29  1637   # Loomis rekrutten
+bb08                                     2008-12-06  1787   # BB Rekrutt-treffen 08
+brodden2008                              2008-12-06  1890   # Brodden2008
+mossjulecup2008                          2008-12-06  1905   # Mossjulecup2008
+familiemesterskap2008                    2008-12-21  2011   # Familiemesterskap 2008
+spvjulecup2008                           2008-12-27  1608   # Sparebanken Vest Julecup 2008
+blodslitet2008                           2008-12-28  2027   # Blodslitet 2008
+fronranking2009                          2009-01-09  1811   # Fron Ranking 2009
+dobbelstikket2009                        2009-01-10  2031   # Dobbelstikket2009
+oslocup2009                              2009-01-10  1949   # Oslo Cup 2009
+bygdoferskefjes09                        2009-01-11  2084   # Ferske Fjes
+kbkint09                                 2009-01-17  1720   # KBK junior international 2009
+bm_ls_u13_midt_0809                      2009-01-21  2257   # BM LS U13 Midt 0809
+km2009sorvest                            2009-01-23  2047   # KM2009sorvest
+askoyopen2009                            2009-01-24  2030   # Askøy Open 2009
+km2009                                   2009-01-24  2081   # km2009
+km2009_otta                              2009-01-24  2182   # KM2009_Otta
+kmoslofjorden2009                        2009-01-24  2029   # KM Oslofjorden 2009
+bm_ls_u15_midt_0809                      2009-01-28  2258   # BM LS U15 Midt 0809
+nm2009                                   2009-01-30  2056   # NM2009
+finnmarksmesterskapet2009                2009-01-31  2133   # Finnmarksmesterskapet 2009
+bm_ls_2div_rog_0809                      2009-02-02  2194   # BM LS 2div Rog 0809
+bm_ls_u13_rog_0809                       2009-02-03  2195   # BM LS U13 Rog 0809
+arcticopen                               2009-02-07  2121   # Arctic Open
+bm_ls_1div_midt_0809                     2009-02-07  2201   # BM LS 1div Midt 0809
+bm_ls_2div_midtnord_0809                 2009-02-07  2348   # BM LS 2div MidtNord 0809
+bm_ls_u13_midtnord_0809                  2009-02-07  2347   # BM LS U13 MidtNord 0809
+bm_ls_u15_rog_0809                       2009-02-07  2196   # BM LS U15 Rog 0809
+smashcup_2009                            2009-02-07  2151   # Smash Cup 2009
+bm_ls_u15_midtnord_0809                  2009-02-08  2346   # BM LS U15 MidtNord 0809
+bergen2009                               2009-02-14  2198   # BergenRanking 2009
+namdalopen2009                           2009-02-20  2232   # Namdal open
+mollarslaget                             2009-02-21  2218   # Møllarslaget
+sundsvallopen                            2009-02-21  2296   # Sundsvall Open
+hamarturneringen09                       2009-02-28  2206   # Hamarturneringen 09
+vm2009                                   2009-03-06  1826   # VM2009
+fosentreffen_2009                        2009-03-07  2242   # Fosentreffen 2009
+nesnasmarsen_09                          2009-03-07  2253   # Nesna S-marsen 2009
+sabkferskefjes09                         2009-03-07  2302   # sabkFerskeFjes09
+vinterslaget2009                         2009-03-07  2287   # Vinter Slaget 2009
+klaburanking_u19                         2009-03-14  2339   # U19 Ranking 2009
+smu15ht                                  2009-03-14  2431   # SM U15
+spon09                                   2009-03-14  2336   # sponsor-rekrutten
+barentsopen_09                           2009-03-21  2191   # Barents Open 2009
+bm_ls_elite_sluttspill_0809              2009-03-21  2451   # BM LS Sluttspill Elite 08_09
+dfi                                      2009-03-21  2447   # Klubbmesterskap 09
+midtnorsk_km                             2009-03-21  2325   # Midtnorsk Badmintonmesterskap(KM)
+ubm2009                                  2009-03-27  2095   # UBM2009
+varstikket2009                           2009-03-29  2091   # Vårstikket2009
+nmjunior09                               2009-04-17  2353   # NMjunior09
+bopen_2009                               2009-04-18  2394   # Båtsfjord Open
+frognerkyllingen2009                     2009-04-18  1519   # Frognerkyllingen 2009
+nokk09                                   2009-04-18  2229   # Nøkkerosa Cup 2009
+vikingcup2009                            2009-04-18  2524   # Vikingcup 2009
+aalesundsvippen_2009                     2009-04-25  2454   # Ålesundsvippen
+vaarblomsten09                           2009-04-25  2443   # Vårblomsten 2009
+bm_lf_u13_09                             2009-05-01  2735   # Landsfinalen U13 - Kragerø 2009
+bm_lf_u15_09                             2009-05-01  2738   # Landsfinalen U15 - Kragerø 2009
+bmlfu132010                              2009-05-01  4348   # Landsfinalen 2010
+bmlfu152010                              2009-05-01  4347   # Landsfinalen 2010
+fanacup2009                              2009-05-02  2561   # Fana Cup 2009
+u23nm2009                                2009-05-02  2452   # U23 NM 2009
+ottaopen2009                             2009-05-08  2553   # OttaOpen2009
+berlevaagtrimmen                         2009-05-09  2666   # Berlevågdag
+galan09                                  2009-05-09  2663   # Galan 2009
+jannetest3                               2009-05-09  2579   # Jannetest3
+wreck09                                  2009-05-23  2717   # The Lidingö Wreck 2009
+wreckdd55                                2009-05-26  2761   # Lidingö Wreck DDV55
+aot09                                    2009-05-29  2230   # Atlantic Ocean Tournament 09
+strilaslaget09                           2009-05-30  2651   # Strilaslaget 2009
+msn09                                    2009-06-12  2646   # msn09
+frognerklubbmesterskap2009               2009-06-21  2844   # Frogner klubbmesterskap 2009
+knutliland09                             2009-07-23  2806   # Knut Liland køpp 09
+tabyopen2009                             2009-08-22  3021   # Täby Open 2009
+frognerranking2009                       2009-09-04  2920   # Frogner Ranking 2009
+ungdomspretten09                         2009-09-06  2963   # Ungdomspretten09
+ungdomstreffen_2009                      2009-09-13  3036   # Ungdomstreffen 2009
+kbkranking09                             2009-09-18  2933   # KBKranking09
+slagentreffen2009                        2009-09-19  3091   # Slagentreffen 2009
+haugaland_seniors_2009                   2009-09-26  3066   # Haugaland Seniors 2009 GT
+rissa_clearcup_09                        2009-09-26  3064   # Rissa clearcup 09
+haugaland_youths_2009                    2009-09-27  3067   # Haugaland Youths 2009
+sandnessjoen_open                        2009-10-02  3107   # Sandnessjøen Open
+askoyrekrutten2009                       2009-10-10  3116   # Askøy Rekrutten 2009
+mossetreffen2009                         2009-10-10  3058   # DnBNOR MOSSETREFFEN 2009
+askoysenior2009                          2009-10-11  3117   # Askøy Senior 2009
+bm1divost0910                            2009-10-17  3253   # Østlandet
+bm2divost0910                            2009-10-17  3258   # Østlandet
+bm3divost0910                            2009-10-17  3256   # Østlandet
+bmu152ost0910                            2009-10-17  3260   # Østlandet - 2
+nokkerosa_cup_09                         2009-10-17  3217   # Nøkkerosa Cup
+ostersjospelen_2009                      2009-10-17  3251   # Östersjöspelen 2009
+ranking_u13                              2009-10-17  3071   # RANKING U13 2009
+stavangeropen09                          2009-10-17  3138   # Stavanger Open 2009
+host09                                   2009-10-23  3081   # Høst turnering
+frognerhona2009                          2009-10-24  3099   # Frognerhøna 2009
+ranacup09                                2009-10-24  3166   # Ranacup09
+ronnebysmashen_09                        2009-10-24  3305   # Ronnebysmashen
+treffpunkt2009                           2009-10-24  3215   # Treffpunkt 2009
+askerferskefjes2009                      2009-10-25  3156   # Ferske Fjes
+tronderdroppen2009                       2009-10-30  3281   # Trønderdroppen 2009
+bm1divvest0910                           2009-10-31  3340   # Vestlandet
+bm2divhord0910                           2009-11-01  3339   # 2. divisjon Hordaland
+bmu13ost0910                             2009-11-01  3257   # Østlandet
+bmu151ost0910                            2009-11-01  3259   # Østlandet - 1
+sfm                                      2009-11-06  3330   # After Six Mix
+bm1divmidt0910                           2009-11-07  3419   # Midt Norge
+dm2009                                   2009-11-14  3443   # DM2009
+norcup09                                 2009-11-14  3307   # NorborgCupen 09
+powergirls_2009                          2009-11-14  3487   # Poergirls09
+vestlandsmesterskapet2009                2009-11-14  3273   # Vestlandsmesterskapet2009
+ottaranking2009                          2009-11-20  3158   # November Ranking U15 + U19
+ff_sabk_nov_09                           2009-11-21  3380   # Ferske Fjes Nov 2009
+marflogo_09                              2009-11-21  3250   # Marflogo
+nsc2009                                  2009-11-21  3113   # North Sea Cup 2009
+singlestikket09                          2009-11-21  3381   # Singlestikket 2009
+spartreffet_09                           2009-11-21  3331   # Spartreffet 09
+dnbnormossrankingjulecup2009             2009-11-27  3076   # DnBNOR MOSS RANKING / JULECUP 2009
+julecup2009                              2009-12-04  3399   # julecup2009
+bbsingel2009                             2009-12-05  3535   # BBsingel2009
+brodden09                                2009-12-05  3438   # Brodden 2009
+loomis09                                 2009-12-05  3347   # Loomis rekrutten09
+ass                                      2009-12-11  3544   # After Six Seniors
+kmoslofjorden2010                        2009-12-12  3395   # KM - kretsmesterskap
+familiemesterskap2009                    2009-12-20  3599   # Familiemesterskap 2009
+julecupen2009                            2009-12-27  3536   # Julecupen 2009
+blodslitet2009                           2009-12-28  3588   # Blodslitet 2009
+cupassist_10                             2010-01-08  3542   # Januar Ranking U17 + NR
+dobbelstikket10                          2010-01-10  3439   # Dobbelstikket 2010
+bmu13midtsor0910                         2010-01-13  3430   # Midt Norge Sør
+yjtourmellerud                           2010-01-15  3651   # YJT U13
+sfjrnk_09                                2010-01-16  3577   # Sandefjord Ranking
+arcticopen2010                           2010-01-23  3191   # Arctic Open 2010
+kretsmesterskapet_2010                   2010-01-29  3408   # Kretsmesterskapet 2010
+askoyopenogkm2010                        2010-01-30  3643   # Askøy Open og KM 2010
+km2010                                   2010-01-30  3739   # KM Midtnorsk Badmintonkrets Sør
+kmho10                                   2010-01-30  3540   # Kretsmesterskap Hedmark Oppland
+kretsmesterskap_midt-norsk_nord_10       2010-01-30  3692   # Kretsmesterskap Midt-Norsk Nord
+nmsenior10                               2010-02-05  3531   # NM SENIOR 2010
+bmu15rog0910                             2010-02-06  3876   # Rogaland
+smashcup2010                             2010-02-06  3711   # Smash Cup 2010
+bmu13rog0910                             2010-02-13  3917   # Rogaland
+mldclear                                 2010-02-13  3798   # Mellerudsclearen
+2divmidtnord0910                         2010-02-14  4211   # Midt Norge Nord
+u13midtnord0910                          2010-02-14  4212   # Midt Norge Nord
+u15midtnord0910                          2010-02-14  4214   # Midt-Norge Nord
+bm2divrog0910                            2010-02-15  3890   # Rogaland
+Mollarslaget2010                         2010-02-20  3777   # Møllarslaget
+ferskefjesfeb2010                        2010-02-20  3812   # Ferke Fjes Feb 2010
+finnmarksmesterskapet2010                2010-02-20  3766   # Finnmarksmesterskap 2010
+u13finn0910                              2010-02-21  4210   # Finnmark
+u15finn0910                              2010-02-21  4209   # Finnmark
+namdal_open_10                           2010-02-26  3743   # Namdal Open
+sl2010                                   2010-02-26  4024   # SL
+vm2010                                   2010-03-05  3629   # Veteranmesterskapet 2010
+hamarturneringen2010                     2010-03-06  3541   # Mars Ranking U15 + U17 /Hamarturneringen 2010
+nesnasmashen2010                         2010-03-13  3966   # Nesnasmashen 2010
+strilaslaget2010                         2010-03-13  4017   # Strilaslaget 2010
+trick_shot_10                            2010-03-13  3865   # Trick Shot
+vinterslaget2010                         2010-03-13  3775   # Vinterslaget2010
+fosentreffen_2010                        2010-03-14  3855   # Fosentreffen 2010
+km_hlogaland_krets_harstad_10            2010-03-20  4110   # KM Hålogaland Krets, Harstad
+ubm2010                                  2010-04-09  3817   # UBM 2010
+nm_jr_2010a                              2010-04-16  3961   # NM Jr 2010
+batsfjordopen2010                        2010-04-17  3960   # Båtsfjord Open 2010
+frognerkyllingen2010                     2010-04-17  3869   # Frognerkyllingen
+frognerbroileren2010                     2010-04-18  3870   # Frognerbroileren
+aalesundsvippen_2010                     2010-04-24  3220   # Ålesundsvippen 2010
+vaarblomsten2010                         2010-04-24  4149   # Vårblomsten
+verdalstreffen2010                       2010-04-24  4155   # Verdalstreffen2010
+vikingcup2010                            2010-05-01  3776   # Vikingcup 2010
+ottaopen2010                             2010-05-07  4157   # Otta open 2010
+u23nm2010                                2010-05-08  4098   # U23 NM 2010
+bergenranking2010                        2010-09-03  4604   # Bergen Ranking 2010
+kbkranking10                             2010-09-17  4606   # September ranking U13, U17 og NR
+ungdomsspretten2010                      2010-09-18  4743   # Ungdomsspretten 2010
+NBF_SERIE_AVD377                         2010-10-02  4918   # Østlandet
+NBF_SERIE_AVD381                         2010-10-02  4960   # Østlandet
+NBF_SERIE_AVD389                         2010-10-02  4963   # Østlandet
+NBF_SERIE_AVD392                         2010-10-02  4961   # Vestlandet
+NBF_SERIE_AVD391                         2010-10-03  4962   # Østlandet avd 1
+NBF_SERIE_AVD403                         2010-10-03  4975   # Østlandet avd 2
+askoyrekrutten2010                       2010-10-09  4777   # Askøy Rekrutten 2010
+hs2010                                   2010-10-09  4815   # Haugaland Seniors
+nmu23otta                                2010-10-09  4742   # U23 NM
+askoysenior2010                          2010-10-10  4778   # Askøy senior 2010
+hy2010                                   2010-10-10  4814   # Haugalands Youths
+trnderdroppen_2010                       2010-10-22  4935   # Trønderdroppen 2010
+ff_asker2010                             2010-10-23  4876   # Ferske Fjes
+frognerhona2010                          2010-10-23  4838   # Frognerhøna
+stavangeropen2010                        2010-10-23  4869   # Stavanger Open 2010
+NBF_SERIE_AVD388                         2010-10-30  5094   # Grunnspill
+NBF_SERIE_AVD390                         2010-10-30  4966   # 1. divisjon / Midtnorge
+NBF_SERIE_AVD390_X                       2010-10-30  4967   # Midtnorge
+NBF_SERIE_AVD402                         2010-10-30  4965   # Østlandet
+ffbmilh2010                              2010-11-06  5096   # BMIL Ferske Fjes
+november_ranking_u15_og_u19              2010-11-06  4989   # November ranking U15 og U19
+november_ranking_u13                     2010-11-13  5087   # November ranking U13
+vmh2010                                  2010-11-19  4933   # Vestlandsmesterskapet 2010
+sabk_ff_nov_2010                         2010-11-20  5183   # Ferske fjes
+Mossrtu17ognr2010                        2010-11-27  5021   # November ranking U17 og NR
+spartreffet_2010                         2010-11-27  5088   # Spartreffet 2010
+tbkjulecup2010                           2010-12-03  5191   # Julecup 2010
+bb10                                     2010-12-04  5127   # BB Rekrutt-treffen 10
+brodden2010                              2010-12-04  5027   # Brodden 2010
+haugerudcup2010                          2010-12-04  5142   # Haugerud Cup - Jubileumsturnering
+northseacup2010                          2010-12-04  5182   # North Sea Cup 2010
+NBF_SERIE_AVD507                         2010-12-11  5272   # Sør/Vestlandet
+familiemesterskap2010                    2010-12-19  5472   # Familiemesterskap2010
+bbkjulecupen2010                         2010-12-27  5181   # Julecupen 2010
+oslocup2011                              2011-01-07  5421   # OsloCup, Ranking senior og U17
+januarrtu13brodd                         2011-01-15  5028   # Januar Ranking U13
+vinterstormen2011                        2011-01-15  5443   # Vinterstormen
+arctic_open_11                           2011-01-21  5501   # Arctic Open
+sandefjordrankingu15ogu17                2011-01-22  5445   # Internasjonal / Ranking U15 og U19
+km2011sor                                2011-01-28  5030   # KM 2011 Sør
+askoyopenogkm2011                        2011-01-29  4866   # Askøy Open og KM 2011
+km2011btv                                2011-01-29  5594   # KM 2011 BTV Krets
+kmmidt-norsknord2011ogferskefjes11       2011-01-29  5468   # KM Midt-Norsk Nord 2011 og Ferske fjes
+kmoslofjorden2011                        2011-01-29  5237   # KM Oslofjorden
+nm2011                                   2011-02-04  5366   # NM Senior 2011
+NBF_SERIE_AVD636                         2011-02-05  5854   # Sør/Vestlandet
+smash_cup_2011                           2011-02-05  5631   # Smash Cup 2011
+Finnmark2011                             2011-02-12  5449   # Finnmarksmesterskapet 2011
+clearen2011                              2011-02-12  5699   # MellerudsClearen 2011
+mollarslaget2011                         2011-02-18  5610   # Møllarslaget 2011
+ferskefjes11Sandefjordfebruar            2011-02-19  5763   # Ferske fjes
+kmharstad11                              2011-02-19  5789   # KM Halogaland Badmintonkrets
+Horten2011                               2011-02-26  5767   # Trick Shot 2011
+verdalstreffen11                         2011-02-26  5768   # Verdalstreffen 2011
+vbm2011                                  2011-03-04  5329   # Veteranmesterskapet 2011
+nesnasmashen2011                         2011-03-05  5835   # Nesnasmashen 2011
+ranking_karmoy_11                        2011-03-11  5603   # Mars Ranking U15 og U17
+mru1319_ht                               2011-03-12  5161   # Mars Ranking U13 og U19 + Hamarturneringen
+slettes_bm_ole                           2011-03-13  5947   # Slettes_bm_ole
+NBF_SERIE_AVD655                         2011-03-19  6063   # Midt-Norsk krets Nord
+NBF_SERIE_AVD657                         2011-03-19  6064   # Midt-Norsk krets Nord
+NBF_SERIE_AVD658                         2011-03-20  6062   # Rogaland
+NBF_SERIE_AVD659                         2011-03-20  6069   # Sørlandet
+Namdalopen2011                           2011-03-25  5839   # Namdal Open
+NBF_SERIE_AVD656                         2011-03-26  6048   # Østlandet sluttspill
+ferskefjes11Sandefjord                   2011-03-26  5762   # Ferske fjes
+vikingcup2011                            2011-03-26  5669   # Vikingcup 2011
+vaarstikket2011                          2011-03-27  5031   # Vï¿½rstikket 2011
+ubm2011                                  2011-04-01  5759   # UBM 2011
+ranacup_11                               2011-04-02  5923   # Ranacup
+baatsfjord_open_2011                     2011-04-09  5940   # Båtsfjord Open 2011
+frognerkyllingen2011                     2011-04-09  5813   # Frognerkyllingen
+vaarblomsten2011                         2011-04-09  5878   # Vårblomsten 2011
+frognerbroileren2011                     2011-04-10  5814   # Frognerbroileren
+NMjr2011                                 2011-04-29  5593   # NM Jr 2011 - Lillehammer
+NBF_SERIE_AVD680                         2011-04-30  6234   # Finnmark
+bmil11                                   2011-05-07  6082   # BMIL
+fanacup2011                              2011-05-07  5968   # Fana Cup 2011
+midtnightsun2011                         2011-05-20  5877   # Midtnight Sun 1011
+NBF_SERIE_AVD682                         2011-05-22  6317   # Eliteserie kvalifisering
+NBF_SERIE_AVD756                         2011-05-28  6402   # Landsfinalen U15
+NBF_SERIE_AVD757                         2011-05-28  6403   # Landsfinalen U13
+ottaopen2011                             2011-06-03  5905   # Otta Open Jubileumsturnering 2011
+faerdersmashen2011                       2011-06-11  6334   # Færder Smashen 2011
+msn2011                                  2011-06-17  6229   # Midsommernatt 2011
+kbkranking11                             2011-09-02  6617   # Ranking U13 + U15 + U19
+mollaren_2011                            2011-09-10  6687   # Møllaren 2011
+ungdomsspretten2011                      2011-09-10  6648   # Ungdomsspretten 2011
+tromsopalmen2011                         2011-09-17  6667   # Tromsøpalmen
+FFhoststikket2011                        2011-09-24  6722   # Ferske fjes - Høststikket 2011
+vc2011                                   2011-09-24  6779   # Viking Cup
+hortensfersken2011                       2011-09-25  6734   # Hortensfersken 2011
+NBF_SERIE_AVD1005                        2011-10-01  7035   # Vestlandet
+NBF_SERIE_AVD1006                        2011-10-01  7034   # Sør/Vestlandet
+NBF_SERIE_AVD1085                        2011-10-01  7166   # Vestlandet
+NBF_SERIE_AVD998                         2011-10-01  7038   # Østlandet
+NBF_SERIE_AVD999                         2011-10-01  7037   # Østlandet
+hadselsmashen_2011                       2011-10-01  6752   # Hadselsmashen 2011
+NBF_SERIE_AVD1000                        2011-10-02  7036   # Østlandet
+NBF_SERIE_AVD1002                        2011-10-02  7148   # Østlandet
+askoyrekrutten2011                       2011-10-08  6815   # Askøy rekrutten 2011
+treffpunkt2011                           2011-10-08  6817   # Treffpunkt 2011
+askoysenior2011                          2011-10-09  6816   # Askøy Senior 2011
+nmu232011                                2011-10-14  6735   # U23 - mesterskapet
+mossetreffen_2011                        2011-10-15  6813   # DnBNOR Mossetreffen 2011
+barentsopen2011                          2011-10-22  6818   # Barents Open 2011
+frognerhona2011                          2011-10-22  6739   # Frognerhøna
+stavangeropen2011                        2011-10-22  6931   # Stavanger Open 2011
+wwwcupassistcomff_asker2011              2011-10-22  6751   # FerskeFjes
+NBF_SERIE_AVD1003                        2011-10-29  7173   # Østlandet
+NBF_SERIE_AVD1084                        2011-10-29  7165   # Vestlandet
+NBF_SERIE_AVD1095                        2011-10-29  7228   # Midt-Norge
+NBF_SERIE_AVD1121                        2011-10-29  7286   # Ikke gyldig
+NBF_SERIE_AVD1122                        2011-10-29  7287   # Østlandet
+NBF_SERIE_AVD981                         2011-10-29  7179   # Grunnspill
+ranacup2011                              2011-10-29  7051   # RanaCup 2011
+frognerranking2011                       2011-11-04  6723   # Ranking U15 + U19
+polarcirkelcup2011                       2011-11-05  6978   # Polarcirkel Cup 2011
+vaskff2011                               2011-11-05  7130   # Vestre Aker Ferske Fjes (Lørdag) & Singleturnering
+SABKferskefjes11                         2011-11-19  7127   # Ferske Fjes
+spartreffet2011                          2011-11-19  7246   # Spartreffet 2011
+wwwcupassistcomvm2011                    2011-11-19  7063   # Vestlands Mesterskap 2011
+dnbnor_julecup_2011                      2011-11-25  7121   # Ranking U13 + U17 + Senior NR
+brodden2011                              2011-11-26  7208   # Brodden 2011
+tbkjulecup2011                           2011-12-02  7132   # TBK Julecup 2011
+loomis2011                               2011-12-03  7341   # Loomis cup
+northseacup2011                          2011-12-03  7206   # North Sea Cup 2011
+km_sor_2011                              2011-12-09  7244   # Kretsmesterskapet 2011
+km2011hordaland                          2011-12-10  6979   # KM 2011/2012 Hordaland
+km_hedmark_og_oppland_11                 2011-12-10  7400   # KM Hedmark og Oppland
+kmoslofjorden2012                        2011-12-10  7245   # KM Oslofjorden
+bbkjulecup2011                           2011-12-27  7207   # Julecupen 2011
+blodslitet2011                           2011-12-28  7402   # Blodslitet
+broddsmashinggood2012                    2012-01-07  7604   # Brodd  - Smashing Good 2012
+rtu17seniornr2012                        2012-01-13  7505   # Ranking U17 + Senior NR
+RTu13Pillarguri                          2012-01-14  7587   # Ranking U13
+vinterstormen_2012                       2012-01-14  7723   # Vinterstormen 2012
+arctic_open_12                           2012-01-20  7694   # Arctic Open
+rankingu15u19SABK                        2012-01-21  7602   # Ranking U15 + U19
+askoyopen2012                            2012-01-28  7517   # Askøy Open 2012
+km2012midtnorskkretsnordferskefjes2012   2012-01-28  7759   # KM 2012 Midt-Norsk Krets Nord / Ferske Fjes
+nmsenior2012                             2012-02-03  7603   # NM Senior 2012
+smashcup2012                             2012-02-04  7735   # Smash Cup 2012
+mollarslaget2012                         2012-02-10  7508   # Møllarslaget
+UngdomsturnDFI12                         2012-02-11  7856   # Ungdomsturnering Drøbak
+finnmarkmesterskapet2012                 2012-02-11  7800   # Finnmarkmesterskapet 2012
+NBF_SERIE_AVD1314                        2012-02-18  8029   # Sør
+NBF_SERIE_AVD1315                        2012-02-18  8028   # Sør
+kmhaalogaland2012                        2012-02-18  7986   # KM Hålogaland 2012
+ferskefjesSABK2012                       2012-02-25  7938   # Ferske Fjes
+verdalstreffen_2012                      2012-02-25  7937   # Verdalstreffen 2012
+ferskefjes2012                           2012-03-03  7914   # Ferske Fjes 2012
+nesnasmashen2012                         2012-03-03  8054   # Nesnasmashen 2012
+vinterslapsen2012                        2012-03-03  7967   # Vinterslapsen 2012
+bergenranking2012                        2012-03-10  7799   # Ranking U13 + U19
+hamarturneringen_rankingU15U17_2012      2012-03-10  7943   # Hamarturneringen/Ranking U15 + U17
+namdalopen2012                           2012-03-16  7954   # Namdal Open
+veterannm-12                             2012-03-16  7764   # Veteranmesterskapet 2012
+vaarstikket2012                          2012-03-18  8139   # Vårstikket 2012
+UBM2012                                  2012-04-13  7879   # UBM - 2012
+baatsfjordopen2012internasjonalturnering_12 2012-04-21  8147   # Båtsfjord Open 2012 Internasjonal turnering
+vaarblomsten2012                         2012-04-21  7996   # Vårblomsten 2012
+vestreakeropen12                         2012-04-21  8281   # Vestre Aker Open
+rorvikvaarcup2012                        2012-04-23  8299   # Rørvik Vårcup 2012
+juniornm2012                             2012-04-27  7936   # NM jr 2012
+bymesterskapet12                         2012-04-28  8477   # Bymesterskapet12
+fanacup2012                              2012-05-05  8178   # Fana Cup 2012
+frognerkyllingen2012                     2012-05-05  8058   # Frognerkyllingen
+midnightsun2012                          2012-06-08  8056   # Midnight Sun 2012
+NBF_SERIE_AVD1593                        2012-06-09  8822   # Landsfinalen U15
+NBF_SERIE_AVD1594                        2012-06-09  8821   # Landsfinalen U13
+midtsommernatt2012fron12                 2012-06-15  8595   # Midtsommernatt 2012 - Fron
+ottaopen2012                             2012-08-17  8614   # Otta open 2012
+kbkranking_2012                          2012-09-07  8933   # RT 15 + 19
+sabk_rt_13                               2012-09-08  9128   # RT 13
+tromsopalmen_12                          2012-09-15  9034   # Tromsøpalmen
+ungdomsspretten2012                      2012-09-15  9019   # Ungdomsspretten 2012
+nobkranking2012                          2012-09-21  8932   # RT 17 + NRSenior
+mollaren_12                              2012-09-22  9082   # Møllaren
+NBF_SERIE_AVD1835                        2012-09-29  9610   # Vestlandet
+NBF_SERIE_AVD1945                        2012-09-29  9611   # Sør/Vest
+NBF_SERIE_AVD1840                        2012-09-30  9608   # Sør/Vest
+NBF_SERIE_AVD1841                        2012-09-30  9606   # Sør/Vest
+NBF_SERIE_AVD1845                        2012-09-30  9609   # Vestlandet
+NBF_SERIE_AVD1846                        2012-09-30  9607   # Vestlandet
+askoy_rekrutten_senior_2012              2012-10-06  9321   # Askøy Rekrutten - Askøy Senior 2012
+mossetreffen_12                          2012-10-13  9254   # MosseTreffen
+stavangeropen2012                        2012-10-13  9372   # Stavanger Open
+tana_open_2012                           2012-10-13  9140   # Tana Open 2012
+treffpunkt_12                            2012-10-13  9392   # Treffpunkt 2012
+u23_mesterskapet_2012                    2012-10-19  9393   # U23 Mesterskapet 2012
+ff_asker2012                             2012-10-20  9394   # Ferske Fjes
+vestlandsmesterskapet2012                2012-10-20  9497   # Vestlandsmesterskapet
+SABK_ferske_fjes_12                      2012-10-27  9648   # Ferske Fjes
+barents_open_2012                        2012-10-27  9380   # Barents Open 2012
+frognerhona_12                           2012-10-27  9362   # Frognerhøna
+NBF_SERIE_AVD1833                        2012-11-03  9670   # Østlandet
+NBF_SERIE_AVD1836                        2012-11-03  9673   # Østlandet
+NBF_SERIE_AVD1837                        2012-11-03  9695   # Ikke i bruk
+NBF_SERIE_AVD1838                        2012-11-03  9674   # Grunnspill
+NBF_SERIE_AVD1843                        2012-11-03  9696   # Østlandet
+NBF_SERIE_AVD1844                        2012-11-03  9697   # Østlandet
+NBF_SERIE_AVD2028                        2012-11-03  9774   # Østlandet
+polarcirkel_cup_2012                     2012-11-03  9603   # Polarcirkel Cup 2012
+tronderdroppen_12                        2012-11-03  9622   # Trønderdroppen
+NBF_SERIE_AVD1842                        2012-11-04  9672   # Østlandet
+broddranking2012                         2012-11-09  9514   # RT 15 + 19
+vaskff12                                 2012-11-10  9725   # Vestre Aker Ferske Fjes
+vasks12                                  2012-11-10  9726   # Vestre Aker Single
+vc2012                                   2012-11-10  9770   # Viking Cup
+spartreffet_12                           2012-11-16  9711   # Spartreffet 2012
+rt_moss_12                               2012-11-23  9481   # RT U13A og U17A + NRSenior
+brodden2012                              2012-12-01  9849   # Brodden 2012
+northseacup2012                          2012-12-01  9713   # North Sea Cup 2012/KM
+debutanten12                             2012-12-08  9798   # Debutanten
+kmoslofjorden2013                        2012-12-08  9745   # KM Oslofjorden
+kmotta2012                               2012-12-08  9875   # KM Hedmark og Oppland
+blodslitet_12                            2012-12-28  9981   # Blodslitet
+bbkjulecup2012                           2012-12-29  9714   # Julecupen 2012
+oslocup_13                               2013-01-11  9986   # RT17 + RT17X + NRSenior
+Ranking-U13a                             2013-01-12  9968   # Ranking U13
+bergenranking2013                        2013-01-19  9985   # RT 15 + 19
+arctic_open_13                           2013-01-25  10038  # Arctic open
+askoy_open_2013                          2013-01-26  9987   # Askøy Open 2013
+km_midtnorge_nord_13                     2013-01-26  10211  # KM Midtnorge Nord
+sabk_openferske_fjes_13                  2013-01-26  10274  # SaBK Open/Ferske Fjes
+nm_senior_2013                           2013-02-01  9869   # NM Senior 2013
+smashcup_2013                            2013-02-02  10212  # Smashcup 2013
+NBF_SERIE_AVD1834                        2013-02-09  10415  # Midt
+mollarslaget13                           2013-02-15  10091  # Møllarslaget
+finnmarksmesterskapet_2013               2013-02-16  10350  # Finnmarksmesterskapet 2013
+verdalstreffen_2013                      2013-02-16  10351  # Verdalstreffen 2013
+km_haalogaland_13                        2013-02-23  10403  # KM Hålogaland
+ferske_fjes_2013                         2013-03-02  10339  # Ferske Fjes 2013
+midt_vinter_open_2013                    2013-03-02  10051  # Midt Vinter Open 2013
+frognerranking_13                        2013-03-08  10005  # RT 15 + 17
+haugerudrankingu13-u19                   2013-03-08  10137  # RT 13 + 19
+vintergnisten_2013                       2013-03-09  10476  # Vintergnisten 2013
+veteran_nm_2013                          2013-03-15  9919   # Veteran NM 2013
+vaarstikket_2013                         2013-03-16  10477  # Vårstikket 2013
+NBF_SERIE_AVD2101                        2013-04-06  10699  # Østlandet sluttspill lag 1-4
+NBF_SERIE_AVD2103                        2013-04-06  10700  # Østlandet sluttspill lag 5-8
+NBF_SERIE_AVD2373                        2013-04-06  10702  # Østlandet sluttspill lag 5-9
+NBF_SERIE_AVD2469                        2013-04-06  10809  # Finnmark
+NBF_SERIE_AVD2470                        2013-04-06  10810  # Finnmark
+bsi-smashen_13                           2013-04-06  10573  # BSI Smashen 2013
+hisoy_cup_2013                           2013-04-06  10623  # Hisøy Cup 2013
+NBF_SERIE_AVD2100                        2013-04-07  10701  # Østlandet sluttspill lag 1-4
+amgenopen                                2013-04-08  10597  # Amgen Open 2013
+ubm2013                                  2013-04-12  10432  # UBM 2013
+nm_junior_2013                           2013-04-19  10217  # NM junior 2013 - Lillehammer
+nesnasmashen_13                          2013-04-20  10650  # Nesnasmashen
+vaarblomsten2013                         2013-04-20  10612  # Vårblomsten 2013
+vaopen2013                               2013-04-20  10450  # Vestre Aker Open
+NBF_SERIE_AVD2610                        2013-04-25  11003  # Sør/Vest - Agder
+NBF_SERIE_AVD2611                        2013-04-25  11002  # Sør/Vest - Agder
+baatsfjord_open_2013                     2013-04-26  10486  # Båtsfjord Open 2013
+NBF_SERIE_AVD2609                        2013-04-28  11001  # Midt
+fanacup2013                              2013-05-04  10554  # Fana Cup 2013
+frognerkyllingen_13                      2013-05-04  10706  # Frognerkyllingen
+frognerbroileren_13                      2013-05-05  10707  # Frognerbroileren
+midnight_sun_2013                        2013-05-24  10282  # Midnight Sun 2013
+rorvik-vaarcup-13                        2013-05-25  10750  # Rørvik Vårcup
+NBF_SERIE_AVD2622                        2013-06-08  11228  # Landsfinalen grunnspill
+NBF_SERIE_AVD2623                        2013-06-08  11229  # Landsfinalen grunnspill
+NBF_SERIE_AVD2624                        2013-06-09  11232  # Landsfinalen sluttspill 1-3
+NBF_SERIE_AVD2625                        2013-06-09  11233  # Landsfinalen sluttspill 4-6
+NBF_SERIE_AVD2626                        2013-06-09  11234  # Landsfinalen sluttspill 7-9
+NBF_SERIE_AVD2627                        2013-06-09  11235  # Landsfinalen sluttspill 1-3
+NBF_SERIE_AVD2628                        2013-06-09  11236  # Landsfinalen sluttspill 4-6
+NBF_SERIE_AVD2629                        2013-06-09  11237  # Landsfinalen sluttspill 7-9
+midtsommernatt_2013                      2013-06-14  11031  # Midtsommernatt 2013
+ottaopen2013                             2013-08-16  11010  # Otta open 2013
+kbkranking2013                           2013-09-06  11479  # RT 15 + 19
+u13septemberbergen_13                    2013-09-07  11315  # RT 13
+rt_17__nrsenior_13                       2013-09-13  11591  # RT 17 + NRSenior
+tromsopalmen_13                          2013-09-13  11194  # Tromsøpalmen
+NBF_SERIE_AVD2857                        2013-09-21  11785  # Østlandet
+NBF_SERIE_AVD2858                        2013-09-21  11775  # Sør/Vest
+NBF_SERIE_AVD2859                        2013-09-21  11793  # Vestlandet
+NBF_SERIE_AVD2860                        2013-09-21  11787  # Østlandet
+NBF_SERIE_AVD2882                        2013-09-21  11789  # Østlandet
+NBF_SERIE_AVD2861                        2013-09-22  11786  # Østlandet
+clearcup_13                              2013-09-28  11623  # Clearcup
+slagentreffen_2013                       2013-09-28  11699  # Slagentreffen 2013
+solarekrutten-2013                       2013-09-28  11738  # Solarekrutten 2013
+NBF_SERIE_AVD2862                        2013-10-02  11772  # Vestlandet
+hadselsmashen_2013                       2013-10-05  11717  # Hadselsmashen 2013
+tana_open_2013                           2013-10-05  11708  # Tana Open 2013
+askoy_rekrutten_senior_2013              2013-10-12  11702  # Askøy Rekrutten - Askøy Senior 2013
+mosstreffen13                            2013-10-12  11729  # Mossetreffen
+Treffpunkt2013                           2013-10-19  11688  # Treffpunkt
+ff_asker13                               2013-10-19  11805  # Ferske Fjes
+frognerhona_13                           2013-10-19  11809  # Frognerhøna
+stavangeropen2013                        2013-10-19  11807  # Stavanger Open 2013
+u23_2013                                 2013-10-25  11806  # U23-mesterskapet 2013
+barents_open_2013                        2013-10-26  11701  # Barents Open 2013
+nobkff13                                 2013-10-26  11753  # Nøtterøy ferske fjes
+nokkerosa_cup_13                         2013-10-26  11754  # Nøkkerosa Cup
+sorlandsdroppen_13                       2013-10-26  11808  # Sørlandsdroppen
+NBF_SERIE_AVD2855                        2013-11-02  12105  # Grunnspill
+NBF_SERIE_AVD3078                        2013-11-02  12104  # Østlandet
+NBF_SERIE_AVD3079                        2013-11-02  12103  # Østlandet
+tronderdroppen_13                        2013-11-02  11741  # Trønderdroppen
+rtbroddnov2013                           2013-11-08  11907  # RT 15* + 19
+jarlsbergosten_13                        2013-11-09  11894  # Jarlsbergosten
+polarcirkelcup_13                        2013-11-09  11986  # Polarcirkell Cup 2013
+vestlandsmesterskapet_2013               2013-11-15  12030  # Vestlandsmesterskapet 2013
+spartreffet_2013                         2013-11-16  12192  # Spartreffet 2013
+tommy_gaasbakks_minneturnering_13        2013-11-16  12031  # Tommy Gåsbakks minneturnering
+dnb_julecup13                            2013-11-22  12106  # RT 13 + 17* + NRSenior
+debutanten13                             2013-11-30  12204  # Debutanten
+kbkcup2013                               2013-11-30  12193  # KBK cup
+northseacup2013                          2013-11-30  11984  # North Sea Cup 2013
+solaslaget_2013                          2013-11-30  12237  # Solaslaget 2013
+kmsorvest2013                            2013-12-06  11908  # KM Sør 2014
+hokm2013                                 2013-12-07  12252  # KM Hedmark og Oppland 2013/14
+kmoslofjorden2014                        2013-12-07  12191  # KM Oslofjorden 2014/Haugerud Cup
+NBF_SERIE_AVD3256                        2013-12-14  12513  # Sør/Vest
+bbkjulecup2013                           2013-12-28  11985  # Julecupen 2013
+blodslitet_2013                          2013-12-28  12408  # Blodslitet 2013
+frognerranking_U17                       2014-01-04  12255  # RT 17*
+rt_13_nrsenior_14                        2014-01-10  12349  # RT 13 + NRSenior
+vinterstormen_14                         2014-01-11  12448  # Vinterstormen
+NBF_SERIE_AVD3324                        2014-01-15  12730  # Sør/Vest
+wwwcupassistcomottaranking2014           2014-01-17  12236  # RT 15 + 19*
+NBF_SERIE_AVD2863                        2014-01-18  12635  # Vestlandet
+arctic_open_14                           2014-01-18  12352  # Arctic Open
+km_2014_midtnorsk_badmintonkrets_sor_14  2014-01-25  12420  # KM Midtnorsk sør
+km_vest_2014askoy_open_14                2014-01-25  12425  # KM Vest 2014/Askøy Open
+sabk_open_14                             2014-01-25  12421  # SaBK Open
+nmsenior13                               2014-01-31  11987  # NM 2014
+dfiu2014                                 2014-02-01  12624  # Drøbak ungdomsturning
+sondre_lovold_14                         2014-02-01  12623  # Smash Cup 2014
+NBF_SERIE_AVD3365                        2014-02-08  12777  # Midt
+finnmarksmesterskapet_2014               2014-02-08  12610  # Finnmarksmesterskapet 2014
+mollarslaget2014                         2014-02-14  12256  # Møllarslaget 2014
+NBF_SERIE_AVD3397                        2014-02-15  12906  # Nord
+NBF_SERIE_AVD3398                        2014-02-15  12907  # Nord
+hisoy_cup_2014                           2014-02-15  12662  # Hisøy Cup 2014
+verdalstreffen_2014                      2014-02-15  12770  # Verdalstreffen 2014
+km_haalogaland_2014_14                   2014-02-22  12697  # KM Hålogaland 2014
+namdal_open_14                           2014-02-28  12800  # Namdal Open
+fest14                                   2014-03-01  12710  # Fjærfest
+bergenranking2014                        2014-03-07  12637  # RT 15* + 17
+vm2014                                   2014-03-07  12449  # Veteranmesterskapet 2014
+vintergnisten_2014                       2014-03-08  12611  # Vintergnisten 2014
+haugerudrankingu13u19-2014               2014-03-14  12578  # RT 13 + 19*
+ferske_fjes_2014                         2014-03-22  12839  # Ferske Fjes 2014
+fosentreffen2014                         2014-03-22  12779  # Fosentreffen 2014
+vaarstikket_2014                         2014-03-22  12853  # Vårstikket 2014
+baatsfjord_open_2014                     2014-03-29  12737  # Båtsfjord Open 2014
+NBF_SERIE_AVD3572                        2014-03-30  13129  # Midt
+nesnasmashen_14                          2014-04-05  12900  # Nesnasmashen 2014
+bsi-smashen_14                           2014-04-08  12871  # BSI Smashen 2014
+ubm2014                                  2014-04-25  12614  # UBM 2014
+nm_junior_2014                           2014-05-02  12820  # NM Junior 2014
+NBF_SERIE_AVD3574                        2014-05-10  13132  # Kvalifisering eliteserie
+fanacup2014                              2014-05-10  12899  # Fana Cup 2014
+maispretten_14                           2014-05-10  13058  # Maispretten
+vaopen2014                               2014-05-10  12979  # Vestre Aker Open
+frognerkyllingen_14                      2014-05-24  13199  # Frognerkyllingen
+midnattsol-turneringa_14                 2014-05-24  12842  # Midnattsol-turneringa
+NBF_SERIE_AVD3662                        2014-06-07  13447  # Landsfinale grunnspill
+NBF_SERIE_AVD3666                        2014-06-07  13453  # Landsfinale grunnspill
+NBF_SERIE_AVD3663                        2014-06-08  13449  # Landsfinale sluttspill 1-2
+NBF_SERIE_AVD3664                        2014-06-08  13450  # Landsfinale sluttspill 3-4
+NBF_SERIE_AVD3665                        2014-06-08  13451  # Landsfinale sluttspill 5-6
+NBF_SERIE_AVD3667                        2014-06-08  13455  # Landsfinale sluttspill 1-2
+NBF_SERIE_AVD3668                        2014-06-08  13456  # Landsfinale sluttspill 3-4
+NBF_SERIE_AVD3669                        2014-06-08  13457  # Landsfinale sluttspill 5-6
+NBF_SERIE_AVD3670                        2014-06-08  13452  # Landsfinale sluttspill 7-8
+NBF_SERIE_AVD3671                        2014-06-08  13448  # Landsfinale semifinale
+NBF_SERIE_AVD3672                        2014-06-08  13458  # Landsfinale sluttspill 7-8
+NBF_SERIE_AVD3673                        2014-06-08  13454  # Landsfinale semifinale
+midtsommernatt_2014                      2014-06-21  13040  # Midtsommernatt 2014
+knut_liland_kopp_2014                    2014-07-24  13530  # Knut Liland Køpp 2014

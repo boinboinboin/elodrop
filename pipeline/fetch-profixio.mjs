@@ -4,7 +4,9 @@
 // Usage: node fetch-profixio.mjs [--offline] [--only <slug>]
 //
 // 1. The list of Norwegian badminton tournaments (Livewire: the list loads 12 at a time as it's
-//    scrolled; one call with a larger `limit` gives them all).
+//    scrolled; one call with a larger `limit` gives them all), and the tournaments Profixio keeps off
+//    that list, in profixio-unlisted.txt: many of 2010-2014 are on no list or search, only at their
+//    address (or /app/<id>), such as North Sea Cup 2012 and Fana Cup 2013.
 // 2. For each tournament from FROM to TO, its pages are saved as they are in data/profixio/raw/<slug>/:
 //    the day pages (every match, 15 a page, with its class, players, set scores and winner), the class
 //    pages (the group matches, under each group's heading; knockout matches aren't on them and their
@@ -91,6 +93,33 @@ async function listTournaments() {
       };
     })
     .filter((t) => t.slug && t.date);
+}
+
+// 1b. The unlisted tournaments (profixio-unlisted.txt: "<slug> <first day> <id>  # name"), in the
+// list's shape. The day and id are the file's (a one-day tournament's page links no days); the page is
+// read for the name, and to check the address and that its id is the file's.
+async function unlistedTournaments(listed) {
+  const file = `${DIR}profixio-unlisted.txt`;
+  if (!existsSync(file)) return [];
+  const have = new Set(listed.map((t) => t.slug));
+  const rows = (await readFile(file, "utf8"))
+    .split("\n")
+    .map((l) => l.replace(/#.*/, "").trim().split(/\s+/))
+    .filter(([slug, date, id]) => slug && /^\d{4}-\d\d-\d\d$/.test(date ?? "") && /^\d+$/.test(id ?? "") && !have.has(slug))
+    .filter(([, date]) => date >= FROM && date <= TO); // no request for the ones outside the range
+  const found = [];
+  for (const [slug, date, id] of rows) {
+    try {
+      const html = unescape(await get(`${BASE}/${slug}`));
+      const pageId = html.match(/"turnering_id":(\d+)/)?.[1];
+      if (!pageId || !html.includes(`/app/${slug}/`)) throw new Error("no tournament at this address");
+      if (pageId !== id) throw new Error(`its page has id ${pageId}, the file ${id}`);
+      found.push({ id: +id, slug, name: text(html.match(/<title>([\s\S]*?)- Profixio/)?.[1] ?? slug), date, matchCount: 0 });
+    } catch (e) {
+      console.warn(`profixio-unlisted.txt: ${slug} left out: ${e.message}`);
+    }
+  }
+  return found;
 }
 
 // 2. A tournament's pages, saved as they are. Paginated pages are fetched until the next one isn't linked.
@@ -346,6 +375,7 @@ let list;
 if (offline) list = JSON.parse(await readFile(`${RAW}/tournaments.json`, "utf8"));
 else {
   list = await listTournaments();
+  list.push(...(await unlistedTournaments(list)));
   await writeFile(`${RAW}/tournaments.json`, JSON.stringify(list, null, 1));
 }
 const wanted = list.filter((t) => t.date >= FROM && t.date <= TO && (!only || t.slug === only));
