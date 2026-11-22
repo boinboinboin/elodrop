@@ -15,6 +15,10 @@ Every change merged into `main` gets an entry here, newest first.
 - Players in these tournaments are matched more carefully: a name with a typo ("Kennet" for Kenneth) is matched within the same club, and a name with initials ("S. Jørgensen") only to a player of the same club, so players of the older tournaments who stopped before 2013 are no longer given to someone else of the same initials. About 430 more names are matched by hand (initials, typos, names cut short or without a later surname: "Iris Carrascal" is Iris Carrascal Simonsen), the clubs Profixio abbreviates are read as the clubs they are ("BMIL" is Vestre Aker, "BMK" BMK Boston), and players registered twice on badmintonportalen count as one (46 more such players are merged into one page each). Players not found are joined where they're one person under two names ("M. Thunem" and Michael Thunem), so they're rated as one.
 - For the pipeline: `profixio-unlisted.txt` lists the tournaments missing from Profixio's list (left out: team series, tournaments without results, the Swedish ones, tests and copies), and `fetch-profixio.mjs` fetches them, skipping team series and saving the pages it checks.
 
+## v1.39.1 (2026-11-22)
+
+- For the pipeline: the traffic watch runs again. Its check for challenged networks quiet for 30 days asked Vercel for more rows than it allows (30 days in hours), so every run stopped there; ranges that long are now asked in days.
+
 ## v1.39.0 (2026-11-22)
 
 - Tournaments from 2010 to 2014 are now rated too: about 7,700 matches from 49 tournaments kept on Profixio, from before badmintonportalen had tournament results, mostly in Trøndelag, Møre, Vestland and Nord-Norge. About 1,300 players' histories now go back to 2010, 377 of them players who only played then and now have a page of their own.

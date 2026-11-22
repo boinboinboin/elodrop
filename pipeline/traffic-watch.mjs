@@ -86,13 +86,17 @@ const hoursAgo = (h) => new Date(Date.now() - h * 3600_000).toISOString();
 
 /** An observability query's totals per group (the summary over the whole range) */
 async function query(metric, { aggregation = "sum", filter, groupBy = [], from, to = new Date().toISOString(), limit = 500 }) {
+  // Vercel refuses a query that could return more than 250,000 rows (time buckets × limit), as the 30 days of
+  // firewall hits in hours (720 × 500) do. Longer ranges are asked in days: only the summary is read, and it's the
+  // same, but for the range being widened to whole days.
+  const hours = (Date.parse(to) - Date.parse(from)) / 3600_000;
   const json = await vercel("POST", "/v2/observability/query", {
     metric,
     aggregation,
     scope: { type: "project", ownerId: TEAM, projectIds: [PROJECT] },
     startTime: from,
     endTime: to,
-    granularity: { hours: 1 },
+    granularity: hours * limit <= 250_000 ? { hours: 1 } : { days: 1 },
     ...(filter && { filter }),
     ...(groupBy.length && { groupBy }),
     limit,
