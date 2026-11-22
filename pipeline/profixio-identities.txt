@@ -49,6 +49,7 @@ ff79badc157c1b79  23619                # no club given: a typo
 a560d0cd7ccb85a5  22875                # Rissa: a later surname
 95f16c8a5dece09b  21464                # Rørvik: a typo
 2f1da1e2d73215b0  17758                # Sola: a typo
+539944e27dc1c9a8  25260                # Bergen, then Sola
 25f8ab11efd23039  24779                # Sotra: a typo
 e351f0e56c2bfd06  21232                # Tromsøstudentenes IL
 5fb797a080f6e86f  24517                # Verdal: a typo
