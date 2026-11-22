@@ -10,14 +10,130 @@
 # A club as Profixio writes it (an abbreviation or a typo), and badmintonportalen's name for it:
 #   club <Profixio's club> = <badmintonportalen's club>
 
+club ABK = Asker
+club Ark = Russland (Arkhangelsk)
+club ARK = Russland (Arkhangelsk)
+club Askr = Asker
 club Askø = Askøy
 club BBK = Bergen
+club Be = Bergen
+club Ber = Bergen
+club Berg = Bergen
+club Berge = Bergen
+club BMIL = Vestre Aker
+club BMK = Sverige (BMK Boston)
+club Bmon = Vestre Aker
+club BOS = Sverige (BMK Boston)
+club Boston = Sverige (BMK Boston)
+club Brgn = Bergen
+club Brlv = Berlevåg
+club Brod = Brodd
+club BSK = Båtsfjord
+club Btsf = Båtsfjord
+club ByBK = Bygdø
+club Bygd = Bygdø
+club Bygdï¿½ Badmintonklubb = Bygdø
+club Bygdï¿½ Monolitten Idrettslag = Vestre Aker
+club Bygdø Monolitten Idrettslag = Vestre Aker
+club Dj = Djerv
+club Dje = Djerv
 club Djrv = Djerv
+club Dram = Drammen
+club Edsv = Eidsvoll
+club FIL = Frogner
+club Fjellhamar Badmintonklubb = Fjellhamar
+club Fjlm = Fjellhamar
+club Frgn = Frogner
+club Ganddal IL = Ganddal
+club Gjvk = Gjøvik
+club Grms = Grimstad
+club Grng = Grong
+club Gro = Grong
+club Hdsl = Hadsel
+club Herø = Herøy
+club Hfst = Hammerfest
+club Hgsn = Haugesund
 club HIF = Haugerud
+club Hisø = Hisøy
+club Hmar = Hamar
 club HoBK = Horten
+club Horg Badmintonklubb = Horg
+club Hrst = Harstad
+club Hrtn = Horten
+club Jrlb = Jarlsberg
+club Jrpl = Jørpeland
+club Jtnh = Jotunheimen
+club Jørpeland Badmintonklubb = Jørpeland
+club Kar = Karmøy
+club Karm = Karmøy
+club Karmø = Karmøy
+club KBK = Kristiansand
+club KIL = Kolvereid
+club KIR BK = Russland (Kirovsk)
+club Kiro = Russland (Kirovsk)
+club Klbu = Klæbu
+club Klvr = Kolvereid
+club Kolv = Kolvereid
+club Kov = Russland (Kovdor)
+club Krgr = Kragerø
 club Kris = Kristiansand
 club Kristiansan = Kristiansand
 club Krkn = Kirkenes
+club Krmø = Karmøy
+club Krsa = Kristiansand
+club Krsu = Kristiansund
+club Kvdr = Russland (Kovdor)
+club Lksv = Leksvik
+club Mhmn = Mehamn
+club Mnch = Russland (Monchegorsk)
+club Mndl = Mandal
+club MoBK = Moss
+club Monc = Russland (Monchegorsk)
+club Mrvl = Myrvoll
+club Murm = Russland (Murmansk)
+club Nesn = Nesna
+club Nrbr = Norborg
+club Nrby = Nordbyhagen
+club NT = NTNUI
+club NTN = NTNUI
+club NTNU = NTNUI
+club Ntrø = Nøtterøy
+club Nï¿½tterï¿½y = Nøtterøy
+club Nï¿½tterï¿½y Badmintonklubb = Nøtterøy
+club Orkg = Orkanger
+club PBK = Pillarguri
+club Plrg = Pillarguri
+club Prsg = Porsgrunn
+club Risk = Riska
+club Riss = Rissa
+club Ryk = Rykkinn
+club Rykk = Rykkinn
+club Rykki = Rykkinn
+club Rykkin = Rykkinn
+club Rykkinn Badmintonklubb = Rykkinn
+club Røvk = Rørvik
+club SaBK = Sandefjord
+club Sdfj = Sandefjord
+club Sdsj = Sandnessjøen
+club Sklv = Sykkylven
+club SlBK = Slagen
+club Slgn = Slagen
+club Sot = Sotra
+club Sotr = Sotra
+club STIL = Stavanger
+club Stjørdals-blink Badminton = Stjørdal-blink Badminton
+club Strd = Stord
+club Stvg = Stavanger
+club Søgn = Søgne
+club TBK = Tromsø
+club Tnst = Tynset
+club Trdh = Trondheim
+club Tromsï¿½studentenes IL = Tromsøstudentenes IL
+club TSI = Tromsøstudentenes IL
+club Voll = Eidsvoll
+club Vrdl = Verdal
+club ÅBK = Ålesund
+club Ålsd = Ålesund
 
 85abfc6414c4e379  25278                # Bergen, 2012-2014: a typo
 bcb39f073e4fa5d7  23271                # Bergen
@@ -66,3 +182,1064 @@ e7b9c3eafb883e3b  = 82b2415322108e96   # Askøy, 2011/12: a typo
 3d5bad8a82aacd44  = 1e62447258b1d6d7   # Klæbu: initials
 5ae777d4df6dcecd  = ec1c2e6810dc7497   # Kirkenes, Mehamn Smashen 2010: initials
 884111dc6182e3c4  = ea70287996faa0d5   # Sweden, AOT 2010: initials
+
+# Matched from unidentified.txt on 2026-11-22: initials with the same surname, the only player of
+# them (in the club, or anywhere for a rare surname) who played in Profixio under the full name in the
+# same years; the name without a middle or later surname; typos in rare surnames; first names spelt
+# otherwise; checked against the player's other names in the same tournaments
+adc8f844a622ddc6  21673                # Kolvereid, 2009-2010: the first name spelt otherwise
+575f4585b6ba7fc0  20559                # Berlevag, 2008-2013: the first name spelt otherwise
+78fff0c88168dde3  22800                # Krsa, 2008-2014: the first name spelt otherwise
+a17a246fd36480c1  21446                # Grong, 2008-2011: the first name spelt otherwise
+5cfcaa9383874b6f  17587                # Kristiansand, 2013-2014: the first name spelt otherwise
+0b1bd1839b16c7b9  38581                # Grong, 2008: the first name spelt otherwise
+568032057d63f74d  42838                # Batsfjord, 2013: the first name spelt otherwise
+5c5cdb3f49ee9f91  20885                # Frgn, 2008: the first name spelt otherwise
+5c2ab81eddb3a428  20771                # Klvr, 2008: the first name spelt otherwise
+ab6d3a7f6ad24a13  20781                # Hauger, 2011: the first name spelt otherwise
+0970787f8804799e  22569                # Haugerud, 2014: the first name spelt otherwise
+60ff72e6c308bede  23962                # Bygd, 2008: the first name spelt otherwise
+02808307ad36b6cd  23743                # Rorvik, 2012: the first name spelt otherwise
+285e1ad2361ceedb  23340                # Brgn, 2008: the first name spelt otherwise
+d1be1fd74c225d60  22790                # Frogner, 2010: the first name spelt otherwise
+a334c565402ddbac  20337                # Grong, 2008-2010: initials
+3317b9f51045deb6  20108                # Klbu, 2008-2010: initials
+ea33557098efc512  29846                # Trdh, 2008-2010: initials
+6c6e2738926541b1  19868                # Moss, 2008: initials
+4eb26758fcda80fb  20828                # Sabk, 2009: initials
+636f0f615979e6c1  21273                # Drobak, 2010-2011: initials
+42a84e43f3f8e185  20863                # Kristiansand, 2011: initials
+43304bc387c1d7e4  23341                # Hmar, 2008: initials
+3c6cfe6b3667ff25  22973                # Askoy, 2010: initials
+12ef2ac700bcbb34  20958                # Sdsj, 2009: initials
+2f2313d0a8d83543  23041                # Ntnui, 2010: initials
+4ab2e32d12260a22  17187                # Brlv, 2009: initials
+d4ef4f0b27631849  22642                # Krmo, 2010: initials
+f0cbba7c1698fdcc  22210                # Ntnu, 2009: initials
+07f8ca5d4febca44  22120                # Brlv, 2009: initials
+7a948583d271d788  18928                # Klaebu, 2008-2011: initials
+5f317a981b414589  21974                # Default, 2008-2011: initials
+5b2d906c0ab11022  45799                # Brod, 2008-2010: initials
+cac5111cd9ac44ea  21081                # Leksvik, 2008-2011: initials
+6728271b0af081f0  18748                # Ganddal, 2008-2009: initials
+24e0238fd545ee00  52528                # Ganddal, 2008-2009: initials
+936990d9bc51d134  20813                # Haugerud, 2008-2011: initials
+46021d35327d1adf  19152                # Bergen, 2008-2009: initials
+dc4377b3298bb923  20496                # Notteroy, 2009-2011: initials
+673f8c3e1bc1fbf3  20358                # Brodd, 2009-2010: initials
+8d6b50c351084870  19282                # Sotr, 2008-2010: initials
+32ebd7c1f69ebafd  20814                # Rykkinn, 2008-2011: initials
+777250b6f4480a27  19814                # Bergen, 2008-2010: initials
+55410e652b536c09  19200                # Sandefjord, 2008-2011: initials
+934036d2169c6769  20361                # Ganddal, 2008-2009: initials
+66f3e60c869f3733  18600                # Bmil, 2008-2010: initials
+08bf8dfd25ed7bb6  48869                # Fil, 2008-2010: initials
+314a3fc9cf7775cd  21037                # Rykkinn, 2009-2011: initials
+7c451884b1d87951  17414                # Hdsl, 2008-2010: initials
+fa32d567e17f2348  47033                # Klbu, 2008-2009: initials
+401dc39fcb73a9fb  23376                # Hgsn, 2008-2010: initials
+e36a6c1946f7b5a8  24067                # Bygdo, 2008-2011: initials
+7e60731bf8ac9776  18391                # Brod, 2008-2010: initials
+da407301d8eee61c  19379                # Riss, 2008-2009: initials
+7f6b2e1a17960508  20164                # Bmil, 2008-2010: initials
+4d584642282ae9f5  18817                # Klbu, 2008-2011: initials
+16d2967818783f0f  18994                # Vrdl, 2009-2010: initials
+4a07aaaff3eabb55  47326                # Rissa, 2008-2011: initials
+424781004160583f  20189                # Hmar, 2008-2010: initials
+9a41dfe916ad11d9  23426                # Rykkinn, 2009-2011: initials
+35ee3315c38da9ae  19829                # Askim, 2009-2011: initials
+001e926fb9b0a356  19980                # Bmon, 2008-2009: initials
+64ec2f8a0368a647  23193                # Ntnu, 2008-2010: initials
+d043ca51e3d7901e  18733                # Pbk, 2008: initials
+0f4ce385e467acb9  22153                # Hamar, 2010-2011: initials
+993b2a1446bd3b65  47255                # Sdsj, 2008-2009: initials
+a17f3a6053dc7397  23382                # Hgsn, 2008-2010: initials
+0d0f08b6309b8ba3  24749                # Holland, 2008-2010: initials
+e780dcc5dea62a7c  19588                # Jrpl, 2009: initials
+c3a0f408dd011290  51178                # Pbk, 2008: initials
+4ab79ab043adefaa  22113                # Djerv, 2009-2011: initials
+b7703fdbab3f6ba5  24110                # Pbk, 2008: initials
+f8beb33dc83be42d  20090                # Bergen, 2009-2010: initials
+9fc538f3fb651944  45642                # Estonia, 2010: initials
+70b9479f4c031bb3  43571                # Tsi, 2009-2010: initials
+492c164397f952c5  20119                # Fb, 2008-2010: initials
+b333987b735327bc  21850                # Bmon, 2009: initials
+1e30d543d312d853  44746                # Hgsn, 2008-2010: initials
+41cd5cf31ead10a7  22098                # Bmon, 2009-2010: initials
+8645bceb2f4aec71  23193                # Ntnu, 2010: initials
+224f46059a766b56  23893                # Sweden, 2010: initials
+7a7679287da8b3dd  20457                # Fb, 2008-2010: initials
+b23e80b5fb29a29c  20811                # Rykkinn, 2008-2009: initials
+4cc6ade4e431dfab  17862                # Bygd, 2008-2009: initials
+a91a6f8c87f9f495  17752                # Strd, 2008-2009: initials
+d93a163f3b48097a  23900                # Brod, 2008-2009: initials
+a398db8fd140a934  21100                # Trdh, 2008-2009: initials
+2133e1e1b2d7f0d9  18238                # Bsi, 2009-2010: initials
+533f85b031f3f680  19776                # Rykkinn, 2009: initials
+b9ced258d2d5874e  17102                # Boston, 2009-2010: initials
+15ba519b8956c1cb  17101                # Boston, 2010: initials
+9ce4ee7d403b9d1d  48033                # Stvg, 2008-2009: initials
+7d7ef483c9e54955  21188                # Mrvl, 2009-2010: initials
+1946f29435bad955  22164                # Bmon, 2009: initials
+45805f7958433890  22119                # Bsk, 2009-2010: initials
+d7fabdce5105ab70  20878                # Sandefjord, 2011: initials
+1247a1db4e5e96f8  20179                # Kirkenes, 2011: initials
+49062ca83dec1294  20398                # Stvg, 2008: initials
+acba492ec236c667  23364                # Fb, 2008-2010: initials
+112ce01861914b31  20842                # Bmon, 2009: initials
+090da15c9b7318c5  20825                # Rykkinn, 2009: initials
+29db9e67736bcfcf  21472                # Rykkinn, 2009: initials
+db87317595c11265  21381                # Bmon, 2008-2009: initials
+eb7bdd3cac686aff  19023                # Osi, 2008: initials
+b06fa23a60b3bfa4  17110                # Boston, 2009-2010: initials
+5bd964c5f7debebc  25150                # Bmk, 2009: initials
+b71057da553320c6  20823                # Steinkjaer, 2008: initials
+3819f948ba60e71a  18781                # Norway, 2008: initials
+8584c0f714b8fb19  19986                # Norway, 2008: initials
+72a6a3a0ef13154b  21644                # Bsi, 2010: initials
+ba9e8fa404e1c234  20857                # Bmon, 2009: initials
+f5b11eccae95c2df  19753                # Abc, 2008-2009: initials
+2f7d6ffeb98e43a9  46277                # Ntnu, 2009: initials
+df556c11064fa39b  18831                # Trdh, 2009: initials
+6ad2bb2a17cc37ff  25089                # Mnch, 2009: initials
+35fd0d0dde816b10  24218                # Vestre aker, 2008-2011: initials
+c318a2f7ed9fcb8b  21174                # Brod, 2008-2010: initials
+dcd5619b88f5c816  21408                # Sotr, 2008-2009: initials
+e2851c2e6c9541af  21110                # Bmon, 2009-2010: initials
+89c743e6fa515371  21550                # Tnst, 2009-2010: initials
+8ca6386e10e3a366  18459                # Bygd, 2009: initials
+ebef0b15538996ab  25087                # Kiro, 2009: initials
+bc7d97a47efc42bd  17612                # Bmon, 2008-2009: initials
+2a8ddc9f513b66ab  21382                # Bmon, 2008: initials
+2feba16243085778  17104                # Boston, 2009-2010: initials
+2c1b59fd94da2465  21310                # Kil, 2009: initials
+e1c884f2ed8dcfa1  43191                # Klbu, 2008: initials
+861e75b7598e6f61  19065                # Ntnu, 2009: initials
+4da6d3f5db9ba214  18911                # Bergen, 2008: initials
+3fffa03af227d10a  19774                # Fjlm, 2008-2010: initials
+ce7d42aff134bf4c  20458                # Prsg, 2008: initials
+0c08c6b27f575f21  36505                # Frogner, 2011: initials
+8532b028c3e6d5b1  17601                # Mnch, 2009: initials
+0dfbb056a27d471a  21698                # Default, 2011: initials
+03c96b2364efcc97  22639                # Brod, 2010: initials
+50a55cad4222dfa5  21897                # Rykkinn, 2009-2010: initials
+bd89795560b62b45  20248                # Rykkinn, 2009: initials
+e6f9197ad88890f3  23760                # Moss, 2011: initials
+07da5961ee4a178d  23719                # Sandefjord, 2011: initials
+3155f9bc34f6259b  17728                # Murm, 2009: initials
+9ae7d30d9d5854cc  45071                # Monc, 2009: initials
+4c419b2a31a56517  21344                # Abc, 2008-2009: initials
+e1bfd6eb614323dd  23472                # Osi, 2009: initials
+6d63c7afcd85a402  22582                # Abc, 2009: initials
+d5bc08ce91432d56  20057                # Frogner, 2011: initials
+64e2207116ccd320  21325                # Default, 2011: initials
+79aca577ba214aeb  20837                # Voll, 2008: initials
+11ba96ec48e539ed  17109                # Boston, 2010: initials
+f8e4b3d8af9c2979  17097                # Bmk, 2009: initials
+659d4af8e3f696c4  22014                # Ganddal, 2009: initials
+8cd0deefc6904333  20665                # Mrvl, 2010: initials
+f4e0ecbda15a515f  22799                # Bsk, 2010: initials
+072698fc1690cedc  22416                # Notteroy, 2011: initials
+3b3bbd84d21fce0a  20795                # Notteroy, 2011: initials
+8d7cb426d09acab7  18698                # Horten, 2010: initials
+171dfebe878b0290  22166                # Haugerud, 2009: initials
+d657cebbf71bde7e  20815                # Rykkinn, 2008: initials
+169e24f395057e69  21302                # Bygd, 2009: initials
+ff32950f1a580e2f  19185                # Bygd, 2009: initials
+10e69604eab3bf38  24974                # Kov, 2009: initials
+54156a7df4ab3e3c  21488                # Bmon, 2009: initials
+79cabb7eac1f06c6  22585                # Abc, 2009: initials
+075b5ae11bad301b  22792                # Rykkinn, 2011: initials
+1989f36596503cb4  20835                # Horten, 2011: initials
+321410f061570f86  17100                # Boston, 2010: initials
+82748a9e3ca15f33  21474                # Moss, 2011: initials
+62c8ce19a7bb0424  20781                # Notteroy, 2011: initials
+2aae76a8ee77151e  19811                # Bergen, 2011: initials
+a965f311e674d29d  21011                # No club given, 2010: initials
+03703bd0fb4de5d9  21291                # Rykkinn, 2009: initials
+18393e49e0b136c0  21190                # Bygd, 2009: initials
+9b0dbe559016ee24  25091                # Ark, 2009: initials
+ed78c3b223ea5151  18743                # Krmo, 2009: initials
+9fefd9286bf0ea4b  22595                # Abc, 2009: initials
+ad8dca7d512b8efd  17099                # Boston, 2010: initials
+1b0b10b646b0b458  25153                # Boston, 2010: initials
+d7cf7ab5704caf77  25151                # Bmk, 2009: initials
+6aa25c42b95bd31d  22094                # Rykkinn, 2009: initials
+dbab04bb53db38a9  21076                # Brodd, 2010: initials
+63cb545d760a98da  23118                # Grimstad, 2010: initials
+db22889f89e78a17  18486                # Nokl, 2009: initials
+54132d1530deb68b  19324                # Fron, 2008: initials
+2ac59c670137e242  20459                # Jrlb, 2008: initials
+5f9a690816f3d780  20460                # Jrlb, 2008: initials
+33b4edefebabae6c  22800                # Grimstad, 2011: initials
+b32e9d09de9639ec  22804                # Grimstad, 2011: initials
+8b61a19d83e5199b  43597                # Gbk, 2008: initials
+d8fdce5489dc1afc  21345                # Abc, 2008: initials
+daaac267b2c35336  21896                # Rykkinn, 2009: initials
+823ce4c8db8d9ad6  22125                # Mehamn, 2009-2014: C/K
+ed507de46d9f50f3  21672                # Grong, 2009-2010: a typo
+24420bbdfde53031  19442                # Stord, 2009-2012: a later surname (the old one as a middle initial)
+e3c2dde06fd732c9  25382                # Moss, 2012: the name cut short
+c7ef042ebbf55188  17381                # Frgn, 2008: a later surname (the old one as a middle initial)
+b508aa6ec7755c58  44086                # Rorvik, 2009-2011: the name without a middle or later surname
+3d126a084e119464  21765                # Sandnessjoen, 2008-2009: the name without a middle or later surname
+d6ae0bc40b46ddf3  19516                # Bygdo, 2008-2009: the name without a middle or later surname
+a6d29f2fcd13839e  48033                # Stavanger, 2008-2012: the name without a middle or later surname
+3366d32e22aa2e39  43637                # Berlevag, 2014: the name without a middle or later surname
+bfd42df56c1d0a5f  19395                # Sotra, 2009-2012: the name without a middle or later surname
+d8823bf09a30a13f  19644                # Stavanger, 2012: the name without a middle or later surname
+00af3d28bff68c38  45113                # Brodd, 2008-2009: the name without a middle or later surname
+53b615e4048ad12a  23859                # Haugesund, 2008-2012: the name without a middle or later surname
+18a1a1eeb90909b7  23107                # No club given, 2010-2012: the name without a middle or later surname
+047b3a3f2dfd6267  49958                # Pillarguri, 2008-2009: the name without a middle or later surname
+04923a45ada5241a  23171                # Notteroy, 2012-2013: the name without a middle or later surname
+cf133cadde6aafbd  24308                # Berlevag, 2013-2014: the name without a middle or later surname
+fec4d173b0e1f010  22729                # Bergen, 2012-2013: the name without a middle or later surname
+bff2ca1a55971934  21474                # Ntro, 2009: the name without a middle or later surname
+db4cefafef82f8b2  23472                # Osi, 2010: the name without a middle or later surname
+b53cf268a36f03d2  18893                # Askoy, 2013: the name without a middle or later surname
+9224b819abc91441  24979                # Slagen, 2013: the name without a middle or later surname
+812bfafd2aac3d61  23169                # Bygdo, 2014: the name without a middle or later surname
+69c6f4e4900d4991  45353                # Tromso, 2014: the name without a middle or later surname
+5bee15993fb764b5  48036                # Stavanger, 2008-2009: the name without a middle or later surname
+e327991010d53a6f  44348                # Brlv, 2009: the name without a middle or later surname
+a6b43c8021d89414  21455                # Swe, 2008-2011: the name without a middle or later surname
+525e400ff4e2e04a  23292                # Vaksdal il, 2008: the name without a middle or later surname
+6140ea68f78e1150  21453                # Chbs sv, 2008: the name without a middle or later surname
+a71a8c956e2df9af  23233                # Bmil, 2010: the name without a middle or later surname
+ad6df1f35e34800c  24224                # Notteroy, 2012: the name without a middle or later surname
+b46b6150c361ac8f  20789                # No club given, 2012: the name without a middle or later surname
+dd2271eac0cd042b  17848                # No club given, 2013: the name without a middle or later surname
+24b4b8045db84851  20816                # Frgn, 2008: the name without a middle or later surname
+5c54e492381608aa  20771                # Klvr, 2008: the name without a middle or later surname
+95f40552c3fc1707  20654                # Ntro, 2008: the name without a middle or later surname
+3bcaa40c59706ed5  20496                # No club given, 2011: the name without a middle or later surname
+f3b4cb6bd51b5fda  24722                # No club given, 2012: the name without a middle or later surname
+78558d038f3e1727  22390                # No club given, 2011: the name without a middle or later surname
+9bddd4d27232cfc4  24582                # No club given, 2012: the name without a middle or later surname
+33ebbeeeb58c807f  22836                # Bergen, 2011: the name without a middle or later surname
+27626e811d825223  18685                # No club given, 2009: the name without a middle or later surname
+452d1ed9ddb72287  20038                # No club given, 2010: the name without a middle or later surname
+c9b3f1b4f00b9633  18469                # Bygdo, 2008-2009: the name without a middle or later surname
+ae000ef7e4d956e1  23959                # Djerv, 2011-2012: the name without a middle or later surname
+ea920a951a52a2c6  22848                # Norborg, 2013: the name without a middle or later surname
+31ab713046e0c884  17950                # Kolvereid, 2014: the name without a middle or later surname
+153d5a388d06d4cd  20619                # Frogner, 2009: the name without a middle or later surname
+4656217c9396d73e  17499                # Sotra, 2014: the name without a middle or later surname
+c7145c14dd93269e  44301                # Brodd, 2009: the name without a middle or later surname
+796d834c33908578  23472                # No club given, 2011: the name without a middle or later surname
+55c4f895a67a1e7d  22670                # Tromsostudentenes il, 2010-2014: a typo
+53f905f601094beb  20156                # Haugesund, 2011: a typo
+35dad1563db07a4f  23272                # Alesund, 2010-2011: a typo
+7b5b0c076eb685f5  23133                # No club given, 2010-2012: a typo
+72736c3fbf24f1c6  24959                # No club given, 2010: a typo
+4f9cf0f768a18c84  24952                # Monc, 2009-2010: a typo
+27ace7ef344bdab3  24786                # Stavanger, 2012-2013: a typo
+053fac1f81ffbb6b  18189                # No club given, 2011: a typo
+083a2d7d19264370  17601                # Mnch, 2009-2011: a typo
+9194b83677a65d10  21127                # No club given, 2010-2011: a typo
+ddad60174fdb40bb  21310                # Kolvereid, 2009-2011: a typo
+05f673038091ce13  24974                # Kov, 2009-2010: a typo
+76cbfd087e25ef12  23554                # Rykkinn, 2011-2012: a typo
+39fa55c20bbaa51b  17728                # Murm, 2009-2010: a typo
+7cca8b2c993ce060  22589                # Osi, 2010: a typo
+6c3d14d6e7adc713  24959                # No club given, 2011: a typo
+c098e87140024528  18187                # No club given, 2011: a typo
+639067f307d0f852  20008                # Frogner, 2008: a typo
+e7038737a5afae3b  25087                # Kirkenes, 2012: a typo
+772bb9108d1499f2  24953                # No club given, 2010: a typo
+1e9e212fe7f0cd5b  24716                # No club given, 2012: a typo
+0eb5d695ba33f7a9  30081                # No club given, 2014: a typo
+ab52d40d016a765b  50682                # Fitjar, 2009: a typo
+0599bfc1932cf97d  24976                # No club given, 2011: a typo
+5b2ee629a77f7506  18191                # Kvdr, 2009: a typo
+e4181c8e95c6d904  20290                # Fil, 2008: a typo
+07227debac7f9f70  21110                # Bygdo, 2009: a typo
+9c9b79ff28485443  23636                # No club given, 2011: a typo
+881a863372ca3023  23361                # Hero, 2009: a typo
+62e6bfb3540ce1aa  25150                # Boston, 2011: a typo
+ca597bc1b5fe7f24  24968                # No club given, 2010: a typo
+ec59bad23d6170a5  20913                # Hbk, 2009: a typo
+6580267fbfb5c698  22065                # Vaksdal il, 2008: a typo
+f323cf87fd1b79d9  17728                # Murm, 2009: a typo
+3b3db4ec37a55401  23268                # No club given, 2010: a typo
+e039c74c3a920ba9  20307                # No club given, 2011: a typo
+c288606fc29538ea  19641                # No club given, 2009: a typo
+d7cf0c2f190d143b  42815                # No club given, 2010: a typo
+328f828b5f5b276e  18453                # No club given, 2014: a typo
+d502e655c296f6fb  25150                # Bmk, 2009: a typo
+4875415dd9bbdb90  25149                # No club given, 2009: a typo
+f1eacea11420c67f  44490                # No club given, 2011: a typo
+fbd42e7076ca088d  51798                # Bergen, 2009-2013: a typo
+253a7deb1f125ad3  19450                # Myrvoll, 2009-2011: a typo
+76794baeca03f101  45323                # Bergen, 2008-2011: a typo
+8417957eba51b62e  25493                # Asker, 2008-2012: a typo
+7d6da52f66293d19  20856                # Bygdo, 2008-2009: a typo
+ad6e781d00d54ab9  21243                # Hdsl, 2008: a typo
+4ab88dcb27ed9e03  47633                # Bos, 2009-2011: a typo
+96d35baf7a03565f  17986                # No club given, 2014: a typo
+21482560e656af75  24630                # No club given, 2012: a typo
+630965bb49763e24  22390                # No club given, 2010: a typo
+902ad948eed9be07  19968                # Fil, 2009: a typo
+5251acd03699bd26  19631                # No club given, 2011: a typo
+89de4c5ae0666c7e  20921                # No club given, 2011: a typo
+ddef685a8f4e98c6  22078                # No club given, 2009: a typo
+43e5ea8a47646015  23586                # Sola, 2011-2013: a later surname (checked by the owner)
+a6e9cf134fa3302b  18547                # Ntnui, 2008-2011: the name without a middle name (checked by the owner)
+b9190ac7d4971d2b  19270                # Bygdø, 2008-2009: the name without a middle name (checked by the owner)
+281d68c31013f15e  51403                # Bergen, 2008-2009: the name without a later surname (checked by the owner)
+
+# Matched on 2026-11-22, second pass (after the club abbreviations above), only names identified in no
+# tournament: names cleaned, cut short, with a middle initial or reversed; initials and typos of rare surnames;
+# and "= <hash>": unidentified names that are the same player (initials and the same surname in the same club,
+# the same name written otherwise), so they are rated as one player
+096f16e336750186  = 8d5909dbeaa6b735   # no club given: the same player as another unidentified name
+2d86e02572ae0774  = f17447880771e15a   # grimstad: the same player as another unidentified name
+5f2d17dcae476810  = 381ea0fdf7845c84   # grimstad: the same player as another unidentified name
+c0c8a33e684ac23d  = 1127e2e86f694982   # stavanger: the same player as another unidentified name
+385973eef4931da9  = 440aea9089d8ce53   # mandal: the same player as another unidentified name
+476e3f67e2965866  = 50149b0024aac8ef   # mandal: the same player as another unidentified name
+22b8ebc21aaf3c9b  = 4a46cf632f64f6df   # no club given: the same player as another unidentified name
+50db1b538dd1d004  = 3a30e799d542744a   # kirkenes: the same player as another unidentified name
+6dad12c474a3d0c4  = 92fe9a779608a66b   # batsfjord: the same player as another unidentified name
+dc4a66dfc1845b86  = 44c60a17f9567087   # batsfjord: the same player as another unidentified name
+901af5f3aff7c30c  = 28c92685db0f430e   # kirkenes: the same player as another unidentified name
+e582f90d6833b406  23207                # berlevag: same
+d6ed2ecf1b4bb388  = 98881e09bb3d8c8e   # batsfjord: the same player as another unidentified name
+05f6a160bb1c3166  = 449c69c66db30c33   # ulleval: the same player as another unidentified name
+768efd6c64675125  = 1d62f831fcfdd103   # ulleval: the same player as another unidentified name
+f0e53084c959a9ca  = 7c9e59c1d5e9dfa1   # frogner: the same player as another unidentified name
+9154af87dabce2f0  = 1491c32aaa86357a   # frogner: the same player as another unidentified name
+1404a45644c636a6  = 5272e4ba9c33a342   # djerv: the same player as another unidentified name
+ea28ae599c0a9858  = 7e4f442c69f5aff6   # bergen: the same player as another unidentified name
+2fa2e5f205268e7a  = 14875bdc8535d398   # djerv: the same player as another unidentified name
+38fb0446679aa5d1  = cc03f17231c47b95   # djerv: the same player as another unidentified name
+8d49081f1f931e37  = e4d24079ca5fb963   # bergen: the same player as another unidentified name
+08a6944586b4bd5a  = b4ea69090aebb0c9   # djerv: the same player as another unidentified name
+33bf56d77762c5ab  = 9486f8a172688f61   # bergen: the same player as another unidentified name
+598f26c9eeba6545  = 269c949cf04351f7   # djerv: the same player as another unidentified name
+a241720b426e7f43  = 22a6b5951412dc75   # bergen: the same player as another unidentified name
+9d1759719f11b371  = 0462a0e4649079d4   # djerv: the same player as another unidentified name
+95672ca28dbd14b4  = 0462a0e4649079d4   # djerv: the same player as another unidentified name
+f0ed51c93d4e8692  = 26709e13af1ebb19   # djerv: the same player as another unidentified name
+eca7af7b84517e86  = 176859ca0ed459c8   # djerv: the same player as another unidentified name
+6758b979a2e85f53  = 4fe1d168f011e402   # askoy: the same player as another unidentified name
+1e7a158feb08bc3d  = 818b8d92279c5a8d   # bergen: the same player as another unidentified name
+fa32e7c4b4417ed1  = 998a7c66725ec607   # askoy: the same player as another unidentified name
+228612b5c0aabf6c  = 3f750f86edb8cb86   # bergen: the same player as another unidentified name
+c7b16de28e36df03  = 811b9c77f027cb50   # askoy: the same player as another unidentified name
+9bc86b951cbf478c  = 68bcba81e6ba55f9   # bergen: the same player as another unidentified name
+20fc0471511b2c02  45323                # bergen: initials
+ea534a49b308fcf6  = 5222dc7e671e302b   # bergen: the same player as another unidentified name
+6aaac4af0db4ca6f  = d4f03c418c2f66f1   # bergen: the same player as another unidentified name
+ec26363f197a8be4  = fdd2350998e2442c   # bergen: the same player as another unidentified name
+c185d942d873f94c  = b6c58152f4ec4d97   # bsi: the same player as another unidentified name
+3ff13f6b11ba2e4d  = 4cdc460a38109443   # bsi: the same player as another unidentified name
+e6cd63d2fba7407a  = 5d038385910e44f5   # bergen: the same player as another unidentified name
+b445f7c1615e6b3b  20525                # askoy: initials
+ad7635ffc379e767  = 522c970944de124e   # djerv: the same player as another unidentified name
+0a8b6d6006ce0e52  = 522c970944de124e   # djerv: the same player as another unidentified name
+5a76fb848f116dc5  = 7ee04da92ed18853   # bsi: the same player as another unidentified name
+664435698263241b  = 869e5da48c8e3086   # haugerud: the same player as another unidentified name
+74127f34df8562ec  = 03c94f26992c5e36   # bygdo: the same player as another unidentified name
+fea57c987533d818  = 03c94f26992c5e36   # bygdo: the same player as another unidentified name
+2e0a128cb32ee600  = f2a1e808991d2cef   # haugerud: the same player as another unidentified name
+5bc308ff12d404bf  = 1f88107dea2ac96a   # stavanger: the same player as another unidentified name
+635d0147b913e46e  = 1f88107dea2ac96a   # stavanger: the same player as another unidentified name
+df300a0bb7de95d1  = 4de92f63f85544f8   # stavanger: the same player as another unidentified name
+4bb561a5bf8c346b  = c108e5ea620bdbd9   # kristiansand: the same player as another unidentified name
+f73ffe060e191588  = 0e5d20e15f17f361   # bygdo: the same player as another unidentified name
+d5880094b8681bbb  = ec69dd1b9a9744f1   # bygdo: the same player as another unidentified name
+fd26e8dee96904dd  = 71f9f39bbe9df70c   # bygdo: the same player as another unidentified name
+1ea96bb21ae23148  = 71f9f39bbe9df70c   # bygdo: the same player as another unidentified name
+c1205e8c0497a5ca  = 71f9f39bbe9df70c   # bygdo: the same player as another unidentified name
+f700a25550a84e3a  = 3d9b11243f634f07   # bmk ko: the same player as another unidentified name
+39cdc7080fb2971e  = 89c916286ed112b3   # bmk ko: the same player as another unidentified name
+9f30dfeea5ac8da2  = 4d3be8db419ead83   # vestre aker: the same player as another unidentified name
+8351967233fce56b  = 06c70835c32db281   # bmk ko: the same player as another unidentified name
+ba27a962ad4c6807  19636                # no club given: subset
+3884f26518b6781d  = 6348d0767f8d2611   # alesund: the same player as another unidentified name
+63c844677e69655c  = 6348d0767f8d2611   # alesund: the same player as another unidentified name
+9d0f4d791bd5714a  = 1cd9125c7945e6a5   # sverige bmk boston: the same player as another unidentified name
+94c0fb5522fa276a  = 1cd9125c7945e6a5   # sverige bmk boston: the same player as another unidentified name
+8a66e442c9361629  = 97a986ccd9b76a23   # no club given: the same player as another unidentified name
+c98e086e628d93b6  = 535dc28b3c106d4d   # sverige bmk boston: the same player as another unidentified name
+c86005bf3cc57132  = 5c754cfab927480b   # no club given: the same player as another unidentified name
+8c6efe8d6d49f080  = 5da19164a12341ac   # sverige bmk boston: the same player as another unidentified name
+8489826573f3adea  = f71547c4e50f31a7   # leksvik: the same player as another unidentified name
+571cbdfa670cb1f3  = f71547c4e50f31a7   # no club given: the same player as another unidentified name
+93491dfe48f9b3e6  = 44e02c3ea3e3de85   # sverige bmk boston: the same player as another unidentified name
+4f965e2352d63112  = 18ae3e8af8ffaf6e   # sverige bmk boston: the same player as another unidentified name
+1a5d57e575bb6eea  = 3556d9a2b9fb80a1   # sverige bmk boston: the same player as another unidentified name
+1e8f26799868df3d  = ed2dc804e7d624a5   # no club given: the same player as another unidentified name
+d3dcf5aa6477d31d  21463                # rorvik: same
+2f6e174d1fe0dfda  = d3dcf5aa6477d31d   # rorvik: the same player as another unidentified name
+670f8b5486857c87  = d3dcf5aa6477d31d   # rorvik: the same player as another unidentified name
+8fe524d2e074b162  = e924f74f58011a78   # sverige bmk boston: the same player as another unidentified name
+b504cd7b1b91834a  = c435ea00dedbafc6   # bergen: the same player as another unidentified name
+a392d2f65d2140d4  = b79f30d3d02f0adb   # mandal: the same player as another unidentified name
+938badd8cb2386f1  = bd0df66ecf3cfe00   # slagen: the same player as another unidentified name
+e47ab7fb20648fa9  = 8a0799c9ab0b0daf   # no club given: the same player as another unidentified name
+915b29ab3d1c5ab8  = 5c09769eae993e13   # asker: the same player as another unidentified name
+659eab7ecb29d5d5  = d10c108f4c3edd01   # asker: the same player as another unidentified name
+f05ebca966e73da4  = bde5390e3d30288c   # moss: the same player as another unidentified name
+edb0d1a6725688a3  = 81a5a8b57367d184   # no club given: the same player as another unidentified name
+5236cab9df18b93c  = d7fe5c8e52d7e32c   # slagen: the same player as another unidentified name
+bf667181206a1cde  = a298f452fe5252e4   # batsfjord: the same player as another unidentified name
+b0d5c8b0acf7b9db  = 32fec3cd464549e3   # kristiansand: the same player as another unidentified name
+030f4736ef41dca8  = a568d3a46b30248a   # kristiansand: the same player as another unidentified name
+fba0a0180989d1ae  24097                # frogner: same
+6485944c76577cb2  = aab9e63b26fa6aba   # no club given: the same player as another unidentified name
+6d2b8811896d589d  = 117695e483100a61   # holland: the same player as another unidentified name
+1544c809cb590aa7  = 4c3b18e1ef194cf3   # kolvereid: the same player as another unidentified name
+2087236d5c3943f3  = 5f4df8173dda7e04   # holland: the same player as another unidentified name
+d86a75bbc2a1d0c0  = b4f9a5544082d61d   # germany: the same player as another unidentified name
+961c63d3c58c225d  = aed601573e570bb5   # netherlands: the same player as another unidentified name
+e480a488ea06c1ca  = e8d39c4faffb7735   # scotland: the same player as another unidentified name
+c4bd53187ed6216c  45677                # denmark: initials
+4c4d75df6442505a  23190                # tromsostudentenes il: superset
+a98e30fbdd8326dd  = 4c4d75df6442505a   # tromsostudentenes il: the same player as another unidentified name
+685cc44cf8eca186  43732                # noklubb: same
+7252a135a284ff83  = 685cc44cf8eca186   # noklubb: the same player as another unidentified name
+8b946e61abe15331  = 4e319eebfcdafcab   # hammerfest: the same player as another unidentified name
+66a33b559e8fea14  29950                # tromsostudentenes il: superset
+2fdc62a15fa9dbc8  = 66a33b559e8fea14   # no club given: the same player as another unidentified name
+cc4e685feeef4a88  = 1d7291265a205483   # tromso: the same player as another unidentified name
+87736f93b273253b  = 63c666fe69a26d35   # tromso: the same player as another unidentified name
+35cef7b7dd047d97  = ed20a1eaa245e3b1   # tromso: the same player as another unidentified name
+7ee5030fe775739c  = a84fbbf56aedf1e5   # tromsostudentenes il: the same player as another unidentified name
+bb4205f278cc52e5  = d60dee369fe54eab   # tromsostudentenes il: the same player as another unidentified name
+d3f0337ae4dfb0b6  = a7854426cc4c9308   # tromsostudentenes il: the same player as another unidentified name
+aac9c7a9873494ab  = 60a72767ae50f8a8   # hammerfest: the same player as another unidentified name
+aa0e0b57cad1b2ff  = 6708a60bf5e7cd87   # tromso: the same player as another unidentified name
+fb082a5bd6cff1fd  = f5dfb7d5b9db1df3   # tromsostudentenes il: the same player as another unidentified name
+ff481aeedc52c84c  = f5dfb7d5b9db1df3   # no club given: the same player as another unidentified name
+7931c845f6adcb01  = f5dfb7d5b9db1df3   # tromsostudentenes il: the same player as another unidentified name
+7fc9a6f1efb4236f  21209                # tromso: initials
+e61e948e88bb7372  = efe1331acd9e5705   # kbb: the same player as another unidentified name
+67b5b44f55e4fe54  = ac3a979d204c672a   # tromsostudentenes il: the same player as another unidentified name
+f43b2e48677eee6f  = b349d28243b18cbe   # tromso: the same player as another unidentified name
+59fb750deca84c1e  = 361f1b0211b4d711   # tromsostudentenes il: the same player as another unidentified name
+ab4f8e8684814d19  = 4d254e54a4b6f5a4   # hadsel: the same player as another unidentified name
+1fb14fc922ebf26f  = abf56711a338c4d7   # batsfjord: the same player as another unidentified name
+658f5138b5520ab8  = 34fd4e2c2a89987f   # kirkenes: the same player as another unidentified name
+345b2119d8eea3ae  = 66b734d6e8daa5e5   # hammerfest: the same player as another unidentified name
+a0dddc86f183f2df  = 43413b5e8f4e1c88   # batsfjord: the same player as another unidentified name
+e9222feb68aa46db  = cb2baa8beceb8375   # batsfjord: the same player as another unidentified name
+c01c3b0a4dd7a686  = 59517c0c6789cbe4   # batsfjord: the same player as another unidentified name
+1080f25678d181d9  = d18e991db0052549   # asker: the same player as another unidentified name
+ac2aa6ee6dfbdab4  = 4c07bf78798c387f   # asker: the same player as another unidentified name
+7b22d29d14b61724  = d18017dfe89ce05b   # haugerud: the same player as another unidentified name
+cb78f37426a9d7de  = 1c5c8e021e6553d6   # asker: the same player as another unidentified name
+ad321e61e5ae1a67  = 9e2c1269ca8746f4   # frogner: the same player as another unidentified name
+e20b846390f5ebdb  = 849d2a1c162f9f91   # no club given: the same player as another unidentified name
+44fd8d41ab635ec4  = 8e8285ba59254834   # no club given: the same player as another unidentified name
+9537663a4dde0608  = 8440023eb49ffab9   # horten: the same player as another unidentified name
+1879cbab65f48d31  = 77fa23e2bce3f3b8   # horten: the same player as another unidentified name
+d17795b4bee871f4  22220                # drammen: same
+a75ea46c78d30236  = d17795b4bee871f4   # no club given: the same player as another unidentified name
+142745cc5cddbca9  = b13d318803d2e541   # haugerud: the same player as another unidentified name
+dd241f0d16f6ea38  = b99ec10c43ce87bc   # haugerud: the same player as another unidentified name
+197846733d9ecdb0  17095                # djerv: same
+a5c478d637afd645  = d8ad00f2c42bccaf   # bergen: the same player as another unidentified name
+54a09f12f6679187  = b2f8fa71ace6b411   # bergen: the same player as another unidentified name
+e57958f965669c38  = 82bbb17e8a2a05e4   # askoy: the same player as another unidentified name
+5f16d3beaf7f1e11  = e1b2dddadb94baa2   # bergen: the same player as another unidentified name
+e522da9a209690eb  = 2dbc4a9512944d3a   # bergen: the same player as another unidentified name
+aaab3ba5b8cd33ac  = 2dbc4a9512944d3a   # bergen: the same player as another unidentified name
+588efb1a85b68be9  = 8d6639c1f7802a79   # bergen: the same player as another unidentified name
+4783f8f523a46f4f  = 8df9e3787ecf23af   # bergen: the same player as another unidentified name
+645a28e5ab7b56f0  = 8df9e3787ecf23af   # bergen: the same player as another unidentified name
+bc3656d6badaa22d  = 08cd35a715124aee   # askoy: the same player as another unidentified name
+ff595576b18008f3  = 42a9cc7cffc3e2a2   # askoy: the same player as another unidentified name
+245e76672ee38eb7  = abbc0f32cf2b1fd8   # askoy: the same player as another unidentified name
+8af83e1d12672107  = abbc0f32cf2b1fd8   # askoy: the same player as another unidentified name
+f42be18064f4ccdc  = 6d1e82be7584ce90   # bsi: the same player as another unidentified name
+22ee186ee9febec1  = 06d96e3b02ce46ed   # bsi: the same player as another unidentified name
+8c5559696d7b0449  = ac4a5f341e0509f8   # bsi: the same player as another unidentified name
+bc41c08ed5659a1e  = 007d07155aba240e   # bsi: the same player as another unidentified name
+1beeaa595b350bb2  = f89863371c07b1c0   # bsi: the same player as another unidentified name
+6a8324f49d81308e  = 50f7927d5c219ba6   # bergen: the same player as another unidentified name
+9e9ddee1809071c2  21829                # bergen: subset
+16bf02ef44723791  = 9e9ddee1809071c2   # bergen: the same player as another unidentified name
+8681507c0c18b25b  = 664ed676d0966eca   # bergen: the same player as another unidentified name
+331cb1825c4b3955  = 4b4e562eb625e593   # askoy: the same player as another unidentified name
+2226100ceda46492  = ba3e91a510e1a237   # no club given: the same player as another unidentified name
+9e5b4bdf45b9a5aa  = c187a71ee159f896   # djerv: the same player as another unidentified name
+2e8e984a1853afbb  48937                # sotra: middle initial
+6504c5ef91a89882  = 5b08be034857f77c   # bsi: the same player as another unidentified name
+26db961317791ce2  = c94a98001004c962   # sweden: the same player as another unidentified name
+d5f3c6f46e99d4fa  = 08a64d4693725f0c   # sweden: the same player as another unidentified name
+1e76ca5e64a9016f  = 2c9fe273db7ff5e3   # poland: the same player as another unidentified name
+902dcc1826488172  = 834c5f09129e0103   # sweden: the same player as another unidentified name
+88a9f8644f473ba2  = d640b86a8840a083   # sweden: the same player as another unidentified name
+26523ecf21cd49f6  = a804ffaf04ebe555   # no club given: the same player as another unidentified name
+e0ed145414ebca1f  = a804ffaf04ebe555   # kirkenes: the same player as another unidentified name
+7e211372385eeb65  21127                # no club given: first name
+75e57619f5d73ba5  = a3aabfa782438f60   # batsfjord: the same player as another unidentified name
+c2cc947790a24126  = ade3d773590f9436   # batsfjord: the same player as another unidentified name
+2d275a0a093eae31  = 01614f49ebd07ad6   # no club given: the same player as another unidentified name
+5ef5858736e4fd35  = 2f8c261a463e0a9d   # no club given: the same player as another unidentified name
+56992d737e17e25e  = cb15b49358208661   # no club given: the same player as another unidentified name
+9b7c48f946dad74e  = cdfc471242153ed8   # no club given: the same player as another unidentified name
+05e6a47a47defdcb  = c77b2cbdf0ca7bdb   # russland monchegorsk: the same player as another unidentified name
+b7b68090b976f8c8  45863                # sverige: same
+b7b80faa9f10f722  17926                # hammerfest: same
+5d061d0ccad4e259  45858                # no club given: same
+576856d6bd15d1c4  = 106919f93637c21a   # batsfjord: the same player as another unidentified name
+45b969c6249d9bea  24010                # no club given: same
+b9be09f8c5b52b47  = 7ba0e52a9d2a53c8   # kirkenes: the same player as another unidentified name
+157ae51b1f8ccd6e  = b965d04cedd6c5f5   # russland monchegorsk: the same player as another unidentified name
+db261ff168488e95  = 200d2ddca1a0ca11   # russland arkhangelsk: the same player as another unidentified name
+1ea2e3817e5aeda0  = 121945d9575b9b69   # russland kovdor: the same player as another unidentified name
+1235112c5755c626  = 121945d9575b9b69   # russland kovdor: the same player as another unidentified name
+0a5aa44a7ae5cd17  = adf370978c845b9b   # russland monchegorsk: the same player as another unidentified name
+4ffe6387f401a1e5  = 782ca8ed8f7a93e1   # batsfjord: the same player as another unidentified name
+c72538a297c68601  = 782ca8ed8f7a93e1   # batsfjord: the same player as another unidentified name
+50c7b1ba1409d419  = b066a22297cc90c0   # kirkenes: the same player as another unidentified name
+d674b292693dd275  = 8cd738e1ec0501c3   # batsfjord: the same player as another unidentified name
+9d8e6d20118322ca  = c5de6c792a808507   # kirkenes: the same player as another unidentified name
+b2e805d71326e102  = 92602d33a6e51b4a   # kirkenes: the same player as another unidentified name
+a71145291ec45812  = c568f37c15b63209   # pillarguri: the same player as another unidentified name
+5be4eb0580af858e  = 9a0e29057bed5d01   # pillarguri: the same player as another unidentified name
+af6b11ca0700bddc  21380                # no club given: same
+3aa02a63785795a7  = b3439d893aa203c7   # pillarguri: the same player as another unidentified name
+4ce840e76d1cb641  = b3439d893aa203c7   # pillarguri: the same player as another unidentified name
+fef130523ff4e6d3  = b3439d893aa203c7   # pillarguri: the same player as another unidentified name
+162944d2c1e707eb  = b3439d893aa203c7   # pillarguri: the same player as another unidentified name
+08d252d7c8d686d8  = b3439d893aa203c7   # no club given: the same player as another unidentified name
+5fc6baa6cbb36426  = a697f6862fda8d4a   # pillarguri: the same player as another unidentified name
+951d55138fac8a34  = 95071ba26cd69ab9   # frogner: the same player as another unidentified name
+59cdd3d1d4b91d4c  = 9bef7797d162aa5d   # pillarguri: the same player as another unidentified name
+f0005fdbebd91d01  = ff62b94c5ca44bb5   # pillarguri: the same player as another unidentified name
+cbe8d63ed5395735  = b72e00edd0a294a1   # pillarguri: the same player as another unidentified name
+629ded1b4899a43e  = 26c746df1baf66e2   # pillarguri: the same player as another unidentified name
+627ae816289c8901  = 715fd19e4590a47a   # frogner: the same player as another unidentified name
+6f26f8a58f3e1134  23429                # hamar: same
+df719f9e9366bf9d  = a0eb48a5a33ba0b0   # no club given: the same player as another unidentified name
+b0b27ccdcbf08205  = 6469bd297aa0f361   # no club given: the same player as another unidentified name
+d5f082ce41bf09f7  23431                # hamar: same
+4df1ca3e661a210f  23430                # hamar: same
+418836c6c5adceb4  25268                # saedalen: same
+7a1d23738806f20a  25272                # saedalen: same
+3fe67346a4914144  23125                # sotra: same
+c8eff74374ae368a  = 923dd122beddc716   # kristiansand: the same player as another unidentified name
+4e7a93166dc9d35b  = 9c0ed27198d4b5e2   # haugerud: the same player as another unidentified name
+0e08ce62645b75bc  20039                # no club given: cut short
+6da5a5397bde18b5  = 0e08ce62645b75bc   # no club given: the same player as another unidentified name
+ec7ab22129c9fc90  = 9943107c7c02de29   # bergen: the same player as another unidentified name
+18a32a29199387c3  = 4638ba14faf9348d   # pillarguri: the same player as another unidentified name
+b460b33d04b40610  = 2d65f21a84cdd4d6   # bygdo: the same player as another unidentified name
+3437d696127db9be  22985                # kristiansand: superset
+98e1a06fb6767a09  = 9f5ac0cbdd18aadf   # mandal: the same player as another unidentified name
+1635031e471635c5  = 9f5ac0cbdd18aadf   # mandal: the same player as another unidentified name
+b816376e701f600e  = aa22c262a2a03b1c   # kristiansand: the same player as another unidentified name
+c17e1d0a0070f3e9  = ba14fb9af8249a50   # kristiansand: the same player as another unidentified name
+8e58a89b581d6387  = aa51c3998653e960   # kolvereid: the same player as another unidentified name
+ed2cfa71b0bcf3ce  = aa51c3998653e960   # kolvereid: the same player as another unidentified name
+9e4726ed086744ab  = b03d0a1edce51fd9   # kolvereid: the same player as another unidentified name
+de57b3b3c445eb70  21467                # rorvik: same
+4524a4a63b2dc579  = 4e4ed7383b20a7c2   # klaebu: the same player as another unidentified name
+5cc7bb0bf7ee7249  = a740578b56e0dbcc   # klaebu: the same player as another unidentified name
+7e4357cbc7292722  = 58941d2625019b50   # kolvereid: the same player as another unidentified name
+eb9efc0e925b4ca9  = 106c842f5ab21ac2   # kolvereid: the same player as another unidentified name
+9e9328f9cc787d5f  = e105053f94d6b66d   # grong: the same player as another unidentified name
+790905830deea674  = c8e5ce85dfb79628   # kolvereid: the same player as another unidentified name
+258565a09a0fc0fd  = a347a0265e5ee86f   # verdal: the same player as another unidentified name
+3c970ff96636c09e  = de579c139c2a8259   # verdal: the same player as another unidentified name
+8f3d3e2e09619c4e  = 70e864e88dbe4d7c   # orkanger: the same player as another unidentified name
+9d05c6ae7462eb7c  22278                # no club given: subset
+506bba6a0c84eacf  = e684b3d0a8335717   # russland arkhangelsk: the same player as another unidentified name
+9f8346ddf4cd1030  = 3136ba4f2c3be8a5   # russland monchegorsk: the same player as another unidentified name
+b3433e815b5dacef  = 78ae27dcc4339905   # russland monchegorsk: the same player as another unidentified name
+61f592f80b3c8d1a  = 78ae27dcc4339905   # russland monchegorsk: the same player as another unidentified name
+567b365b0c9e549a  = 78ae27dcc4339905   # russland monchegorsk: the same player as another unidentified name
+761612251c0eb826  = b205f77e8b3ba564   # batsfjord: the same player as another unidentified name
+625d68bcc99afef2  = d0663668b3c22839   # russland monchegorsk: the same player as another unidentified name
+6660551e7d4852db  = 659d3b7c5ed84768   # ganddal: the same player as another unidentified name
+bdc1a9411765b938  = 659d3b7c5ed84768   # ganddal: the same player as another unidentified name
+b0847e946171afe8  = 659d3b7c5ed84768   # brodd: the same player as another unidentified name
+737e8cdc3c604d96  = cf93dc1c65e8fcd1   # brodd: the same player as another unidentified name
+4b4a7805016660fb  = 40b94d63b6d8da4f   # brodd: the same player as another unidentified name
+a333c7872f4fe9ca  38582                # brodd: initials
+7b5c8dd7f4863126  = 7174d7fe41f8ab5a   # mandal: the same player as another unidentified name
+c52b5d2e7f31dde0  19887                # brodd: initials
+7f271387383f6ee5  20604                # brodd: initials
+8a6f1fa96bf50e2c  = 831e6d8806898f4f   # brodd: the same player as another unidentified name
+6bb748c8813ac908  = 0dd607fbc3b36a97   # brodd: the same player as another unidentified name
+1c90523e5fa21c94  = 4778627e6b8c7eff   # stavanger: the same player as another unidentified name
+f731721b2b6c4935  = f4ceecae31c11123   # brodd: the same player as another unidentified name
+021af98893dcf303  = 0214004a9c6cda75   # ganddal: the same player as another unidentified name
+779d3b193a46d343  = 09f846340e686e33   # brodd: the same player as another unidentified name
+c7730b4bfa8db9a2  = e5c76812face6e15   # no club given: the same player as another unidentified name
+ff68d057a53550de  = e1d4f27b5b23f438   # stavanger: the same player as another unidentified name
+306b71fedf2b80d3  = 64cd878e41f325b7   # stavanger: the same player as another unidentified name
+2f16322141d4a90f  = 1fcc107495e23be0   # brodd: the same player as another unidentified name
+45a8a3454bed5a2b  = 38d424dcff6e10c6   # stavanger: the same player as another unidentified name
+efc9ec62569df4cc  = 6a01e6aab3c525e8   # stavanger: the same player as another unidentified name
+cb6e53ad22406d0d  = 834227b97dbf61c0   # brodd: the same player as another unidentified name
+8e07b1370b4ef73a  = 7872937ce694155a   # stavanger: the same player as another unidentified name
+cc5b85104d94fd32  = 880d4eebb976d888   # stavanger: the same player as another unidentified name
+b269bd9e2df3930b  = 74c8e0719ff5fa25   # jorpeland: the same player as another unidentified name
+a74d4dad1e76ffdc  = 5bcd7a3cfdd76032   # stavanger: the same player as another unidentified name
+909219463c7e922b  = 9a527059d5c6f955   # brodd: the same player as another unidentified name
+d95c90f52a7cbbd7  = 2b7adffb022c0cca   # brodd: the same player as another unidentified name
+fa8c7a12d03c2fab  = f8459e7ec4415780   # brodd: the same player as another unidentified name
+ba932b857def5789  = e6ba9a8acfcb22bd   # brodd: the same player as another unidentified name
+1d2bd3c3c4320ec5  = 3f3ff0f9992d7884   # no club given: the same player as another unidentified name
+bdbe4ed1817a2416  = 29f60b0d852c3fd5   # mandal: the same player as another unidentified name
+3718e7b5c9a6e719  17350                # no club given: cut short
+2dbc240e955bd466  = 8f19439b6770c92d   # stavanger: the same player as another unidentified name
+fe4eaa130a9c734f  = 7294622570932596   # ganddal: the same player as another unidentified name
+85890aaaee903f27  = 7294622570932596   # ganddal: the same player as another unidentified name
+ef8c328628302e2e  = 7294622570932596   # brodd: the same player as another unidentified name
+bef611a19bfc0911  = 7294622570932596   # brodd: the same player as another unidentified name
+c993799c03709a77  24821                # no club given: same
+eea294ac47adf937  23761                # sola: same
+b17cce73833d272b  = ee9f3f5949c722b0   # no club given: the same player as another unidentified name
+d1587b235c02f160  = 1c4cffef245e00c5   # kristiansand: the same player as another unidentified name
+1f65f545ab39d5d0  = 6a930c48771e7713   # stavanger: the same player as another unidentified name
+5722a2f4ac1fc6b9  = 16e3dc74bb6b0210   # brodd: the same player as another unidentified name
+b334efbd7677a766  = 8028e7147b879a55   # mandal: the same player as another unidentified name
+94edd5fb33c9a1ab  = 185555c856a5a9ba   # stavanger: the same player as another unidentified name
+a7418224af209ae6  = 185555c856a5a9ba   # stavanger: the same player as another unidentified name
+8a7134ce4d14b0c0  = 185555c856a5a9ba   # stavanger: the same player as another unidentified name
+0ea7d4c284d00756  = 70d25e3fd8cf4288   # kristiansand: the same player as another unidentified name
+2a2e9a3716d0d27b  = a955f6851573a6b1   # kristiansand: the same player as another unidentified name
+38ccce5fed5fe284  26744                # baerum: same
+4e95cf1bcaa65707  = d8b084aa67bd8ead   # kristiansand: the same player as another unidentified name
+b0dd3ea81ebcbc38  = 5502472cc865015e   # kristiansand: the same player as another unidentified name
+c681c95750ff98c1  = 5502472cc865015e   # no club given: the same player as another unidentified name
+2bb1bb776029b57d  = 6f554f00c8e0d7d5   # horten: the same player as another unidentified name
+2c588766b8120835  = 231b870d9ad1afd0   # no club given: the same player as another unidentified name
+10a8e55b1f088d3c  19474                # ganddal: initials
+e14e6745f9f250bb  20418                # brodd: initials
+e409bf180855eeb6  20419                # brodd: initials
+3f5fbb3f066a56c0  = 7002ae46b3996e0e   # brodd: the same player as another unidentified name
+0d0b56e936b58db7  = 0c2a913ad3e71116   # stavanger: the same player as another unidentified name
+e6fcdc961b6fdee6  = e9319ebb7ca6f43d   # stavanger: the same player as another unidentified name
+4bb1eae89f2c602a  20431                # brodd: initials
+42d065de2295f262  = b1ef2f8f9187f78e   # stavanger: the same player as another unidentified name
+50b5b1f9372796c8  = 982c90fe033da9c0   # horten: the same player as another unidentified name
+62fddcf707568bc3  = 4bbaa2a5f4dd679d   # askoy: the same player as another unidentified name
+13d5486e29d67bed  = 8788894a7daab3b3   # askoy: the same player as another unidentified name
+4de8924c3298df11  = 20b2cfad2674a82e   # bergen: the same player as another unidentified name
+a2aa4e65c5d70624  = 1fc52b2cb5e3bb5a   # bergen: the same player as another unidentified name
+ef99ed4b0af8a433  = 1a4294131b884564   # bergen: the same player as another unidentified name
+fb8517b61fe8ceab  = deb100ab80d80670   # bergen: the same player as another unidentified name
+ece29f3e5cc6776e  = 5f749a7d5d7a3ba0   # bergen: the same player as another unidentified name
+e3b2ad87acf2e290  = bfbb4f6aedf7d327   # askoy: the same player as another unidentified name
+85859bb57e5919df  = 600112db42cf4385   # bergen: the same player as another unidentified name
+cd6e83f0d6913786  = 14499e6daded01ee   # bergen: the same player as another unidentified name
+2abce8235076328e  = b743355ab10895ff   # bergen: the same player as another unidentified name
+0f563ceeff218975  17134                # il ros: same
+7f43832873cf5013  = 92944c7740c14426   # horten: the same player as another unidentified name
+da5a31828272674f  22817                # rykkinn: reversed
+b5aa73b663cdb7aa  = 91c36abd2268997f   # no club given: the same player as another unidentified name
+0cdd941e59dd312a  = 74c5f724ed91ff54   # sandefjord: the same player as another unidentified name
+001570db17ca64af  = 74c5f724ed91ff54   # sandefjord: the same player as another unidentified name
+4ff7d2efae880593  = 4a7cbb4a88cecdd0   # no club given: the same player as another unidentified name
+f737e6a76b3fe9b6  20306                # drobak: same
+9c0faf88ca878d97  = f737e6a76b3fe9b6   # no club given: the same player as another unidentified name
+1ea87d80793490eb  = 0fceb46bcb29b241   # no club given: the same player as another unidentified name
+1065debe3c426ff8  = 8ef72237c3c0af4f   # haugerud: the same player as another unidentified name
+0cce8ee0ea618636  20547                # berlevag: same
+4318dd0a9d8733c8  = 5185e124cdd60b03   # leksvik: the same player as another unidentified name
+965d54dfcff9fba8  = cb02e782df300df6   # leksvik: the same player as another unidentified name
+a13b04eb4ed52d82  = 2a2129b7bd9fa4b6   # rissa: the same player as another unidentified name
+ada7fc0c43fc161b  = fa1161844333c26b   # rissa: the same player as another unidentified name
+a0a07fa762b41501  = fa1161844333c26b   # rissa: the same player as another unidentified name
+da3e822818352319  = 3f93974551cde9b9   # rissa: the same player as another unidentified name
+0f6a2f202e705338  = 4f9157c262465e98   # leksvik: the same player as another unidentified name
+adbb434021d06e6c  = 34c1bbaa06915b81   # leksvik: the same player as another unidentified name
+7027713afa9e359c  = 3a3db14f347f0853   # klaebu: the same player as another unidentified name
+af0c41e190e07bc9  = 1c76e2fa21bee713   # rissa: the same player as another unidentified name
+1ce0c15ced81fb4f  = 21561206a1d6758e   # rissa: the same player as another unidentified name
+c078a18939e56c5d  = 96a48289723086c9   # leksvik: the same player as another unidentified name
+03dedc76a6e73efd  = 7942ea560aa1bebe   # orkanger: the same player as another unidentified name
+77b0233f18249320  = f6c33152f10d1404   # leksvik: the same player as another unidentified name
+a4adfde7a03d0bbf  = a19b114941ef5866   # orkanger: the same player as another unidentified name
+40e6182f2bc6d8c7  = e8cf479522767c3b   # rissa: the same player as another unidentified name
+b36ee712cf52c337  = 2ccb7aa4b1f0dbb3   # klaebu: the same player as another unidentified name
+780837f3d5137858  = df99919427d5adee   # leksvik: the same player as another unidentified name
+ec343588f6a63246  = 11152940a73a4c7d   # leksvik: the same player as another unidentified name
+5c9b731e737c6b50  = f8fb74b3b7c4c8b2   # leksvik: the same player as another unidentified name
+a25c4e32fae2d31f  = 15473d299301c172   # rissa: the same player as another unidentified name
+b82ecd2e2f7ac60e  = 15473d299301c172   # rissa: the same player as another unidentified name
+6e53d36b4cc07ba9  = f299da757dadfcd0   # leksvik: the same player as another unidentified name
+6ccbd27221f9348b  = 113577e56a2465dc   # leksvik: the same player as another unidentified name
+13546cafaa2dde26  = 113577e56a2465dc   # leksvik: the same player as another unidentified name
+85ff9b87386d10e0  = 113577e56a2465dc   # leksvik: the same player as another unidentified name
+317343622a60ab4f  = 12f7b84921c4910d   # orkanger: the same player as another unidentified name
+1e20b2060ce68e1b  = d3a751359df6cb37   # no club given: the same player as another unidentified name
+0bd43a63f3295142  = e56b6d4c34bd7df8   # no club given: the same player as another unidentified name
+b097f461027d38c1  = 9f02ad35d0493760   # no club given: the same player as another unidentified name
+b40f6699da2cfcaa  = c3420431f0b1f1b5   # klaebu: the same player as another unidentified name
+bb674a5db4a0c241  = 5133da4d7344639e   # no club given: the same player as another unidentified name
+fde4120309eccd31  = 30bdc7173c16410d   # klaebu: the same player as another unidentified name
+b7f0f03cf4f6bade  = 7af45f46cadb35d6   # klaebu: the same player as another unidentified name
+8fd1b18a21610224  = e4578b71c85bea10   # klaebu: the same player as another unidentified name
+6b4fdd58478e34d9  = 61f3bcc53901c67c   # leksvik: the same player as another unidentified name
+73eae0b436a2efb9  = 5eabff58073f0066   # no club given: the same player as another unidentified name
+3ce2fefb48e68434  = 22ebd285e55c88fe   # klaebu: the same player as another unidentified name
+49d586f8920682f7  21036                # rykkinn: initials
+1d0f15d4aff04088  = 800b1ab6cd07c74a   # haugerud: the same player as another unidentified name
+5365d3ccd3b27400  42798                # fjellhamar: first name
+c49d17bb97a6aca9  = aa07b3f3b079744c   # grimstad: the same player as another unidentified name
+d54369fbd2b4c8ef  = 777b530203a80211   # haugerud: the same player as another unidentified name
+622d60798baad8e0  = a4a47493940f40da   # ulleval: the same player as another unidentified name
+fe5f4144768bd32f  = 23c690b476b4027c   # ulleval: the same player as another unidentified name
+bcfd2b7c95ba7177  = dfe7a9364f666e42   # ulleval: the same player as another unidentified name
+b6b4f3733408477a  = bf9004c076a40adf   # bygdo: the same player as another unidentified name
+085ac247690f3c5d  = 49a48149840a405a   # bygdo: the same player as another unidentified name
+1f65c39032fbe2ae  21383                # vestre aker: initials
+74826d6f8b741a0d  = 71dad0006fcc9f72   # frogner: the same player as another unidentified name
+a456bf506c7417fe  20188                # frogner: initials
+76de7de56a4e976b  = a2fbdcee3aaccc62   # pillarguri: the same player as another unidentified name
+7b7b839309ec513f  = ab3f405e2b2d84d1   # nordbyhagen: the same player as another unidentified name
+d8c221b04e0b2480  22178                # no club given: cut short
+2755d91fdd781b6e  = d78b6c50a871c39c   # unknown: the same player as another unidentified name
+20dcf2482bdc2cac  24035                # vestre aker: same
+83b379f35f343e22  24926                # asker: same
+eb5f37ad794e0fe5  = bc9a8cf3bda528c2   # frogner: the same player as another unidentified name
+d5ab03710a137deb  = 98d7c13890ba8ee5   # rykkinn: the same player as another unidentified name
+62e0c8fc841f25a7  = 5ab93f9fecaf7382   # haugerud: the same player as another unidentified name
+99e348b2048dcb50  = 0f20ff7a48ad4d11   # frogner: the same player as another unidentified name
+d8483900a41583d8  = 47de4b15d56c70a3   # frogner: the same player as another unidentified name
+36560ae992314e40  = 0220efebb5de104b   # frogner: the same player as another unidentified name
+4579f81669599aac  = 76dad49e4c662044   # haugerud: the same player as another unidentified name
+f6af10243e0c6b80  20857                # bygdo: superset
+37c62dd2749c9162  20486                # sandefjord: same
+7f5b0879729ff61f  = 07b5c2a46ffdb61c   # frogner: the same player as another unidentified name
+5852ab889d47a627  18469                # bygdo: initials
+6ff04ea67f9ba362  = c514f81ca82b5978   # horten: the same player as another unidentified name
+0953782a80b6fa61  20485                # frogner: same
+ebd48c5898a2cd49  = 080c04d016654714   # no club given: the same player as another unidentified name
+032861c32d48890c  = 13b40ced5c283a57   # kristiansand: the same player as another unidentified name
+f624d84a42e17b47  = e3740173d0ecce0a   # kristiansand: the same player as another unidentified name
+86ac6cdc0706017e  = c3361884b1e72606   # frogner: the same player as another unidentified name
+35a6aad7aae5bf8d  = 2f87b7d1759c7ca6   # pillarguri: the same player as another unidentified name
+22655f15771ea664  = f7a0174067e377a1   # trondheim: the same player as another unidentified name
+e097437c8d949c73  = fa7648e7bcfa88a3   # leksvik: the same player as another unidentified name
+832db2418c67ab06  = 501f82c69447e823   # leksvik: the same player as another unidentified name
+6be052acdd3fdf11  = 501f82c69447e823   # leksvik: the same player as another unidentified name
+1d2a7d7b883fcf50  = fca3a81cdf65cded   # leksvik: the same player as another unidentified name
+482dec581c4008dc  = 6cd8932acf98bf57   # leksvik: the same player as another unidentified name
+54e47a6d917740b2  = 408f9555b722721e   # leksvik: the same player as another unidentified name
+dae6cb65278a14fe  = 620c555802606dcf   # leksvik: the same player as another unidentified name
+1dcc731bf0ff64fd  49077                # no club given: same
+ec14fff94387925f  22554                # no club given: same
+c68d99d1ef92ab93  = 12d13b331258e012   # pillarguri: the same player as another unidentified name
+f6ed1b4c3ef5030c  = 67a4c7e4828e7110   # pillarguri: the same player as another unidentified name
+48a113dfd1ffb8a0  = 67a4c7e4828e7110   # pillarguri: the same player as another unidentified name
+d93789d04f65e380  = 67a4c7e4828e7110   # pillarguri: the same player as another unidentified name
+56b3ebacc639a4bb  = 3c7e5cc4163bdbfe   # pillarguri: the same player as another unidentified name
+2a3bd8b41b3fa8f2  = bf29584fe6d7049f   # pillarguri: the same player as another unidentified name
+90d3166d54ca92c8  19578                # hamar: initials
+9dcc199002f9635f  50968                # nordbyhagen: initials
+5c4b9e29f51fd029  = b0e7d3b8632ecf9c   # bergen: the same player as another unidentified name
+3df758813f3ab797  = 10c83fbf6dda7cf8   # haugesund: the same player as another unidentified name
+05b0f14467b981b0  = 4babde11b311ed58   # haugesund: the same player as another unidentified name
+44bdeccc37196250  17739                # karmoy: initials
+4011d335b581c30c  = e346c17b01cb2ed5   # haugesund: the same player as another unidentified name
+94eb3199551a43db  = 1a4375b5aba30ace   # haugesund: the same player as another unidentified name
+7391f82f3c36aa3c  = 9b3556dd3df5d798   # pillarguri: the same player as another unidentified name
+4116660ccd4a60f3  = 487e0b8c79b342e4   # osi: the same player as another unidentified name
+39b4bc18a9dd302a  17204                # no club given: first name
+2679585564550fc5  = 7641915eba74f1ea   # sandnessjoen: the same player as another unidentified name
+daa2e49e438b2a4b  = c8633cb50e8b8a76   # sandnessjoen: the same player as another unidentified name
+29437ba93bc86ec5  = 5d04d44b655c7a06   # sandnessjoen: the same player as another unidentified name
+962d411b06bbb067  47255                # sandnessjoen: subset
+f732e6981a8a4527  = 7ee3915d0c407aca   # sandnessjoen: the same player as another unidentified name
+225bc80f74d849e2  = 20aa45abe3bd254f   # kolvereid: the same player as another unidentified name
+95263d1dbe8895be  = cd7464762632c2ef   # kristiansand: the same player as another unidentified name
+acfd6524ecc19634  44702                # grimstad: same
+4872065b0fa115f4  = 0634abe23f0b5f0e   # russland kirovsk: the same player as another unidentified name
+71d6f6ae9f3db196  = 7c48a41f03967729   # russland arkhangelsk: the same player as another unidentified name
+5a65e25f4320e92b  = 40c34f84b0f20e3d   # russland arkhangelsk: the same player as another unidentified name
+be9707fa87a0d7d8  = 594b4f5d66bb282d   # batsfjord: the same player as another unidentified name
+c908357f83a7146f  = c9b1f08adc83ce34   # haugesund: the same player as another unidentified name
+83a3b87559e7834a  = 3dac7a22b0b7894a   # haugesund: the same player as another unidentified name
+316c65824592d705  = fd0d2bd82e5eb8fe   # haugesund: the same player as another unidentified name
+9ec15ccfea86e615  = 98f1eb372ef8df1d   # haugesund: the same player as another unidentified name
+deca64fb021080f1  = fd4c91009cdddcfa   # haugesund: the same player as another unidentified name
+a9f8ebaaf82f39bc  = bc8167d2789a98fb   # haugesund: the same player as another unidentified name
+8ac3245dcacafed6  = b16a21d6efeb807d   # haugesund: the same player as another unidentified name
+6e6318b1ca01dab8  = 7b3f63003e03ecb2   # no club given: the same player as another unidentified name
+e5512c06233bfe07  = 5afc0305e5e79cca   # no club given: the same player as another unidentified name
+d6d6cc20a41ebb15  21415                # porsgrunn: same
+3ad669d9016b1bfa  = 386f952e4cfc995f   # alesund: the same player as another unidentified name
+3d09dc6147688a24  = 409f4ecac6f5108c   # ostersund: the same player as another unidentified name
+21cbe4c568917bc0  = d26fdd15baf1ef44   # sverige bmk boston: the same player as another unidentified name
+65b081a1893e7ecc  = 88304342f1aa415f   # orkanger: the same player as another unidentified name
+37a7e4e5b6a98e33  = 57b9b2a22d0b17e2   # ostersund: the same player as another unidentified name
+39e05f570649ad29  = e8b0fad2636e6cf5   # leksvik: the same player as another unidentified name
+b710fbda38d2334d  = 2bbd23e9749eba1b   # alesund: the same player as another unidentified name
+56f181e15bcef06b  = 21bbd8f39357c0eb   # bergen: the same player as another unidentified name
+5a0eafb834ceb702  17413                # no club given: subset
+8aa78ea880f00210  17204                # kristiansand: same
+f388ab13072d151e  44690                # kristiansand: superset
+8a50afccd43ba367  = f388ab13072d151e   # kristiansand: the same player as another unidentified name
+06d69e12600e005e  = dbfccc31f4850fdc   # alesund: the same player as another unidentified name
+f285a9e486d507f9  = 6f22c4bf8a9b6924   # kristiansand: the same player as another unidentified name
+cc236e3f08a85a1f  = 469c11cbc0b21b81   # kristiansand: the same player as another unidentified name
+832320d2d2d40258  = c377c07103fb26d3   # no club given: the same player as another unidentified name
+002ecf2000faebc8  = d5c13327b146e688   # kolvereid: the same player as another unidentified name
+7502ea8c53e915d2  = 141643ced497c638   # kolvereid: the same player as another unidentified name
+cb80dd208ffdc71a  = af42fd2018f921d0   # kolvereid: the same player as another unidentified name
+0653b4d518712062  = afe7873de4f42f90   # kolvereid: the same player as another unidentified name
+ec45e94b5036cc66  = 8b78be198bd539c6   # kolvereid: the same player as another unidentified name
+d672d4624f5910df  = 4eb4d64350539225   # stavanger: the same player as another unidentified name
+604271b8edb652f9  = 8a136b664db6a183   # karmoy: the same player as another unidentified name
+0fb05e8bf2338523  = 385bbf7946018f99   # stavanger: the same player as another unidentified name
+588560c8f9133aa5  = db731fb78617cb60   # stavanger: the same player as another unidentified name
+7e51f4511854f161  = a5276a6cf35ec885   # mandal: the same player as another unidentified name
+7165486e345120be  = f7b7e2682acbe2b4   # brodd: the same player as another unidentified name
+fce0ae01e77a3f51  = 9f79c9c4d0bfd14e   # sykkylven: the same player as another unidentified name
+cb667a2d7b56c892  = db276c851bd06cf3   # alesund: the same player as another unidentified name
+00653614929bb13e  = c892b1b373de15a8   # pillarguri: the same player as another unidentified name
+bbc11e41814eb393  20876                # no club given: cut short
+22d1cf536d810351  = ed37594d9dea02d4   # grimstad: the same player as another unidentified name
+a00ffb8c2dd40369  = 7c2c5d4e79e61491   # gbk: the same player as another unidentified name
+5e8fd6cf2668b27c  25356                # leksvik: superset
+cd0365597134fb79  = c4dabeead4cf4964   # pillarguri: the same player as another unidentified name
+12669df09d758670  = c4dabeead4cf4964   # pillarguri: the same player as another unidentified name
+d4733d184f26c862  = cb17631cee9e9588   # hadsel: the same player as another unidentified name
+4ae4847f5bbce1a5  22833                # rana: same
+060536e4eeb8fab5  = 4ae4847f5bbce1a5   # rana: the same player as another unidentified name
+c65128513e1869c5  = 9b1dfaa42e66c37e   # bygdo: the same player as another unidentified name
+dc40bda80aa183e7  22065                # no club given: cut short
+0e69a7a610b1c653  = efc74cd9eff6074d   # kolvereid: the same player as another unidentified name
+ed2d37ea3a9e6bd6  21181                # bygdo: reversed
+98e29497944f4386  = ed2d37ea3a9e6bd6   # bygdo: the same player as another unidentified name
+0d2a060392a87919  = 7f5f22a34424f29f   # vestre aker: the same player as another unidentified name
+981f5db90606c0de  21489                # vestre aker: initials
+04645542dfc51795  19729                # vestre aker: same
+0a204cce12d02605  18373                # myrvoll i l badminton: same
+cc4f339cedda4398  22596                # abc: initials
+5ff4c1ba1dd74b75  25253                # no club given: same
+f28b06d88de18814  = 65a74524f0339feb   # verdal: the same player as another unidentified name
+f98dcfbbaf455a8b  = a826f606a04957ec   # haugesund: the same player as another unidentified name
+e959cc0472d4a70a  = df1232c66b62d93a   # haugesund: the same player as another unidentified name
+fa7960b8974f2034  = a8684ad1f8393b66   # haugesund: the same player as another unidentified name
+2389d360979701b5  = 190c59bb5ed7c48c   # haugesund: the same player as another unidentified name
+f4f347dfd2b8b8e1  = bcf734466db5d673   # haugesund: the same player as another unidentified name
+d3894f475a3f1c96  = ef9222f7be045151   # haugesund: the same player as another unidentified name
+3077a8fb0226738b  = 1f088b1a91a9183b   # haugesund: the same player as another unidentified name
+c6c74642df2a1d1f  = f1618ca0a9cfcaf8   # haugesund: the same player as another unidentified name
+5722e7f2573cfc8e  49636                # leksvik: subset
+207e6f75865b441f  = c9d8b9a7af0468c3   # kristiansand: the same player as another unidentified name
+6964f51bc53fc6f2  = 6f68d78a24af86b8   # no club given: the same player as another unidentified name
+d40b2a85467ea3af  = 99e7d9c40f57e773   # no club given: the same player as another unidentified name
+127680816669274d  = ef50c6cfe135defa   # no club given: the same player as another unidentified name
+5b229da8623a7d1f  20619                # no club given: cut short
+a9df112f8c67228e  21166                # heroy: same
+75380ce78238afe2  20962                # sandnessjoen: same
+d90396923820976b  20232                # sandnessjoen: same
+d68f6cbb2d4fcc1b  19837                # heroy: same
+debefebe1b9b0cbd  = 5b770c0846ad16b4   # nesna: the same player as another unidentified name
+576bd7ee47b4acc8  21142                # nesna: same
+50cd8aa58b678e97  20239                # sandnessjoen: same
+8e48afec928079fa  23355                # heroy: same
+e77414b748f6e109  20901                # nesna: same
+05631b6fcf170bba  25182                # heroy: same
+4a3e07919b4d4b65  18612                # sandnessjoen: same
+0a8f57773bda54ed  19902                # kolvereid: same
+0143d1e9a2014fdd  20032                # no club given: same
+ec18daf170a020ff  20798                # mehamn: same
+3dfd083360201816  = ec18daf170a020ff   # mehamn: the same player as another unidentified name
+6b22e722d38c18ba  = cd538f8145a9dbe1   # verdal: the same player as another unidentified name
+4015f3b2b807cfc2  = 30066da7974c2e2b   # verdal: the same player as another unidentified name
+00dc8fc723b60adb  = 3444fbd929aabaa0   # verdal: the same player as another unidentified name
+9dda270002efe5c1  24367                # no club given: same
+54fb70a3552130fc  = 9c959c36f9526a06   # slagen: the same player as another unidentified name
+d38acfc31c150570  50775                # default: initials
+5f453607a57ce35a  = 376f6c4e6290778e   # gbk: the same player as another unidentified name
+a925cbf669b1b3e5  19289                # leksvik: initials
+a6cdc3ff0cafe3ef  19516                # bygdo: initials
+2faf066e76a0ad4b  22063                # frogner: same
+bfcc3d4010d456bf  = 1d05971c3db7bb47   # verdal: the same player as another unidentified name
+e5f922713491c1d9  = 8f07e0e1678e1821   # osi: the same player as another unidentified name
+8629bc629fabf75f  = 7311caad719b8690   # sverige bmk boston: the same player as another unidentified name
+6a8f812d7a948373  = 0c70833f2017ba9a   # sverige bmk boston: the same player as another unidentified name
+96a6e0b3bb859d35  = 94b8995b09234111   # sverige bmk boston: the same player as another unidentified name
+0eea306b719ad665  = 69dfeb5b826c0bcf   # sverige bmk boston: the same player as another unidentified name
+57248c0caa2aea81  = 427743d5b0765288   # sverige bmk boston: the same player as another unidentified name
+912bd2b8c2015a8c  = 50cc5bb821288c7a   # sverige bmk boston: the same player as another unidentified name
+e3871fdcfc0aeb91  = 9a5675b9c1da8872   # sverige bmk boston: the same player as another unidentified name
+3ca1dd1c42cca836  20218                # heroy: same
+a78f2d3b40d27366  = 889d89d2090fc358   # sverige bmk boston: the same player as another unidentified name
+c5c73811a28c79ae  = 02dd75687435df3d   # sverige bmk boston: the same player as another unidentified name
+4de503790ba779e8  = 820d08d00c11eb2b   # sverige bmk boston: the same player as another unidentified name
+2c9a49f8edbc22ce  = 29c5e2ae8dce2326   # sverige bmk boston: the same player as another unidentified name
+51249dac51cb3666  = 0db929f978caa9e6   # sverige bmk boston: the same player as another unidentified name
+87af895b28f94c50  = f7cb088a897346a3   # sverige bmk boston: the same player as another unidentified name
+825b0e8cac2c4d24  = 646357309e8662b1   # sverige bmk boston: the same player as another unidentified name
+d811d6f0da97e66b  = 2079cc90a7601aeb   # sverige bmk boston: the same player as another unidentified name
+5cde75af68a005af  = 2d8bbab00b849cb6   # sverige bmk boston: the same player as another unidentified name
+1e388bd5a4c145f6  = cbb982524f487505   # sverige bmk boston: the same player as another unidentified name
+3e948f852c8ae28d  = fbbee3937e35020b   # sverige bmk boston: the same player as another unidentified name
+bea01448a2c5d91e  = 31a46c65e4cb247f   # sverige bmk boston: the same player as another unidentified name
+aac404dbf5543067  = c936bf1c71392620   # sverige bmk boston: the same player as another unidentified name
+60c507fa95bce201  = 5cdc25324a6237f4   # sverige bmk boston: the same player as another unidentified name
+cc8239114716288a  = 92e1b659f5b91caf   # sandnessjoen: the same player as another unidentified name
+7dfea68445689f73  = d962ce64b53e14d3   # asker: the same player as another unidentified name
+df63dbd0b3322998  23631                # no club given: same
+3f98dd44d111c49a  = 7aac1adb3d2aff55   # bygdo: the same player as another unidentified name
+6fc449cca6b8c894  = 4a54bf16a55be1db   # bygdo: the same player as another unidentified name
+88f1bd125a5c3a9f  = d825e160b3647167   # bygdo: the same player as another unidentified name
+df0c0284da03b1ee  = f7f73986dbcb37e7   # grimstad: the same player as another unidentified name
+e6dbde6c96cc4c9b  = f7965dfeb95d9552   # bygdo: the same player as another unidentified name
+346d3958432fab0d  = 7802ab4ebf8417d7   # bergen: the same player as another unidentified name
+9288313b32a0c306  = a27870e31ec6ac3e   # kolvereid: the same player as another unidentified name
+8b853dd8a703d2f4  = fae575666242ebcf   # kolvereid: the same player as another unidentified name
+9aa1048881ef6c10  = ff651a886399b180   # klaebu: the same player as another unidentified name
+215e2b0e84605eed  = 219ca00b4a2691a6   # kolvereid: the same player as another unidentified name
+0daa5da3823ccaf6  = cce9be7890c79046   # kolvereid: the same player as another unidentified name
+3e6b5c1edc29fc7d  = 8236a745e544b090   # bsi: the same player as another unidentified name
+591e550b3c96b59c  = 1bfef78f0e929f65   # bsi: the same player as another unidentified name
+7de1b922bf01d0ef  = 47d957ffa1c46874   # bergen: the same player as another unidentified name
+9acfdd65be299a28  = 1f728ee68d8da3d0   # no club given: the same player as another unidentified name
+8a35dc21cba51bcb  18731                # no club given: cut short
+16bd9d913c7049e4  = 39fd7950a8c58326   # alesund: the same player as another unidentified name
+758b71686efcc2ae  20694                # fron: same
+da219fa308a8a695  20695                # fron: same
+ce0b6b4d2e989857  19231                # fron: same
+9feda3d1f61b12e4  19294                # trondheim: same
+1d74df935a9ce987  = 615a3dbd41cbefd6   # horg: the same player as another unidentified name
+5407bdf8c9049046  19915                # horg: first name
+5e213043a9adb7da  = 1561e7413186a8c2   # leksvik: the same player as another unidentified name
+b24999e950170366  = 397f37a4399701e1   # pillarguri: the same player as another unidentified name
+5493881651d022aa  = cf20f6cf37cf8b0c   # pillarguri: the same player as another unidentified name
+1d9388833310c362  = 59cea60d7a49be99   # pillarguri: the same player as another unidentified name
+d54bde026ca05a38  = 168490b8c0f3b1c2   # pillarguri: the same player as another unidentified name
+3e24c26f2356b55f  = 78c97485a8b539ce   # pillarguri: the same player as another unidentified name
+7fd52b719c3ab0a9  = 81b2ced96a94a957   # pillarguri: the same player as another unidentified name
+808bf7d879d9e844  = 753ba9e9d6324b5f   # pillarguri: the same player as another unidentified name
+de199371fb006af2  = 384730c036f802ac   # pillarguri: the same player as another unidentified name
+8eeec6504bece468  20279                # hamar: initials
+fa8241b8ad33a7c5  18546                # by: initials
+feaa18ff8d841611  20057                # by: initials
+eb53b8d2ec7b46ca  19470                # kirkenes: same
+9b39835f9f026fc7  20987                # leksvik: same
+6786e0060d780398  = 9b39835f9f026fc7   # leksvik: the same player as another unidentified name
+ce4308edc6f59c59  18733                # pillarguri: initials
+ff228755b20f8893  25028                # bodo: same
+b5137b732443410f  25032                # bodo: same
+065bc4f5b5729cf5  50862                # no club given: same
+b5e5b1724004b609  = b1911832c65d21dc   # leksvik: the same player as another unidentified name
+2d985918aaa54118  = 95cf8e268610d353   # leksvik: the same player as another unidentified name
+819c7da4947495a7  = a85a215b300ca76f   # rissa: the same player as another unidentified name
+c6b2e3da989dc486  24129                # no club given: same
+f37d45c618d01515  17576                # Sandefjord: a typo (by the owner)
+019a515a5a690bd7  24619                # vestre aker: same
+440a88401620bd52  = f864b3b4b35d00fb   # slagen: the same player as another unidentified name
+f1ac3f61baafd132  45409                # no club given: superset
+39901349fd971862  = 9f6e4f641390c7a4   # sykkylven: the same player as another unidentified name
+0334f6cf558b86f3  = 3eb6d0b3ad627c7e   # kristiansand: the same player as another unidentified name
+b0e65fdab86034c4  20847                # bygdo: initials
+9216416c70bd8b78  = 6d4e5ee1776387ff   # slagen: the same player as another unidentified name
+af3032c7cc384492  = d129ce4d7c98f6dd   # kristiansand: the same player as another unidentified name
+52f13ca94fbdf79d  = aa60e0bbb62726c3   # slagen: the same player as another unidentified name
+4692155f3f622168  = 13f826a2e182bffa   # slagen: the same player as another unidentified name
+fe531e80fce682a9  20809                # rykkinn: initials
+49a7f492f82cee4d  = 1d93420be77b87b4   # no club given: the same player as another unidentified name
+29dab2fff8a69b64  = 345f1c3044138617   # no club given: the same player as another unidentified name
+a73716303037b3e3  24021                # no club given: middle initial
+29bfc3454045b46f  = 1db3486b45efadc3   # grimstad: the same player as another unidentified name
+4bc7475308cf6d58  23053                # ntnui: reversed
+8c64dbb9645f0a88  = 4bc7475308cf6d58   # no club given: the same player as another unidentified name
+8779516be0aceae0  17793                # no club given: same
+83c1061b00438ba8  23045                # ntnui: initials
+8489c2b04c9a3a86  21783                # ntnui: same
+8a25f190a501ce55  = cf69d8d55cc5a264   # kristiansand: the same player as another unidentified name
+10df32ff0a0765da  19566                # no club given: cut short
+c68d3392ffdab1bb  22112                # no club given: cut short
+8f50492e29b34a85  20371                # no club given: cut short
+8dbed2305031dd23  19061                # no club given: cut short
+3faf669d8ea98386  20038                # no club given: cut short
+719fed4966d90f85  20307                # no club given: subset
+3eae8650ecf38438  = 5f64c220c5e0b4d7   # brodd: the same player as another unidentified name
+463abba922deed05  = c113fa2b23e3f18f   # stavanger: the same player as another unidentified name
+a2d60cbee2b451bc  17164                # brodd: same
+99c171760122025b  = 9316c6533ff191c6   # verdal: the same player as another unidentified name
+c43b43f9760b4640  = 22f215b47768dafb   # verdal: the same player as another unidentified name
+4602aece264e0d7e  19370                # karmoy: same
+b1743724dda3eb07  = 4602aece264e0d7e   # karmoy: the same player as another unidentified name
+2554d39cb339cbee  = 3dfdc9dcb0c9c437   # bygdo: the same player as another unidentified name
+a57a845a831e0067  = 82d0487357f4fe48   # sykkylven: the same player as another unidentified name
+0c072e878a6d202b  = 2c3d34d82dbe4f92   # porsgrunn: the same player as another unidentified name
+a4220d975a763bc5  = 7dc7340f3623f3d6   # alesund: the same player as another unidentified name
+149d635e9a9a45df  = 1a533243d9de3df7   # alesund: the same player as another unidentified name
+774dd058275da142  = 62fdb4dcf8444c2c   # grimstad: the same player as another unidentified name
+5607f791f10fd921  22717                # myrvoll: initials
+c2148c845e6a2028  46327                # brodd: subset
+e9230d9c8fba77cb  18722                # Frogner: a later surname (by the owner)
+2deb7b06d1bb2ea8  24973                # Russia, Kirovsk: another spelling (by the owner)
+b317bacbfffa8adc  24973                # Russia, Kirovsk: another spelling (by the owner)
+36cbedff4c1d3fbf  24973                # Russia, Kirovsk: another spelling (by the owner)
+
+# Initials identified in no tournament, whose full name is identified as one player in the same club
+03b8d66daec7cf1c  = 253a7deb1f125ad3   # myrvoll: initials of an identified name
+d373f700d1885499  = a6b43c8021d89414   # chbs sv: initials of an identified name
+ac40bf46fcbdfd51  = 34f0e04c7a8c50e5   # moss: initials of an identified name
+251f38187c030052  = fe2df1c82cc54da8   # haugerud: initials of an identified name
+b54d86b3ff4bcfcf  = 80caf6cd46c30ff7   # tromso: initials of an identified name
+89d0bfb095f3caea  = 0ceeba93ccd029e8   # bergen: initials of an identified name
+a6e79c607857e57d  = 8a56e453668ffc1c   # bergen: initials of an identified name
+ed7a4b32a36438e5  = 4e6cc41f01ebfd7b   # verdal: initials of an identified name
+80907e2177efcb89  = 823ce4c8db8d9ad6   # mehamn: initials of an identified name
+769aee53fb7d3f8e  = 963c1e376e9a2831   # mehamn: initials of an identified name
+fe77e6a4b53447e3  = 8f153483fec9fffb   # batsfjord: initials of an identified name
+0486746d98a9a27b  = fa474c965703dc1d   # batsfjord: initials of an identified name
+625d68bcc99afef2  = 4f9cf0f768a18c84   # russland monchegorsk: initials of an identified name
+55bb51347759331c  = 2cbffb4384a654b8   # brodd: initials of an identified name
+4e88b653c681abb9  = 878a86af762faf3f   # bygdo: initials of an identified name
+057e1ae285003462  = 5bee15993fb764b5   # stavanger: initials of an identified name
+5028799b5983bc55  = 6f26e98faae839c0   # stavanger: initials of an identified name
+ae59883a459c6e3b  = 281d68c31013f15e   # bergen: initials of an identified name
+66ac47255323283a  = fd34634585e00296   # leksvik: initials of an identified name
+5e567117887d5b42  = 16e784f598d88547   # trondheim: initials of an identified name
+fb95047a8b9e921d  = a55fb69a0c495858   # slagen: initials of an identified name
+e8b3e8f66b8e48ef  = d3d7c339dac07ca3   # myrvoll: initials of an identified name
+280b546922dba1af  = 5d1045385c98cb13   # myrvoll: initials of an identified name
+ee3553919e3abfef  = 902ad948eed9be07   # frogner: initials of an identified name
+f9931f59131fed7e  = 639067f307d0f852   # haugerud: initials of an identified name
+d3cb2f5f73bad954  = 37c62dd2749c9162   # sandefjord: initials of an identified name
+29ff3b30e3957171  = 31c0655a65b4a368   # bygdo: initials of an identified name
+526433226cc4f7a2  = c7ef042ebbf55188   # frogner: initials of an identified name
+085716fde5301732  = ed507de46d9f50f3   # kolvereid: initials of an identified name
+a82de0054246786b  = 8417957eba51b62e   # asker: initials of an identified name
+347809857e9387c0  = 2bcc42f83c495811   # stavanger: initials of an identified name
+0fe65db3886b0814  = 7d6da52f66293d19   # vestre aker: initials of an identified name
+bcda61748d6a70e9  = 6140ea68f78e1150   # chbs sv: initials of an identified name
+cb8d31078aa35ac0  = 8d71bda43cdf74bf   # norborg: initials of an identified name
+0a605ccf533c3cb1  = 5529532b8b802980   # sverige bmk boston: initials of an identified name
+4c43281bfa6a86f2  = 4ab88dcb27ed9e03   # sverige bmk boston: initials of an identified name
+3f46a52696893c5c  = 61e5196019ef1f5b   # grong: initials of an identified name
+a0cd15223ed2daac  = 95f16c8a5dece09b   # rorvik: initials of an identified name
+59bbda0ac7dad5eb  = b508aa6ec7755c58   # rorvik: initials of an identified name
+89d0fb83cf2ac7d9  = 3d126a084e119464   # sandnessjoen: initials of an identified name
+4c43281bfa6a86f2  = 4ab88dcb27ed9e03   # sverige bmk boston: initials of an identified name
+0a605ccf533c3cb1  = 5529532b8b802980   # sverige bmk boston: initials of an identified name
+38f19403d6ef2f8c  = e2a76dc521197364   # klaebu: initials of an identified name
+f4a55bf5227a7cc5  = 06f28ee67f8c6c57   # rana: initials of an identified name
+8e98254038d4c5c7  = b1eda47025c1ef35   # sandefjord: initials of an identified name
+e97e74d526d513c5  = 881a863372ca3023   # heroy: initials of an identified name
+d5d33d4d501839bc  = 9cfc6162c57ec997   # ntnui: initials of an identified name
+37d8306963561543  = 2a9e9f10372db20f   # kolvereid: initials of an identified name
+4ae17be0f6358233  = 00dd86bc50221a62   # grong: initials of an identified name
+21b6cd3ba76eda1d  = 378d2ce669dcbf93   # rorvik: initials of an identified name
+b598d9814c8b5210  = eeb444243c20dca7   # kolvereid: initials of an identified name
+e929638a521bbe99  = 3e8b5c5bcd62e761   # hard: initials of an identified name
+487d81e69319b996  = bfffcfd126925f75   # alesund: initials of an identified name
+
+# By the owner (2026-11-22)
+4d3be8db419ead83  22823                # Vestre Aker: a later surname
+c187a71ee159f896  22113                # Djerv: a typo
+440303e2931a7af9  24216                # Bergen: a typo
+76bc60aee86046fd  24216                # Bergen: a typo, cut short
+f48dd41eef9eca45  24075                # Sandnessjøen: the name cut short
+06748694ddc87187  19588                # Stavanger: a typo
+74c8e0719ff5fa25  19588                # Brodd: C/K
+705c19ea2a6f1b73  23853                # Bergen: the name cut short

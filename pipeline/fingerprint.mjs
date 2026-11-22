@@ -4,7 +4,7 @@
 //
 // results: the fetched results (tournaments, team matches, the matches played so far in
 // tournaments being played, from their draws: cup2000-results.mjs, and Profixio's tournaments of
-// 2010-2014: fetch-profixio.mjs), the official ranking, the
+// 2007-2014: fetch-profixio.mjs), the official ranking, the
 // player register, clubs and birth years, and the pipeline itself (code, corrections, rosters).
 // draws: the tournament draws from Cup2000 (data/upcoming/raw) and the ranking lists they're seeded
 // by (data/ranking/seeding/<version>, upcoming.mjs).

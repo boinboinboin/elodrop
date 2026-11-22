@@ -272,3 +272,51 @@
 45508 != 46834
 45554 != 50668
 48422 != 48420
+
+# Found matching Profixio's players (2026-11-22): the same name, birth year and club, registered twice
+17164  18316                    # Stavanger, no results, Stavanger, no results
+45863  17320                    # Sverige 2019-2019, Sverige 2015-2017
+17095  17493                    # Djerv 2013-2013, Djerv, no results
+49077  17559                    # Sverige 2023-2023, Sverige, no results
+44702  17753                    # Grimstad 2018-2018, Grimstad 2014-2017
+17926  18294                    # Hammerfest, no results, Hammerfest, no results
+17204  18031                    # Kristiansand 2014-2017, Kristiansand, no results
+18373  22545                    # NTNUI, no results, Oppegård BK, no results
+50862  20206                    # Bodø 2025-2025, Bodø, no results
+20218  23829                    # Herøy, no results, Herøy, no results
+20306  21270                    # Drøbak, no results, Drøbak, no results
+20485  21826                    # Frogner, no results, Frogner, no results
+20486  20831                    # Sandefjord, no results, Sandefjord, no results
+20547  21565                    # Berlevåg, no results, Berlevåg, no results
+20798  20639                    # Mehamn 2014-2014, Mehamn, no results
+21380  21427                    # Frogner, no results, Frogner, no results
+21415  24574                    # Porsgrunn 2015-2019, Porsgrunn, no results
+21463  23500                    # Rørvik 2014-2015, Rørvik, no results
+21467  21481                    # Rørvik, no results, Rørvik, no results
+21783  24864                    # NTNUI, no results, NTNUI, no results
+22063  22327                    # Frogner, no results, Frogner, no results
+22220  22223  22224             # Drammen, no results, Drammen, no results, Drammen, no results
+22554  17560                    # Noklubb, no results, Sverige, no results
+22833  23139                    # Rana, no results, Rana, no results
+43732  22994                    # Trondheim 2017-2022, Sortland BK, no results
+23045  23057                    # NTNUI, no results, NTNUI, no results
+23125  17137                    # Sotra 2013-2013, Sotra, no results
+23207  23226                    # Berlevåg, no results, Berlevåg, no results
+23429  23511                    # Hamar, no results, Hamar, no results
+23430  23512                    # Hamar, no results, Hamar, no results
+23431  23513                    # Hamar, no results, Hamar, no results
+23761  24050                    # Sola, no results, Sola, no results
+45858  24009                    # Sverige 2019-2023, Noklubb, no results
+24010  17561                    # Noklubb, no results, Sverige, no results
+24035  24037                    # Vestre Aker, no results, Vestre Aker, no results
+24097  24334                    # Frogner, no results, Frogner, no results
+24129  24714                    # Grong, no results, Rørvik, no results
+24619  24626                    # Vestre Aker, no results, Vestre Aker, no results
+24821  24944                    # Sola, no results, Sola, no results
+24926  25105                    # Asker, no results, Asker, no results
+25028  25031                    # Bodø, no results, Bodø, no results
+25032  25029                    # Bodø 2015-2015, Bodø, no results
+26744  25076                    # Bærum 2014-2014, Bærum 2013-2013
+25253  25254                    # Tynset, no results, Tynset, no results
+25268  17631  17632             # Sædalen, no results, Sædalen, no results, Sædalen, no results
+25272  25300                    # Sædalen, no results, Sædalen, no results

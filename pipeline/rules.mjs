@@ -79,7 +79,7 @@ export const startRating = ({ tier }, pool) =>
 // times as many) above their class's start rating, at most at P0: their first class says less about
 // them, and they were underrated.
 export const FOREIGN_START_BONUS = 100;
-// Players new in a Profixio tournament (2010-2014) start the same way: those tournaments were
+// Players new in a Profixio tournament (2007-2014) start the same way: those tournaments were
 // regional, so a first class there says less too (BENCHMARK.md, "Profixio tournaments")
 export const PROFIXIO_START_BONUS = 200;
 

@@ -402,7 +402,7 @@ On the games of returning players rated 1650+ before the break (364 in singles, 
 
 ## Profixio tournaments (2010–2014)
 
-The tournaments of 2010 to spring 2014 on Profixio (7,743 matches, mostly regional; see the [README](README.md#profixio-tournaments-20102014)) were added in v1.39.0. Run with the current rules on every badmintonportalen game, and scored on the same games from 2014/15 on (242,536), the change in log loss when the Profixio matches are rated before them (thousandths, 95% interval, clustered by tournament and tie as above):
+The tournaments of 2010 to spring 2014 on Profixio (7,743 matches, mostly regional; see the [README](README.md#profixio-tournaments-20072014)) were added in v1.39.0. Run with the current rules on every badmintonportalen game, and scored on the same games from 2014/15 on (242,536), the change in log loss when the Profixio matches are rated before them (thousandths, 95% interval, clustered by tournament and tie as above):
 
 | Games | Log loss without | Only matches with every player identified | Every match (adopted) |
 | --- | ---: | ---: | ---: |

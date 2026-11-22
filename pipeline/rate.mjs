@@ -4,7 +4,7 @@
 //
 // Reads data/portalen/*.json, data/league/*.json, the matches played so far in tournaments not
 // yet on badmintonportalen from their Cup2000 draws (cup2000-results.mjs), and the tournaments of
-// 2010 to 2014 from Profixio (data/profixio/*.json, fetch-profixio.mjs), whose players are identified
+// 2007 to 2014 from Profixio (data/profixio/*.json, fetch-profixio.mjs), whose players are identified
 // on every run (profixio-players.mjs). Players not identified there are rated, but have no page.
 // Writes data/ratings.json (current ratings and strongest clubs per pool), data/ratings-weekly.json and
 // data/history/<id>.json (each player's rating at the end of every week, for history graphs), and
@@ -405,7 +405,7 @@ let regionOf;
 // A club's regional association (after collectGames), or null for foreign clubs and combined teams
 export const clubRegion = (club) => regionOf?.(club) ?? null;
 
-// The tournaments of 2010 to 2014 from Profixio (fetch-profixio.mjs), with their players identified
+// The tournaments of 2007 to 2014 from Profixio (fetch-profixio.mjs), with their players identified
 // (profixio-players.mjs). A player not identified is one player per name, with a negative id (from
 // the name's hash): rated, as their results count for everyone they met, but without a page
 // (`anonymous`). For testing, PROFIXIO=off leaves the tournaments out and PROFIXIO=identified keeps
@@ -501,7 +501,7 @@ const RETURN_MATCHES = 5;
 // side's rating change is shared between the partners), levelWeight(level), juniorK(level) (or a number for every junior match),
 // marginWeight(sets, s, game), crossRegionK, minRating(pool) (no rating, start or after a match, goes
 // below it), foreignBonus (null: foreign players start at their class's start), profixioBonus (the
-// same for players new in a Profixio tournament, 2010-2014), doublesPull
+// same for players new in a Profixio tournament, 2007-2014), doublesPull
 // (null: off), homeAdvantage(game) (rating points added to side 1, the home team in league ties),
 // afterMatch(player, game, players) (after each match's update) and ratingPeriod(game) (a key: games
 // with the same key are rated from the ratings before the first and updated together). inactivity.floor

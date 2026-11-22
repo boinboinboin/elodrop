@@ -236,7 +236,7 @@ export const PLAYER_RULES = {
 };
 
 /**
- * The results the rules use: every tournament on badmintonportalen, and Profixio's of 2010-2014 with their players
+ * The results the rules use: every tournament on badmintonportalen, and Profixio's of 2007-2014 with their players
  * identified as for the ratings (rate.mjs; players without a page have negative ids, and earn nothing shown), each with
  * its event winners; and the weekly upsets
  */
