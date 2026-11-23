@@ -11,7 +11,7 @@ import NavigationProgress from "@/components/layout/NavigationProgress";
 import { PublishedOnly, type WrittenPageKey } from "@/components/layout/PublishedPages";
 import SearchBar from "@/components/layout/SearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
-import { CaretDown } from "@/components/SVG";
+import { CaretDown, Instagram } from "@/components/SVG";
 import UpdatedAt from "@/components/layout/UpdatedAt";
 import Badge from "@/components/ui/Badge";
 import ExternalLink from "@/components/ui/ExternalLink";
@@ -19,6 +19,7 @@ import Link from "@/components/ui/Link";
 import { getI18n } from "@/messages/server";
 import { ACCOUNTS } from "@/utils/account";
 import { copyrightYears, getReleases } from "@/utils/changelog";
+import { INSTAGRAM_URL } from "@/utils/hrefs";
 
 const FOOTER_LINK = "link-underlined hover:text-black";
 const VERSION = getReleases()[0]?.version;
@@ -120,6 +121,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
               );
               return l.page ? <PublishedOnly key={l.href} page={l.page}>{link}</PublishedOnly> : link;
             })}
+            {/* The site's Instagram, at the row's end (on the last line when it wraps); its icon says where it goes, so
+                it goes without the External icon. In a new tab, as on the front page */}
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener" className="link-host hover:text-black ml-auto inline-flex items-center gap-1.5">
+              <Instagram />
+              <span className="link-group">Instagram</span>
+            </a>
           </nav>
           <p>
             {rich("layout.footer.sources", {

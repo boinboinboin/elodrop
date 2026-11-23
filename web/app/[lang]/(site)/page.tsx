@@ -2,7 +2,7 @@
 // (components/home). The rankings, the front page until this one, are at /rankings.
 // Fully static: rendered once per data update.
 import type { Metadata } from "next";
-import { ArrowRight } from "@/components/SVG";
+import { ArrowRight, Instagram } from "@/components/SVG";
 import FollowingCard from "@/components/account/FollowingCard";
 import SignUpCard from "@/components/account/SignUpCard";
 import { HowItWorksGlimpse, WhatsNewGlimpse } from "@/components/home/AboutGlimpses";
@@ -12,13 +12,14 @@ import JsonLd from "@/components/seo/JsonLd";
 import Link from "@/components/ui/Link";
 import Section from "@/components/ui/Section";
 import ShareButtons from "@/components/ui/ShareButtons";
-import { BUTTON, TEXT_LINK } from "@/components/ui/styles";
+import { BUTTON, ICON_BUTTON, TEXT_LINK } from "@/components/ui/styles";
 import SiteStats from "@/components/content/SiteStats";
 import { getSiteNumbers, SITE_NUMBERS } from "@/data/siteNumbers";
 import { getI18n } from "@/messages/server";
 import { PALETTE, SIDE_COLORS } from "@/utils/chart";
 import { LAUNCH_YEAR } from "@/utils/changelog";
 import { absoluteUrl, pageMetadata } from "@/utils/metadata";
+import { INSTAGRAM_URL } from "@/utils/hrefs";
 import { hyphenate } from "@/utils/hyphenate";
 
 // Each card's colour: the first five chart colours, which are apart in every pair, and head to head
@@ -71,9 +72,12 @@ export default async function Home() {
             {t("home.toRankings")} <ArrowRight />
           </Link>
           <Link href="/how-it-works" className={TEXT_LINK}>{t("home.howItWorksLink")}</Link>
-          {/* The site's preview image and sharing, at the end of the row */}
-          <div className="ml-auto">
+          {/* The site's preview image and sharing, then its Instagram (an icon button like them), at the end of the row */}
+          <div className="ml-auto flex gap-2">
             <ShareButtons path="/" image="/opengraph-image" title={t("seo.homeTitle")} kind="site" />
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener" aria-label={t("common.share.instagram")} title={t("common.share.instagram")} className={ICON_BUTTON}>
+              <Instagram className="text-xl" />
+            </a>
           </div>
         </div>
       </Section>

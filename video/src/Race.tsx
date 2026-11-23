@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { AbsoluteFill, Img, Sequence, continueRender, delayRender, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { Mark } from "./Logo";
 import { Outro } from "./Outro";
+import { TITLE_OUT_SECONDS, TITLE_SECONDS, TitleCard } from "./TitleCard";
 
 export const LISTS = {
   men: "Herresingle",
@@ -33,7 +35,7 @@ export type RaceProps = {
   list: keyof typeof LISTS;
   /** The first week shown (a date; the week ending on or after it) */
   from: string;
-  /** Video frames per week (30 fps): 11 is a week in about 0.37 s, about 6 minutes from autumn 2008 */
+  /** Video frames per week (30 fps): 5 is a week in about 0.17 s, about 2¾ minutes from autumn 2009 */
   framesPerWeek: number;
   data: RaceData | null;
 };
@@ -43,7 +45,6 @@ const COLORS = ["#3061d8", "#ca5956", "#129495", "#a7951e", "#e761cc", "#008300"
 const INK = "#111827";
 const MUTED = "#6b7280";
 const GRID = "#e7e5e4";
-const ACCENT = "#f97316";
 const ROWS = 10;
 // Weeks either side averaged for the axis, so it glides instead of jumping with each result
 const AXIS_SMOOTHING = 12;
@@ -61,12 +62,16 @@ const HOLD_SECONDS = 5;
 const FADE_SECONDS = 0.8;
 const OUTRO_SECONDS = 4.5;
 
-/** The first week shown, and the frames of the race (to the end of settling), the outro's start and the whole video */
+/**
+ * The first week shown; the frames of the title card (the race starts as it has faded); and, counted from the race's
+ * start, the frames of the race (to the end of settling) and the outro's start; and the whole video's frames
+ */
 export function timeline(data: RaceData, { from, framesPerWeek }: Pick<RaceProps, "from" | "framesPerWeek">, fps: number) {
   const start = Math.max(0, data.weeks.findIndex((w) => w >= from));
+  const intro = Math.round((TITLE_SECONDS + TITLE_OUT_SECONDS) * fps);
   const race = Math.ceil((data.weeks.length - 1 - start + SETTLE_WEEKS) * framesPerWeek);
   const outro = race + Math.round(HOLD_SECONDS * fps);
-  return { start, race, outro, total: outro + Math.round((FADE_SECONDS + OUTRO_SECONDS) * fps) };
+  return { start, intro, race, outro, total: intro + outro + Math.round((FADE_SECONDS + OUTRO_SECONDS) * fps) };
 }
 
 // Text width in the video's font, to fit a name into its bar
@@ -95,22 +100,6 @@ function useFont() {
   });
 }
 
-/** The elodrop mark (web/utils/logo.ts): white on a black rounded square */
-function Mark({ size }: { size: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32">
-      <clipPath id="square">
-        <rect width="32" height="32" rx="7" />
-      </clipPath>
-      <rect width="32" height="32" rx="7" fill="#000" />
-      <g clipPath="url(#square)">
-        <path d="M-1 9H3L6.4 12.8L9 11L12.4 14.6L14.2 17.4H21.8L25.2 11.6H33" fill="none" stroke="#fff" strokeWidth="2.6" strokeLinejoin="round" />
-        <path d="M14.6 19.6V22A3.4 3.4 0 0 0 21.4 22V19.6Z" fill={ACCENT} />
-      </g>
-    </svg>
-  );
-}
-
 function ClubLogo({ club, logo, size }: { club: string; logo?: string; size: number }) {
   const box = { width: size, height: size, borderRadius: size / 2, flexShrink: 0, background: "#fff", border: `2px solid ${GRID}` };
   if (logo)
@@ -134,12 +123,13 @@ function niceStep(range: number) {
 
 export function Race({ data, from, framesPerWeek }: RaceProps) {
   useFont();
-  const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
   const d = data!;
   const last = d.weeks.length - 1;
   const times = timeline(d, { from, framesPerWeek }, fps);
   const start = times.start;
+  // The race's own frame: it waits on its first week under the title card
+  const frame = Math.max(0, useCurrentFrame() - times.intro);
 
   // Per week: the 10th's and the leader's rating, smoothed for the axis
   const axis = useMemo(() => {
@@ -332,12 +322,16 @@ export function Race({ data, from, framesPerWeek }: RaceProps) {
         <div style={{ fontSize: portrait ? 48 : 40, fontWeight: 700 }}>elodrop.no</div>
       </div>
       {/* The ending: after the hold, the logo animation fades in over the final standings */}
-      <Sequence from={times.outro}>
+      <Sequence from={times.intro + times.outro}>
         <AbsoluteFill style={{ opacity: interpolate(frame - times.outro, [0, FADE_SECONDS * fps], [0, 1], { extrapolateRight: "clamp" }) }}>
           <Sequence from={Math.round(FADE_SECONDS * fps * 0.6)}>
             <Outro />
           </Sequence>
         </AbsoluteFill>
+      </Sequence>
+      {/* The opening, over the race's first week */}
+      <Sequence durationInFrames={times.intro}>
+        <TitleCard title={LISTS[d.list]} years={`${d.weeks[start].slice(0, 4)}–${d.weeks[last].slice(0, 4)}`} />
       </Sequence>
     </AbsoluteFill>
   );

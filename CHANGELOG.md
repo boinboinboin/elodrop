@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.6 (2026-11-23)
+
+- Elodrop is on Instagram: linked in the footer, and with a button beside the share buttons on the front page.
+
 ## v1.39.5 (2026-11-23)
 
 - Clubs written as abbreviations in the 2008–2014 tournaments now show their full names in players' club history: Frog is Frogner, Kr Kristiansand, By Bygdø, Sand Sandefjord and GBK Grimstad, and players from abroad show their country (Danmark (GUG), Malaysia, Sverige (chbs)). One more player is identified because of it (Hans-Christian Martinsen in a 2011 tournament), which moves a few ratings slightly.

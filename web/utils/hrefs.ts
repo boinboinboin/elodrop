@@ -44,3 +44,5 @@ export const doublesHeadToHeadHref = ([a1, a2]: number[], [b1, b2]: number[], po
 /** The site's code on GitHub, or a file in it ("pipeline/README.md") */
 export const REPO_URL = "https://github.com/boinboinboin/elodrop";
 export const repoHref = (path: string) => `${REPO_URL}/blob/main/${path}`;
+/** The site's Instagram (the footer, the front page) */
+export const INSTAGRAM_URL = "https://www.instagram.com/elo.drop/";
