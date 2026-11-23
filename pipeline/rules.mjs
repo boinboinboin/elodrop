@@ -80,8 +80,8 @@ export const startRating = ({ tier }, pool) =>
 // them, and they were underrated.
 export const FOREIGN_START_BONUS = 100;
 // Players new in a Profixio tournament (2007-2014) start the same way: those tournaments were
-// regional, so a first class there says less too (BENCHMARK.md, "Profixio tournaments")
-export const PROFIXIO_START_BONUS = 200;
+// regional, so a first class there says less too (BENCHMARK.md, "Profixio tournaments" and round 10)
+export const PROFIXIO_START_BONUS = 300;
 
 // Games between players from clubs in different regional associations (kretser) count
 // this many times more, so isolated regions are calibrated against the rest faster.
@@ -103,6 +103,14 @@ export function tournamentLevel(className) {
   else if (age === "U13") tier = ax ? 4 : letter === "B" ? 5 : 6;
   else if (age === "U11") tier = letter === "A" ? 5 : 6;
   return { tier, junior };
+}
+
+// A Profixio tournament's class (2007-2014). Its junior classes are often written without a letter
+// ("U15", mostly before 2010): the age group's main class, beside a beginners' class ("U15 N"), read
+// as B (BENCHMARK.md, round 10: better than the lowest level, which an unknown class gets, or A)
+export function profixioLevel(className) {
+  const name = className.trim();
+  return tournamentLevel(/^U\d+$/.test(name) ? `${name} B` : name);
 }
 
 // Team league game: age group, division name (free text) and game code ("1. HS", "2. DS", ...).
@@ -311,11 +319,12 @@ export const penaltyDays = (from, to) => weightedDays(from, to, COVID, (p) => p.
 
 // Not playing penalty. After `graceDays` without playing, the part of the rating above
 // `floor` decays: it halves every `halfLifeDays` (null = no penalty). Ratings at or below the
-// floor are not affected. Only top ratings (above 1850, in singles and doubles alike): top players
+// floor are not affected. Only top ratings (above 1750, in singles and doubles alike): top players
 // come back from a break somewhat worse than their rating, everyone else about as good or better,
-// so a penalty for everyone predicted worse (BENCHMARK.md, rounds 4-7 and round 9). Until v1.14.0
-// it was the part above P0 with a half-life of 3 years; none from v1.14.0 to v1.16.0.
-export const INACTIVITY = { graceDays: 365, halfLifeDays: 730, floor: 1850 };
+// so a penalty for everyone predicted worse (BENCHMARK.md, rounds 4-7 and round 9; the floor 1850
+// until round 10, which found 1650-1875 about the same, 1750 in the middle). Until v1.14.0 it was
+// the part above P0 with a half-life of 3 years; none from v1.14.0 to v1.16.0.
+export const INACTIVITY = { graceDays: 365, halfLifeDays: 730, floor: 1750 };
 
 // A player is active (ranked, and counted for their club's strength) while they have played within
 // this many days. During Covid-19 the time without playing counts slower: not at all from 2020-03-18

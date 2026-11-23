@@ -129,6 +129,11 @@ export interface Split extends Record3 {
   matches: number;
   perf: number;
 }
+/** Team matches, tournaments, or one tournament class (`cls`, as written: "SEN A", "U17 A"), and how the member does there */
+export interface Strength extends Split {
+  key: "teamMatches" | "tournaments" | "class";
+  cls?: string;
+}
 /** A doubles or mixed partner and how the two do together against expectation */
 export interface Chemistry extends Who, Split {
   kind: "doubles" | "mixed";
@@ -159,10 +164,10 @@ export interface Career {
   nemeses: Partner[];
   /** Matches whose last set was decided by 3 points or fewer */
   close: Record3;
-  /** Doubles and mixed partners (at least 5 matches together), with the most matches first, top 3 each */
+  /** Every doubles and mixed partner played with more than once, the best together first */
   chemistry: Chemistry[];
-  /** Team matches against tournaments, and the tournament classes (A–E), with at least 5 matches each */
-  strongest: (Split & { key: "teamMatches" | "tournaments" | RatingClass })[];
+  /** Team matches, tournaments and each tournament class as written ("SEN A", "U17 A"), each played more than once, the strongest first */
+  strongest: Strength[];
   /** The last 10 matches, newest first */
   form: { day: string; pool: Pool; result: number; opponents: Who[]; score: string }[];
 }
@@ -211,8 +216,12 @@ function split(matches: PoolMatch[]): Split {
   return { ...r, matches: matches.length, perf: matches.length ? Math.round((perf / matches.length) * 10) / 10 : 0 };
 }
 /** A tournament match's class letter, from its event ("… (SEN A)" → A) */
-const classLetter = (event: string) => (/\(([^()]+)\)\s*$/.exec(event)?.[1].match(/(?:^|\s)([A-E])$/)?.[1] as RatingClass | undefined) ?? null;
-const MIN_SPLIT = 5;
+/** A tournament match's class as written, from its event ("NM 2025 (SEN A)" → "SEN A"), spaces tidied */
+const classOfEvent = (event: string) => /\(([^()]+)\)\s*$/.exec(event)?.[1].trim().replace(/\s+/g, " ").toUpperCase() ?? null;
+/** A partner, a class, team matches or tournaments count for chemistry and strengths from this many matches (not one-offs) */
+const MIN_SPLIT = 2;
+/** Best first: how much better than expected, then the more matches */
+const byPerf = (a: Split, b: Split) => b.perf - a.perf || b.matches - a.matches;
 /** The Monday of a day's week */
 function monday(day: string): string {
   const d = new Date(`${day}T00:00:00Z`);
@@ -336,7 +345,7 @@ function career(matches: PoolMatch[]): Career {
     if (sets(m.score) >= 3) add(decider, m.result);
     if (isClose(m.score)) add(close, m.result);
   }
-  // Partners against expectation: per partner and kind, at least MIN_SPLIT matches, the most played first
+  // Partners against expectation: per partner and kind, every partner played with more than once, the best together first
   const chemistry: Chemistry[] = [];
   for (const kind of ["doubles", "mixed"] as const) {
     const byPartner = new Map<number | string, { id: number | null; name: string; list: PoolMatch[] }>();
@@ -349,19 +358,24 @@ function career(matches: PoolMatch[]): Career {
     chemistry.push(
       ...[...byPartner]
         .filter(([, p]) => p.list.length >= MIN_SPLIT)
-        .sort((a, b) => b[1].list.length - a[1].list.length)
-        .slice(0, TOP)
-        .map(([, p]) => ({ id: p.id, name: p.name, kind, ...split(p.list) })),
+        .map(([, p]) => ({ id: p.id, name: p.name, kind, ...split(p.list) }))
+        .sort(byPerf),
     );
   }
-  // Team matches against tournaments, and the tournament classes
-  const keyed = (key: Career["strongest"][number]["key"], list: PoolMatch[]) => ({ key, ...split(list) });
+  // Team matches against tournaments, and every tournament class as written: the strongest first
   const tournamentMatches = matches.filter((m) => m.key?.startsWith("T"));
-  const strongest = [
-    keyed("teamMatches", matches.filter((m) => m.key?.startsWith("L"))),
-    keyed("tournaments", tournamentMatches),
-    ...CLASSES.map((c) => keyed(c, tournamentMatches.filter((m) => classLetter(m.event) === c))),
-  ].filter((s) => s.matches >= MIN_SPLIT);
+  const byClass = new Map<string, PoolMatch[]>();
+  for (const m of tournamentMatches) {
+    const cls = classOfEvent(m.event);
+    if (cls) byClass.set(cls, [...(byClass.get(cls) ?? []), m]);
+  }
+  const strongest: Strength[] = [
+    { key: "teamMatches" as const, ...split(matches.filter((m) => m.key?.startsWith("L"))) },
+    { key: "tournaments" as const, ...split(tournamentMatches) },
+    ...[...byClass].map(([cls, list]) => ({ key: "class" as const, cls, ...split(list) })),
+  ]
+    .filter((s) => s.matches >= MIN_SPLIT)
+    .sort(byPerf);
   // Streaks over every discipline, oldest first
   let longest: Career["longestStreak"] = null;
   let run = 0;

@@ -5,7 +5,7 @@
 // events, partner, seed, group and chances), their recent weeks (each tournament and the team matches, with the
 // matches), a season in review (any season they played) and their career and form. Only what the player page doesn't
 // show already. Without a claimed player: a way to the Settings tab to choose who they are.
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import { SplitBar } from "@/components/head-to-head/SplitBar";
 import MatchTable from "@/components/players/MatchTable";
@@ -16,7 +16,7 @@ import StatCard from "@/components/ui/StatCard";
 import { BUTTON, TEXT_LINK, toggleClass } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { I18n } from "@/messages/i18n";
-import type { Chemistry, Dashboard, NextTournament, Partner, Record3, SeasonReview, Split, Standing, Week, Who } from "@/utils/dashboard";
+import type { Chemistry, Dashboard, NextTournament, Partner, Record3, SeasonReview, Standing, Strength, Week, Who } from "@/utils/dashboard";
 import { seasonLabel, toneClass } from "@/utils/format";
 import { headToHeadHref, playerHref, tournamentHref } from "@/utils/hrefs";
 import type { TournamentEvent } from "@/types";
@@ -529,7 +529,26 @@ function SeasonTournaments({ events }: { events: SeasonReview["events"] }) {
   );
 }
 
-/** Each partner's performance together against expectation */
+/** How many rows of a ranked list show at first; the rest open below */
+const SHOWN = 5;
+
+/** A ranked list's rows: the first SHOWN, then the rest in a disclosure, numbered on from them */
+function RankedRows<T>({ rows, row }: { rows: T[]; row: (item: T) => ReactNode }) {
+  const { t } = useI18n();
+  const rest = rows.slice(SHOWN);
+  return (
+    <>
+      <ol className="space-y-1">{rows.slice(0, SHOWN).map(row)}</ol>
+      {rest.length > 0 && (
+        <Disclosure summary={<span className="text-sm">{t("account.overview.career.showAll", { count: rows.length })}</span>} className="mt-1">
+          <ol start={SHOWN + 1} className="space-y-1 mt-1">{rest.map(row)}</ol>
+        </Disclosure>
+      )}
+    </>
+  );
+}
+
+/** Each partner's performance together against expectation, the best first */
 function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
   const { t } = useI18n();
   return (
@@ -540,8 +559,9 @@ function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
         return list.length ? (
           <div key={kind} className="mb-2 last:mb-0">
             <h4 className="text-xs uppercase text-gray-500">{t(`account.overview.career.chemistryKinds.${kind}`)}</h4>
-            <ol className="space-y-1">
-              {list.map((c) => (
+            <RankedRows
+              rows={list}
+              row={(c) => (
                 <li key={c.id ?? c.name} className="flex justify-between items-baseline gap-x-3">
                   <span className="min-w-0">
                     {c.id ? <Link href={playerHref(c.id)} className="link font-semibold hover:text-blue-600">{c.name}</Link> : <span className="font-semibold">{c.name}</span>}
@@ -549,8 +569,8 @@ function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
                   </span>
                   <Perf perf={c.perf} />
                 </li>
-              ))}
-            </ol>
+              )}
+            />
           </div>
         ) : null;
       })}
@@ -559,24 +579,25 @@ function ChemistryCard({ chemistry }: { chemistry: Chemistry[] }) {
   );
 }
 
-/** Team matches against tournaments, and the tournament classes */
-function StrongestCard({ strongest }: { strongest: (Split & { key: string })[] }) {
+/** Team matches against tournaments, and each tournament class, the strongest first */
+function StrongestCard({ strongest }: { strongest: Strength[] }) {
   const { t } = useI18n();
-  const label = (key: string) => (key === "teamMatches" || key === "tournaments" ? t(`account.overview.career.splits.${key}`) : t("account.overview.career.splits.class", { cls: key }));
+  const label = (x: Strength) => (x.key === "class" ? t("account.overview.career.splits.class", { cls: x.cls ?? "" }) : t(`account.overview.career.splits.${x.key}`));
   return (
     <div className="bg-white p-4 min-w-0">
       <h3 className="text-sm text-gray-600 mb-2">{t("account.overview.career.strongest")}</h3>
-      <ol className="space-y-1">
-        {strongest.map((x) => (
-          <li key={x.key} className="flex justify-between items-baseline gap-x-3">
+      <RankedRows
+        rows={strongest}
+        row={(x) => (
+          <li key={x.cls ?? x.key} className="flex justify-between items-baseline gap-x-3">
             <span className="min-w-0">
-              <span className="font-semibold">{label(x.key)}</span>
+              <span className="font-semibold">{label(x)}</span>
               <span className="text-sm text-gray-600 whitespace-nowrap"> · {recordText(t, x)}</span>
             </span>
             <Perf perf={x.perf} />
           </li>
-        ))}
-      </ol>
+        )}
+      />
       <p className="text-xs text-gray-500 mt-2">{t("account.overview.career.strongestHelp")}</p>
     </div>
   );

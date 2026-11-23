@@ -4,7 +4,7 @@
 // Every config rates the full match history; only decisive games are scored, before the rating
 // update, so each config is judged by how well its ratings predicted those games. A config overrides
 // computeRatings' hooks (see rate.mjs); "floor" sets the not playing penalty floor and "inactivity"
-// the whole not playing penalty. The current rules are the reference: the other configs show the
+// the whole not playing penalty, and "levelOf" reads each game at another level (game → level). The current rules are the reference: the other configs show the
 // change in log loss in thousandths (negative = better), with a 95% interval. Games in the same
 // tournament or tie are related (the same players, ratings moving together), so the interval is
 // clustered by tournament and tie rather than by game.
@@ -68,12 +68,23 @@ const CONFIGS = [
   ["before rounds 4-8 (start 1100, minimum 350)", BEFORE_ROUND_4],
   ["previous rules (before v1.14.0)", PREVIOUS],
   ["no not playing penalty (v1.14.0 to v1.16.0)", { inactivity: { ...R.INACTIVITY, halfLifeDays: null } }],
+  // The rules before round 10: Profixio's start bonus 200, its junior classes without a letter at the lowest level,
+  // the not playing penalty's floor 1850
+  ["before round 10 (Profixio bonus 200, U-classes at the lowest level, floor 1850)", { profixioBonus: 200, levelOf: profixioAsWritten, floor: 1850 }],
 ];
+
+// A Profixio game's level as its class is written (before round 10: "U15" at the lowest level, as an unknown class)
+function profixioAsWritten(g) {
+  const className = g.source.startsWith("TP") && g.event?.match(/\(([^()]*)\)$/)?.[1];
+  return className ? R.tournamentLevel(className) : g.level;
+}
 
 // Per game (by index in games): what it is, for the subsets, filled in on the first run
 let meta = null;
-function run(games, config, { weekly = false } = {}) {
-  const { floor, inactivity: penalty, ...options } = config;
+function run(all, config, { weekly = false } = {}) {
+  const { floor, inactivity: penalty, levelOf, ...options } = config;
+  // Games read at another level: copies, in the same order (the subsets go by index)
+  const games = levelOf ? all.map((g) => ({ ...g, level: levelOf(g) })) : all;
   const inactivity = penalty ?? (floor ? { ...R.INACTIVITY, floor } : R.INACTIVITY);
   const index = new Map(games.map((g, i) => [g, i]));
   const expected = new Float64Array(games.length).fill(NaN);
