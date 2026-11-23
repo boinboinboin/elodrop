@@ -5,8 +5,8 @@
 // rest in lower case, each part of a double name too ("jan-are", "TOR-KRISTIAN": "Jan-Are", "Tor-Kristian").
 // Left as they are: words in mixed case ("McGovern"), short capitals in a name that isn't all capitals (initials
 // or a suffix: "JR", "JS", "HIL"), the small words inside a name ("van der", "de", "ul", "bin"; "jr" and "sr" at
-// its end too) and what's in brackets ("(chbs - Sv)"). The register's "ikke i bruk" (not in use) after a name is
-// left out.
+// its end too) and a nickname in brackets ("Freya (Tobi) Smallshire"). The register's notes after a name are left
+// out: "ikke i bruk" (not in use) and anything in brackets at the end ("(chbs - Sv)", a Swedish club; "(ikke bruk denne)").
 const PARTICLES = new Set(["de", "da", "das", "do", "dos", "di", "du", "del", "della", "van", "von", "der", "den", "ter", "ten", "la", "le", "ul", "ud", "uz", "din", "bin", "binti", "al", "el", "af", "jr", "jr.", "sr", "sr."]);
 const letters = (s) => s.replace(/[^\p{L}]/gu, "");
 const isLower = (l) => l === l.toLowerCase() && l !== l.toUpperCase();
@@ -18,7 +18,7 @@ const capital = (part, rest) => {
 
 export function tidyName(name) {
   if (typeof name !== "string") return name;
-  const words = name.replace(/,?\s*ikke i bruk\s*$/i, "").trim().split(/\s+/);
+  const words = name.replace(/\s*\([^()]*\)\s*$/, "").replace(/,?\s*ikke i bruk\s*$/i, "").trim().split(/\s+/);
   const allCaps = isUpper(letters(words.join(""))) && letters(words.join("")).length >= 4;
   let bracket = false;
   return words
