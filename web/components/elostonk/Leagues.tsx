@@ -1,19 +1,23 @@
 "use client";
 
 // EloStonk's leagues: a member's own leagues as cards, each with who won its last round and the member's place in its
-// season table; making one (its maker joins it at once); joining one with its code, typed or from an invite link
+// season table; the public leagues they're not in, to join with a press; making one (private unless ticked public; its
+// maker joins it at once); joining one with its 4-character code, typed or from an invite link
 // (/elostonk?tab=leagues&join=<code>). A card opens the league (LeagueView, ?league=<id>, so the back button returns to
 // the list): the members' squads, its tables, most picked players, members, and sharing the link, leaving, and for the
-// owner a new code (the old link stops working). The database keeps the limits (supabase/migrations/*_elostonk.sql) and
-// shows a league only to its members.
+// owner a new code (the old link stops working) and making it public or private. The database keeps the limits
+// (supabase/migrations/*_elostonk.sql, *_league_codes_public.sql) and shows a league only to its members (a public one's
+// name and size to everyone signed in).
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useAccount } from "@/components/account/AccountProvider";
 import LeagueView, { type League, type Person, type Pick } from "@/components/elostonk/LeagueView";
 import { useNow } from "@/components/elostonk/useStonk";
-import { ERROR, FIELD, LABEL, SUBMIT } from "@/components/account/form";
+import { ERROR, FIELD, HELP, LABEL, SUBMIT } from "@/components/account/form";
 import { ArrowRight } from "@/components/SVG";
+import CheckToggle from "@/components/ui/CheckToggle";
+import CodeFields from "@/components/ui/CodeFields";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
@@ -31,8 +35,15 @@ interface Place {
   rank: number;
   points: number;
 }
+interface PublicLeague {
+  id: number;
+  name: string;
+  members: number;
+}
 interface Read {
   leagues: League[];
+  /** The public leagues not full (the member's own among them) */
+  open: PublicLeague[];
   people: Person[];
   /** The newest round with scores, and the members' scores in it */
   last: string | null;
@@ -45,17 +56,19 @@ interface Read {
 
 /** The member's leagues, their members, the last round's scores, the round under way's picks and the member's places */
 async function readLeagues(client: SupabaseClient, current: string, me: string): Promise<Read> {
-  const [l, p, newest, o, m] = await Promise.all([
-    client.from("stonk_leagues").select("id, name, invite_code, owner").order("created_at"),
+  const [l, p, newest, o, m, pub] = await Promise.all([
+    client.from("stonk_leagues").select("id, name, invite_code, owner, is_public").order("created_at"),
     client.from("stonk_league_people").select("league_id, nickname, owner").order("joined_at"),
     client.from("stonk_round_scores").select("round").order("round", { ascending: false }).limit(1).maybeSingle<{ round: string }>(),
     client.from("stonk_league_ownership").select("league_id, player_id, name, picks, captains").eq("round", current).order("picks", { ascending: false }),
     client.from("stonk_league_table").select("league_id, rank, points").eq("season", seasonOfRound(current)).eq("nickname", me),
+    client.from("stonk_public_leagues").select("id, name, members").limit(50),
   ]);
   const last = newest.data?.round ?? null;
   const scores = last ? ((await client.from("stonk_league_round_scores").select("league_id, nickname, points").eq("round", last)).data as Score[] | null) ?? [] : [];
   return {
     leagues: (l.data as League[] | null) ?? [],
+    open: (pub.data as PublicLeague[] | null) ?? [],
     people: (p.data as Person[] | null) ?? [],
     last,
     scores: scores.map((x) => ({ ...x, points: Number(x.points) })),
@@ -64,6 +77,9 @@ async function readLeagues(client: SupabaseClient, current: string, me: string):
   };
 }
 
+/** An invite code's length (supabase/migrations/*_league_codes_public.sql: new_league_code) */
+const CODE = 4;
+
 export default function Leagues() {
   const { t, plural, rich, href, signed, date, num } = useI18n();
   const { status, profile, load } = useAccount();
@@ -71,6 +87,7 @@ export default function Leagues() {
   const [opened, setOpened] = useQueryState("league", parseAsInteger.withOptions({ history: "push", scroll: true }));
   const [read, setRead] = useState<Read | null>(null);
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<number | null>(null);
@@ -90,9 +107,9 @@ export default function Leagues() {
     void (async () => {
       const client = await load();
       if (join) {
-        const { error } = await client.rpc("join_league", { code: join });
+        const { data, error } = await client.rpc("join_league", { code: join });
         if (!live) return;
-        if (error) setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
+        if (error || data === null) setError(t(`account.errors.${error ? (accountError(error) ?? "unknown") : "league_not_found"}`));
         void setJoin(null);
       }
       const data = await readLeagues(client, current, me);
@@ -110,18 +127,36 @@ export default function Leagues() {
     e.preventDefault();
     setError(null);
     const client = await load();
-    const { error } = await client.from("stonk_leagues").insert({ name: name.trim(), owner: profile.user_id });
+    const { error } = await client.from("stonk_leagues").insert({ name: name.trim(), owner: profile.user_id, is_public: open });
     if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
     setName("");
+    setOpen(false);
     await reread();
   };
+  const typed = code.replace(/\s/g, "");
   const joinByCode = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     const client = await load();
-    const { error } = await client.rpc("join_league", { code: code.trim() });
+    const { data, error } = await client.rpc("join_league", { code: typed });
     if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
+    // A wrong code: null (the database counts the tries)
+    if (data === null) return setError(t("account.errors.league_not_found"));
     setCode("");
+    await reread();
+  };
+  const joinPublic = async (id: number) => {
+    setError(null);
+    const client = await load();
+    const { error } = await client.rpc("join_public_league", { league: id });
+    if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
+    await reread();
+  };
+  const setPublic = async (id: number, value: boolean) => {
+    setError(null);
+    const client = await load();
+    const { error } = await client.from("stonk_leagues").update({ is_public: value }).eq("id", id);
+    if (error) return setError(t(`account.errors.${accountError(error) ?? "unknown"}`));
     await reread();
   };
   const leave = async (id: number) => {
@@ -158,6 +193,8 @@ export default function Leagues() {
 
   // A league opened (one of the member's: another id shows the list)
   const shown = read?.leagues.find((l) => l.id === opened);
+  // The public leagues to join: those the member isn't in
+  const joinable = read?.open.filter((o) => !read.leagues.some((l) => l.id === o.id)) ?? [];
   if (read && shown) {
     return (
       <LeagueView
@@ -171,6 +208,7 @@ export default function Leagues() {
         onShare={() => void share(shown)}
         onRenew={() => void renew(shown.id)}
         onLeave={() => void leave(shown.id)}
+        onPublic={(value) => void setPublic(shown.id, value)}
       />
     );
   }
@@ -225,6 +263,22 @@ export default function Leagues() {
           </ul>
         </>
       )}
+      {joinable.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xl mb-3">{t("elostonk.leagues.publicTitle")}</h2>
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {joinable.map((o) => (
+              <li key={o.id} className="min-w-0 bg-white p-4 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4">
+                <span className="min-w-0">
+                  <span className="block text-lg break-words">{o.name}</span>
+                  <span className="block text-sm text-gray-600">{plural("elostonk.leagues.members", o.members)}</span>
+                </span>
+                <button type="button" onClick={() => void joinPublic(o.id)} className={SUBMIT}>{t("elostonk.leagues.joinButton")}</button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
         <form onSubmit={create} className="space-y-3">
           <h2 className="text-xl">{t("elostonk.leagues.create")}</h2>
@@ -232,15 +286,19 @@ export default function Leagues() {
             <label htmlFor="league-name" className={LABEL}>{t("elostonk.leagues.name")}</label>
             <input id="league-name" required minLength={3} maxLength={40} value={name} onChange={(e) => setName(e.target.value)} className={FIELD} />
           </div>
+          <div>
+            <CheckToggle checked={open} onChange={setOpen}>{t("elostonk.leagues.public")}</CheckToggle>
+            <p className={HELP}>{t(open ? "elostonk.leagues.publicHelp" : "elostonk.leagues.privateHelp")}</p>
+          </div>
           <button type="submit" className={SUBMIT}>{t("elostonk.leagues.createButton")}</button>
         </form>
         <form onSubmit={joinByCode} className="space-y-3">
           <h2 className="text-xl">{t("elostonk.leagues.join")}</h2>
           <div>
             <label htmlFor="league-code" className={LABEL}>{t("elostonk.leagues.codeLabel")}</label>
-            <input id="league-code" required minLength={6} maxLength={20} value={code} onChange={(e) => setCode(e.target.value)} className={`${FIELD} font-mono`} />
+            <CodeFields id="league-code" length={CODE} value={code} onChange={setCode} label={t("elostonk.leagues.codeLabel")} />
           </div>
-          <button type="submit" className={SUBMIT}>{t("elostonk.leagues.joinButton")}</button>
+          <button type="submit" disabled={typed.length < CODE} className={SUBMIT}>{t("elostonk.leagues.joinButton")}</button>
         </form>
       </div>
     </div>

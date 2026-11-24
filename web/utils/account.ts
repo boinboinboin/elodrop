@@ -95,6 +95,7 @@ export const ACCOUNT_ERRORS = [
   "league_full",
   "too_many_leagues",
   "not_owner",
+  "too_many_tries",
   "too_fast",
   "name_blocked",
   "username_too_soon",

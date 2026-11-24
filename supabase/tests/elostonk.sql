@@ -2,7 +2,7 @@
 -- Run with `pnpm dlx supabase test db` (the local stack running).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(46);
+select plan(57);
 
 insert into auth.users (id, email, created_at, aud, role) values
   ('00000000-0000-0000-0000-0000000000a1', 'a@example.com', now() - interval '40 days', 'authenticated', 'authenticated'),
@@ -120,6 +120,30 @@ select is((select count(*)::integer from stonk_league_round_scores), 4, 'each ro
 select is((select picks from stonk_league_ownership where player_id = 2 and round = public.stonk_round_of(now()) - 7), 2, 'and who the league picked');
 select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
 select is((select count(*)::integer from stonk_league_round_scores), 0, 'none of it for those not in the league');
+
+-- ---- Short codes and public leagues (*_league_codes_public.sql) ----
+select matches(current_setting('test.code'), '^[A-HJ-NP-Z2-9]{4}$', 'a code is 4 letters and digits, without look-alikes');
+select pg_temp.as_owner();
+insert into public.profiles (user_id, nickname, birth_year) values ('00000000-0000-0000-0000-0000000000c3', 'Charlie', 1992);
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
+select is((select count(*)::integer from stonk_public_leagues), 0, 'a private league isn''t listed');
+select throws_ok($$select join_public_league((select id from public.stonk_leagues limit 1))$$, 'P0001', 'league_not_found', 'nor joined without its code');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000b2');
+update stonk_leagues set is_public = true;
+select is((select count(*)::integer from stonk_public_leagues), 0, 'only the owner makes it public');
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000a1');
+update stonk_leagues set is_public = true;
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
+select is((select members from stonk_public_leagues), 2, 'a public league is listed, with its size');
+select lives_ok($$select join_public_league((select id from stonk_public_leagues))$$, 'and joined without its code');
+select is((select count(*)::integer from stonk_leagues), 1, 'the new member sees it');
+select pg_temp.as_owner();
+delete from public.stonk_league_members where user_id = '00000000-0000-0000-0000-0000000000c3';
+select pg_temp.as_user('00000000-0000-0000-0000-0000000000c3');
+select lives_ok($$select join_league(lower(current_setting('test.code')))$$, 'a code in small letters works');
+select is(join_league('0000'), null::bigint, 'a wrong code joins nothing');
+select is((select count(*)::integer from (select join_league('0000') from generate_series(1, 9)) t), 9, 'nine more wrong codes');
+select throws_ok($$select join_league(current_setting('test.code'))$$, 'P0001', 'too_many_tries', 'then no more tries for an hour');
 
 select * from finish();
 rollback;
