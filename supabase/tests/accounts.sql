@@ -2,7 +2,7 @@
 -- Run with `pnpm dlx supabase test db` (the local stack running).
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(43);
+select plan(48);
 
 -- Three users: an old account (40 days), a new one, and a third for reports about the same player
 insert into auth.users (id, email, created_at, aud, role) values
@@ -78,7 +78,7 @@ select throws_ok($$update ideas set status = 'open'$$, '42501', null, 'a user ca
 select pg_temp.as_owner();
 update ideas set status = 'open';
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
-select lives_ok($$insert into votes (user_id, idea_id) select '00000000-0000-0000-0000-00000000000b', id from ideas_public$$, 'a vote');
+select lives_ok($$insert into votes (user_id, idea_id) select '00000000-0000-0000-0000-00000000000b', id from ideas_public$$, 'a new account votes at once');
 select throws_ok($$insert into votes (user_id, idea_id) select '00000000-0000-0000-0000-00000000000b', id from ideas_public$$, '23505', null, 'a second vote is refused');
 select is((select votes from ideas_public), 1, 'the votes are counted for everyone');
 select is((select author from ideas_public), 'Shuttle', 'an idea shows its author''s nickname');
@@ -88,6 +88,20 @@ select is((select author from ideas_public), null, 'but not a hidden one');
 update public.profiles set hidden = false where nickname = 'Shuttle';
 select pg_temp.as_owner();
 select is((select contact_ok from ideas where author = '00000000-0000-0000-0000-00000000000a'), false, 'contact is off unless ticked');
+-- From 3 days old, with up to 3 waiting
+update auth.users set created_at = now() - interval '2 days' where id = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select throws_ok($$insert into ideas (title, author) values ('Two days old idea', '00000000-0000-0000-0000-00000000000b')$$, 'P0001', 'account_too_new', 'an account 2 days old can''t suggest yet');
+select pg_temp.as_owner();
+update auth.users set created_at = now() - interval '3 days 1 hour' where id = '00000000-0000-0000-0000-00000000000b';
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+select lives_ok($$insert into ideas (title, author) values ('First waiting idea', '00000000-0000-0000-0000-00000000000b')$$, 'an account 3 days old suggests');
+select lives_ok($$insert into ideas (title, author) values ('Second waiting idea', '00000000-0000-0000-0000-00000000000b')$$, 'a second waiting');
+select lives_ok($$insert into ideas (title, author) values ('Third waiting idea', '00000000-0000-0000-0000-00000000000b')$$, 'a third waiting');
+select throws_ok($$insert into ideas (title, author) values ('Fourth waiting idea', '00000000-0000-0000-0000-00000000000b')$$, 'P0001', 'too_many_pending', 'but not a fourth');
+select pg_temp.as_owner();
+delete from ideas where author = '00000000-0000-0000-0000-00000000000b';
+update auth.users set created_at = now() where id = '00000000-0000-0000-0000-00000000000b';
 
 -- ---- Reports ----
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');

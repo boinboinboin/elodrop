@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.9 (2026-11-24)
+
+- Public EloStonk leagues: the owner chooses when making a league whether it's public or private (private unless ticked) and can change it later. Public leagues are listed on the Leagues tab for anyone to join; private ones are joined with the link or code, as before.
+- League codes are 4 letters and digits, typed in four boxes. Existing leagues get a new code, so invite links shared before stop working.
+- New accounts can suggest ideas after 3 days instead of 7, and have up to 3 ideas waiting to be looked at instead of 2. Voting has no wait.
+
 ## v1.39.8 (2026-11-24)
 
 - A tournament winner's rating change is right again: it counted every later recalculation of the ratings (such as the older tournaments added) as part of the tournament.

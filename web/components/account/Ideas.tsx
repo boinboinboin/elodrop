@@ -2,7 +2,7 @@
 
 // The ideas page's list and form (app/[lang]/(site)/ideas): the ideas everyone sees (the database's ideas_public, with
 // their votes and their author's nickname), by most votes, planned or done; a vote on each for a signed-in user (one each, taken back with a
-// second press); their own suggestions with where they stand; and a form to suggest one, for accounts at least 7 days
+// second press); their own suggestions with where they stand; and a form to suggest one, for accounts at least 3 days
 // old. The database holds the same rules (supabase/migrations: check_idea, the votes' policy).
 import { type FormEvent, useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
@@ -26,7 +26,7 @@ interface Idea {
 }
 type View = "votes" | "planned" | "done";
 
-const SUGGEST_DAYS = 7;
+const SUGGEST_DAYS = 3;
 
 export default function Ideas() {
   const { t, plural, rich } = useI18n();

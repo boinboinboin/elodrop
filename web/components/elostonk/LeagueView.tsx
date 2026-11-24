@@ -3,7 +3,7 @@
 // One EloStonk league, opened from its card in Leagues (?league=<id>): who won its last round, every member's squad in
 // the newest round that has locked (from Friday 14:00 the new round's, before it last week's: squads are only shown once
 // locked, so nobody copies anyone), ranked by its points so far, then the league's tables (Leaderboard), its most picked
-// players this round, its members, and inviting, a new code (the owner) and leaving.
+// players this round, its members, and inviting, a new code and public or private (the owner) and leaving.
 import { useEffect, useState } from "react";
 import { useAccount } from "@/components/account/AccountProvider";
 import Leaderboard from "@/components/elostonk/Leaderboard";
@@ -13,6 +13,7 @@ import { useNow, useStonkPlayers, type StonkPlayer } from "@/components/elostonk
 import { ArrowLeft } from "@/components/SVG";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
+import CheckToggle from "@/components/ui/CheckToggle";
 import { ROW } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import { toneClass } from "@/utils/format";
@@ -23,6 +24,8 @@ export interface League {
   name: string;
   invite_code: string;
   owner: string | null;
+  /** Listed for everyone to join; private: joined with its code */
+  is_public: boolean;
 }
 export interface Person {
   league_id: number;
@@ -59,6 +62,7 @@ export default function LeagueView({
   onShare,
   onRenew,
   onLeave,
+  onPublic,
 }: {
   league: League;
   members: Person[];
@@ -72,6 +76,8 @@ export default function LeagueView({
   onShare: () => void;
   onRenew: () => void;
   onLeave: () => void;
+  /** The owner makes it public (true) or private */
+  onPublic: (value: boolean) => void;
 }) {
   const { t, plural, rich, signed, date, dateTime, num } = useI18n();
   const { profile, load } = useAccount();
@@ -191,6 +197,14 @@ export default function LeagueView({
           {owned && <button type="button" onClick={onRenew} className="link-underlined hover:text-blue-600">{t("elostonk.leagues.renew")}</button>}
           <button type="button" onClick={onLeave} className="link-underlined hover:text-blue-600">{t("elostonk.leagues.leave")}</button>
         </div>
+        {owned ? (
+          <div className="mt-4">
+            <CheckToggle checked={league.is_public} onChange={onPublic}>{t("elostonk.leagues.public")}</CheckToggle>
+            <p className="text-sm text-gray-600 mt-1">{t(league.is_public ? "elostonk.leagues.publicHelp" : "elostonk.leagues.privateHelp")}</p>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-600 mt-4">{t(league.is_public ? "elostonk.leagues.isPublic" : "elostonk.leagues.isPrivate")}</p>
+        )}
       </Card>
     </div>
   );
