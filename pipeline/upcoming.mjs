@@ -691,13 +691,16 @@ function analyse({ cupId, portalenId, fetchedAt, info, draws, seeding = null }, 
       final: results && outcome ? parsed.final : null,
       // Played: the rating each of the winner's players gained or lost in the tournament's week
       // (their rating at the end of the week of the last day minus the one before; null for a
-      // player without a rating before, marked ≈)
+      // player without a rating before, marked ≈). Both from the current rating history, not the
+      // locked rating: that one stays as it was at the start, so a later recalculation of the
+      // history (a rating rule changed, older tournaments added) would count as a change
       winnerRatingChange: (() => {
         const w = outcome?.findIndex((o) => o.win === 1) ?? -1;
         if (w < 0) return null;
         return entries[w].players.map((p) => {
-          const after = p.estimated ? null : ratingAfter(p.id, pool, info.endDate ?? day);
-          return after === null ? null : Math.round(after - p.rating);
+          const before = p.estimated ? null : ratingBefore(p.id, pool, day)?.rating ?? null;
+          const after = before === null ? null : ratingAfter(p.id, pool, info.endDate ?? day);
+          return after === null ? null : Math.round(after - before);
         });
       })(),
       entries: entries.map((e, i) => {

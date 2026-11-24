@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.8 (2026-11-24)
+
+- A tournament winner's rating change is right again: it counted every later recalculation of the ratings (such as the older tournaments added) as part of the tournament.
+
 ## v1.39.7 (2026-11-24)
 
 - Players no longer jump briefly to clubs they never played for in 2007–2014 (Profixio's tournaments, whose entry lists often gave a pair the partner's club). Fixes the rating graph's colours, opponents' and partners' clubs in the match lists, and the clubs' strength history.
