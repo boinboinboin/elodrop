@@ -8,7 +8,8 @@
 //      (data/players.json) and the names in its tournament and league results (data/portalen,
 //      data/league), that could have played the match: in a junior class (U15 is everyone born in the
 //      season's start year - 14 or later, a year's slack allowed) not too old by their birth year
-//      (data/birth-years.json), nor born less than 5 years before it. One left: them; more: those of
+//      (data/birth-years.json), nor born less than 5 years before it (10 in a senior class: a child of
+//      a parent's name). One left: them; more: those of
 //      the player's gender (from most of their singles and doubles: juniors sometimes play in the
 //      other gender's events), then the one from the same club, if exactly one is;
 //   3. a name with all the words of the other, in any order (Profixio's "Bård Vegard Grande" for
@@ -219,20 +220,53 @@ export function identifyAll(tournaments) {
     const c = genderCounts.get(n);
     return !c || c.M === c.K ? null : c.M > c.K ? "M" : "K";
   };
+  // How sure a name's gender is: 1 for one gender only, less as its matches mix both
+  const sureness = (n) => {
+    const c = genderCounts.get(n);
+    return c ? Math.abs(c.M - c.K) / (c.M + c.K) : 0;
+  };
+  // The gender of each player of a match, to choose between players of one name: women's events are
+  // women's (men don't play them); men's events the name's (women play men's when there are too few
+  // of them); in mixed the pair is mostly a man and a woman, so when both names have the same gender
+  // and one of them has played the other gender's events too (a name two players share), the one less
+  // sure of it is the other ("C. Hem" with Fredrik Runsjø is the woman, Caroline Hem, though "C. Hem"
+  // is mostly her brother Carl; "C. Hem / C. Hem" is one of each). Two names sure of their gender
+  // stay as they are (two girls in a junior mixed). Profixio's order in a pair varies, so it says
+  // nothing.
+  const gendersOf = (m, side) => {
+    if (GENDER[m.discipline] === "K") return side.map(() => "K");
+    const own = side.map((p) => genderOf(normalize(p.name)));
+    if (m.discipline !== "MixedDoubles" || side.length !== 2) return own;
+    const [a, b] = own;
+    if (a && b && a !== b) return own;
+    if (!a && !b) return own;
+    const other = (g) => (g === "M" ? "K" : "M");
+    if (!a) return [other(b), b];
+    if (!b) return [a, other(a)];
+    // The same gender for both: the one less sure of it (the second on a tie) is the other
+    const [sa, sb] = side.map((p) => sureness(normalize(p.name)));
+    if (normalize(side[0].name) !== normalize(side[1].name) && Math.min(sa, sb) === 1) return own;
+    return sa < sb ? [other(a), b] : [a, other(b)];
+  };
+
+  // Whether a player could have played a match by their birth year: in a junior class (age: U15 is 15)
+  // not too old for it, and not too young to play at all; in a senior (or veteran) class at least 10
+  // (no one younger plays them: a 5-year-old "in" senior A is a parent of the same name, "Sverre
+  // Bergland" for Sverre Bergland sr, not jr)
+  const couldPlay = (id, season, year, age) => {
+    const p = players.get(id);
+    if (!p?.born) return true;
+    if (p.born > year - (age ? 5 : 10)) return false;
+    return !(age && p.born < season - age);
+  };
 
   const decisions = new Map();
-  const identify = (name, club, discipline, className, season, year) => {
+  const identify = (name, club, discipline, className, season, year, gender) => {
     const n = normalize(name);
-    const gender = genderOf(n);
     const age = +(className.match(/^U(\d+)/)?.[1] ?? 0);
-    const key = [n, club, age, season, GENDER[discipline] ?? ""].join("|");
+    const key = [n, club, age, season, GENDER[discipline] ?? "", gender ?? ""].join("|");
     if (decisions.has(key)) return decisions.get(key);
-    const could = (id) => {
-      const p = players.get(id);
-      if (p.born && p.born > year - 5) return false;
-      if (p.born && age && p.born < season - age) return false;
-      return true;
-    };
+    const could = (id) => couldPlay(id, season, year, age);
     const sameGender = (ids) => {
       const same = ids.filter((id) => !gender || !players.get(id).gender || players.get(id).gender === gender);
       return same.length ? same : ids;
@@ -241,9 +275,11 @@ export function identifyAll(tournaments) {
     const sameClub = (id) => resolved && [...players.get(id).clubs].some((c) => c === resolved || resolved.startsWith(`${c} `) || c.startsWith(`${resolved} `));
     let decision;
     // By hand: in these events and this club alone, else everywhere
-    const only = hand.scoped.get(nameHash(name))?.find((s) => (!s.gender || s.gender === GENDER[discipline]) && (!s.club || clubOf(s.club) === resolved));
+    const only = hand.scoped.get(nameHash(name))?.find((s) => (!s.gender || s.gender === (GENDER[discipline] ?? gender)) && (!s.club || clubOf(s.club) === resolved));
+    // (not where the player couldn't have played by age: "Sverre Bergland" is jr, but not in senior classes
+    // before he was 10, where it's his father)
     const fixed = only?.id ?? hand.ids.get(nameHash(name)) ?? knownAs(name);
-    if (fixed) decision = { id: samePlayer(fixed), how: "by hand" };
+    if (fixed && could(samePlayer(fixed))) decision = { id: samePlayer(fixed), how: "by hand" };
     else {
       const exact = sameGender([...(byName.get(n) ?? [])].filter(could));
       const exactClub = exact.filter(sameClub);
@@ -291,15 +327,19 @@ export function identifyAll(tournaments) {
 
   // Every appearance's decision. Then a name identified as one player only, in the tournaments where
   // it is identified, is that player where it isn't (not found or ambiguous) if it has no club there
-  // or one of the same clubs: some entry lists give no club, and a loose match needs one.
-  const decided = new Map(); // player object -> decision
+  // or one of the same clubs: some entry lists give no club, and a loose match needs one. For initials
+  // in women's events, only a woman ("C. Hem" is a brother in men's events and a sister in women's);
+  // otherwise the gender only chooses between several (women play men's events, the gender in mixed
+  // is a guess, and a full name is the same player in another gender's event too).
+  const decided = new Map(); // player object -> [decision, gender, whether the gender is sure, could(id) have played]
   const sameNameIds = new Map(); // normalized name -> id -> clubs (resolved) it was identified with
   for (const t of tournaments) {
     const year = +t.startDate.slice(0, 4);
     for (const m of t.matches) {
-      for (const p of [...m.side1, ...m.side2]) {
-        const d = identify(p.name, p.club, m.discipline, m.className, t.season, year);
-        decided.set(p, d);
+      for (const [p, gender] of [m.side1, m.side2].flatMap((side) => { const g = gendersOf(m, side); return side.map((p, i) => [p, g[i]]); })) {
+        const d = identify(p.name, p.club, m.discipline, m.className, t.season, year, gender);
+        const age = +(m.className.match(/^U(\d+)/)?.[1] ?? 0);
+        decided.set(p, [d, gender, GENDER[m.discipline] === "K" && words(normalize(p.name)).some((w) => w.length === 1), (id) => couldPlay(id, t.season, year, age)]);
         if (!d.id) continue;
         const ids = sameNameIds.get(normalize(p.name)) ?? new Map();
         ids.set(d.id, (ids.get(d.id) ?? new Set()).add(clubOf(p.club)));
@@ -307,11 +347,16 @@ export function identifyAll(tournaments) {
       }
     }
   }
-  for (const [p, d] of decided) {
-    const ids = sameNameIds.get(normalize(p.name));
-    if (d.id || ids?.size !== 1) continue;
+  for (const [p, [d, gender, sure, could]] of decided) {
+    if (d.id) continue;
+    // (the gender chooses first, then the one left must be old enough: "M. Christensen" in senior men's
+    // doubles before Magnus was 10 is his father, not his sister Marie)
+    const all = [...(sameNameIds.get(normalize(p.name)) ?? [])];
+    const ofGender = all.filter(([id]) => !gender || !players.get(id)?.gender || players.get(id).gender === gender);
+    const ids = (sure || all.length > 1 ? ofGender : all).filter(([id]) => could(id));
+    if (ids.length !== 1) continue;
     const [[id, clubs]] = ids;
-    if (!clubOf(p.club) || clubs.has(clubOf(p.club))) decided.set(p, { id, how: "same name elsewhere", candidates: d.candidates });
+    if (!clubOf(p.club) || clubs.has(clubOf(p.club))) decided.set(p, [{ id, how: "same name elsewhere", candidates: d.candidates }, gender, sure, could]);
   }
 
   // Per Profixio name: how they were identified, and in how many matches and tournaments
@@ -321,7 +366,7 @@ export function identifyAll(tournaments) {
     for (const m of t.matches) {
       let all = true;
       for (const p of [...m.side1, ...m.side2]) {
-        const d = decided.get(p);
+        const [d] = decided.get(p);
         p.id = d.id;
         if (!d.id) all = false;
         const n = normalize(p.name);

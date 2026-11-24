@@ -7,8 +7,9 @@
 #   <name hash>  <badmintonportalen player id>   # note, without the name
 #   <name hash>  = <name hash>                   # the same player as another Profixio name (one
 #                                                  player, without a page if that name has none)
-#   <name hash>  <id>  women @ <club>             # only in women's events (or men), and/or only for
-#                                                  that club (badmintonportalen's name): a name two
+#   <name hash>  <id>  women @ <club>             # only in women's events (or men; in mixed doubles
+#                                                  the pair's woman or man), and/or only for that
+#                                                  club (badmintonportalen's name): a name two
 #                                                  players share ("M. Halvorsen" in Bygdø)
 # A club as Profixio writes it (an abbreviation or a typo), and badmintonportalen's name for it:
 #   club <Profixio's club> = <badmintonportalen's club>
@@ -1257,3 +1258,5 @@ f48dd41eef9eca45  24075                # Sandnessjøen: the name cut short
 
 # A name two players share: by event and club
 b191ce462554b5c6  19819  women @ Bygdø   # Bygdø, 2008-2010: women's events (a man of that name plays men's doubles there)
+8ba3aca62db9f0bc  18772  women          # Sandefjord, 2008-2010: women's events (her brother of those initials plays men's; the other sister of them has no results)
+44b5f1f277a71098  19948  women          # Pillarguri, 2008-2010: women's events (her brother of those initials plays men's; another sister of them only U11)

@@ -194,8 +194,9 @@ const className = (full, code) => {
 // An entry's players: [{ name, club }]. "Wallem, Kristine" -> "Kristine Wallem"; a pair "A/B" or
 // "A / B" -> two. Some tournaments write the clubs in the name: "Lise Hildrum (Grong)", "T. Treff/A.
 // Skottun (SaBK)" (both of SaBK), "K. Landmark/M. Haukebøe (HoBK/Mrvl)" (one each), sometimes cut
-// short ("(Kristiansan"); some the same name twice ("Siw Årstad/Siw Årstad"). Placeholders ("Seed
-// #5", "Bye") are no one.
+// short ("(Kristiansan"); some the same name twice ("Siw Årstad/Siw Årstad"): one player, but the
+// same initials twice are two ("C. Hem / C. Hem", a brother and sister in mixed doubles; told apart
+// in profixio-players.mjs). Placeholders ("Seed #5", "Bye") are no one.
 const playerNames = (entry) => {
   const pairClub = entry.match(/\(([^()]*)\)?\s*$/)?.[1];
   const pairClubs = pairClub?.split("/").map((c) => c.trim()) ?? [];
@@ -205,7 +206,8 @@ const playerNames = (entry) => {
     const club = part.match(/\(([^()]*)\)?\s*$/)?.[1]?.trim() ?? pairClubs[i] ?? pairClubs[0] ?? null;
     const n = part.replace(/\s*\([^()]*\)?\s*$/, "").trim();
     const name = (n.includes(",") ? n.replace(/^([^,]+),\s*(.+)$/, "$2 $1") : n).replace(/\s+/g, " ");
-    if (!name || /^(seed\b|bye$|w\.?o\.?$)/i.test(name) || players.some((p) => p.name === name)) continue;
+    if (!name || /^(seed\b|bye$|w\.?o\.?$)/i.test(name)) continue;
+    if (players.some((p) => p.name === name) && !/(^|\s)\p{L}\.(\s|$)/u.test(name)) continue;
     players.push({ name, club });
   }
   return players;
@@ -264,16 +266,46 @@ function classGroups(html) {
   return { code, groups };
 }
 
-// The entry list: name -> club, from "Name | Club | Class | Date" rows
+// The entry list: name -> club, from "Name | Club | Class | Date" rows. An entry has one club, so a
+// pair from two clubs has one of theirs, often the partner's; a player's club in the tournament is
+// the one their entries give most, a singles entry counting 2, a pair's 1, and a pair's that is the
+// partner's own singles club 0.5 (the earlier entry on a tie). `oneClub`: the list gives every entry
+// (10 or more) the same club, as Fosentreffen 2008's "Vaksdal IL" for all 107 (see readTournament).
 function entryClubs(pages) {
-  const clubs = new Map();
+  const rows = new Map(); // name -> [{ club, partners }]
+  const all = new Set();
+  let count = 0;
   for (const html of pages) {
     const t = tokens(html);
     for (let i = 3; i < t.length; i++) {
       if (!/^\d{1,2}\. \p{L}+ \d{4}/u.test(t[i])) continue;
       const [entry, club] = [t[i - 3], t[i - 2]];
-      for (const p of playerNames(entry)) if (!clubs.has(p.name)) clubs.set(p.name, club);
+      if (!club) continue;
+      count++;
+      all.add(club);
+      const names = playerNames(entry).map((p) => p.name);
+      for (const name of names) {
+        if (!rows.has(name)) rows.set(name, []);
+        rows.get(name).push({ club, partners: names.filter((n) => n !== name) });
+      }
     }
+  }
+  const clubs = new Map();
+  clubs.oneClub = count >= 10 && all.size === 1;
+  // The club of a player's singles entries (the earlier on a tie)
+  const singles = new Map();
+  for (const [name, list] of rows) {
+    const tally = new Map();
+    for (const r of list) if (!r.partners.length) tally.set(r.club, (tally.get(r.club) ?? 0) + 1);
+    if (tally.size) singles.set(name, [...tally].reduce((a, b) => (b[1] > a[1] ? b : a))[0]);
+  }
+  for (const [name, list] of rows) {
+    const score = new Map();
+    for (const r of list) {
+      const weight = !r.partners.length ? 2 : r.partners.some((n) => singles.get(n) === r.club) ? 0.5 : 1;
+      score.set(r.club, (score.get(r.club) ?? 0) + weight);
+    }
+    clubs.set(name, [...score].reduce((a, b) => (b[1] > a[1] ? b : a))[0]);
   }
   return clubs;
 }
@@ -314,7 +346,9 @@ async function readTournament(t) {
     codes.add(c.code);
     for (const [id, g] of c.groups) groups.set(id, g);
   }
-  const clubs = entryClubs(await Promise.all(files.filter((f) => /^teams-\d+\.html$/.test(f)).map(read)));
+  let clubs = entryClubs(await Promise.all(files.filter((f) => /^teams-\d+\.html$/.test(f)).map(read)));
+  // An entry list with one club for everyone is wrong where the match names write the clubs: use those
+  if (clubs.oneClub && [...byId.values()].some((m) => [...m.names1, ...m.names2].some((p) => p.club))) clubs = new Map();
   const warnings = [];
   const played = [...byId.values()].filter((m) => m.played && m.winner && m.names1.length && m.names2.length);
   const byClass = Map.groupBy(played, (m) => m.code);

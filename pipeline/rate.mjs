@@ -424,11 +424,43 @@ export function profixioTournaments(mode = "all") {
   for (const t of tournaments) {
     if (mode === "identified") t.matches = t.matches.filter((m) => [...m.side1, ...m.side2].every((p) => p.id));
     for (const m of t.matches) for (const p of [...m.side1, ...m.side2]) p.id = id(p);
+    // A pair of the same initials twice that are still one player (not told apart) is left out
+    t.matches = t.matches.filter((m) => [m.side1, m.side2].every((side) => new Set(side.map((p) => p.id)).size === side.length));
   }
   return tournaments;
 }
 // A player without a page: not identified in a Profixio tournament
 export const anonymous = (id) => id < 0;
+
+// Profixio's clubs are often wrong (a pair's one club for both players, a club a player never played
+// for), which made players jump to a club for one tournament. An identified player's Profixio club
+// that they have in that one tournament only, and in no league team, is left out (null) when they
+// have another club that is confirmed (in two or more tournaments, or a league team's): it doesn't
+// change their club history, nor make a match cross-region.
+function confirmProfixioClubs(tournaments, groups) {
+  const seen = new Map(); // id -> club -> tournament ids, "L" for a league team
+  const add = (p, club, where) => {
+    if (!(p.id > 0) || !club || club.includes("/")) return;
+    const id = samePlayer(p.id);
+    if (!seen.has(id)) seen.set(id, new Map());
+    const clubs = seen.get(id);
+    if (!clubs.has(club)) clubs.set(club, new Set());
+    clubs.get(club).add(where);
+  };
+  for (const t of tournaments) for (const m of t.matches) for (const p of [...m.side1, ...m.side2]) add(p, p.club, t.tournamentId);
+  for (const g of groups) for (const tie of g.ties) for (const m of tie.games) for (const p of [...(m.side1 ?? []), ...(m.side2 ?? [])]) add(p, clubName(p.club), "L");
+  const confirmed = (where) => where.size >= 2 || where.has("L");
+  for (const t of tournaments) {
+    if (!String(t.tournamentId).startsWith("P")) continue;
+    for (const m of t.matches) {
+      for (const p of [...m.side1, ...m.side2]) {
+        const clubs = p.id > 0 && p.club ? seen.get(samePlayer(p.id)) : null;
+        const where = clubs?.get(p.club);
+        if (where && !confirmed(where) && [...clubs.values()].some(confirmed)) p.club = null;
+      }
+    }
+  }
+}
 
 export function collectGames({ profixio = process.env.PROFIXIO } = {}) {
   regionOf = regionLookup();
@@ -437,7 +469,10 @@ export function collectGames({ profixio = process.env.PROFIXIO } = {}) {
   checked.clear();
   meetings.clear();
   const games = [];
-  for (const t of [...readDir("portalen"), ...provisionalTournaments(), ...profixioTournaments(profixio)]) {
+  const tournaments = [...readDir("portalen"), ...provisionalTournaments(), ...profixioTournaments(profixio)];
+  const groups = readDir("league");
+  confirmProfixioClubs(tournaments, groups);
+  for (const t of tournaments) {
     t.matches.forEach((m, i) => {
       const g = toGame(m, {
         day: t.startDate,
@@ -451,7 +486,7 @@ export function collectGames({ profixio = process.env.PROFIXIO } = {}) {
     });
   }
   leaguePreviews.length = 0;
-  for (const group of readDir("league")) {
+  for (const group of groups) {
     for (const tie of group.ties) {
       const meta = (game, order) => ({
         day: tie.time.slice(0, 10),
