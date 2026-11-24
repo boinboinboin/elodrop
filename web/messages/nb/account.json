@@ -166,7 +166,7 @@
     "player_reported": "Denne spilleren har allerede rapporter som venter.",
     "squad_invalid": "Et lag er 5 forskjellige spillere, én av dem kaptein.",
     "not_eligible": "En av spillerne kan ikke velges (under 18, eller verken aktiv eller med rating i single, double og mix).",
-    "too_many_from_club": "Et lag kan ha høyst 2 spillere fra én klubb.",
+    "too_many_from_club": "Et lag kan ha maks 2 spillere fra én klubb.",
     "needs_both_genders": "Et lag må ha minst én mann og én kvinne.",
     "no_profile": "Lag kontoen din først (brukernavnet ditt).",
     "league_not_found": "Ingen liga har den koden.",

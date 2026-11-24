@@ -53,6 +53,7 @@
     "save": "Save squad",
     "saved": "Saved. It carries over until you change it.",
     "need": "{count} more to pick, and a captain",
+    "tip": "Tip: tick “{filter}” below to see who plays a tournament this weekend.",
     "unsaved": "Not saved yet",
     "carries": "Saved",
     "now": "The round under way, from {date}",

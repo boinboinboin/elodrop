@@ -12,6 +12,7 @@ Every change merged into `main` gets an entry here, newest first.
 
 - EloStonk: the players in the squads on the leaderboard, in leagues, in your squad and in the team of the round link to their pages.
 - EloStonk's How it works is laid out in numbered sections with proper headings, as the site's own How it works page, instead of showing asterisks around them.
+- EloStonk: a player in your squad can be taken out from the player list too (press the tick), and while picking, a tip points to the filter for who plays a tournament this weekend. "Høyst 2" from one club now reads "Maks 2".
 
 ## v1.39.9 (2026-11-24)
 

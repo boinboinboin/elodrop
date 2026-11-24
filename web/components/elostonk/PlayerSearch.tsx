@@ -4,12 +4,14 @@
 // search: utils/format.ts normalize), filtered by gender, discipline and "has an upcoming tournament" (drawn in one not
 // over: the pipeline knows from the draws; team matches can't be known ahead, so it's a filter, not a rule), sorted by
 // rating, form (the last 4 rounds), last round or how many picked them. Each with their stonk chart (the last 8 rounds)
-// and a button to add them to the squad (off for a club the squad already has 2 from: rules.ts). With the upcoming filter on, they're grouped by the week they play in (Monday to
+// and a button to add them to the squad (off for a club the squad already has 2 from: rules.ts), or to take them out
+// again (ticked while in the squad, a minus on hover). With the upcoming filter on, they're grouped by the week they play in (Monday to
 // Sunday, nearest first: this weekend, next weekend, …), a player drawn in several weeks in each of them.
 import { getISOWeek } from "date-fns";
 import { useMemo, useState } from "react";
 import { MAX_PER_CLUB } from "@/components/elostonk/rules";
 import Sparkline from "@/components/elostonk/Sparkline";
+import { Check, Minus, Plus } from "@/components/SVG";
 import { bestRating, form, type StonkPlayer, useNow } from "@/components/elostonk/useStonk";
 import CheckToggle from "@/components/ui/CheckToggle";
 import Link from "@/components/ui/Link";
@@ -47,6 +49,7 @@ export default function PlayerSearch({
   full,
   clubs,
   onAdd,
+  onRemove,
 }: {
   players: StonkPlayer[];
   /** In the squad being made */
@@ -57,6 +60,8 @@ export default function PlayerSearch({
   /** How many of the squad being made are from each club */
   clubs: Map<string, number>;
   onAdd: (id: number) => void;
+  /** Take a player in the squad out again */
+  onRemove: (id: number) => void;
 }) {
   const { t, num, poolCodes, date, dateRange } = useI18n();
   const now = useNow();
@@ -121,13 +126,26 @@ export default function PlayerSearch({
         <span className="w-14 text-right tabular-nums text-sm" title={t("elostonk.search.formTitle")}>{form(p) > 0 ? "+" : ""}{num(Math.round(form(p)))}</span>
         <button
           type="button"
-          disabled={inSquad || off}
-          onClick={() => onAdd(p.id)}
-          aria-label={clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : t("elostonk.search.add", { name: p.name })}
-          title={clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : undefined}
-          className={`shrink-0 w-10 h-10 border border-black text-xl leading-none ${inSquad ? "bg-black text-white" : off ? "" : "hover:bg-black hover:text-white"} disabled:cursor-default ${off ? "opacity-30" : ""}`}
+          disabled={off}
+          onClick={() => (inSquad ? onRemove(p.id) : onAdd(p.id))}
+          aria-pressed={inSquad}
+          aria-label={inSquad ? t("elostonk.squad.remove", { name: p.name }) : clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : t("elostonk.search.add", { name: p.name })}
+          title={inSquad ? t("elostonk.squad.remove", { name: p.name }) : clubFull ? t("elostonk.search.clubFull", { name: p.name, club: p.club!, max: MAX_PER_CLUB }) : undefined}
+          className={`group shrink-0 w-10 h-10 inline-flex items-center justify-center border border-black text-xl cursor-pointer ${inSquad ? "bg-black text-white hover:bg-white hover:text-black" : off ? "" : "hover:bg-black hover:text-white"} disabled:cursor-default ${off ? "opacity-30" : ""}`}
         >
-          {inSquad ? "✓" : "+"}
+          {inSquad ? (
+            <>
+              {/* Ticked; a minus on hover, as pressing takes them out */}
+              <span className="group-hover:hidden">
+                <Check />
+              </span>
+              <span className="hidden group-hover:inline">
+                <Minus />
+              </span>
+            </>
+          ) : (
+            <Plus />
+          )}
         </button>
       </li>
     );

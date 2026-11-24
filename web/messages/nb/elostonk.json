@@ -13,7 +13,7 @@
   "rules": {
     "squad": {
       "title": "Laget ditt",
-      "text": "Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Høyst 2 kan være fra samme klubb, og laget må ha minst én mann og én kvinne. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det."
+      "text": "Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Maks 2 kan være fra samme klubb, og laget må ha minst én mann og én kvinne. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det."
     },
     "rounds": {
       "title": "Runder",
@@ -43,7 +43,7 @@
     },
     "gone": "Kan ikke velges lenger",
     "invalid": "Kan ikke velges: {names}. En spiller må være 18 år eller eldre, og aktiv (en kamp de siste 12 månedene) eller ha rating i single, double og mix. Bytt ut før du lagrer.",
-    "clubLimit": "Høyst 2 spillere fra én klubb: {club} har {count}. Bytt ut én for å lagre.",
+    "clubLimit": "Maks 2 spillere fra én klubb: {club} har {count}. Bytt ut én for å lagre.",
     "genders": "Et lag må ha minst én mann og én kvinne. Bytt inn én for å lagre.",
     "captain": "Kaptein: teller dobbelt",
     "makeCaptain": "Gjør {name} til kaptein",
@@ -53,6 +53,7 @@
     "save": "Lagre laget",
     "saved": "Lagret. Det følger med til du endrer det.",
     "need": "{count} til å velge, og en kaptein",
+    "tip": "Tips: huk av for «{filter}» nedenfor for å se hvem som spiller turnering denne helgen.",
     "unsaved": "Ikke lagret ennå",
     "carries": "Lagret",
     "now": "Runden som pågår, fra {date}",

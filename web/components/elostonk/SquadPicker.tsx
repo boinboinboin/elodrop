@@ -197,6 +197,8 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
           {done ? t("elostonk.squad.saved") : !ready ? t("elostonk.squad.need", { count: SIZE - draft.length }) : changed ? t("elostonk.squad.unsaved") : saved ? t("elostonk.squad.carries") : ""}
         </span>
       </div>
+      {/* While picking: where to find who plays this weekend (the search's upcoming filter) */}
+      {draft.length < SIZE && <p className="text-sm text-gray-600 mt-2">{t("elostonk.squad.tip", { filter: t("elostonk.search.upcoming") })}</p>}
       {invalid.length > 0 && (
         <p role="alert" className={ERROR}>
           {rich("elostonk.squad.invalid", {
@@ -219,7 +221,7 @@ export default function SquadPicker({ between, onSaved }: { between?: ReactNode;
     {/* The player search */}
     <section className="mb-10">
       <h2 className="text-2xl mb-3">{t("elostonk.search.title")}</h2>
-      <PlayerSearch players={data.players} picked={picked} owned={owned} full={draft.length >= SIZE} clubs={clubs} onAdd={add} />
+      <PlayerSearch players={data.players} picked={picked} owned={owned} full={draft.length >= SIZE} clubs={clubs} onAdd={add} onRemove={remove} />
     </section>
     </>
   );
