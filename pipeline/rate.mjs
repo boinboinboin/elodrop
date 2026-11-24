@@ -575,6 +575,30 @@ export function computeRatings(
   } = {}
 ) {
   const players = Object.fromEntries(Object.values(POOLS).map((pool) => [pool, new Map()]));
+  // For the club history (getPlayer): a league match for the registered club is a move, unless their
+  // next tournament is for another club (a loan to the club they later joined). Each player's tournament
+  // entries [day, club], in playing order.
+  const registered = registeredClubs();
+  const entries = new Map();
+  for (const g of games) {
+    if (!g.source.startsWith("T")) continue;
+    for (const side of [...g.side1, ...g.side2]) {
+      if (!side.club) continue;
+      if (!entries.has(side.id)) entries.set(side.id, []);
+      entries.get(side.id).push([g.day, side.club]);
+    }
+  }
+  const movedTo = (id, club, day) => {
+    if (!club || club !== registered.get(id)) return false;
+    const list = entries.get(id) ?? [];
+    let lo = 0;
+    for (let hi = list.length; lo < hi; ) {
+      const mid = (lo + hi) >> 1;
+      if (list[mid][0] <= day) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo === list.length || list[lo][1] === club;
+  };
   // Prediction accuracy per pool
   const calibration = Object.fromEntries(Object.keys(players).map((pool) => [pool, { n: 0, correct: 0, logLoss: 0 }]));
   // surprise: mean (actual - expected) score. items: [rating before the return, days away, actual - expected]
@@ -637,10 +661,16 @@ export function computeRatings(
     // ("Kristiansand 2", or combined teams like "Tromsø/Bygdø").
     if (source.startsWith("T")) {
       if (side.club) [p.tournamentClub, p.tournamentDay] = [side.club, day];
-    } else if (side.club && !side.club.includes("/")) p.leagueClub = clubName(side.club);
-    // Club history for the rating graph: [week index, club] whenever the club changes.
+    } else if (side.club && !side.club.includes("/")) {
+      [p.leagueClub, p.leagueDay] = [clubName(side.club), day];
+      p.leagueMove = movedTo(side.id, p.leagueClub, day);
+    }
+    // Club history for the rating graph: [week index, club] whenever the club changes. The last
+    // tournament's club for 12 months, unless they have since played a league match for the club they
+    // are registered with, and enter no tournament for another club after it: then they have moved there.
     const recent = p.tournamentDay && (toTime(day) - toTime(p.tournamentDay)) / DAY_MS <= TOURNAMENT_CLUB_DAYS;
-    const club = (recent ? p.tournamentClub : p.leagueClub) ?? p.tournamentClub;
+    const moved = p.leagueDay > p.tournamentDay && p.leagueMove;
+    const club = (recent && !moved ? p.tournamentClub : p.leagueClub) ?? p.tournamentClub;
     if (club && club !== p.clubs.at(-1)?.[1]) {
       const index = Math.round((toTime(weekStart(day)) - toTime(p.firstWeek)) / (7 * DAY_MS));
       if (p.clubs.at(-1)?.[0] === index) p.clubs.pop(); // changed within the same week: keep the last
@@ -885,6 +915,22 @@ export function computeRatings(
   return { players, calibration, returns, upsets, leagueGames };
 }
 
+// Each player's club in badmintonportalen's player register (current as of the last fetch-players.mjs
+// run), or the one in player-clubs.txt
+function registeredClubs() {
+  const registered = new Map(
+    JSON.parse(readFileSync(`${DIR}data/players.json`, "utf8")).map((p) => [p.id, p.club.trim()])
+  );
+  for (const [i, raw] of readFileSync(`${DIR}player-clubs.txt`, "utf8").split("\n").entries()) {
+    const line = raw.replace(/\s+#.*$|^#.*$/, "").trim();
+    if (!line) continue;
+    const m = line.match(/^(\d+)\s+(.+)$/);
+    if (!m) console.warn(`player-clubs.txt line ${i + 1}: can't read "${raw.trim()}"`);
+    else registered.set(Number(m[1]), m[2].trim());
+  }
+  return registered;
+}
+
 // Ranking order: the exact rating (not the rounded one shown), then the most matches played, then the
 // name (Norwegian order), then the id, so players with the same rating keep their order from week to week
 const byRanking = (a, b) => b.rating - a.rating || b.matches - a.matches || a.name.localeCompare(b.name, "nb") || a.id - b.id;
@@ -900,16 +946,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   // Club shown for each player: the club registered on badmintonportalen (current as of the last
   // fetch-players.mjs run; or the one in player-clubs.txt), else the last tournament club, else the
   // last league team's club.
-  const registered = new Map(
-    JSON.parse(readFileSync(`${DIR}data/players.json`, "utf8")).map((p) => [p.id, p.club.trim()])
-  );
-  for (const [i, raw] of readFileSync(`${DIR}player-clubs.txt`, "utf8").split("\n").entries()) {
-    const line = raw.replace(/\s+#.*$|^#.*$/, "").trim();
-    if (!line) continue;
-    const m = line.match(/^(\d+)\s+(.+)$/);
-    if (!m) console.warn(`player-clubs.txt line ${i + 1}: can't read "${raw.trim()}"`);
-    else registered.set(Number(m[1]), m[2].trim());
-  }
+  const registered = registeredClubs();
   const clubOf = (p) => registered.get(p.id) || p.tournamentClub || p.leagueClub || null;
   const genders = new Map(JSON.parse(readFileSync(`${DIR}data/players.json`, "utf8")).map((p) => [p.id, p.gender]));
   // Players not in the register: the opposite of most of their mixed doubles partners' genders,
@@ -934,7 +971,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
   const genderOf = (id) => genders.get(id) ?? inferred.get(id) ?? null;
   // Fields only used while rating
-  const INTERNAL = new Set(["weekly", "weeklyExact", "weeklyMatches", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "ranks", "pool", "peakSettled"]);
+  const INTERNAL = new Set(["weekly", "weeklyExact", "weeklyMatches", "log", "clubs", "nextWeek", "penalizedUntil", "returning", "returnInfo", "rdDay", "tournamentClub", "tournamentDay", "leagueClub", "leagueDay", "leagueMove", "ranks", "pool", "peakSettled"]);
 
   // Rankings only include active players (R.isActive) of the pool's gender (R.rankedIn); others get rank null.
   for (const [pool, map] of Object.entries(players)) {

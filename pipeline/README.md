@@ -388,6 +388,8 @@ The cut-offs are worked out once a season, at its start, with `node class-cutoff
 
 The rating graph is coloured by the club the player played for at the time: the club of their last tournament, if it was within the last 12 months, otherwise the club of their last league team.
 
+A league match for the club the player is registered with (badmintonportalen's player register, or `player-clubs.txt`) after their last tournament is a move, and counts from then, unless their next tournament is for another club (a loan to the club they joined later). Without it, a player who moved and played league for the new club kept their old tournament club for up to a year: Sofia Louis Macsali, Bergen's in a tournament in February 2026, stayed Bergen through her autumn 2026 Eliteserien matches for Kristiansand. In November 2026 this changed the club history of 170 players (56 now end at their registered club), with 20 more short stints (players who played league for two clubs in a season).
+
 Profixio's clubs (2007–2014) are often wrong, which made players jump to a club they never played for, for one tournament. So an identified player's Profixio club that they have in that one tournament only, and in no league team, is left out when they have another club that is confirmed (in two or more tournaments, Profixio's or badmintonportalen's, or a league team's) (`confirmProfixioClubs` in `rate.mjs`): it doesn't change their club history, and doesn't make the match cross-region. In November 2026 this left 581 short stints at another club (going back to the one before) in 2008–2014, down from 3,638; from 2015 on there are 13–71 a year.
 
 ### Women's singles first

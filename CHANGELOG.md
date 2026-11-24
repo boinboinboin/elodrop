@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.11 (2026-11-24)
+
+- A player who has moved club now shows the new club on their rating graph (and beside them in match lists) from their first league match for it, instead of keeping their last tournament's club for up to a year.
+
 ## v1.39.10 (2026-11-24)
 
 - EloStonk: the players in the squads on the leaderboard, in leagues, in your squad and in the team of the round link to their pages.
