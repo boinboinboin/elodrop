@@ -8,6 +8,11 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.10 (2026-11-24)
+
+- EloStonk: the players in the squads on the leaderboard, in leagues, in your squad and in the team of the round link to their pages.
+- EloStonk's How it works is laid out in numbered sections with proper headings, as the site's own How it works page, instead of showing asterisks around them.
+
 ## v1.39.9 (2026-11-24)
 
 - Public EloStonk leagues: the owner chooses when making a league whether it's public or private (private unless ticked) and can change it later. Public leagues are listed on the Leagues tab for anyone to join; private ones are joined with the link or code, as before.

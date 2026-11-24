@@ -10,7 +10,29 @@
     "stats": "Statistikk",
     "rules": "Slik fungerer det"
   },
-  "rules": "**Laget ditt.** Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Høyst 2 kan være fra samme klubb, og laget må ha minst én mann og én kvinne. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det.\n\n**Runder.** En runde går fra fredag til torsdag og låses kl. 14.00 på fredagen (norsk tid): laget du har da, spiller hele runden, også fredagens kamper. En helgs turneringer og lagkampene uka etter hører altså til samme runde.\n\n**Poeng.** Hver kamp en av spillerne dine spiller i runden, gir 100 × (resultatet − sjansen for å vinne den, fra Elodrops rating):\n- seier med 20 % sjanse: +80\n- seier med 90 % sjanse: +10\n- tap med 90 % sjanse: −90\n\nFavoritter får altså mindre enn underdoger som vinner, og skalaen er den samme på alle nivåer. Tap teller også, så en stonk kan falle. Flere kamper gir flere sjanser begge veier.\n\n**Når poengene kommer.** Poengene kommer med resultatene, natta etter hver kampdag; sene resultater kan fortsatt endre en runde i 3 uker, så de siste rundene er merket foreløpige.\n\n**Ligaer.** Lag en liga og inviter andre med lenken eller koden på 4 tegn, for å ha en egen tabell ved siden av alles. En åpen liga står på listen, og hvem som helst kan bli med.\n\nEloStonk er gratis, uten innsats og uten premier.",
+  "rules": {
+    "squad": {
+      "title": "Laget ditt",
+      "text": "Velg 5 spillere som er 18 år eller eldre. Én er kaptein, og poengene hans eller hennes teller dobbelt. Høyst 2 kan være fra samme klubb, og laget må ha minst én mann og én kvinne. Endre laget så ofte du vil til runden låses; etter det følger det med til neste runde til du endrer det."
+    },
+    "rounds": {
+      "title": "Runder",
+      "text": "En runde går fra fredag til torsdag og låses kl. 14.00 på fredagen (norsk tid): laget du har da, spiller hele runden, også fredagens kamper. En helgs turneringer og lagkampene uka etter hører altså til samme runde."
+    },
+    "points": {
+      "title": "Poeng",
+      "text": "Hver kamp en av spillerne dine spiller i runden, gir 100 × (resultatet − sjansen for å vinne den, fra Elodrops rating):\n- seier med 20 % sjanse: +80\n- seier med 90 % sjanse: +10\n- tap med 90 % sjanse: −90\n\nFavoritter får altså mindre enn underdoger som vinner, og skalaen er den samme på alle nivåer. Tap teller også, så en stonk kan falle. Flere kamper gir flere sjanser begge veier."
+    },
+    "timing": {
+      "title": "Når poengene kommer",
+      "text": "Poengene kommer med resultatene, natta etter hver kampdag; sene resultater kan fortsatt endre en runde i 3 uker, så de siste rundene er merket foreløpige."
+    },
+    "leagues": {
+      "title": "Ligaer",
+      "text": "Lag en liga og inviter andre med lenken eller koden på 4 tegn, for å ha en egen tabell ved siden av alles. En åpen liga står på listen, og hvem som helst kan bli med."
+    },
+    "note": "EloStonk er gratis, uten innsats og uten premier."
+  },
   "squad": {
     "signIn": "<link>Logg inn</link> for å velge laget ditt. Tabellene og statistikken er åpne for alle.",
     "title": "Laget ditt for {date}",

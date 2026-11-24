@@ -1,18 +1,16 @@
-// The building blocks of /how-it-works: a numbered part of the page in its own colour, the details
+// The building blocks of /how-it-works: a numbered part of the page in its own colour (NumberedHeading), the details
 // for nerds under it (shown with the switch on), and a formula.
 import type { ReactNode } from "react";
 import { NerdOnly } from "@/components/how-it-works/NerdMode";
 import { Reveal } from "@/components/ui/Motion";
+import NumberedHeading from "@/components/ui/NumberedHeading";
 import { getI18n } from "@/messages/server";
 
 /** A part of the page: its number in its colour, its heading and the plain text, then anything else; it fades up as it scrolls into view */
 export function Part({ id, number, color, title, children }: { id: string; number: number; color: string; title: string; children: ReactNode }) {
   return (
     <Reveal as="section" id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24 xl:scroll-mt-8">
-      <div className="flex items-baseline gap-3 mb-4">
-        <span aria-hidden="true" className="font-mono text-sm font-semibold" style={{ color }}>{String(number).padStart(2, "0")}</span>
-        <h2 id={`${id}-title`} className="text-3xl">{title}</h2>
-      </div>
+      <NumberedHeading id={`${id}-title`} number={number} color={color} title={title} />
       <div className="grid gap-4 text-lg max-w-3xl [&_strong]:font-semibold">{children}</div>
     </Reveal>
   );

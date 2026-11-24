@@ -3,11 +3,14 @@
 // A squad's players with their points in a round (the captain's twice), in a row of small cards: the member's squad
 // (Squad), others' in the tables (Leaderboard) and the team of the round (TeamOfRound); with `compact`, one wrapping
 // line of small text, for a league's squads (LeagueView). The points and names come from the players' file (`byId`, its
-// last 8 rounds by `index`), or are given (`points`, `names`) for older rounds and players no longer in it.
+// last 8 rounds by `index`), or are given (`points`, `names`) for older rounds and players no longer in it. Every
+// player's name links to their page.
 import type { StonkPlayer } from "@/components/elostonk/useStonk";
 import { Star } from "@/components/SVG";
+import Link from "@/components/ui/Link";
 import { useI18n } from "@/messages/client";
 import { toneClass } from "@/utils/format";
+import { playerHref } from "@/utils/hrefs";
 
 /** "Markus Lervik Furuvik" -> "M. Furuvik": the first name's initial and the last name */
 const shortName = (name: string) => {
@@ -48,8 +51,10 @@ export default function SquadLine({
               {/* A player and their points wrap together */}
               <span className="whitespace-nowrap">
                 {id === captain && <Star filled className="mr-0.5 text-xs" />}
-                <span className="sm:hidden">{shortName(name)}</span>
-                <span className="hidden sm:inline">{name}</span>{" "}
+                <Link href={playerHref(id)} className="link hover:text-blue-600">
+                  <span className="sm:hidden">{shortName(name)}</span>
+                  <span className="hidden sm:inline">{name}</span>
+                </Link>{" "}
                 <span className={`tabular-nums ${toneClass(pts)}`}>
                   {signed(pts, 0)}
                   {id === captain && <span className="text-gray-600"> ×2</span>}
@@ -71,7 +76,7 @@ export default function SquadLine({
           <li key={id} className="bg-white px-3 py-2 min-w-0">
             <span className="block font-semibold truncate">
               {id === captain && <Star filled className="mr-1 text-sm" />}
-              {names?.get(id) ?? p?.name ?? `#${id}`}
+              <Link href={playerHref(id)} className="link hover:text-blue-600">{names?.get(id) ?? p?.name ?? `#${id}`}</Link>
             </span>
             <span className={`text-sm tabular-nums ${toneClass(pts)}`}>
               {signed(pts, 1)}
