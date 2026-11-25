@@ -440,3 +440,8 @@ enabled = true
 # finds nothing new does nothing
 [functions.push-draws]
 verify_jwt = false
+
+# Match stories into the Sanity Studio (supabase/functions/stories-to-sanity): called by the database (a story sent in,
+# and hourly) without a key; a call that finds nothing to do does nothing
+[functions.stories-to-sanity]
+verify_jwt = false

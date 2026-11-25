@@ -6,6 +6,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { badge } from "./badge";
 import { invertInDark } from "./invertInDark";
+import { matchStory } from "./matchStory";
 import { page } from "./page";
 import { tidySlug, tidyText } from "./spacing";
 import { tournament } from "./tournament";
@@ -38,4 +39,4 @@ export const club = defineType({
   preview: { select: { title: "title", subtitle: "fullName", media: "logo" } },
 });
 
-export const schemaTypes = [tournament, club, venue, badge, page];
+export const schemaTypes = [tournament, club, venue, badge, matchStory, page];

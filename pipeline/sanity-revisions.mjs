@@ -1,8 +1,8 @@
 // What changed in the Studio since the last check, as the cache tags to refresh on the site (web/data/sanityTags.ts):
 // the clubs (on nearly every page), the badges earned by a rule (every player page) and the halls (tournament and
 // team match pages) as a whole, when any of their documents was published, added or deleted; each tournament on its
-// own; and a badge given by hand on its players' pages alone (the webhook refreshes them at once: this is the safety
-// net). The
+// own; and a badge given by hand, or a match's story, on its players' pages alone (the webhook refreshes them at once:
+// this is the safety net). The
 // nightly run refreshes only these, once per change: the Sanity webhook leaves the clubs, badges and halls to it
 // (web/app/api/revalidate), and refreshes a tournament's pages at once, so for tournaments this is the safety net for
 // a webhook call that didn't arrive (it refreshes only that tournament's pages again). The written pages (About, Help &
@@ -36,6 +36,13 @@ const next = {};
 for (const [key, [type]] of Object.entries(WHOLE)) next[key] = hash(await query(`${published(type)}${type === "badge" ? "[defined(key)]" : ""} { _id, _rev }`));
 // Each badge given by hand by its document id: its revision and players
 next.handBadges = Object.fromEntries((await query(`${published("badge")}[!defined(key)] { _id, _rev, players }`)).map((b) => [b._id, [b._rev, b.players ?? []]]));
+// Each match story by its document id: its revision and its match's players (from the key, "T6084 22113 vs 20814"; as
+// web/utils/matchKey.ts)
+function keyPlayers(key) {
+  const m = /^(?:TP?|L)\d+(?:\.\d+)? (-?\d+(?:\+-?\d+)?) vs (-?\d+(?:\+-?\d+)?)$/.exec(key?.trim().replace(/\s+/g, " ") ?? "");
+  return m ? `${m[1]}+${m[2]}`.split("+").map(Number).filter((id) => id > 0) : [];
+}
+next.stories = Object.fromEntries((await query(`${published("matchStory")} { _id, _rev, match }`)).map((s) => [s._id, [s._rev, keyPlayers(s.match)]]));
 // Each tournament by its document id: its Cup2000 id (its pages' tag) and revision
 next.tournaments = Object.fromEntries((await query(`${published("tournament")} { _id, _rev, cup2000Id }`)).map((t) => [t._id, [t.cup2000Id ?? null, t._rev]]));
 writeFileSync(nextFile, JSON.stringify(next));
@@ -62,6 +69,14 @@ if (last) {
       tags.add("sanity:badges:given");
       for (const player of new Set([...(was?.[1] ?? []), ...(now?.[1] ?? [])])) if (Number.isInteger(player) && player > 0) tags.add(`sanity:badges:player:${player}`);
     }
+  }
+  // A match story, changed, added or deleted: its match's players' pages (before and after). From a state without them
+  // (before this check existed): every story's, in case one was published before the webhook knew them (a few pages)
+  for (const id of new Set([...Object.keys(last.stories ?? {}), ...Object.keys(next.stories)])) {
+    const [was, now] = [last.stories?.[id], next.stories[id]];
+    if (was?.[0] === now?.[0]) continue;
+    tags.add("sanity:stories");
+    for (const player of new Set([...(was?.[1] ?? []), ...(now?.[1] ?? [])])) tags.add(`sanity:stories:player:${player}`);
   }
   for (const tag of tags) console.log(tag);
 }

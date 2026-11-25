@@ -18,19 +18,23 @@
 //     a written page (About, Help & support; _id page-about-nb) → that page in both languages (two small pages)
 //     a badge given by hand (no key) → the pages of its players, before and after the change (a handful: their
 //       own tag each), and the achievements page
+//     a match's story → the pages of its match's players, before and after the change (two to four: their own tag each),
+//       and the stories page with the upset cards' stories (app/api/stories)
 //     a badge earned by a rule, a club or a hall → nothing now: those badges are on every player page (about
 //       23,600 with both languages), the clubs on nearly every page and the halls on every team match page (about
 //       12,000), so they wait for the night, when the pipeline refreshes each kind once if any of it changed
 //   To show one at once (seldom needed), call this by hand with its tag (sanity:badges, sanity:clubs, sanity:venues):
 //     curl -X POST -H "Authorization: Bearer $REVALIDATE_SECRET" "https://www.elodrop.no/api/revalidate?tag=sanity:badges"
-//   So the webhook needs tournaments, written pages and badges (filter _type in ["tournament", "page", "badge"]),
-//   with the projection { _id, _type, cup2000Id, "key": coalesce(after().key, before().key), "players": after().players,
-//   "playersBefore": before().players }.
+//   So the webhook needs tournaments, written pages, badges and match stories (filter
+//   _type in ["tournament", "page", "badge", "matchStory"]), with the projection { _id, _type, cup2000Id,
+//   "key": coalesce(after().key, before().key), "players": after().players, "playersBefore": before().players,
+//   "match": after().match, "matchBefore": before().match }.
 //   Drafts are skipped (the webhook should leave them out anyway: the Studio saves one every few seconds).
 //   Without a body, ?tag=sanity refreshes all of Sanity's content.
 import { revalidateTag } from "next/cache";
 import { DATA_TAG, fileTag, isDataPath } from "@/data/dataTags";
-import { HAND_BADGES_TAG, PAGES_TAG, pageKeyOf, pageTag, playerBadgesTag, SANITY_TAG, TOURNAMENTS_TAG, tournamentTag } from "@/data/sanityTags";
+import { HAND_BADGES_TAG, PAGES_TAG, pageKeyOf, pageTag, playerBadgesTag, playerStoriesTag, SANITY_TAG, STORIES_TAG, TOURNAMENTS_TAG, tournamentTag } from "@/data/sanityTags";
+import { parseMatchKey } from "@/utils/matchKey";
 
 const isTag = (tag: string) => tag === DATA_TAG || tag === SANITY_TAG || /^(elo-data|sanity):[a-z0-9:-]+$/.test(tag);
 /** The most files one call refreshes (the pipeline sends more in several calls) */
@@ -45,6 +49,9 @@ interface Body {
   key?: unknown;
   players?: unknown;
   playersBefore?: unknown;
+  // A match story's match key, after and before the change
+  match?: unknown;
+  matchBefore?: unknown;
   // The pipeline's uploaded files
   files?: unknown;
 }
@@ -69,6 +76,11 @@ function sanityTags(body: Body | null): string[] | null {
       if (typeof body.key === "string" && body.key) return [];
       const players = new Set([...playerIds(body.players), ...playerIds(body.playersBefore)]);
       return [HAND_BADGES_TAG, ...[...players].map(playerBadgesTag)];
+    }
+    case "matchStory": {
+      // Its match's players' pages, before and after the change (the story may have moved to another match)
+      const players = new Set([body.match, body.matchBefore].flatMap((key) => (typeof key === "string" ? (parseMatchKey(key)?.players ?? []) : [])));
+      return [STORIES_TAG, ...[...players].map(playerStoriesTag)];
     }
     case "venue":
     case "club":

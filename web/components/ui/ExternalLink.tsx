@@ -5,9 +5,10 @@ import type { ReactNode } from "react";
 import { External } from "@/components/SVG";
 import { TEXT_LINK } from "./styles";
 
-export default function ExternalLink({ href, className = TEXT_LINK, children }: { href: string; className?: string; children: ReactNode }) {
+// `rel`: "noopener ugc" for an address a visitor gave (a story's source)
+export default function ExternalLink({ href, className = TEXT_LINK, rel = "noopener", children }: { href: string; className?: string; rel?: string; children: ReactNode }) {
   return (
-    <a href={href} className={className} rel="noopener">
+    <a href={href} className={className} rel={rel}>
       {children}
       <External className="ml-1 text-[0.8em]" />
     </a>

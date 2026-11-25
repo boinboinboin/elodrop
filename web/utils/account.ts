@@ -79,6 +79,9 @@ export const ACCOUNT_ERRORS = [
   "claim_too_soon",
   "account_too_new",
   "too_many_pending",
+  // Match stories (supabase/migrations/*_match_stories.sql)
+  "too_many_stories",
+  "story_twice",
   "reports_off",
   "reports_blocked",
   "not_your_player",

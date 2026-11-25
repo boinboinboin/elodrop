@@ -158,6 +158,8 @@
     "claim_too_soon": "Du valgte en spiller for mindre enn 30 dager siden.",
     "account_too_new": "Kontoen din er for ny til dette ennå.",
     "too_many_pending": "Du har allerede 3 ideer som venter på å bli sett på.",
+    "too_many_stories": "Du har allerede 3 historier som venter på å bli lest.",
+    "story_twice": "Du har allerede sendt inn en historie om denne kampen.",
     "reports_off": "Rapporter er slått av for nå.",
     "reports_blocked": "Du kan ikke sende rapporter lenger.",
     "not_your_player": "Du kan bare rapportere feil om deg selv, 14 dager etter at du valgte hvem du er.",

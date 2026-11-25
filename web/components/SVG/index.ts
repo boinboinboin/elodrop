@@ -1,6 +1,7 @@
 // The site's icons, one per file (each an inline SVG, see iconProps.ts)
 export { ArrowLeft } from "./ArrowLeft";
 export { ArrowRight } from "./ArrowRight";
+export { Book } from "./Book";
 export { CaretDown } from "./CaretDown";
 export { CaretUp } from "./CaretUp";
 export { Check } from "./Check";

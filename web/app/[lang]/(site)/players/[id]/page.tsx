@@ -31,10 +31,10 @@ import { TEXT_LINK } from "@/components/ui/styles";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
 import { getRankings } from "@/data/rankings";
-import { getBadges, getClubMap, getPlayerHandBadges } from "@/data/sanity";
+import { getBadges, getClubMap, getPlayerHandBadges, getPlayerStories } from "@/data/sanity";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
-import type { Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
+import type { MatchStory, Player, PlayerPool, Pool, Rival, SeasonRow } from "@/types";
 import { classOf } from "@/utils/classes";
 import { addDays, EMPTY, seasonLabel } from "@/utils/format";
 import { clubHref, DISCIPLINE_PARAM, headToHeadHref, playerHref } from "@/utils/hrefs";
@@ -90,8 +90,8 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
   if (id === null) notFound();
   // Neither meta.json nor achievements.json, which change with every run: the page is built again only when the
   // player's own data changes (the badges' rarity is loaded in the browser: BadgeStrip), or a badge is given to them by
-  // hand or taken (their own tag: data/sanity.ts getPlayerHandBadges)
-  const [player, clubs, earnable, handGiven] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang), getPlayerHandBadges(id, i18n.lang)]);
+  // hand or taken, or a story told about one of their matches (their own tags: data/sanity.ts playerRowsOf)
+  const [player, clubs, earnable, handGiven, stories] = await Promise.all([getPlayer(id), getClubMap(), getBadges(i18n.lang), getPlayerHandBadges(id, i18n.lang), getPlayerStories(id, i18n.lang)]);
   const badges = [...handGiven, ...earnable];
   if (!player) notFound();
   // A merged id (one person with two ids on badmintonportalen): their page is the id kept
@@ -158,7 +158,7 @@ async function PlayerContent({ params }: Pick<PageProps<"/[lang]/players/[id]">,
           label={t("players.disciplines")}
           param={DISCIPLINE_PARAM}
           sticky
-          tabs={pools.map(([pool, p], i) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} first={i === 0} /> }))}
+          tabs={pools.map(([pool, p], i) => ({ id: pool, label: <PoolName pool={pool} />, content: <Discipline pool={pool} p={p} player={player} links={links} stories={stories} first={i === 0} /> }))}
         />
       </Section>
     </>
@@ -366,7 +366,7 @@ async function AllDisciplines({ player }: { player: Player }) {
  * (LazyMatchTable), as the page is stored again with every change to the player's data, and the match tables were
  * most of its size.
  */
-async function Discipline({ pool, p, player, links, first }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number>; first: boolean }) {
+async function Discipline({ pool, p, player, links, stories, first }: { pool: Pool; p: PlayerPool; player: Player; links: Record<string, number>; stories: MatchStory[]; first: boolean }) {
   const { t, num, date, pools } = await getI18n();
   const mixed = pool === "mixedDoubles";
   const history = p.history;
@@ -461,6 +461,7 @@ async function Discipline({ pool, p, player, links, first }: { pool: Pool; p: Pl
             more={{ url: `/api/players/${player.id}/matches?pool=${pool}`, count: log.count ?? log.all.length }}
             pool={pool}
             tournamentLinks={links}
+            stories={stories.length ? stories : undefined}
           />
           {/* Biggest wins and losses (by win chance) and biggest rating gains and losses, as tabs in one box */}
           {highlights.length > 0 && (
@@ -486,6 +487,7 @@ async function Discipline({ pool, p, player, links, first }: { pool: Pool; p: Pl
                       embedded
                       pool={pool}
                       tournamentLinks={links}
+                      stories={stories.length ? stories : undefined}
                     />
                   ),
                 }))}

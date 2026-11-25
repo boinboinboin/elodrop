@@ -8,6 +8,12 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.40.0 (2026-11-25)
+
+- Story Time: some matches have a story behind them. Look for "There's a story here" under a match on a player's page, in head to head or on an upset, or read them all on the new Story Time page (in the menu).
+- Signed in, you can send in a story yourself: find the match on Story Time, tell what happened, and add where you heard it. Each story is read before it's shown, and you can follow how yours are doing there.
+- On phones, a player's match list no longer cuts off the rating column when a tournament's name is one long word (such as "Hamarturneringen/Ranking"): the name wraps instead.
+
 ## v1.39.11 (2026-11-24)
 
 - A player who has moved club now shows the new club on their rating graph (and beside them in match lists) from their first league match for it, instead of keeping their last tournament's club for up to a year.

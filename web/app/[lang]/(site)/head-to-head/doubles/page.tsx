@@ -35,7 +35,7 @@ import Tabs from "@/components/ui/Tabs";
 import { getDoublesHeadToHead, getGenderGap } from "@/data/head-to-head";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
-import { getClubMap } from "@/data/sanity";
+import { getClubMap, getPlayerStories } from "@/data/sanity";
 import type { I18n } from "@/messages/i18n";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, DoublesHeadToHead, DoublesHeadToHeadPool, GenderGap, PairKind, Player, Pool } from "@/types";
@@ -147,7 +147,9 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head/do
 }
 
 async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadToHead; twins: Twins | null; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
-  const { t, plural } = await getI18n();
+  const { t, plural, lang } = await getI18n();
+  // The stories behind their matches (pair A's first player's: the table keeps those of the matches it shows)
+  const stories = await getPlayerStories(h2h.a[0].id, lang);
   // Facing themselves: never met, as with one player against themselves (../page.tsx)
   const mirror = twins?.kind === "samePair" || twins?.kind === "onePlayer";
   const kindName = (kind: PairKind) => t(`headToHead.pairs.kinds.${kind}`);
@@ -215,7 +217,7 @@ async function Comparison({ h2h, twins, clubs, links, gap }: { h2h: DoublesHeadT
 
       {h2h.meetings.length > 0 && (
         <Section>
-          <MatchTable title={t("headToHead.matches.against")} subtitle={t("headToHead.matches.fromPairA", { pair: pairName(h2h.a) })} matches={h2h.meetings} limit={20} showMargin tournamentLinks={links} />
+          <MatchTable title={t("headToHead.matches.against")} subtitle={t("headToHead.matches.fromPairA", { pair: pairName(h2h.a) })} matches={h2h.meetings} limit={20} showMargin tournamentLinks={links} stories={stories} />
         </Section>
       )}
     </>

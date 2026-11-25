@@ -158,6 +158,8 @@
     "claim_too_soon": "You chose a player less than 30 days ago.",
     "account_too_new": "Your account is too new for this yet.",
     "too_many_pending": "You have 3 ideas waiting to be looked at already.",
+    "too_many_stories": "You have 3 stories waiting to be read already.",
+    "story_twice": "You've sent in a story about this match already.",
     "reports_off": "Reports are switched off for now.",
     "reports_blocked": "You can't send reports any more.",
     "not_your_player": "You can only report mistakes about yourself, 14 days after choosing who you are.",

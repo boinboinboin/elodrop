@@ -9,15 +9,16 @@
 // tournament's approval only on its own pages. Every ISR page a tag reaches is written again when next visited, so the
 // clubs', the earned badges' and the halls' tags are left for the nightly run, which refreshes each only when one of
 // them has changed (pipeline/sanity-revisions.mjs), not the webhook. A written page (About, Help & support) is on its
-// own page in each language, and a badge given by hand on its players' pages alone (a tag per player), so the webhook
+// own page in each language, and a badge given by hand or a match's story on its players' pages alone (a tag per player), so the webhook
 // refreshes those at once. Cached until a tag is revalidated ("max"), not by time.
 import { cacheLife, cacheTag } from "next/cache";
 import { draftMode } from "next/headers";
 import clubsJson from "@/content/clubs.json";
 import type { Language } from "@/messages/i18n";
-import type { Badge, ClubEntry, PageBlock, Venue, WrittenPage } from "@/types";
+import type { Badge, ClubEntry, MatchStory, PageBlock, StorySpan, Venue, WrittenPage } from "@/types";
+import { parseMatchKey } from "@/utils/matchKey";
 import { sanityImageUrl } from "@/utils/sanityImage";
-import { BADGES_TAG, CLUBS_TAG, HAND_BADGES_TAG, PAGES_TAG, pageTag, playerBadgesTag, SANITY_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG, WRITTEN_PAGES, type WrittenPageKey } from "./sanityTags";
+import { BADGES_TAG, CLUBS_TAG, HAND_BADGES_TAG, PAGES_TAG, pageTag, playerBadgesTag, playerStoriesTag, SANITY_TAG, STORIES_TAG, tournamentTag, TOURNAMENTS_TAG, VENUES_TAG, WRITTEN_PAGES, type WrittenPageKey } from "./sanityTags";
 
 const fromJson = (): ClubEntry[] => (clubsJson as ClubEntry[]).map((c) => ({ ...c, logo: c.logo ? `/club-logos/${encodeURIComponent(c.logo)}` : null }));
 
@@ -141,12 +142,13 @@ type BadgeText = { title: string | null; titleEn: string | null; description: st
 type BadgeRow = BadgeText & { id: string; key: string | null; about: string | null; aboutEn: string | null; art: SanityLogo | null; players: number[] | null; listed: boolean; levels: (BadgeText & { level: number | null; art: SanityLogo | null })[] | null };
 const badgeArt = (field: string) => `select(defined(${field}.asset) => { "url": ${field}.asset->url, "width": ${field}.asset->metadata.dimensions.width, "height": ${field}.asset->metadata.dimensions.height, "crop": ${field}.crop, "invert": ${field}.invertInDark })`;
 
+/** The published badges that `filter` (GROQ) picks, both languages, by title: the query */
+const badgesQuery = (filter: string) =>
+  `*[_type == "badge" && !(_id in path("drafts.**")) && ${filter}] | order(title asc) { "id": _id, key, "listed": listed != false, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${badgeArt("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${badgeArt("art")} } }`;
+
 /** The published badges that `filter` (GROQ) picks, both languages, by title */
 async function badgeRows(projectId: string, filter: string): Promise<BadgeRow[]> {
-  return query<BadgeRow[]>(
-    projectId,
-    `*[_type == "badge" && !(_id in path("drafts.**")) && ${filter}] | order(title asc) { "id": _id, key, "listed": listed != false, title, titleEn, description, descriptionEn, about, aboutEn, players, "art": ${badgeArt("art")}, "levels": levels[]{ level, title, titleEn, description, descriptionEn, "art": ${badgeArt("art")} } }`,
-  );
+  return query<BadgeRow[]>(projectId, badgesQuery(filter));
 }
 
 /** Badges in the page's language (else the other's), without the ones with no title */
@@ -185,18 +187,121 @@ export async function getHandGivenBadges(lang: Language): Promise<Badge[]> {
   return projectId ? toBadges(await badgeRows(projectId, "!defined(key)"), lang) : [];
 }
 
-/** The hand-given badges one player has, both languages: one entry per player (playerBadgesTag), so a badge given or taken refreshes only its players' pages at once */
-async function handBadgeRowsOf(id: number): Promise<BadgeRow[]> {
+/** A story's text as the Studio keeps it (Portable Text: paragraphs of spans, links in markDefs) */
+type StoryBlock = { _type?: string; children?: { _type?: string; text?: string; marks?: string[] }[]; markDefs?: { _key: string; _type?: string; href?: string }[] };
+type StoryRow = {
+  id: string;
+  createdAt: string;
+  match: string | null;
+  title: string | null;
+  titleEn: string | null;
+  story: StoryBlock[] | string | null;
+  storyEn: StoryBlock[] | string | null;
+  source: { name?: string; url?: string } | null;
+  teller: string | null;
+};
+/** The published stories' fields, raw (a span's spaces next to a bold part are part of the text) */
+const STORIES_QUERY = `*[_type == "matchStory" && !(_id in path("drafts.**"))] | order(_createdAt asc) { "id": _id, "createdAt": _createdAt, match, title, titleEn, story, storyEn, source, teller }`;
+
+/**
+ * What the Studio gives one player by hand, both languages, in one query: their hand-given badges and the stories behind
+ * their matches. One entry per player, with a tag per player for each (playerBadgesTag, playerStoriesTag), so a badge
+ * given or taken, or a story told, refreshes only its players' pages at once. The stories are few, so all of them are
+ * read and the player's picked here (a match key isn't something GROQ can take apart).
+ */
+async function playerRowsOf(id: number): Promise<{ badges: BadgeRow[]; stories: (StoryRow & { key: string })[] }> {
   "use cache";
-  cacheTag(SANITY_TAG, playerBadgesTag(id));
+  cacheTag(SANITY_TAG, playerBadgesTag(id), playerStoriesTag(id));
   cacheLife("max");
   const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-  return projectId && Number.isInteger(id) ? badgeRows(projectId, `!defined(key) && ${id} in players`) : [];
+  if (!projectId || !Number.isInteger(id)) return { badges: [], stories: [] };
+  // Raw, for the stories' text; the badges are cleaned as usual
+  const rows = await query<{ badges: BadgeRow[]; stories: StoryRow[] }>(projectId, `{ "badges": ${badgesQuery(`!defined(key) && ${id} in players`)}, "stories": ${STORIES_QUERY} }`, { raw: true });
+  const stories = (rows.stories ?? []).flatMap((s) => {
+    const match = s.match ? parseMatchKey(s.match) : null;
+    return match?.players.includes(id) ? [{ ...s, key: match.key }] : [];
+  });
+  return { badges: clean(rows.badges ?? []) as BadgeRow[], stories };
 }
 
 /** The badges given by hand to one player, in the page's language (with each badge's players, for its rarity) */
 export async function getPlayerHandBadges(id: number, lang: Language): Promise<Badge[]> {
-  return toBadges(await handBadgeRowsOf(id), lang);
+  return toBadges((await playerRowsOf(id)).badges, lang);
+}
+
+/** A link the site follows: a path on it, or a web address (nothing else, such as javascript:) */
+const safeHref = (href: string | undefined) => (href && (/^\/(?!\/)/.test(href) || /^https?:\/\//i.test(href)) ? href : undefined);
+
+/**
+ * A story's paragraphs as plain spans (no Portable Text in the browser): runs of spaces made one, each paragraph
+ * trimmed. Plain text too (the first stories', before the text had links): its paragraphs parted by empty lines.
+ */
+function storySpans(blocks: StoryBlock[] | string | null): StorySpan[][] {
+  if (typeof blocks === "string") {
+    return blocks
+      .split(/\n\s*\n/)
+      .map((p) => p.replace(/\s+/g, " ").trim())
+      .filter(Boolean)
+      .map((text) => [{ text }]);
+  }
+  return (Array.isArray(blocks) ? blocks : []).flatMap((block) => {
+    if (block._type !== "block") return [];
+    const links = new Map((block.markDefs ?? []).filter((d) => d._type === "link").map((d) => [d._key, safeHref(d.href)]));
+    const spans = (block.children ?? []).flatMap((child): StorySpan[] => {
+      const text = (child.text ?? "").replace(/\s+/g, " ");
+      if (!text) return [];
+      const marks = child.marks ?? [];
+      const href = marks.map((m) => links.get(m)).find(Boolean);
+      return [{ text, ...(href ? { href } : {}), ...(marks.includes("strong") ? { strong: true as const } : {}), ...(marks.includes("em") ? { em: true as const } : {}) }];
+    });
+    // The paragraph's ends trimmed
+    if (spans.length) {
+      spans[0] = { ...spans[0], text: spans[0].text.trimStart() };
+      spans[spans.length - 1] = { ...spans[spans.length - 1], text: spans[spans.length - 1].text.trimEnd() };
+    }
+    const kept = spans.filter((span) => span.text);
+    return kept.length ? [kept] : [];
+  });
+}
+
+/** A story in the page's language (each field falling back to the other language's), or null without text */
+function toStory(s: StoryRow & { key: string }, lang: Language): MatchStory | null {
+  const pick = (no: string | null | undefined, en: string | null | undefined) => (lang === "en" ? en?.trim() || no?.trim() : no?.trim() || en?.trim()) || null;
+  const no = storySpans(s.story);
+  const en = storySpans(s.storyEn);
+  const story = lang === "en" ? (en.length ? en : no) : no.length ? no : en;
+  if (!story.length) return null;
+  const url = safeHref(s.source?.url?.trim());
+  const name = s.source?.name?.trim() || null;
+  return { key: s.key, title: pick(s.title, s.titleEn), story, source: name || url ? { name, url: url ?? null } : null, teller: s.teller?.trim() || null };
+}
+
+/** The stories behind one player's matches, in the page's language (else the other's), oldest written first */
+export async function getPlayerStories(id: number, lang: Language): Promise<MatchStory[]> {
+  return (await playerRowsOf(id)).stories.flatMap((s) => toStory(s, lang) ?? []);
+}
+
+/** Every published story, both languages (STORIES_TAG: the stories page and app/api/stories) */
+async function storyRows(): Promise<(StoryRow & { key: string; players: number[] })[]> {
+  "use cache";
+  cacheTag(SANITY_TAG, STORIES_TAG);
+  cacheLife("max");
+  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+  if (!projectId) return [];
+  return (await query<StoryRow[]>(projectId, STORIES_QUERY, { raw: true })).flatMap((s) => {
+    const match = s.match ? parseMatchKey(s.match) : null;
+    return match ? [{ ...s, key: match.key, players: match.players }] : [];
+  });
+}
+
+/** Every published story in the page's language, newest first, with its match's players and when it was published */
+export async function getStories(lang: Language): Promise<(MatchStory & { id: string; players: number[]; createdAt: string })[]> {
+  return (await storyRows())
+    .flatMap((s) => {
+      const story = toStory(s, lang);
+      return story ? [{ ...story, id: s.id, players: s.players, createdAt: s.createdAt }] : [];
+    })
+    .reverse();
 }
 
 /** The images in a written page: address, size, crop and description */

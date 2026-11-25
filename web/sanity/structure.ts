@@ -1,5 +1,5 @@
 // The Studio's lists: the tournaments first (the ones needing a look, the ones not approved yet, and
-// all of them), then the clubs and the halls, then the players' badges, then the site's written pages (About,
+// all of them), then the clubs and the halls, then the players' badges and the stories behind matches, then the site's written pages (About,
 // Help & support: one fixed document per page and language, schemas/page.ts).
 import type { StructureResolver } from "sanity/structure";
 import { PAGE_LANGUAGES, PAGES } from "./schemas/page";
@@ -28,6 +28,14 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("venue").title("Venues"),
       S.divider(),
       S.documentTypeListItem("badge").title("Badges"),
+      S.listItem()
+        .title("Match stories: sent in, not published")
+        .schemaType("matchStory")
+        .child(S.documentList().title("Sent in, not published").schemaType("matchStory").filter(`_type == "matchStory" && _id in path("drafts.**") && defined(submission)`).defaultOrdering([{ field: "_createdAt", direction: "desc" }])),
+      S.listItem()
+        .title("Match stories")
+        .schemaType("matchStory")
+        .child(S.documentList().title("Match stories").schemaType("matchStory").filter(`_type == "matchStory"`).defaultOrdering([{ field: "_createdAt", direction: "desc" }])),
       S.divider(),
       S.listItem()
         .title("Pages")

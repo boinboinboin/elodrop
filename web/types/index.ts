@@ -193,6 +193,27 @@ export interface Achievement {
   winChance?: number;
 }
 
+/** A piece of a story's paragraph: its text, bold or italic, and a link (a site path "/…" or "https://…") */
+export interface StorySpan {
+  text: string;
+  href?: string;
+  strong?: true;
+  em?: true;
+}
+
+/** The story behind a match, from Sanity (data/sanity.ts), in the page's language */
+export interface MatchStory {
+  /** The match's key in one order (utils/matchKey.ts) */
+  key: string;
+  title: string | null;
+  /** Its paragraphs */
+  story: StorySpan[][];
+  /** Where it comes from (a podcast, an article) */
+  source: { name: string | null; url: string | null } | null;
+  /** Who told it (a visitor's username) */
+  teller: string | null;
+}
+
 /** A badge's text and art from Sanity (data/sanity.ts getBadges), in the page's language */
 export interface Badge {
   id: string;

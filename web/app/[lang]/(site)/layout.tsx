@@ -54,6 +54,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     { href: "/about", label: t("layout.nav.aboutPage"), page: "about" },
     { href: "/how-it-works", label: t("layout.nav.howItWorks") },
     { href: "/achievements", label: t("layout.nav.achievements") },
+    { href: "/stories", label: t("layout.nav.stories") },
     { href: "/whats-new", label: t("layout.nav.whatsNew"), detail: VERSION && t("layout.footer.version", { version: VERSION }) },
     { href: "/support", label: t("layout.nav.support"), page: "support" },
     { href: "/privacy", label: t("layout.nav.privacy"), page: "privacy" },

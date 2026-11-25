@@ -17,6 +17,10 @@ export const BADGES_TAG = "sanity:badges";
 export const HAND_BADGES_TAG = "sanity:badges:given";
 /** One player's badges given by hand: their own page, so the Sanity webhook refreshes a hand-given badge's players at once */
 export const playerBadgesTag = (id: number) => `${BADGES_TAG}:player:${id}`;
+/** The stories behind matches, all of them: the stories page (/stories) and app/api/stories (the upset cards) */
+export const STORIES_TAG = "sanity:stories";
+/** The stories behind one player's matches: their own page, so the Sanity webhook refreshes a story's players at once */
+export const playerStoriesTag = (id: number) => `${STORIES_TAG}:player:${id}`;
 /** The pages written in the Studio (About, Help & support, Privacy) */
 export const PAGES_TAG = "sanity:pages";
 /** Their keys: their addresses on the site (/about) and their documents' ids (page-about-nb) */

@@ -1,7 +1,8 @@
 // One upset: who beat whom with what win chance, each player's rating before the match, the
 // rating gained or lost and their club; the score, discipline, event and day. The event links to its page: the
 // tournament's class (when the tournament has a page, `cup2000Id` from the export) or the team match. Head to head
-// is linked when every player has a page (not one of Profixio's players without one).
+// is linked when every player has a page (not one of Profixio's players without one). Its story, if it has one, under
+// it (UpsetStory).
 import Team from "@/components/clubs/Team";
 import Link from "@/components/ui/Link";
 import { TEXT_LINK } from "@/components/ui/styles";
@@ -11,6 +12,7 @@ import { toneClass } from "@/utils/format";
 import PlayerName from "@/components/players/PlayerName";
 import { doublesHeadToHeadHref, headToHeadHref } from "@/utils/hrefs";
 import { matchHref } from "@/utils/tournament";
+import UpsetStory from "./UpsetStory";
 
 export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; rank?: number; clubs: Record<string, ClubEntry> }) {
   const { date, pct, signed, t } = await getI18n();
@@ -68,6 +70,8 @@ export default async function UpsetCard({ upset, rank, clubs }: { upset: Upset; 
           </>
         )}
       </p>
+      {/* Its story, when it has one (loaded in the browser) */}
+      {upset.key && <UpsetStory matchKey={upset.key} />}
     </article>
   );
 }

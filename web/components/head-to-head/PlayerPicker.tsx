@@ -2,20 +2,21 @@
 
 // A player name field with suggestions (an ARIA combobox): typing searches the players in the
 // site's search index in the browser (utils/search.ts; loaded on first focus), and choosing a suggestion puts its id in the hidden field `name`. Typing again clears the id
-// until a player is chosen. Arrow keys move through the suggestions, Enter chooses, Escape closes.
+// until a player is chosen. Arrow keys move through the suggestions, Enter chooses, Escape closes. `onChange` hears the
+// player chosen (null: cleared or typed over), for a picker outside a form (the stories page's).
 import { useEffect, useRef, useState } from "react";
 import { Search } from "@/components/SVG";
 import ClearButton from "@/components/ui/ClearButton";
 import { useI18n } from "@/messages/client";
 import { loadSearchIndex, searchPlayers } from "@/utils/search";
 
-interface Found {
+export interface Found {
   id: number;
   name: string;
   club: string | null;
 }
 
-export default function PlayerPicker({ name, label, initial }: { name: string; label: string; initial: { id: number; name: string } | null }) {
+export default function PlayerPicker({ name, label, initial, onChange }: { name: string; label: string; initial: { id: number; name: string } | null; onChange?: (player: Found | null) => void }) {
   const { lang, t } = useI18n();
   const [query, setQuery] = useState(initial?.name ?? "");
   const [id, setId] = useState<number | null>(initial?.id ?? null);
@@ -45,6 +46,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
     setQuery(p.name);
     setId(p.id);
     setResults(null);
+    onChange?.(p);
   };
   const onKey = (event: React.KeyboardEvent) => {
     if (!results) return;
@@ -78,6 +80,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
+            if (id !== null) onChange?.(null);
             setId(null);
             if (e.target.value.trim().length < 2) setResults(null);
           }}
@@ -90,6 +93,7 @@ export default function PlayerPicker({ name, label, initial }: { name: string; l
           show={query !== ""}
           onClear={() => {
             setQuery("");
+            if (id !== null) onChange?.(null);
             setId(null);
             setResults(null);
           }}

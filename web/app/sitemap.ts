@@ -45,6 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     [ELITESERIEN_TEN_MATCHES_HREF],
     ...(meta?.eliteserien.seasons ?? []).map((season): [string] => [eliteserienHref(season)]),
     ["/achievements"],
+    ["/stories"],
     ["/upsets"],
     ...(upsets?.years ?? []).map((year): [string] => [upsetsHref(year)]),
     // The senior and the junior team matches: each one's seasons and weeks

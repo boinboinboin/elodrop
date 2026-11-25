@@ -31,7 +31,7 @@ import Tabs from "@/components/ui/Tabs";
 import { getGenderGap, getHeadToHead } from "@/data/head-to-head";
 import { getMeta } from "@/data/meta";
 import { getPlayer } from "@/data/players";
-import { getClubMap } from "@/data/sanity";
+import { getClubMap, getPlayerStories } from "@/data/sanity";
 import { getI18n } from "@/messages/server";
 import type { ClubEntry, GenderGap, HeadToHead, HeadToHeadCrossover, HeadToHeadPool, Player, Pool } from "@/types";
 import { SIDE_COLORS } from "@/utils/chart";
@@ -104,8 +104,10 @@ async function Content({ searchParams }: Pick<PageProps<"/[lang]/head-to-head">,
 }
 
 async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: Record<string, ClubEntry>; links: Record<string, number>; gap: GenderGap | null }) {
-  const { t } = await getI18n();
+  const { t, lang } = await getI18n();
   const { a, b, record } = h2h;
+  // The stories behind their matches (A's: the table keeps those of the matches it shows)
+  const stories = await getPlayerStories(a.id, lang);
   const pools = Object.entries(h2h.pools) as [Pool, HeadToHeadPool][];
   const { path, image } = pairAddresses(a.id, b.id);
   return (
@@ -164,8 +166,8 @@ async function Comparison({ h2h, clubs, links, gap }: { h2h: HeadToHead; clubs: 
       {(h2h.meetings.length > 0 || h2h.together.length > 0) && (
         <section className="base-section">
           <div className="base-container px-4 grid grid-cols-1 gap-6">
-            {h2h.meetings.length > 0 && <MatchTable title={t("headToHead.matches.against")} subtitle={t("headToHead.matches.fromSide", { name: a.name })} matches={h2h.meetings} limit={20} showMargin tournamentLinks={links} />}
-            {h2h.together.length > 0 && <MatchTable title={t("headToHead.matches.together")} subtitle={t("headToHead.matches.fromSide", { name: a.name })} matches={h2h.together} limit={20} tournamentLinks={links} />}
+            {h2h.meetings.length > 0 && <MatchTable title={t("headToHead.matches.against")} subtitle={t("headToHead.matches.fromSide", { name: a.name })} matches={h2h.meetings} limit={20} showMargin tournamentLinks={links} stories={stories} />}
+            {h2h.together.length > 0 && <MatchTable title={t("headToHead.matches.together")} subtitle={t("headToHead.matches.fromSide", { name: a.name })} matches={h2h.together} limit={20} tournamentLinks={links} stories={stories} />}
           </div>
         </section>
       )}
