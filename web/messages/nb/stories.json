@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "title": "Storytime",
+    "description": "Historiene bak kampene i norsk badminton: det resultatet ikke forteller. Kjenner du en? Send den inn."
+  },
+  "title": "Storytime",
+  "intro": "Historiene bak kampene: det resultatet ikke forteller.",
+  "open": "Det er en historie her",
+  "close": "Lukk historien",
+  "toldBy": "Fortalt av {name}",
+  "source": "Kilde:",
+  "more": "Flere historier",
+  "none": "Ingen historier ennå. Bli den første til å fortelle en!",
+  "beat": "slo",
+  "drew": "spilte uavgjort mot",
+  "headToHead": "Head to head",
+  "count": {
+    "one": "{count} historie",
+    "other": "{count} historier"
+  },
+  "form": {
+    "title": "Fortell en historie",
+    "intro": "Vet du om en kamp med en morsom historie? Noe utenom det vanlige, på banen eller rundt den. Finn kampen og fortell: alle historier blir lest før de vises, og noen blir kanskje pusset litt på.",
+    "signIn": "<link>Logg inn</link> for å sende inn en historie.",
+    "tooNew": "Du kan sende inn historier når kontoen din er {days} dager gammel.",
+    "player": "En spiller i kampen",
+    "search": "Søk: motstander, makker, turnering eller år",
+    "loading": "Henter kampene …",
+    "noMatches": "Fant ingen kamper.",
+    "pick": "Velg denne kampen",
+    "chosen": "Kampen",
+    "change": "Bytt",
+    "with": "med {name}",
+    "won": "Seier",
+    "lost": "Tap",
+    "draw": "Uavgjort",
+    "story": "Historien",
+    "storyHelp": "{count}/{max} · minst {min} tegn · en tom linje starter et nytt avsnitt",
+    "sourceName": "Kilde (valgfritt)",
+    "sourceNameHelp": "Hvor du hørte eller leste den: en podkast, en artikkel …",
+    "sourceUrl": "Lenke til kilden (valgfritt)",
+    "showName": "Vis brukernavnet mitt med historien",
+    "showNameHelp": "Som «Fortalt av {name}»",
+    "send": "Send historien",
+    "sending": "Sender …",
+    "sent": "Takk! Historien din venter på å bli lest. Du ser den her under når den er publisert.",
+    "mine": "Historiene dine",
+    "status": {
+      "pending": "Venter på å bli lest",
+      "sent": "Venter på å bli lest",
+      "published": "Publisert",
+      "declined": "Ikke publisert"
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "title": "Story Time",
+    "description": "The stories behind Norwegian badminton matches: what happened that the score doesn't tell. Know one? Send it in."
+  },
+  "title": "Story Time",
+  "intro": "The stories behind the matches: what happened that the score doesn't tell.",
+  "open": "There's a story here",
+  "close": "Close the story",
+  "toldBy": "Told by {name}",
+  "source": "Source:",
+  "more": "More stories",
+  "none": "No stories yet. Be the first to tell one!",
+  "beat": "beat",
+  "drew": "drew with",
+  "headToHead": "Head to head",
+  "count": {
+    "one": "{count} story",
+    "other": "{count} stories"
+  },
+  "form": {
+    "title": "Tell a story",
+    "intro": "Know a match with a funny story that you would like to share with everyone? Something out of the ordinary, on the court or around it. Find the match and tell it: every story is read before it's shown, and some may be tidied up a little.",
+    "signIn": "<link>Sign in</link> to send in a story.",
+    "tooNew": "You can send in stories once your account is {days} days old.",
+    "player": "A player in the match",
+    "search": "Search: opponent, partner, tournament or year",
+    "loading": "Loading the matches…",
+    "noMatches": "No matches found.",
+    "pick": "Pick this match",
+    "chosen": "The match",
+    "change": "Change",
+    "with": "with {name}",
+    "won": "Won",
+    "lost": "Lost",
+    "draw": "Draw",
+    "story": "The story",
+    "storyHelp": "{count}/{max} · at least {min} characters · an empty line starts a new paragraph",
+    "sourceName": "Source (optional)",
+    "sourceNameHelp": "Where you heard or read it: a podcast, an article…",
+    "sourceUrl": "Link to the source (optional)",
+    "showName": "Show my username with the story",
+    "showNameHelp": "As “Told by {name}”",
+    "send": "Send the story",
+    "sending": "Sending…",
+    "sent": "Thanks! Your story is waiting to be read. You'll see it below when it's published.",
+    "mine": "Your stories",
+    "status": {
+      "pending": "Waiting to be read",
+      "sent": "Waiting to be read",
+      "published": "Published",
+      "declined": "Not published"
+    }
+  }
+}
