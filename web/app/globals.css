@@ -312,6 +312,13 @@ html[data-theme="lightsout"] .dark-invert {
   & td:not(:last-child) {
     @apply pr-2 sm:pr-4;
   }
+  /* The opponents: a word too long for the column (a tournament's or a club's name) is broken rather than widening
+     the table past its clipped box (MatchTable). `anywhere`, not `break-word`, which a table's column ignores when
+     it's sized. It only breaks when the column is narrower than the word (a phone); a soft hyphen (utils/hyphenate.ts)
+     is used first */
+  & td:nth-child(2) {
+    overflow-wrap: anywhere;
+  }
   /* Its links have the site's line on hover; the event's (MatchTable) is underlined already (link-underlined) */
   & a:not(.link-underlined) {
     @apply link;

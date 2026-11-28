@@ -1,4 +1,5 @@
-// Where the page titles (the `h1` utility, app/globals.css) may break a long word, chosen by hand: the browser's own
+// Where the page titles (the `h1` utility, app/globals.css) and the match tables' tournament names (MatchTable) may
+// break a long word, chosen by hand: the browser's own
 // hyphenation (`hyphens: auto`) broke Norwegian compounds in odd places. Each word is written with a "|" where it may
 // break; at the end of a line it breaks there with a hyphen, and nowhere else. A word is matched whole, ignoring case
 // ("badminton|rangering" also hyphenates "Badmintonrangering"), in titles from the translation files and from the data

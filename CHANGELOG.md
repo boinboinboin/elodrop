@@ -8,6 +8,10 @@ Every change merged into `main` gets an entry here, newest first.
 - **x**: big features: new pages, new components, new capabilities.
 - **y**: smaller features, improvements, bug and issue fixes.
 
+## v1.39.12 (2026-11-28)
+
+- On phones, a player's match table no longer has its rating column cut off at the right edge. A long tournament name ("Vestlandsmesterskapet") or a doubles match's "mot single" line made the table wider than the screen; long names now break onto the next line ("Vestlands-mesterskapet"), and the "mot single" line wraps.
+
 ## v1.39.11 (2026-11-24)
 
 - A player who has moved club now shows the new club on their rating graph (and beside them in match lists) from their first league match for it, instead of keeping their last tournament's club for up to a year.
