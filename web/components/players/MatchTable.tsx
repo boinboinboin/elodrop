@@ -19,6 +19,7 @@ import { BUTTON } from "@/components/ui/styles";
 import { useI18n } from "@/messages/client";
 import type { Match, Pool } from "@/types";
 import { toneClass } from "@/utils/format";
+import { hyphenate } from "@/utils/hyphenate";
 import { sortByDesc } from "@/utils/sort";
 import { matchEventHref } from "@/utils/tournament";
 
@@ -88,7 +89,11 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
         )}
       </div>
       {/* Fits a phone: there the win chance goes under the score and the match key is left out. Clip,
-          not scroll, so the header can stick to the top of the page while scrolling through matches. */}
+          not scroll, so the header can stick to the top of the page while scrolling through matches. So nothing in a
+          cell may be wider than a phone leaves it: a long word in the opponents' cell breaks (a tournament's name
+          where utils/hyphenate.ts marks it, "Vestlands-mesterskapet", any other at the edge: match-rows), and the
+          rating's "pull towards singles" line wraps. Both once made the table wider than its box, its rating cut off
+          (Nov 2026). */}
       <div className="overflow-x-clip">
         <table className="w-full text-left">
           <thead className="sticky top-[calc(var(--header-offset)+var(--sticky-offset,0px))] z-10 transition-[top] duration-200 bg-white text-sm text-gray-600 shadow-[inset_0_-1px_0_var(--color-gray-200)]">
@@ -114,7 +119,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                   <td className="match-date">
                     <span>{date(m.day, "dayOnly")}</span> <span>{date(m.day, "monthShort")}</span> <span>{m.day.slice(0, 4)}</span>
                   </td>
-                  <td className="break-words">
+                  <td>
                     {m.opponents.map((o, i) => (
                       <span key={o.id ?? o.name}>
                         <PlayerName id={o.id} name={o.name} pool={m.pool ?? pool} /> <span className="match-note tabular-nums">{o.rating}</span>
@@ -130,9 +135,9 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                       </span>
                     )}
                     {href ? (
-                      <Link href={href} className="match-event link-underlined">{m.event}</Link>
+                      <Link href={href} className="match-event link-underlined">{hyphenate(m.event)}</Link>
                     ) : (
-                      <span className="match-event">{m.event}</span>
+                      <span className="match-event">{hyphenate(m.event)}</span>
                     )}
                     {m.key && (
                       // Match key for pipeline/corrections.txt; one click selects all of it for copying
@@ -166,7 +171,7 @@ export default function MatchTable({ matches: newest, title, subtitle, limit, so
                     </span>
                   </td>
                   <td className="text-right tabular-nums hidden sm:table-cell">{chanceText}</td>
-                  <td className="text-right tabular-nums whitespace-nowrap">
+                  <td className="text-right tabular-nums">
                     {Math.round(m.rating + m.change + (m.pull ?? 0))}
                     <span className={`block text-sm ${toneClass(m.change)}`}>{signed(m.change, 1)}</span>
                     {m.pull != null && (
